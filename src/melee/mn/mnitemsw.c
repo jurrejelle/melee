@@ -7,7 +7,11 @@
 #include <baselib/gobjproc.h>
 #include <baselib/jobj.h>
 
+#include <melee/lb/lb_00F9.h>
 #include <melee/lb/lblanguage.h>
+#include <melee/sc/types.h>
+
+extern StaticModelDesc MenMainCursorIs_Top;
 
 struct MnItemSwTable {
     /* 0x00 */ f32 x00[4][3];
@@ -46,6 +50,9 @@ static struct MnItemSwTable mnItemSw_803ED340 = {
     },
 };
 
+static f32 mnItemSw_804D4BA0[2] = { 0.0f, 1.0f };
+
+#pragma dont_inline on
 s32 mnItemSw_80233A98(s32 arg0)
 {
     switch (arg0) {
@@ -64,6 +71,7 @@ s32 mnItemSw_80233A98(s32 arg0)
         return (s32) mnItemSw_803ED340.items[arg0];
     }
 }
+#pragma dont_inline reset
 
 HSD_JObj* mnItemSw_8023405C(MnItemSwData* data, u8 idx)
 {
@@ -86,6 +94,45 @@ HSD_JObj* mnItemSw_8023405C(MnItemSwData* data, u8 idx)
         }
     }
     return cur;
+}
+
+HSD_JObj* mnItemSw_80235020(u8 arg0, MnItemSwData* arg1)
+{
+    HSD_JObj* sp14;
+    HSD_JObj* sp10;
+    u8 hovered;
+    u8 item_val;
+    HSD_JObj* jobj;
+
+    hovered = (u8) mn_804A04F0.hovered_selection;
+    jobj = HSD_JObjLoadJoint(MenMainCursorIs_Top.joint);
+    HSD_JObjAddAnimAll(jobj, MenMainCursorIs_Top.animjoint,
+                       MenMainCursorIs_Top.matanim_joint,
+                       MenMainCursorIs_Top.shapeanim_joint);
+    lb_80011E24(jobj, &sp14, 3, -1);
+    HSD_JObjReqAnimAll(sp14,
+                       (f32) mnItemSw_80233A98(
+                           (s32) mnItemSw_803ED340.item_order[arg0]));
+    HSD_JObjAnimAll(sp14);
+    if (arg0 == hovered) {
+        HSD_JObjReqAnimAll(sp14, mnItemSw_803ED340.x30[1]);
+    } else {
+        HSD_JObjReqAnimAll(sp14, mnItemSw_803ED340.x30[0]);
+    }
+    mn_8022F3D8(sp14, 1, TOBJ_MASK);
+    HSD_JObjAnimAll(sp14);
+    item_val = arg1->items[arg0];
+    lb_80011E24(jobj, &sp10, 2, -1);
+    HSD_JObjReqAnimAll(sp10, mnItemSw_804D4BA0[item_val]);
+    HSD_JObjAnimAll(sp10);
+    lb_80011E24(jobj, &sp14, 8, -1);
+    if (arg0 == hovered) {
+        HSD_JObjReqAnimAll(sp14, mnItemSw_803ED340.x30[3]);
+        HSD_JObjAnimAll(sp14);
+    } else {
+        HSD_JObjSetFlagsAll(sp14, 0x10);
+    }
+    return jobj;
 }
 
 void mnItemSw_802358C0(void)
