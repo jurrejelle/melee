@@ -9,6 +9,11 @@
 #include <baselib/jobj.h>
 #include <baselib/sislib.h>
 
+#include <sysdolphin/baselib/debug.h>
+#include <sysdolphin/baselib/gobjuserdata.h>
+#include <sysdolphin/baselib/memory.h>
+
+#include <melee/gm/gm_1601.h>
 #include <melee/gm/gm_1A3F.h>
 #include <melee/gm/gmmain_lib.h>
 #include <melee/lb/lb_00F9.h>
@@ -18,6 +23,7 @@
 #include <melee/sc/types.h>
 
 extern StaticModelDesc MenMainCursorIs_Top;
+extern StaticModelDesc MenMainConIs_Top;
 extern HSD_GObj* mnItemSw_804D6BE8;
 extern u8 mn_804D6BB5;
 
@@ -715,6 +721,124 @@ HSD_JObj* mnItemSw_80235020(u8 arg0, MnItemSwData* arg1)
         HSD_JObjSetFlagsAll(sp14, 0x10);
     }
     return jobj;
+}
+
+HSD_GObj* mnItemSw_802351A0(s32 arg0)
+{
+    struct StaticModelDesc* mdl = &MenMainConIs_Top;
+    struct MnItemSwTable* tbl = &mnItemSw_803ED340;
+    HSD_GObj* gobj;
+    HSD_JObj* jobj;
+    MnItemSwData* data;
+    s32 i;
+    f32 y_spacing;
+    u8 cursor;
+    HSD_JObj* cjobj;
+
+    gobj = GObj_Create(6, 7, 0x80);
+    mnItemSw_804D6BE8 = gobj;
+
+    jobj = HSD_JObjLoadJoint(mdl->joint);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 6, 0x80);
+    HSD_GObj_SetupProc(gobj, fn_80234C24, 0);
+
+    HSD_JObjAddAnimAll(jobj, mdl->animjoint, mdl->matanim_joint,
+                       mdl->shapeanim_joint);
+    HSD_JObjReqAnimAll(jobj, 0.0f);
+    HSD_JObjAnimAll(jobj);
+
+    data = HSD_MemAlloc(sizeof(MnItemSwData));
+    HSD_ASSERTREPORT(0x3D7, data, "Can't get user_data.\n");
+
+    GObj_InitUserData(gobj, 0, HSD_Free, data);
+
+    data->menu_kind = mn_804A04F0.cur_menu;
+    data->cursor = (u8) mn_804A04F0.hovered_selection;
+
+    {
+        u8* order = tbl->item_order;
+        for (i = 0; (u8) i < 0x1F; i++, order++) {
+            data->items[(u8) i] = gm_8016403C(*order);
+        }
+    }
+
+    data->x21 = gmMainLib_8015CC58()->item_freq + 1;
+    data->x23 = (u8) arg0;
+
+    for (i = 0; i < 7; i++) {
+        lb_80011E24(jobj, &data->jobjs[i], i, -1);
+    }
+
+    if (mn_804A04F0.hovered_selection == 0x1F ||
+        mn_804A04F0.hovered_selection == 0x20)
+    {
+        mn_804A04F0.confirmed_selection = data->x21;
+    } else {
+        mn_804A04F0.confirmed_selection = data->items[data->cursor];
+    }
+
+    y_spacing = HSD_JObjGetTranslationY(data->jobjs[5]) -
+        HSD_JObjGetTranslationY(data->jobjs[4]);
+
+    for (i = 0; i < 0x1F; i++) {
+        HSD_JObj* item_jobj = mnItemSw_80235020((u8) i, data);
+        if (i < 0x10) {
+            HSD_JObjAddChild(data->jobjs[4], item_jobj);
+            HSD_JObjAddTranslationY(item_jobj, y_spacing * (f32) i);
+        } else {
+            HSD_JObjAddChild(data->jobjs[6], item_jobj);
+            HSD_JObjAddTranslationY(item_jobj,
+                y_spacing * (f32)(i - 0x10));
+        }
+    }
+
+    HSD_JObjSetFlagsAll(data->jobjs[4], 0x10);
+    HSD_JObjSetFlagsAll(data->jobjs[6], 0x10);
+
+    cursor = data->cursor;
+    cjobj = data->jobjs[2];
+
+    if (cursor == 0x1F || cursor == 0x20) {
+        HSD_JObjSetFlagsAll(cjobj, 0x10);
+    } else {
+        HSD_JObjClearFlagsAll(cjobj, 0x10);
+        y_spacing = HSD_JObjGetTranslationY(data->jobjs[5]) -
+            HSD_JObjGetTranslationY(data->jobjs[4]);
+
+        if (cursor < 0x10) {
+            HSD_JObjSetTranslateX(cjobj,
+                HSD_JObjGetTranslationX(data->jobjs[4]));
+            HSD_JObjSetTranslateY(cjobj,
+                y_spacing * (f32) cursor +
+                    HSD_JObjGetTranslationY(data->jobjs[4]));
+        } else {
+            HSD_JObjSetTranslateX(cjobj,
+                HSD_JObjGetTranslationX(data->jobjs[6]));
+            HSD_JObjSetTranslateY(cjobj,
+                y_spacing * (f32)(cursor - 0x10) +
+                    HSD_JObjGetTranslationY(data->jobjs[4]));
+        }
+    }
+
+    HSD_JObjSetFlagsAll(data->jobjs[2], 0x10);
+
+    {
+        u8 hov = (u8) mn_804A04F0.hovered_selection;
+        u8 x21 = data->x21;
+        HSD_JObj* all_jobj = data->jobjs[3];
+
+        if (hov == 0x1F || hov == 0x20) {
+            HSD_JObjReqAnimAll(all_jobj, tbl->x30[7 + x21 * 2]);
+        } else {
+            HSD_JObjReqAnimAll(all_jobj, tbl->x30[6 + x21 * 2]);
+        }
+        HSD_JObjAnimAll(all_jobj);
+    }
+
+    HSD_JObjSetFlagsAll(data->jobjs[3], 0x10);
+
+    return gobj;
 }
 
 void mnItemSw_802358C0(void)

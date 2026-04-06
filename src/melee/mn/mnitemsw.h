@@ -24,7 +24,7 @@ typedef struct MnItemSwData {
 /* 23453C */ void mnItemSw_8023453C(HSD_GObj*, u8, u8);
 /* 234C24 */ void fn_80234C24(HSD_GObj*);
 /* 235020 */ HSD_JObj* mnItemSw_80235020(u8, MnItemSwData*);
-/* 2351A0 */ void mnItemSw_802351A0(s32);
+/* 2351A0 */ HSD_GObj* mnItemSw_802351A0(s32);
 /* 2358C0 */ void mnItemSw_802358C0(void);
 
 extern HSD_GObj* mnItemSw_804D6BE8;
