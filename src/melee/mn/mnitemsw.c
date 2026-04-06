@@ -360,6 +360,151 @@ void mnItemSw_80234104(HSD_GObj* gobj)
     HSD_JObjClearFlagsAll(data->jobjs[3], 0x10);
 }
 
+void mnItemSw_8023453C(HSD_GObj* gobj, u8 arg1, u8 arg2)
+{
+    MnItemSwData* data = gobj->user_data;
+    struct MnItemSwTable* tbl = &mnItemSw_803ED340;
+    HSD_JObj* sp44;
+    s32 sp40;
+    HSD_JObj* sp3C;
+    f32 anim_val;
+    u8 new_cursor;
+    HSD_JObj* cjobj;
+
+    if (arg1 != 0) {
+        u8 old_cursor = data->cursor;
+
+        if (old_cursor == 0x1F || old_cursor == 0x20) {
+            u8 x21 = data->x21;
+            HSD_JObj* all_jobj = data->jobjs[3];
+            if ((u8) mn_804A04F0.hovered_selection == 0x1F ||
+                (u8) mn_804A04F0.hovered_selection == 0x20)
+            {
+                HSD_JObjReqAnimAll(all_jobj,
+                    tbl->x30[7 + x21 * 2]);
+            } else {
+                HSD_JObjReqAnimAll(all_jobj,
+                    tbl->x30[6 + x21 * 2]);
+            }
+            HSD_JObjAnimAll(all_jobj);
+        } else {
+            HSD_JObj* jobj = mnItemSw_8023405C(data, old_cursor);
+            lb_80011E24(jobj, &sp44, 8, -1);
+            HSD_JObjSetFlagsAll(sp44, 0x10);
+            anim_val = mn_8022F298(sp44);
+            lb_80011E24(jobj, &sp44, 3, -1);
+            HSD_JObjReqAnimAll(sp44,
+                (f32) mnItemSw_80233A98(
+                    (s32) tbl->item_order[old_cursor]));
+            HSD_JObjAnimAll(sp44);
+            HSD_JObjReqAnimAll(sp44, tbl->x30[0]);
+            mn_8022F3D8(sp44, 1, TOBJ_MASK);
+            HSD_JObjAnimAll(sp44);
+        }
+
+        new_cursor = (u8) mn_804A04F0.hovered_selection;
+
+        if (new_cursor == 0x1F || new_cursor == 0x20) {
+            HSD_JObj* all_jobj = data->jobjs[3];
+            u8 conf = mn_804A04F0.confirmed_selection;
+            if ((u8) mn_804A04F0.hovered_selection == 0x1F ||
+                (u8) mn_804A04F0.hovered_selection == 0x20)
+            {
+                HSD_JObjReqAnimAll(all_jobj,
+                    tbl->x30[7 + conf * 2]);
+            } else {
+                HSD_JObjReqAnimAll(all_jobj,
+                    tbl->x30[6 + conf * 2]);
+            }
+            HSD_JObjAnimAll(all_jobj);
+        } else {
+            HSD_JObj* jobj = mnItemSw_8023405C(data, new_cursor);
+            lb_80011E24(jobj, &sp44, 8, -1);
+            HSD_JObjClearFlagsAll(sp44, 0x10);
+            HSD_JObjReqAnimAll(sp44, anim_val);
+            HSD_JObjAnimAll(sp44);
+            lb_80011E24(jobj, &sp44, 3, -1);
+            HSD_JObjReqAnimAll(sp44,
+                (f32) mnItemSw_80233A98(
+                    (s32) tbl->item_order[new_cursor]));
+            HSD_JObjAnimAll(sp44);
+            HSD_JObjReqAnimAll(sp44, tbl->x30[0]);
+            mn_8022F3D8(sp44, 1, TOBJ_MASK);
+            HSD_JObjAnimAll(sp44);
+        }
+
+        cjobj = data->jobjs[2];
+        if ((u8)(new_cursor - 0x1F) <= 1U) {
+            HSD_JObjSetFlagsAll(cjobj, 0x10);
+        } else {
+            f32 y_spacing;
+            HSD_JObjClearFlagsAll(cjobj, 0x10);
+            y_spacing = HSD_JObjGetTranslationY(data->jobjs[5]) -
+                HSD_JObjGetTranslationY(data->jobjs[4]);
+
+            if (new_cursor < 0x10) {
+                HSD_JObjSetTranslateX(cjobj,
+                    HSD_JObjGetTranslationX(data->jobjs[4]));
+                HSD_JObjSetTranslateY(cjobj,
+                    y_spacing * (f32) new_cursor +
+                        HSD_JObjGetTranslationY(data->jobjs[4]));
+            } else {
+                HSD_JObjSetTranslateX(cjobj,
+                    HSD_JObjGetTranslationX(data->jobjs[6]));
+                HSD_JObjSetTranslateY(cjobj,
+                    y_spacing * (f32)(new_cursor - 0x10) +
+                        HSD_JObjGetTranslationY(data->jobjs[4]));
+            }
+        }
+    }
+
+    if (arg2 != 0) {
+        if (mn_804A04F0.hovered_selection == 0x1F ||
+            mn_804A04F0.hovered_selection == 0x20)
+        {
+            HSD_JObj* all_jobj = data->jobjs[3];
+            u8 conf = mn_804A04F0.confirmed_selection;
+            if ((u8) mn_804A04F0.hovered_selection == 0x1F ||
+                (u8) mn_804A04F0.hovered_selection == 0x20)
+            {
+                HSD_JObjReqAnimAll(all_jobj,
+                    tbl->x30[7 + conf * 2]);
+            } else {
+                HSD_JObjReqAnimAll(all_jobj,
+                    tbl->x30[6 + conf * 2]);
+            }
+            HSD_JObjAnimAll(all_jobj);
+        } else {
+            u8 confirmed = mn_804A04F0.confirmed_selection;
+            HSD_JObj* jobj = mnItemSw_8023405C(data,
+                (u8) mn_804A04F0.hovered_selection);
+            lb_80011E24(jobj, &sp3C, 2, -1);
+            HSD_JObjReqAnimAll(sp3C,
+                mnItemSw_804D4BA0[confirmed]);
+            HSD_JObjAnimAll(sp3C);
+        }
+    }
+
+    {
+        u16 sel;
+        if (arg1 != 0) {
+            sel = mn_804A04F0.hovered_selection;
+        } else {
+            sel = data->cursor;
+        }
+
+        if ((u8) sel != 0x1F && (u8) sel != 0x20) {
+            HSD_JObj* jobj = mnItemSw_8023405C(data, (u8) sel);
+            lb_80011E24(jobj, &sp44, 8, -1);
+            mn_8022ED6C(sp44,
+                (AnimLoopSettings*) &tbl->x30[3]);
+            lb_80011E24(jobj, &sp44, 3, -1);
+            mn_8022ED6C(sp44,
+                (AnimLoopSettings*) &tbl->x30[0]);
+        }
+    }
+}
+
 void fn_80234C24(HSD_GObj* gobj)
 {
     MnItemSwData* data;
