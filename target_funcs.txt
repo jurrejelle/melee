@@ -1,0 +1,10 @@
+file: src/melee/mn/mnitemsw.c
+funcs: 
+- [x] mnItemSw_80233A98        
+- [ ] mnItemSw_80235020        
+- [ ] fn_80233E10              
+- [ ] mnItemSw_80233B68        
+- [ ] fn_80234C24              
+- [ ] mnItemSw_80234104        
+- [ ] mnItemSw_8023453C        
+- [ ] mnItemSw_802351A0     
