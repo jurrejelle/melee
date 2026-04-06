@@ -7,6 +7,7 @@
 #include <baselib/gobjplink.h>
 #include <baselib/gobjproc.h>
 #include <baselib/jobj.h>
+#include <baselib/sislib.h>
 
 #include <melee/gm/gm_1A3F.h>
 #include <melee/gm/gmmain_lib.h>
@@ -18,6 +19,7 @@
 
 extern StaticModelDesc MenMainCursorIs_Top;
 extern HSD_GObj* mnItemSw_804D6BE8;
+extern u8 mn_804D6BB5;
 
 struct MnItemSwTable {
     /* 0x00 */ f32 x00[4][3];
@@ -298,6 +300,179 @@ HSD_JObj* mnItemSw_8023405C(MnItemSwData* data, u8 idx)
         }
     }
     return cur;
+}
+
+void fn_80234C24(HSD_GObj* gobj)
+{
+    MnItemSwData* data;
+    f32* anims;
+    HSD_JObj* jobj;
+    HSD_Text* text;
+    s32 menu_changed;
+    s32 hovered_changed;
+    s32 confirmed_changed;
+    struct MnItemSwTable* tbl = &mnItemSw_803ED340;
+
+    PAD_STACK(0x18);
+
+    menu_changed = 0;
+    hovered_changed = 0;
+    confirmed_changed = 0;
+    data = (MnItemSwData*) gobj->user_data;
+
+    {
+        u8 state = data->x23;
+        if ((state == 0 || state == 1 || state == 3) &&
+            data->menu_kind != (u8) mn_804A04F0.cur_menu)
+        {
+            if ((u8) mn_804A04F0.entering_menu != 0) {
+                data->x23 = 4;
+            } else if ((mn_804A04F0.buttons & 0x20) != 0) {
+                data->x23 = 2;
+            }
+
+            state = data->x23;
+            jobj = data->jobjs[1];
+
+            switch ((s32) state) {
+            case 1:
+                anims = tbl->x00[0];
+                break;
+            case 2:
+                anims = tbl->x00[2];
+                break;
+            case 3:
+                anims = tbl->x00[1];
+                break;
+            case 4:
+                anims = tbl->x00[3];
+                break;
+            }
+
+            HSD_JObjReqAnim(jobj, anims[0]);
+            HSD_JObjAnim(jobj);
+
+            state = data->x23;
+            if (state == 0 || state == 1 || state == 3) {
+                menu_changed = 1;
+                hovered_changed = 1;
+                confirmed_changed = 1;
+            }
+        }
+    }
+
+    {
+        u8 state = data->x23;
+        if (state != 0) {
+            jobj = data->jobjs[1];
+
+            switch ((s32) state) {
+            case 1:
+                anims = tbl->x00[0];
+                break;
+            case 2:
+                anims = tbl->x00[2];
+                break;
+            case 3:
+                anims = tbl->x00[1];
+                break;
+            case 4:
+                anims = tbl->x00[3];
+                break;
+            }
+
+            if (mn_8022F298(jobj) >= anims[1]) {
+                state = data->x23;
+                switch ((s32) state) {
+                case 1:
+                case 3:
+                    data->x23 = 0;
+                    text = HSD_SisLib_803A5ACC(0, (s32) mn_804D6BB5,
+                                               -14.9527f, -4.6369f,
+                                               17.5f, 200.0f, 300.0f);
+                    data->jobjs[7] = (HSD_JObj*) text;
+                    text->font_size.x = 0.0521f;
+                    text->font_size.y = 0.0521f;
+                    HSD_SisLib_803A6368(text, 2);
+                    text = HSD_SisLib_803A5ACC(0, (s32) mn_804D6BB5,
+                                               -0.52099997f, -4.6369f,
+                                               17.5f, 200.0f, 300.0f);
+                    data->jobjs[8] = (HSD_JObj*) text;
+                    text->font_size.x = 0.0521f;
+                    text->font_size.y = 0.0521f;
+                    if (lbLang_IsSettingJP() != 0 &&
+                        lbLang_IsSavedLanguageUS() != 0)
+                    {
+                        HSD_SisLib_803A6368(text, 5);
+                    } else {
+                        HSD_SisLib_803A6368(text, 3);
+                    }
+                    mnItemSw_80234104(gobj);
+                    mnItemSw_804D6BEC = 0;
+                    return;
+                case 2:
+                case 4:
+                    HSD_GObjPLink_80390228(gobj);
+                    HSD_SisLib_803A5CC4((HSD_Text*) data->jobjs[7]);
+                    HSD_SisLib_803A5CC4((HSD_Text*) data->jobjs[8]);
+                    return;
+                }
+            } else {
+                HSD_JObjAnim(jobj);
+            }
+        }
+    }
+
+    {
+        u8 state = data->x23;
+        if (state == 0 || state == 1 || state == 3) {
+            if ((s32) data->cursor !=
+                (s32) mn_804A04F0.hovered_selection)
+            {
+                hovered_changed = 1;
+            }
+            if ((u16) (mn_804A04F0.hovered_selection - 0x1F) <= 1U) {
+                if ((u8) data->x21 !=
+                    (u8) mn_804A04F0.confirmed_selection)
+                {
+                    confirmed_changed = 1;
+                }
+            } else if ((u8) data->items[mn_804A04F0
+                                             .hovered_selection] !=
+                       (u8) mn_804A04F0.confirmed_selection)
+            {
+                confirmed_changed = 1;
+            }
+        }
+    }
+
+    mnItemSw_8023453C(gobj, (u8) hovered_changed, (u8) confirmed_changed);
+
+    if (menu_changed != 0) {
+        data->menu_kind = (u8) mn_804A04F0.cur_menu;
+    }
+    if (hovered_changed != 0) {
+        data->cursor = (u8) mn_804A04F0.hovered_selection;
+    }
+    if (confirmed_changed != 0) {
+        if (((u16) mn_804A04F0.hovered_selection == 0x1F) ||
+            ((u16) mn_804A04F0.hovered_selection == 0x20))
+        {
+            s32 i;
+            MnItemSwData* dat;
+            u8* order = tbl->item_order;
+
+            data->x21 = (u8) mn_804A04F0.confirmed_selection;
+            dat = (MnItemSwData*) gobj->user_data;
+            for (i = 0; i < 0x1F; i++) {
+                mn_8022E978(order[i], dat->items[i]);
+            }
+            gmMainLib_8015CC58()->item_freq = dat->x21 - 1;
+            return;
+        }
+        data->items[mn_804A04F0.hovered_selection] =
+            (u8) mn_804A04F0.confirmed_selection;
+    }
 }
 
 HSD_JObj* mnItemSw_80235020(u8 arg0, MnItemSwData* arg1)

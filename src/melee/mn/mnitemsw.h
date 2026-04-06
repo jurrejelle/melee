@@ -20,9 +20,9 @@ typedef struct MnItemSwData {
 /* 233B68 */ void mnItemSw_80233B68(MnItemSwData*, u32);
 /* 233E10 */ void fn_80233E10(HSD_GObj*);
 /* 23405C */ HSD_JObj* mnItemSw_8023405C(MnItemSwData*, u8);
-/* 234104 */ UNK_RET mnItemSw_80234104(UNK_PARAMS);
-/* 23453C */ UNK_RET mnItemSw_8023453C(UNK_PARAMS);
-/* 234C24 */ UNK_RET fn_80234C24(UNK_PARAMS);
+/* 234104 */ void mnItemSw_80234104(HSD_GObj*);
+/* 23453C */ void mnItemSw_8023453C(HSD_GObj*, u8, u8);
+/* 234C24 */ void fn_80234C24(HSD_GObj*);
 /* 235020 */ HSD_JObj* mnItemSw_80235020(u8, MnItemSwData*);
 /* 2351A0 */ void mnItemSw_802351A0(s32);
 /* 2358C0 */ void mnItemSw_802358C0(void);
