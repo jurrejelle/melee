@@ -688,9 +688,9 @@ HSD_JObj* mnItemSw_80235020(u8 arg0, MnItemSwData* arg1)
 {
     HSD_JObj* sp14;
     HSD_JObj* sp10;
-    u8 hovered;
     u8 item_val;
     HSD_JObj* jobj;
+    u8 hovered;
 
     hovered = (u8) mn_804A04F0.hovered_selection;
     jobj = HSD_JObjLoadJoint(MenMainCursorIs_Top.joint);
@@ -698,9 +698,10 @@ HSD_JObj* mnItemSw_80235020(u8 arg0, MnItemSwData* arg1)
                        MenMainCursorIs_Top.matanim_joint,
                        MenMainCursorIs_Top.shapeanim_joint);
     lb_80011E24(jobj, &sp14, 3, -1);
-    HSD_JObjReqAnimAll(sp14,
-                       (f32) mnItemSw_80233A98(
-                           (s32) mnItemSw_803ED340.item_order[arg0]));
+    item_val = arg0;
+    HSD_JObjReqAnimAll(
+        sp14,
+        (f32) mnItemSw_80233A98((s32) mnItemSw_803ED340.item_order[item_val]));
     HSD_JObjAnimAll(sp14);
     if (arg0 == hovered) {
         HSD_JObjReqAnimAll(sp14, mnItemSw_803ED340.x30[1]);
