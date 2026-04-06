@@ -79,6 +79,120 @@ s32 mnItemSw_80233A98(s32 arg0)
 }
 #pragma dont_inline reset
 
+void mnItemSw_80233B68(MnItemSwData* arg0, u32 arg1)
+{
+    s32 temp_r0;
+    u8 var_r0;
+    u8 var_r0_2;
+    u16* hovered = &mn_804A04F0.hovered_selection;
+    u8 sel = (u8) *hovered;
+
+    if (arg1 & 1) {
+        switch ((s32) sel) {
+        case 0:
+            *hovered = 0x1F;
+            break;
+        case 16:
+            *hovered = 0x20;
+            break;
+        case 31:
+            *hovered = 0xF;
+            break;
+        case 32:
+            *hovered = 0x1E;
+            break;
+        default:
+            *hovered = sel - 1;
+            break;
+        }
+        if (((u8) *hovered == 0x1F) ||
+            ((u8) *hovered == 0x20))
+        {
+            mn_804A04F0.confirmed_selection = arg0->x21;
+            return;
+        }
+        mn_804A04F0.confirmed_selection =
+            arg0->items[(u8) *hovered];
+        return;
+    }
+    if (arg1 & 2) {
+        switch ((s32) sel) {
+        case 15:
+            *hovered = 0x1F;
+            break;
+        case 30:
+            *hovered = 0x20;
+            break;
+        case 31:
+            *hovered = 0;
+            break;
+        case 32:
+            *hovered = 0x10;
+            break;
+        default:
+            *hovered = sel + 1;
+            break;
+        }
+        if (((u8) *hovered == 0x1F) ||
+            ((u8) *hovered == 0x20))
+        {
+            mn_804A04F0.confirmed_selection = arg0->x21;
+            return;
+        }
+        mn_804A04F0.confirmed_selection =
+            arg0->items[(u8) *hovered];
+        return;
+    }
+    if (arg1 & 4) {
+        if ((u8) (sel - 0x1F) <= 1U) {
+            if ((u8) mn_804A04F0.confirmed_selection == 5) {
+                var_r0 = 0;
+            } else {
+                var_r0 = mn_804A04F0.confirmed_selection + 1;
+            }
+            mn_804A04F0.confirmed_selection = var_r0;
+            return;
+        }
+        if ((sel >= 0x10U) && (sel < 0x1FU)) {
+            *hovered = sel - 0x10;
+            if (((u8) *hovered == 0x1F) ||
+                ((u8) *hovered == 0x20))
+            {
+                mn_804A04F0.confirmed_selection = arg0->x21;
+                return;
+            }
+            mn_804A04F0.confirmed_selection =
+                arg0->items[(u8) *hovered];
+        }
+    } else if (arg1 & 8) {
+        if ((u8) (sel - 0x1F) <= 1U) {
+            if ((u8) mn_804A04F0.confirmed_selection == 0) {
+                var_r0_2 = 5;
+            } else {
+                var_r0_2 = mn_804A04F0.confirmed_selection - 1;
+            }
+            mn_804A04F0.confirmed_selection = var_r0_2;
+            return;
+        }
+        if (sel < 0x10U) {
+            temp_r0 = sel + 0x10;
+            if (temp_r0 >= 0x1F) {
+                *hovered = 0x1E;
+            } else {
+                *hovered = (u16) temp_r0;
+            }
+            if (((u8) *hovered == 0x1F) ||
+                ((u8) *hovered == 0x20))
+            {
+                mn_804A04F0.confirmed_selection = arg0->x21;
+                return;
+            }
+            mn_804A04F0.confirmed_selection =
+                arg0->items[(u8) *hovered];
+        }
+    }
+}
+
 void fn_80233E10(HSD_GObj* gobj)
 {
     MnItemSwData* data;
