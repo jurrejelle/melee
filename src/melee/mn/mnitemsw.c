@@ -4,14 +4,20 @@
 #include "mn/mnmain.h"
 
 #include <baselib/gobj.h>
+#include <baselib/gobjplink.h>
 #include <baselib/gobjproc.h>
 #include <baselib/jobj.h>
 
+#include <melee/gm/gm_1A3F.h>
+#include <melee/gm/gmmain_lib.h>
 #include <melee/lb/lb_00F9.h>
+#include <melee/lb/lbcardgame.h>
 #include <melee/lb/lblanguage.h>
+#include <melee/mn/mnmainrule.h>
 #include <melee/sc/types.h>
 
 extern StaticModelDesc MenMainCursorIs_Top;
+extern HSD_GObj* mnItemSw_804D6BE8;
 
 struct MnItemSwTable {
     /* 0x00 */ f32 x00[4][3];
@@ -72,6 +78,90 @@ s32 mnItemSw_80233A98(s32 arg0)
     }
 }
 #pragma dont_inline reset
+
+void fn_80233E10(HSD_GObj* gobj)
+{
+    MnItemSwData* data;
+    u32 buttons;
+    s32 i;
+
+    PAD_STACK(0x20);
+
+    data = (MnItemSwData*) mnItemSw_804D6BE8->user_data;
+    buttons = mn_80229624(4);
+    mn_804A04F0.buttons = buttons;
+    i = 0;
+
+    if (buttons & MenuInput_Back) {
+        sfxBack();
+        mn_804A04F0.entering_menu = 0;
+        data = (MnItemSwData*) mnItemSw_804D6BE8->user_data;
+        for (i = 0; i < 0x1F; i++) {
+            mn_8022E978(mnItemSw_803ED340.item_order[i], data->items[i]);
+        }
+        gmMainLib_8015CC58()->item_freq = data->x21 - 1;
+        lb_8001CE00();
+        mn_804D6BC8.cooldown = 5;
+        mn_8023164C();
+        HSD_GObjPLink_80390228(gobj);
+        return;
+    }
+
+    if (mnItemSw_804D6BEC != 0) {
+        return;
+    }
+
+    if (buttons & MenuInput_AButton) {
+        if (mn_804A04F0.hovered_selection < 0x1Fu) {
+            sfxMove();
+            if (mn_804A04F0.confirmed_selection != 0) {
+            } else {
+                i = 1;
+            }
+            mn_804A04F0.confirmed_selection = (u8) i;
+            data = (MnItemSwData*) mnItemSw_804D6BE8->user_data;
+            for (i = 0; i < 0x1F; i++) {
+                mn_8022E978(mnItemSw_803ED340.item_order[i],
+                            data->items[i]);
+            }
+            gmMainLib_8015CC58()->item_freq = data->x21 - 1;
+            return;
+        }
+    } else if (buttons & MenuInput_StartButton) {
+        sfxForward();
+        if ((s32) gm_801A4310() == 1) {
+            data = (MnItemSwData*) mnItemSw_804D6BE8->user_data;
+            for (i = 0; i < 0x1F; i++) {
+                mn_8022E978(mnItemSw_803ED340.item_order[i],
+                            data->items[i]);
+            }
+            gmMainLib_8015CC58()->item_freq = data->x21 - 1;
+            lb_8001CE00();
+            mn_80229860(2);
+            return;
+        }
+        data = (MnItemSwData*) mnItemSw_804D6BE8->user_data;
+        for (i = 0; i < 0x1F; i++) {
+            mn_8022E978(mnItemSw_803ED340.item_order[i],
+                        data->items[i]);
+        }
+        gmMainLib_8015CC58()->item_freq = data->x21 - 1;
+        lb_8001CE00();
+        mn_8022F4CC();
+        return;
+    }
+
+    if (buttons & 0xF) {
+        s32 old_hovered = (s32) mn_804A04F0.hovered_selection;
+        s32 old_confirmed = (s32) mn_804A04F0.confirmed_selection;
+        mnItemSw_80233B68(data, buttons);
+        if (old_hovered != (s32) mn_804A04F0.hovered_selection ||
+            old_confirmed != (s32) mn_804A04F0.confirmed_selection)
+        {
+            sfxMove();
+        }
+    }
+}
 
 HSD_JObj* mnItemSw_8023405C(MnItemSwData* data, u8 idx)
 {

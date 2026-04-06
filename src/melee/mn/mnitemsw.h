@@ -17,7 +17,7 @@ typedef struct MnItemSwData {
 } MnItemSwData; // size 0x48
 
 /* 233A98 */ s32 mnItemSw_80233A98(s32);
-/* 233B68 */ UNK_RET mnItemSw_80233B68(UNK_PARAMS);
+/* 233B68 */ void mnItemSw_80233B68(MnItemSwData*, u32);
 /* 233E10 */ void fn_80233E10(HSD_GObj*);
 /* 23405C */ HSD_JObj* mnItemSw_8023405C(MnItemSwData*, u8);
 /* 234104 */ UNK_RET mnItemSw_80234104(UNK_PARAMS);
@@ -27,6 +27,7 @@ typedef struct MnItemSwData {
 /* 2351A0 */ void mnItemSw_802351A0(s32);
 /* 2358C0 */ void mnItemSw_802358C0(void);
 
+extern HSD_GObj* mnItemSw_804D6BE8;
 extern u8 mnItemSw_804D6BEC;
 
 #endif
