@@ -431,202 +431,79 @@ void lb_80011B74(HSD_DObj* dobj, u32 flags)
  */
 /// #lb_80011E24
 
-/// #lb_8001204C
-#if 0
-int lb_8001204C(HSD_JObj* arg0, HSD_JObj** arg1, ...)
+int lb_8001204C(HSD_JObj* root, HSD_JObj** result, u16* indices, int count)
 {
-    HSD_JObj* var_ctr;
-    HSD_JObj* var_r0_2;
-    HSD_JObj* var_r0_3;
-    HSD_JObj* var_r0_4;
-    HSD_JObj* var_r0_5;
-    HSD_JObj* var_r0_6;
-    u16* var_r5;
-    HSD_JObj* var_r6;
-    HSD_JObj* var_r6_3;
-    HSD_JObj* var_r8;
-    HSD_JObj** var_r4;
-    s32 n;
-    int count;
-    u16 temp_r7;
+    HSD_JObj** out;
+    u16* idx;
+    HSD_JObj* jobj;
+    HSD_JObj* saved;
+    HSD_JObj* next_node;
+    int found;
+    int prev;
+    int cur;
+    int i;
+    u16 target;
 
-    var_r4 = arg1;
-    var_r5 = (u16*) arg1[1];
-    var_r6 = arg1[1];
-    count = 0;
-    n = -1;
-    if (arg0 == NULL) {
-        goto block_4;
+    out = result;
+    idx = indices;
+    found = 0;
+    prev = -1;
+
+    if (root == NULL || out == NULL || idx == NULL || count == 0) {
+        return 0;
     }
-    if (var_r4 == NULL) {
-        goto block_4;
-    }
-    if (var_r5 == NULL) {
-        goto block_4;
-    }
-    if (var_r6 != 0) {
-        goto block_5;
-    }
-block_4:
-    return 0;
-block_5:
-    var_ctr = var_r6;
-    if ((int) var_r6 <= 0) {
-        goto block_52;
-    }
-loop_6:
-    temp_r7 = *var_r5;
-    if (n > temp_r7) {
-        goto block_8;
-    }
-    if (n != -1) {
-        goto block_9;
-    }
-block_8: {
-    s32 var_r10;
-    var_r6 = arg0;
-    var_r10 = 0;
-    goto loop_48;
-block_9:
-    var_r10 = n;
-    goto loop_48;
-block_10:
-    if (var_r10 == temp_r7) {
-        goto block_49;
-    }
-    var_r8 = var_r6;
-    {
-        if (var_r6->flags & 0x1000) {
-            goto if_19;
+
+    for (i = count; i > 0; i--) {
+        target = *idx;
+        if (prev > (s32) target || prev == -1) {
+            jobj = root;
+            cur = 0;
+        } else {
+            cur = prev;
         }
-        if (var_r6 != NULL) {
-            goto if_14;
+
+        while (jobj != NULL) {
+            if (cur == (s32) target) {
+                break;
+            }
+            saved = jobj;
+            if (!(jobj->flags & JOBJ_INSTANCE) &&
+                HSD_JObjGetChild(jobj) != NULL)
+            {
+                next_node = HSD_JObjGetChild(jobj);
+            } else if (HSD_JObjGetNext(jobj) != NULL) {
+                next_node = HSD_JObjGetNext(jobj);
+            } else {
+                while (true) {
+                    if (HSD_JObjGetParent(saved) == NULL) {
+                        next_node = NULL;
+                        break;
+                    }
+                    if (HSD_JObjGetNext(
+                            HSD_JObjGetParent(saved)) != NULL)
+                    {
+                        next_node = HSD_JObjGetNext(
+                            HSD_JObjGetParent(saved));
+                        break;
+                    }
+                    saved = HSD_JObjGetParent(saved);
+                }
+            }
+            jobj = next_node;
+            cur++;
         }
-        var_r0_2 = NULL;
-        goto else_15;
-    if_14:
-        var_r0_2 = var_r6->child;
-    else_15:
-        if (var_r0_2 == NULL) {
-            goto if_19;
+
+        *out = jobj;
+        prev = cur;
+        out++;
+        if (jobj != NULL) {
+            found++;
         }
-        if (var_r6 != NULL) {
-            goto if_18;
-        }
-        var_r0_3 = NULL;
-        goto end_for_47;
-    if_18:
-        var_r0_3 = var_r6->child;
-        goto end_for_47;
+        idx++;
     }
-if_19:
-    if (var_r6 != NULL) {
-        goto block_21;
-    }
-    var_r0_4 = NULL;
-    goto block_22;
-block_21:
-    var_r0_4 = var_r6->next;
-block_22:
-    if (var_r0_4 == NULL) {
-        goto loop_26;
-    }
-    if (var_r6 != NULL) {
-        goto block_25;
-    }
-    var_r0_3 = NULL;
-    goto end_for_47;
-block_25:
-    var_r0_3 = var_r6->next;
-    goto end_for_47;
-loop_26:
-    if (var_r8 != NULL) {
-        goto block_28;
-    }
-    var_r0_5 = NULL;
-    goto block_29;
-block_28:
-    var_r0_5 = var_r8->parent;
-block_29:
-    if (var_r0_5 != NULL) {
-        goto block_31;
-    }
-    var_r0_3 = NULL;
-    goto end_for_47;
-block_31:
-    if (var_r8 != NULL) {
-        goto block_33;
-    }
-    {
-        HSD_JObj* var_r6_2;
-        var_r6_2 = NULL;
-        goto block_34;
-    block_33:
-        var_r6_2 = var_r8->parent;
-    block_34:
-        if (var_r6_2 != NULL) {
-            goto block_36;
-        }
-        var_r0_6 = NULL;
-        goto block_37;
-    block_36:
-        var_r0_6 = var_r6_2->next;
-    }
-block_37:
-    if (var_r0_6 == NULL) {
-        goto block_44;
-    }
-    if (var_r8 != NULL) {
-        goto block_40;
-    }
-    var_r6_3 = NULL;
-    goto block_41;
-block_40:
-    var_r6_3 = var_r8->parent;
-block_41:
-    if (var_r6_3 != NULL) {
-        goto block_43;
-    }
-    var_r0_3 = NULL;
-    goto end_for_47;
-block_43:
-    var_r0_3 = var_r6_3->next;
-    goto end_for_47;
-block_44:
-    if (var_r8 != NULL) {
-        goto block_46;
-    }
-    var_r8 = NULL;
-    goto loop_26;
-block_46:
-    var_r8 = var_r8->parent;
-    goto loop_26;
-end_for_47:
-    var_r6 = var_r0_3;
-    var_r10 += 1;
-loop_48:
-    if (var_r6 != NULL) {
-        goto block_10;
-    }
-block_49:
-    *var_r4 = var_r6;
-    n = var_r10;
-    var_r4 += 1;
-    if (var_r6 == NULL) {
-        goto block_51;
-    }
-    count += 1;
+
+    return found;
 }
-block_51:
-    var_r5 += 2;
-    var_ctr -= 1;
-    if (var_ctr != NULL) {
-        goto loop_6;
-    }
-block_52:
-    return count;
-}
-#endif
 
 static void* setImageFromPreloadedArchive(HSD_ImageDesc* image_desc,
                                           s16 entry_num)
