@@ -333,12 +333,11 @@ static void fn_8019F810(void)
     }
     if (lbl_80479A98.x0 == 9) {
         if ((u32) lbl_80479A98.x8 == (u32) lbl_80479A98.xC) {
-            if (lbl_80479A98.x4 < 3) {
-                if (lbl_80479A98.x4 < 0) {
-
-                } else {
-                    lbl_80479A98.x18 = 1;
-                }
+            switch (lbl_80479A98.x4) {
+            case 0:
+            case 1:
+            case 2:
+                lbl_80479A98.x18 = 1;
             }
         } else {
             u32 var_r4;
