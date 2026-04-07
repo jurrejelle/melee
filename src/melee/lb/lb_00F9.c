@@ -9,7 +9,11 @@
 #include "baselib/displayfunc.h"
 #include "baselib/rumble.h"
 #include "baselib/tobj.h"
+#include "dolphin/gx/GXCull.h"
 #include "dolphin/gx/GXGeometry.h"
+#include "dolphin/gx/GXPixel.h"
+#include "dolphin/gx/GXTev.h"
+#include "dolphin/gx/GXTexture.h"
 #include "dolphin/gx/GXVert.h"
 #include "dolphin/pad.h"
 
@@ -1387,6 +1391,91 @@ void lb_800122C8(HSD_ImageDesc* image_desc, u16 origx, u16 origy, bool clear)
 }
 
 /// #lb_800122F0
+void lb_800122F0(HSD_ImageDesc* img, GXTexObj* tex, f32 factor)
+{
+    GXColor color0, color1, color2;
+    f32 temp;
+    f32 mul179;
+
+    temp = 120.0f * factor;
+    mul179 = 179.0f * factor;
+
+    color0.r = (u8) (s8) (255.0f - mul179);
+    color1.r = (u8) (s8) (150.0f * factor);
+    color2.r = (u8) (s8) (29.0f * factor);
+
+    color0.g = (u8) (s8) (68.4f * factor);
+    color1.g = (u8) (s8) (255.0f - temp);
+    color2.g = (u8) (s8) (26.099998f * factor);
+
+    color0.b = (u8) (s8) (60.8f * factor);
+    color1.b = (u8) (s8) temp;
+    color2.b = (u8) (s8) -((231.8f * factor) - 255.0f);
+
+    color0.a = 0;
+    color1.a = 0;
+
+    GXInitTexObj(tex, img->image_ptr, img->width, img->height, img->format,
+                 GX_CLAMP, GX_CLAMP, (u8) img->mipmap);
+    GXClearVtxDesc();
+    GXSetCullMode(GX_CULL_BACK);
+    GXSetNumTexGens(1);
+    GXSetZMode(0, GX_ALWAYS, 0);
+    GXLoadTexObj(tex, GX_TEXMAP0);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_TEX_S, GX_RGBA6, 0);
+    GXSetVtxDesc(GX_VA_POS, GX_DIRECT);
+    GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_TEX0, GX_TEX_ST, GX_RGBA6, 0);
+    GXSetVtxDesc(GX_VA_TEX0, GX_DIRECT);
+
+    if (factor != 0.0f) {
+        GXSetNumTevStages(3);
+        GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+        GXSetTevOrder(GX_TEVSTAGE1, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+        GXSetTevOrder(GX_TEVSTAGE2, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+        GXSetTevKColor(GX_KCOLOR0, color0);
+        GXSetTevKColor(GX_KCOLOR1, color1);
+        GXSetTevKColor(GX_KCOLOR2, color2);
+        GXSetTevKColorSel(GX_TEVSTAGE0, GX_TEV_KCSEL_K0);
+        GXSetTevKColorSel(GX_TEVSTAGE1, GX_TEV_KCSEL_K1);
+        GXSetTevKColorSel(GX_TEVSTAGE2, GX_TEV_KCSEL_K2);
+        GXSetTevSwapMode(GX_TEVSTAGE0, GX_TEV_SWAP1, GX_TEV_SWAP1);
+        GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_TEXC,
+                        GX_CC_KONST, GX_CC_ZERO);
+        GXSetTevColorOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO,
+                        GX_CS_SCALE_1, 1, GX_TEVPREV);
+        GXSetTevSwapMode(GX_TEVSTAGE1, GX_TEV_SWAP2, GX_TEV_SWAP2);
+        GXSetTevColorIn(GX_TEVSTAGE1, GX_CC_ZERO, GX_CC_TEXC,
+                        GX_CC_KONST, GX_CC_CPREV);
+        GXSetTevColorOp(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO,
+                        GX_CS_SCALE_1, 1, GX_TEVPREV);
+        GXSetTevSwapMode(GX_TEVSTAGE2, GX_TEV_SWAP3, GX_TEV_SWAP3);
+        GXSetTevColorIn(GX_TEVSTAGE2, GX_CC_ZERO, GX_CC_TEXC,
+                        GX_CC_KONST, GX_CC_CPREV);
+        GXSetTevColorOp(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO,
+                        GX_CS_SCALE_1, 1, GX_TEVPREV);
+        GXSetTevAlphaIn(GX_TEVSTAGE1, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO,
+                        GX_CA_APREV);
+        GXSetTevAlphaOp(GX_TEVSTAGE1, GX_TEV_ADD, GX_TB_ZERO,
+                        GX_CS_SCALE_1, 1, GX_TEVPREV);
+        GXSetTevAlphaIn(GX_TEVSTAGE2, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO,
+                        GX_CA_APREV);
+        GXSetTevAlphaOp(GX_TEVSTAGE2, GX_TEV_ADD, GX_TB_ZERO,
+                        GX_CS_SCALE_1, 1, GX_TEVPREV);
+    } else {
+        GXSetNumTevStages(1);
+        GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
+        GXSetTevSwapMode(GX_TEVSTAGE0, GX_TEV_SWAP0, GX_TEV_SWAP0);
+        GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO,
+                        GX_CC_TEXC);
+        GXSetTevColorOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO,
+                        GX_CS_SCALE_1, 1, GX_TEVPREV);
+    }
+
+    GXSetBlendMode(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA,
+                   GX_LO_CLEAR);
+    GXSetColorUpdate(1);
+    GXSetAlphaCompare(GX_GEQUAL, 0, GX_AOP_OR, GX_GEQUAL, 0);
+}
 
 void lb_8001271C(GXTexObj* arg0, float x0, float arg2, float tex_width,
                  float tex_height, float scale_x, float scale_y)

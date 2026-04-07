@@ -43,7 +43,7 @@
 /* 0122C8 */ void
 lb_800122C8(HSD_ImageDesc* image_desc, u16 origx, u16 origy,
             bool clear); ///< #HSD_ImageDescCopyFromEFB wrapper
-/* 0122F0 */ UNK_RET lb_800122F0(UNK_PARAMS);
+/* 0122F0 */ void lb_800122F0(HSD_ImageDesc*, GXTexObj*, f32);
 /* 01271C */ void lb_8001271C(GXTexObj*, float, float, float, float, float,
                               float);
 /* 01285C */ void lb_8001285C(HSD_ImageDesc*, GXTexObj*);
