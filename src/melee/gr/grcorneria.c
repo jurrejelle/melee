@@ -1041,8 +1041,6 @@ s32 grCorneria_801DEC94(Vec3* pos)
     return 0;
 }
 
-/// #grCorneria_801DED50
-
 extern Vec3 grCn_803B80B4;
 
 void grCorneria_801DED50(Ground_GObj* gobj)
@@ -1178,9 +1176,9 @@ void grCorneria_801DED50(Ground_GObj* gobj)
                                 HSD_GObj* item =
                                     gp->gv.corneria2.xDC;
                                 if (item != NULL) {
-                                    void* ip = item->user_data;
-                                    if (ip != NULL) {
-                                        *(Vec3*) ((u8*) ip + 0xE0) = pos;
+                                    Ground* gr = item->user_data;
+                                    if (gr != NULL) {
+                                        gr->gv.arwing.xE0 = pos;
                                     }
                                 }
                             }
@@ -1188,9 +1186,9 @@ void grCorneria_801DED50(Ground_GObj* gobj)
                                 HSD_GObj* item =
                                     gp->gv.corneria2.xDC;
                                 if (item != NULL) {
-                                    void* ip = item->user_data;
-                                    if (ip != NULL) {
-                                        *(f32*) ((u8*) ip + 0xDC) = rot_z;
+                                    Ground* gr = item->user_data;
+                                    if (gr != NULL) {
+                                        gr->gv.arwing.xDC = rot_z;
                                     }
                                 }
                             }
