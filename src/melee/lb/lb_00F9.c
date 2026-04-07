@@ -53,7 +53,44 @@ void lb_8000F9F8(HSD_JObj* jobj)
     }
 }
 
-/// #lb_8000FA94
+void lb_8000FA94(void)
+{
+    int i;
+    int offset;
+    struct DynamicsData* next;
+    struct lb_80011A50_t* next2;
+
+    offset = 0;
+    for (i = 0; i < 0x140; i++) {
+        *(s32*)((u8*)lb_804D63A0 + offset) = 0;
+        if (i < 0x13F) {
+            next = (struct DynamicsData*)((u8*)lb_804D63A0 + offset + 0x98);
+        } else {
+            next = NULL;
+        }
+        *(struct DynamicsData**)((u8*)lb_804D63A0 + offset + 0x90) = next;
+        offset += 0x98;
+    }
+
+    cur_data = (struct DynamicsData*)lb_804D63A0;
+
+    offset = 0;
+    for (i = 0; i < 8; i++) {
+        *((u8*)lb_804D63A8 + offset) = 0;
+        if (i < 7) {
+            next2 =
+                (struct lb_80011A50_t*)((u8*)lb_804D63A8 + offset + 0x38);
+        } else {
+            next2 = NULL;
+        }
+        *(struct lb_80011A50_t**)((u8*)lb_804D63A8 + offset + 0x34) = next2;
+        offset += 0x38;
+    }
+
+    lb_804D63AC = (struct lb_80011A50_t*)lb_804D63A8;
+    lb_804D63B0 = NULL;
+    lb_804D63B4 = 0;
+}
 
 void lb_8000FCDC(void)
 {
