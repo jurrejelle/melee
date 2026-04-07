@@ -278,8 +278,6 @@ void lbShadow_8000F214(HSD_Shadow* shadow)
     GXEnd();
 }
 
-/// #lbShadow_8000F38C
-
 void lbShadow_8000F38C(s32 arg0)
 {
     HSD_ViewingRect rect;
@@ -339,13 +337,10 @@ void lbShadow_8000F38C(s32 arg0)
     if (lobj == NULL && fallback != NULL) {
         lobj = fallback;
     }
-    if (lobj == NULL) {
-        __assert("lbshadow.c", 0x181, "lobj");
-    }
+    HSD_ASSERT(0x181, lobj);
 
     if (!HSD_LObjGetPosition(lobj, &lightPos)) {
-        OSReport("lbshadow.c");
-        __assert("lbshadow.c", 0x184, "0");
+        HSD_ASSERTREPORT(0x184, NULL, "couldn't get light position");
     }
 
     if (HSD_LObjGetInterest(lobj, &lightDir)) {
@@ -361,8 +356,8 @@ void lbShadow_8000F38C(s32 arg0)
 
     lbVector_Diff(&lightPos, &lightDir, &lightVec);
 
-    dist = (lightVec.z * lightVec.z) +
-           ((lightVec.x * lightVec.x) + (lightVec.y * lightVec.y));
+    dist = lightVec.x * lightVec.x;
+    dist = (lightVec.z * lightVec.z) + (dist + (lightVec.y * lightVec.y));
     if (dist > 0.0f) {
         dist = sqrtf(dist);
     }
