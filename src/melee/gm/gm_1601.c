@@ -2991,7 +2991,7 @@ void fn_80168E54(s8 arg0, s8 arg1, u8 arg2, u8 arg3)
     }
 }
 
-void fn_80168F2C(void)
+void fn_80168F2C(s8)
 {
     if (lbl_804D659A == 0) {
         lbl_804D659A = 3;

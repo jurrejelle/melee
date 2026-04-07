@@ -314,13 +314,11 @@ static void fn_8019F6EC(HSD_GObj* gobj)
 
 static void fn_8019F810(void)
 {
-    HSD_PadStatus* pad;
     u32 trigger;
     PAD_STACK(16);
 
-    pad = &HSD_PadCopyStatus[lbl_80479A98.x15];
-    trigger = pad->trigger;
-    fn_8019EFC4(pad);
+    trigger = HSD_PadCopyStatus[lbl_80479A98.x15].trigger;
+    fn_8019EFC4(&HSD_PadCopyStatus[lbl_80479A98.x15]);
     if (lbl_80479A98.x0 < 8U) {
         lbl_804D66B0.x4 += 1;
         if (lbl_804D66B0.x4 > 0x31F) {
@@ -340,18 +338,11 @@ static void fn_8019F810(void)
                 lbl_80479A98.x18 = 1;
             }
         } else {
-            u32 var_r4;
-            u32 temp_r0;
-
-            fn_80168F2C();
-            var_r4 = lbl_80479A98.xC;
-            temp_r0 = lbl_80479A98.x8 - lbl_80479A98.x10;
-            if (temp_r0 < var_r4) {
-
-            } else {
-                var_r4 = temp_r0;
-            }
-            lbl_80479A98.x8 = var_r4;
+            fn_80168F2C(0);
+            lbl_80479A98.x8 =
+                ((lbl_80479A98.x8 - lbl_80479A98.x10) < (lbl_80479A98.xC))
+                    ? (lbl_80479A98.xC)
+                    : (lbl_80479A98.x8 - lbl_80479A98.x10);
         }
     }
     if (lbl_80479A98.x0 == 0xA) {
