@@ -22,13 +22,25 @@ static HSD_JObj* lbl_804D66F4;
 static u32 lbl_804D66F8;
 
 static struct {
-    u8 pad0[0x8];
+    u8 pad_00[0x4];
+    s32 x4;
     int x8;
-    u8 padC[0x18 - 0xC];
+    s32 xC;
+    u32 x10;
+    u8 pad_14;
+    u8 x15;
+    u8 x16;
+    u8 pad_17;
     int x18;
-    u8 pad1C[0x22 - 0x1C];
+    u16 x1C;
+    u16 x1E;
+    u8 x20;
+    u8 pad_21;
     u16 x22;
     HSD_Text* x24;
+    u8 pad_28[0x60 - 0x28];
+    u8 x60;
+    u8 pad_61[0x78 - 0x61];
 } lbl_80479A98;
 
 /// seems to handle "Go!" animations, based on .dat filenames
@@ -68,6 +80,34 @@ static void fn_8019F1D0(void)
 /// #fn_8019F9C4
 
 /// #gm_801A0A10_OnEnter
+
+void gm_801A0A10_OnEnter(void* arg0_)
+{
+    DebugGameOverData* arg0 = arg0_;
+
+    lbl_80479A98.x60 = 0;
+    lbl_80479A98.x22 = arg0->x18;
+    lbl_80479A98.x1E = (u16) (arg0->x18 / 10);
+    if (lbl_80479A98.x1E > 0x3E7U) {
+        lbl_80479A98.x1E = 0x3E7U;
+    }
+    lbl_80479A98.x1C = arg0->x16;
+    if (lbl_80479A98.x1E >= lbl_80479A98.x1C) {
+        lbl_80479A98.x20 = 0;
+    } else {
+        lbl_80479A98.x20 = 1;
+    }
+    lbl_80479A98.x16 = (u8) arg0->x15;
+    lbl_80479A98.x4 = (s32) arg0->x8;
+    lbl_80479A98.x8 = (s32) arg0->x0;
+    lbl_80479A98.xC = (s32) ((s32) arg0->x0 / 2);
+    lbl_80479A98.x10 = (u32) (lbl_80479A98.x8 - lbl_80479A98.xC) / 120;
+    if (lbl_80479A98.x10 == 0) {
+        lbl_80479A98.x10 = 1U;
+    }
+    lbl_80479A98.x15 = arg0->slot;
+    fn_8019F9C4(arg0->ckind);
+}
 
 void gm_801A0B18_OnLeave(void* arg0_)
 {
