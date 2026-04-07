@@ -383,10 +383,10 @@ struct grCorneria_GroundVars {
     s32 x100;
     s32 x104;
     u32 x108;
-    u32 x10C;
-    u32 x110;
+    s32 x10C;
+    s32 x110;
     f32 x114;
-    u8 x118;
+    s8 x118;
     u8 x119;
     u8 x11A;
     u8 x11B;
@@ -395,6 +395,36 @@ struct grCorneria_GroundVars {
     Item_GObj* right_cannon;
     HSD_GObj* x128;
     HSD_JObj* x12C;
+};
+
+/// Arwing slot ground vars (callbacks 2 and 10).
+/// Overlaps grCorneria_GroundVars in the gv union but interprets
+/// fields differently: pointers/integers instead of floats.
+struct grCorneria_GroundVars2 {
+    /* 0x00 gp+C4 */ union {
+        struct {
+            u8 b0 : 1;
+        } flags;
+        u8 value;
+    } xC4;
+    /* 0x01 gp+C5 */ u8 xC5;
+    /* 0x02 gp+C6 */ u8 xC6;
+    /* 0x03 gp+C7 */ u8 xC7;
+    /* 0x04 gp+C8 */ s32 xC8;
+    /* 0x08 gp+CC */ s32 xCC;
+    /* 0x0C gp+D0 */ s32 xD0;
+    /* 0x10 gp+D4 */ s32 xD4;
+    /* 0x14 gp+D8 */ s32 xD8;
+    /* 0x18 gp+DC */ HSD_GObj* xDC;
+    /* 0x1C gp+E0 */ HSD_GObj* xE0;
+    /* 0x20 gp+E4 */ HSD_GObj* xE4;
+    /* 0x24 gp+E8 */ HSD_GObj* xE8;
+    /* 0x28 gp+EC */ HSD_GObj* xEC;
+    /* 0x2C gp+F0 */ s32 xF0;
+    /* 0x30 gp+F4 */ s32 xF4;
+    /* 0x34 gp+F8 */ s32 xF8;
+    /* 0x38 gp+FC */ s32 xFC;
+    /* 0x3C gp+100 */ s32 x100;
 };
 
 struct grVenom_GroundVars {
@@ -419,9 +449,7 @@ struct grArwing_GroundVars {
     s32 xD4;
     s32 xD8;
     f32 xDC;
-    f32 xE0;
-    f32 xE4;
-    f32 xE8;
+    Vec3 xE0;
     f32 xEC;
 };
 
@@ -1209,23 +1237,29 @@ struct ShyGuys {
 };
 
 struct grShrineroute_GroundVars {
-    /* +0 gp+C4 */ u32 xC4;
-    /* +4 gp+C8 */ u16 xC8;
-    /* +6 gp+CA */ u16 xCA;
-    /* +8 gp+CA */ u16 xCC;
+    /* +0x00 gp+C4 */ u16 xC4;
+    /* +0x02 gp+C6 */ u16 xC6;
+    /* +0x04 gp+C8 */ u16 xC8;
+    /* +0x06 gp+CA */ u16 xCA;
+    /* +0x08 gp+CC */ u16 xCC;
+    /* +0x0A gp+CE */ u16 xCE;
+    /* +0x0C gp+D0 */ u16 xD0;
+    u8 _pad[0xD4 - 0xD2];
+    /* +0x10 gp+D4 */ u32 xD4;
+    /* +0x14 gp+D8 */ struct {
+        /* +0x00 */ Vec3 offset;
+        /* +0x0C */ HSD_JObj* jobj;
+    } platforms[3];
+    /* +0x44 gp+108 */ HSD_GObj* symbols[6];
 };
 
 struct grShrineroute_GroundVars2 {
-    /* +0 gp+C4 */ HSD_GObj* xC4;
-    /* +4 gp+C8 */ HSD_LObj* xC8;
-    u8 _[0x108 - 0xCC];
-    HSD_GObj* x108;
-    u8 _2[0x118 - 0x10C];
-    u32 x118;
-    u8 _3[0x168 - 0x11C];
-    /* +0 gp+168 */ u32 x168;
-    /* +0 gp+16C */ HSD_LObj* x16C;
-    /* +0 gp+170 */ HSD_LObj* x170;
+    /* +0x00 gp+C4 */ HSD_GObj* xC4;
+    /* +0x04 gp+C8 */ HSD_LObj* xC8[20];
+    /* +0x54 gp+118 */ u32 x118[20];
+    /* +0xA4 gp+168 */ u32 x168;
+    /* +0xA8 gp+16C */ HSD_LObj* x16C;
+    /* +0xAC gp+170 */ HSD_LObj* x170;
 };
 
 struct grShrineroute_GroundVars3 {
@@ -1234,6 +1268,10 @@ struct grShrineroute_GroundVars3 {
     /* +8 gp+CC */ f32 xCC;
     /* +C gp+D0 */ f32 xD0;
     /* +10 gp+D4 */ f32 xD4;
+    /* +14 gp+D8 */ f32 xD8;
+    /* +18 gp+DC */ f32 xDC;
+    /* +1C gp+E0 */ f32 xE0;
+    /* +20 gp+E4 */ HSD_JObj* xE4;
 };
 
 struct Battlefield {
@@ -1372,6 +1410,7 @@ struct Ground {
             struct grCastle_GroundVars11 castle11;
             struct grCastle_GroundVars12 castle12;
             struct grCorneria_GroundVars corneria;
+            struct grCorneria_GroundVars2 corneria2;
             struct grGreatBay_GroundVars greatbay;
             struct grGreatBay_GroundVars2 greatbay2;
             struct grGreatBay_GroundVars3 greatbay3;
