@@ -1,11 +1,13 @@
 #include "gm_19EF.h"
 
+#include "gm_1601.h"
 #include "gm_1A36.h"
 #include "gm_1A45.h"
 #include "gm_unsplit.h"
 
 #include <sysdolphin/baselib/archive.h>
 #include <sysdolphin/baselib/cobj.h>
+#include <sysdolphin/baselib/controller.h>
 #include <sysdolphin/baselib/gobj.h>
 #include <sysdolphin/baselib/gobjgxlink.h>
 #include <sysdolphin/baselib/gobjobject.h>
@@ -18,7 +20,15 @@
 #include <melee/sc/types.h>
 
 static HSD_Archive* lbl_804D6698;
+static struct {
+    HSD_JObj* x0;
+    s32 x4;
+} lbl_804D66B0;
 static HSD_JObj* lbl_804D66B8;
+static struct {
+    HSD_JObj* x0;
+    s32 x4;
+} lbl_804D66D0;
 static struct {
     s32 x0;
     s32 x4;
@@ -52,6 +62,9 @@ static struct {
     s32 x70;
     u8 pad_74[0x78 - 0x74];
 } lbl_80479A98;
+
+static void fn_8019EFC4(HSD_PadStatus*);
+static void fn_8019F2D4(u32);
 
 /// seems to handle "Go!" animations, based on .dat filenames
 
@@ -113,6 +126,63 @@ static void fn_8019F6EC(HSD_GObj* gobj)
     HSD_JObjAnimAll(jobj);
     HSD_JObjAnimAll(lbl_804D66B8);
     HSD_JObjAnimAll(lbl_804D66E8);
+}
+
+static void fn_8019F810(void)
+{
+    HSD_PadStatus* pad;
+    u32 trigger;
+    PAD_STACK(16);
+
+    pad = &HSD_PadCopyStatus[lbl_80479A98.x15];
+    trigger = pad->trigger;
+    fn_8019EFC4(pad);
+    if (lbl_80479A98.x0 < 8U) {
+        lbl_804D66B0.x4 += 1;
+        if (lbl_804D66B0.x4 > 0x31F) {
+            lbl_804D66B0.x4 = 0x190;
+        }
+        HSD_JObjReqAnimAll(lbl_804D66B0.x0, (f32) lbl_804D66B0.x4);
+        HSD_JObjAnimAll(lbl_804D66B0.x0);
+    } else {
+        HSD_JObjSetFlagsAll(lbl_804D66B0.x0, 0x10U);
+    }
+    if (lbl_80479A98.x0 == 9) {
+        if ((u32) lbl_80479A98.x8 == (u32) lbl_80479A98.xC) {
+            if (lbl_80479A98.x4 < 3) {
+                if (lbl_80479A98.x4 < 0) {
+
+                } else {
+                    lbl_80479A98.x18 = 1;
+                }
+            }
+        } else {
+            u32 var_r4;
+            u32 temp_r0;
+
+            fn_80168F2C();
+            var_r4 = lbl_80479A98.xC;
+            temp_r0 = lbl_80479A98.x8 - lbl_80479A98.x10;
+            if (temp_r0 < var_r4) {
+
+            } else {
+                var_r4 = temp_r0;
+            }
+            lbl_80479A98.x8 = var_r4;
+        }
+    }
+    if (lbl_80479A98.x0 == 0xA) {
+        HSD_JObjReqAnimAll(lbl_804D66D0.x0, (f32) lbl_804D66D0.x4);
+        HSD_JObjAnimAll(lbl_804D66D0.x0);
+        if (lbl_804D66D0.x4 < 0x2B2) {
+            lbl_804D66D0.x4 += 1;
+        } else {
+            gm_801A4B60();
+            lbl_80479A98.x18 = 0;
+        }
+    }
+    fn_8019F2D4(trigger);
+    fn_8019F1D0();
 }
 
 /// #fn_8019F9C4
