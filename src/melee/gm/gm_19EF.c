@@ -5,6 +5,7 @@
 #include "gm_1A3F.h"
 #include "gm_1A45.h"
 #include "gm_unsplit.h"
+#include "it/inlines.h"
 
 #include <sysdolphin/baselib/archive.h>
 #include <sysdolphin/baselib/cobj.h>
@@ -96,7 +97,7 @@ static void fn_8019EFC4(HSD_PadStatus* pad)
 {
     HSD_JObj* child_next;
 
-    child_next = GET_JOBJ(lbl_80479A98.x28);
+    child_next = lbl_80479A98.x28->hsd_obj;
     if ((u8) lbl_80479A98.x60 != 0) {
         if (child_next == NULL) {
             child_next = NULL;
