@@ -16,6 +16,7 @@
 #include "lb/forward.h"
 
 #include "lb/lbarchive.h"
+#include "lb/lbcollision.h"
 #include "lb/lbdvd.h"
 #include "lb/lbvector.h"
 #include "lb/types.h"
@@ -26,10 +27,32 @@
 #include <baselib/jobj.h>
 #include <baselib/lobj.h>
 #include <baselib/memory.h>
+#include <baselib/quatlib.h>
 #include <baselib/state.h>
+#include <melee/mp/mplib.h>
 #include <melee/sc/types.h>
 
 typedef bool (*lb_803BA248_fn)(ColorOverlay*);
+
+struct lb_Collider {
+    /* 0x00 */ char pad_00[0x0C];
+    /* 0x0C */ f32 radius;
+    /* 0x10 */ char pad_10[0x08];
+    /* 0x18 */ Vec3 position;
+    /* 0x24 */ char pad_24[0x04];
+};
+
+const struct {
+    Vec3 v0;
+    Vec3 v1;
+    Vec3 v2;
+    f32 pad;
+} lb_803B7280 = {
+    { 0.0f, -1.0f, 0.0f },
+    { 0.0f, -1.0f, 0.0f },
+    { 0.0f, -1.0f, 0.0f },
+    0.0f,
+};
 
 lb_803BA248_fn lb_803BA248[] = {
     lb_80013BB0, lb_80013BB8, lb_80013BE4, lb_80013C18, lb_80013D68,
@@ -362,6 +385,551 @@ bool lb_800103D8(Vec3* vec, float x0, float x1, float x2, float x3,
 }
 
 /// #lb_8001044C
+void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
+                 float pos_y, bool use_floor_fn, Fighter_Part part,
+                 int first_active, bool ground_check)
+{
+    Mtx parent_mtx, temp_mtx, bone_mtx, constrained_mtx, trans_mtx, scale_mtx;
+    Vec3 natural_dir, current_dir, link_dir;
+    Vec3 cross_vec, local_axis;
+    Vec3 gnd_norm;
+    Quaternion angle_quat, euler_quat, result_quat;
+    Vec3 euler_angles;
+    Vec3 collision_point;
+    Vec3 floor_point, floor_normal;
+    int line_id;
+    u32 floor_flags;
+    Vec3 floor_cross;
+    Vec3 floor_point2, floor_normal2;
+    int line_id2;
+    u32 floor_flags2;
+    Vec3 floor_cross2;
+    s32 sp8;
+
+    struct DynamicsData* cur;
+    HSD_JObj* jobj;
+    HSD_JObj* parent_jobj;
+    struct lb_Collider* collider;
+    s32 on_ground;
+    s32 idx;
+
+    if ((u8) lb_804D63B8 != 0) {
+        return;
+    }
+    if (desc == NULL) {
+        return;
+    }
+
+    cur = desc->data;
+    if (cur == NULL) {
+        return;
+    }
+    if (part > 0xFF) {
+        return;
+    }
+
+    on_ground = 0;
+    idx = 0;
+
+    if ((s32) part > 0) {
+        s32 skip_count = 0;
+        s32 rem8 = (s32) part - 8;
+        if ((s32) part > 8) {
+            s32 n = (u32) (rem8 + 7) >> 3;
+            if (rem8 > 0) {
+                do {
+                    cur = cur->next->next->next->next->next->next->next
+                              ->next;
+                    idx += 8;
+                    skip_count += 8;
+                } while (--n);
+            }
+        }
+        if (skip_count < (s32) part) {
+            s32 rem = (s32) part - skip_count;
+            do {
+                cur = cur->next;
+                skip_count++;
+            } while (--rem);
+        }
+    }
+
+    parent_jobj = cur->desc.ft_unk.jobj->parent;
+    if (parent_jobj != NULL) {
+        HSD_JObjSetMtxDirty(parent_jobj);
+        HSD_JObjSetupMatrix(parent_jobj);
+        PSMTXCopy(parent_jobj->mtx, parent_mtx);
+    } else {
+        PSMTXIdentity(parent_mtx);
+    }
+
+    jobj = cur->desc.ft_unk.jobj;
+
+    while (cur->next != NULL) {
+        f32 angle_diff;
+        f32 force_mag;
+
+        /* Build translation matrix and concat */
+        PSMTXTrans(trans_mtx, jobj->translate.x, jobj->translate.y,
+                   jobj->translate.z);
+        PSMTXConcat(parent_mtx, trans_mtx, bone_mtx);
+
+        /* Build rotation from saved rotation (offset 0x58) */
+        lbVector_CreateEulerMatrix(temp_mtx,
+                                   (Vec3*) &cur->desc.lb_unk0.unk_58);
+        PSMTXConcat(bone_mtx, temp_mtx, constrained_mtx);
+
+        /* Build rotation from jobj euler rotation */
+        lbVector_CreateEulerMatrix(temp_mtx, (Vec3*) &jobj->rotate);
+        PSMTXConcat(bone_mtx, temp_mtx, bone_mtx);
+
+        /* Build scale matrix and concat */
+        PSMTXScale(scale_mtx, jobj->scale.x, jobj->scale.y, jobj->scale.z);
+        PSMTXConcat(bone_mtx, scale_mtx, bone_mtx);
+        PSMTXConcat(constrained_mtx, scale_mtx, constrained_mtx);
+
+        /* Store world position */
+        cur->desc.lb_unk0.unk_2C = bone_mtx[0][3];
+        cur->desc.lb_unk0.unk_30 = bone_mtx[1][3];
+        cur->desc.lb_unk0.unk_34 = bone_mtx[2][3];
+
+        /* Compute natural bone direction */
+        PSMTXMultVec(constrained_mtx, &jobj->child->translate, &natural_dir);
+        natural_dir.x -= cur->desc.lb_unk0.unk_2C;
+        natural_dir.y -= cur->desc.lb_unk0.unk_30;
+        natural_dir.z -= cur->desc.lb_unk0.unk_34;
+
+        /* Compute current bone direction */
+        PSMTXMultVec(bone_mtx, &jobj->child->translate, &current_dir);
+        current_dir.x -= cur->desc.lb_unk0.unk_2C;
+        current_dir.y -= cur->desc.lb_unk0.unk_30;
+        current_dir.z -= cur->desc.lb_unk0.unk_34;
+
+        /* Compute link direction (next world pos - current world pos) */
+        link_dir.x = cur->next->desc.lb_unk0.unk_2C - cur->desc.lb_unk0.unk_2C;
+        link_dir.y = cur->next->desc.lb_unk0.unk_30 - cur->desc.lb_unk0.unk_30;
+        link_dir.z = cur->next->desc.lb_unk0.unk_34 - cur->desc.lb_unk0.unk_34;
+
+        lbVector_Normalize(&natural_dir);
+        lbVector_Normalize(&current_dir);
+        lbVector_Normalize(&link_dir);
+
+        /* Save link direction */
+        {
+            Vec3 saved_dir = link_dir;
+
+            /* Apply stiffness blend toward natural direction */
+            if (cur->desc.lb_unk0.unk_4C * desc->pos.x < 1.0f) {
+                f32 stiff_angle = lbVector_Angle(&link_dir, &current_dir);
+                if (stiff_angle < 0.0f) {
+                    stiff_angle = -stiff_angle;
+                }
+                if (stiff_angle != 0.0f) {
+                    PSVECCrossProduct(&link_dir, &current_dir, &cross_vec);
+                    lbVector_Normalize(&cross_vec);
+                    lbVector_RotateAboutUnitAxis(
+                        &link_dir, &cross_vec,
+                        stiff_angle *
+                            (f32) (1.0 -
+                                   (f64) (cur->desc.lb_unk0.unk_4C *
+                                          desc->pos.x)));
+                }
+            }
+
+            /* Apply gravity influence */
+            {
+                Vec3 grav_dir = lb_803B7280.v0;
+                f32 grav_angle = lbVector_Angle(&link_dir, &grav_dir);
+                if (grav_angle != 0.0f) {
+                    f32 grav_rot =
+                        cur->desc.lb_unk0.unk_8C * sinf(grav_angle);
+                    if (grav_rot < 0.0f) {
+                        grav_rot = -grav_rot;
+                    }
+                    PSVECCrossProduct(&link_dir, &grav_dir, &cross_vec);
+                    lbVector_Normalize(&cross_vec);
+                    lbVector_RotateAboutUnitAxis(&link_dir, &cross_vec,
+                                                 grav_rot);
+                }
+            }
+
+            /* Apply interaction force */
+            force_mag = 0.0f;
+            if (lb_804D63B0 != NULL && first_active <= idx) {
+                struct DynamicsData* next_node = cur->next;
+                Vec3 next_pos =
+                    *(Vec3*) &next_node->desc.lb_unk0.unk_2C;
+                Vec3 force_dir;
+                force_mag = lb_800103B8(&next_pos, &force_dir);
+                {
+                    f32 force_angle = lbVector_Angle(&link_dir, &force_dir);
+                    if (force_angle != 0.0f) {
+                        f32 force_rot = (force_mag * sinf(force_angle)) /
+                                        cur->desc.lb_unk0.unk_48;
+                        if (force_rot < 0.0f) {
+                            force_rot = -force_rot;
+                        }
+                        PSVECCrossProduct(&link_dir, &force_dir, &cross_vec);
+                        lbVector_Normalize(&cross_vec);
+                        lbVector_RotateAboutUnitAxis(&link_dir, &cross_vec,
+                                                     force_rot);
+                    }
+                }
+            }
+
+            /* Apply angular velocity rotation */
+            if (0.0 != cur->desc.lb_unk0.unk_44) {
+                lbVector_RotateAboutUnitAxis(
+                    &link_dir, (Vec3*) &cur->desc.lb_unk0.unk_38,
+                    cur->desc.lb_unk0.unk_44);
+            }
+
+            /* Apply max angle constraint */
+            if (force_mag <
+                cur->desc.lb_unk0.unk_8C * cur->desc.lb_unk0.unk_48) {
+                Vec3 clamp_dir = saved_dir;
+                if (lbVector_Angle(&clamp_dir, &link_dir) >
+                    cur->desc.lb_unk0.unk_88) {
+                    PSVECCrossProduct(&clamp_dir, &link_dir, &cross_vec);
+                    lbVector_Normalize(&cross_vec);
+                    lbVector_RotateAboutUnitAxis(&clamp_dir, &cross_vec,
+                                                 cur->desc.lb_unk0.unk_88);
+                    link_dir = clamp_dir;
+                }
+            }
+
+            /* Apply convergence limit */
+            if (cur->desc.lb_unk0.unk_50 > 0.0) {
+                if (lbVector_Angle(&natural_dir, &link_dir) <
+                    cur->desc.lb_unk0.unk_50) {
+                    link_dir = natural_dir;
+                } else {
+                    PSVECCrossProduct(&link_dir, &natural_dir, &cross_vec);
+                    lbVector_Normalize(&cross_vec);
+                    lbVector_RotateAboutUnitAxis(
+                        &link_dir, &cross_vec, cur->desc.lb_unk0.unk_50);
+                }
+            }
+
+            /* Apply max angle deviation */
+            {
+                f32 dev_angle = lbVector_Angle(&natural_dir, &link_dir);
+                if (dev_angle > cur->desc.lb_unk0.unk_68) {
+                    PSVECCrossProduct(&link_dir, &natural_dir, &cross_vec);
+                    lbVector_Normalize(&cross_vec);
+                    lbVector_RotateAboutUnitAxis(
+                        &link_dir, &cross_vec,
+                        dev_angle - cur->desc.lb_unk0.unk_68);
+                }
+            }
+
+            /* Collider avoidance */
+            if (num_colliders != 0) {
+                lbVector_Normalize(&link_dir);
+                collider = (struct lb_Collider*) colliders_raw;
+                {
+                    s32 ci;
+                    for (ci = 0; ci < num_colliders; ci++) {
+                        Vec3 coll_dir;
+                        f32 bone_len = cur->desc.lb_unk0.unk_48;
+                        Vec3 next_bone_pos;
+                        next_bone_pos.x =
+                            link_dir.x * bone_len + cur->desc.lb_unk0.unk_2C;
+                        next_bone_pos.y =
+                            link_dir.y * bone_len + cur->desc.lb_unk0.unk_30;
+                        next_bone_pos.z =
+                            link_dir.z * bone_len + cur->desc.lb_unk0.unk_34;
+
+                        coll_dir.x =
+                            collider->position.x - cur->desc.lb_unk0.unk_2C;
+                        coll_dir.y =
+                            collider->position.y - cur->desc.lb_unk0.unk_30;
+                        coll_dir.z =
+                            collider->position.z - cur->desc.lb_unk0.unk_34;
+
+                        {
+                            f32 coll_dist = coll_dir.z * coll_dir.z +
+                                            (coll_dir.x * coll_dir.x +
+                                             coll_dir.y * coll_dir.y);
+                            if (coll_dist > 0.0f) {
+                                coll_dist = sqrtf(coll_dist);
+                            }
+
+                            if (coll_dist > collider->radius &&
+                                lbColl_80005C44(
+                                    (Vec3*) &cur->desc.lb_unk0.unk_2C,
+                                    &next_bone_pos, &collider->position,
+                                    &collision_point, 0.1f,
+                                    collider->radius) != 0) {
+                                f32 coll_angle =
+                                    lbVector_Angle(&coll_dir, &link_dir);
+                                if (0.0 != coll_angle) {
+                                    f32 adj_radius =
+                                        (f32) (0.1 +
+                                               (f64) collider->radius);
+                                    f32 side_sq =
+                                        coll_dist * coll_dist -
+                                        adj_radius * adj_radius;
+                                    if (side_sq > 0.0f) {
+                                        side_sq = sqrtf(side_sq);
+                                    }
+                                    {
+                                        f32 avoidance_angle =
+                                            atan2f(adj_radius, side_sq);
+                                        avoidance_angle =
+                                            ABS(avoidance_angle);
+                                        avoidance_angle -= coll_angle;
+                                        if (avoidance_angle > 0.0) {
+                                            PSVECCrossProduct(
+                                                &coll_dir, &link_dir,
+                                                &cross_vec);
+                                            lbVector_Normalize(&cross_vec);
+                                            lbVector_RotateAboutUnitAxis(
+                                                &link_dir, &cross_vec,
+                                                avoidance_angle);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        collider++;
+                    }
+                }
+            }
+
+            /* Ground collision */
+            if (ground_check != 0) {
+                if (on_ground != 0) {
+                    gnd_norm = lb_803B7280.v1;
+                    lbVector_Normalize(&link_dir);
+                    {
+                        f32 bone_len = cur->desc.lb_unk0.unk_48;
+                        f32 end_x =
+                            link_dir.x * bone_len + cur->desc.lb_unk0.unk_2C;
+                        f32 end_y =
+                            link_dir.y * bone_len + cur->desc.lb_unk0.unk_30;
+                        s32 floor_hit;
+                        if (use_floor_fn != 0) {
+                            floor_hit = lb_800103D8(
+                                &floor_point, end_x,
+                                (f32) (1.0 + (f64) end_y), end_x,
+                                (f32) ((f64) end_y - 1.0), pos_y);
+                        } else {
+                            sp8 = 0;
+                            floor_hit = mpCheckFloor(
+                                end_x, (f32) (1.0 + (f64) end_y), end_x,
+                                (f32) ((f64) end_y - 1.0), 0.1f,
+                                &floor_point, &line_id, &floor_flags,
+                                &floor_normal, -1, -1, -1, NULL, NULL);
+                        }
+                        PSVECCrossProduct(&gnd_norm, &link_dir, &floor_cross);
+                        lbVector_Normalize(&floor_cross);
+                        lbVector_RotateAboutUnitAxis(&gnd_norm, &floor_cross,
+                                                     1.5707964f);
+                        link_dir = gnd_norm;
+                        if (floor_hit != 0) {
+                            on_ground = 1;
+                        } else {
+                            on_ground = 0;
+                        }
+                    }
+                } else {
+                    gnd_norm = lb_803B7280.v2;
+                    lbVector_Normalize(&link_dir);
+                    {
+                        s32 floor_hit2;
+                        if (use_floor_fn != 0) {
+                            floor_hit2 = lb_800103D8(
+                                &floor_point2, cur->desc.lb_unk0.unk_2C,
+                                (f32) (1.0 +
+                                       (f64) cur->desc.lb_unk0.unk_30),
+                                cur->desc.lb_unk0.unk_2C,
+                                cur->desc.lb_unk0.unk_30, pos_y);
+                        } else {
+                            sp8 = 0;
+                            floor_hit2 = mpCheckFloor(
+                                cur->desc.lb_unk0.unk_2C,
+                                (f32) (1.0 +
+                                       (f64) cur->desc.lb_unk0.unk_30),
+                                cur->desc.lb_unk0.unk_2C,
+                                cur->desc.lb_unk0.unk_30, 0.1f,
+                                &floor_point2, &line_id2, &floor_flags2,
+                                &floor_normal2, -1, -1, -1, NULL, NULL);
+                        }
+                        if (floor_hit2 != 0) {
+                            PSVECCrossProduct(&gnd_norm, &link_dir,
+                                              &floor_cross2);
+                            lbVector_Normalize(&floor_cross2);
+                            lbVector_RotateAboutUnitAxis(
+                                &gnd_norm, &floor_cross2, 1.5707964f);
+                            on_ground = 1;
+                            link_dir = gnd_norm;
+                        } else {
+                            f32 bone_len = cur->desc.lb_unk0.unk_48;
+                            f32 end_x2 = link_dir.x * bone_len +
+                                         cur->desc.lb_unk0.unk_2C;
+                            f32 end_y2 = link_dir.y * bone_len +
+                                         cur->desc.lb_unk0.unk_30;
+                            s32 floor_hit3;
+                            if (use_floor_fn != 0) {
+                                floor_hit3 = lb_800103D8(
+                                    &floor_point2, cur->desc.lb_unk0.unk_2C,
+                                    cur->desc.lb_unk0.unk_30, end_x2, end_y2,
+                                    pos_y);
+                            } else {
+                                sp8 = 0;
+                                floor_hit3 = mpCheckFloor(
+                                    cur->desc.lb_unk0.unk_2C,
+                                    cur->desc.lb_unk0.unk_30, end_x2, end_y2,
+                                    0.1f, &floor_point2, &line_id2,
+                                    &floor_flags2, &floor_normal2, -1, -1, -1,
+                                    NULL, NULL);
+                            }
+                            if (floor_hit3 != 0) {
+                                f32 height_diff =
+                                    cur->desc.lb_unk0.unk_30 - floor_point2.y;
+                                f32 horiz_sq;
+                                if (height_diff < 0.0f) {
+                                    height_diff = -height_diff;
+                                }
+                                horiz_sq = -(height_diff * height_diff -
+                                             bone_len * bone_len);
+                                if (horiz_sq > 0.0f) {
+                                    horiz_sq = sqrtf(horiz_sq);
+                                }
+                                {
+                                    f32 ground_angle =
+                                        atan2f(horiz_sq, height_diff);
+                                    if (ground_angle < 0.0f) {
+                                        ground_angle = -ground_angle;
+                                    }
+                                    PSVECCrossProduct(&gnd_norm, &link_dir,
+                                                      &floor_cross2);
+                                    lbVector_Normalize(&floor_cross2);
+                                    lbVector_RotateAboutUnitAxis(
+                                        &gnd_norm, &floor_cross2,
+                                        ground_angle);
+                                    on_ground = 1;
+                                    link_dir = gnd_norm;
+                                }
+                            } else {
+                                on_ground = 0;
+                            }
+                        }
+                    }
+                }
+            }
+
+            /* Compute angular difference and rotation axis */
+            angle_diff = lbVector_Angle(&current_dir, &link_dir);
+            PSVECCrossProduct(&current_dir, &link_dir, &cross_vec);
+            lbVector_Normalize(&cross_vec);
+
+            /* Rotate current_dir by angle_diff */
+            {
+                Vec3 adj_dir = current_dir;
+                lbVector_RotateAboutUnitAxis(&adj_dir, &cross_vec, angle_diff);
+                link_dir = adj_dir;
+            }
+
+            /* Store angular velocity */
+            if (on_ground != 0) {
+                cur->desc.lb_unk0.unk_44 = 0.0f;
+            } else {
+                cur->desc.lb_unk0.unk_44 =
+                    lbVector_Angle(&saved_dir, &link_dir);
+            }
+
+            /* Dampen angular velocity */
+            {
+                f32 ang_vel = cur->desc.lb_unk0.unk_44;
+                if (ang_vel < 0.0f) {
+                    ang_vel = -ang_vel;
+                }
+                if (ang_vel > 0.0) {
+                    PSVECCrossProduct(&saved_dir, &link_dir,
+                                      (Vec3*) &cur->desc.lb_unk0.unk_38);
+                    lbVector_Normalize((Vec3*) &cur->desc.lb_unk0.unk_38);
+                }
+            }
+
+            /* Apply damping to angular velocity */
+            {
+                f32 ang_vel2 = cur->desc.lb_unk0.unk_44;
+                if (0.0 != ang_vel2) {
+                    f32 damping = cur->desc.lb_unk0.unk_84;
+                    if (ang_vel2 > damping) {
+                        cur->desc.lb_unk0.unk_44 = ang_vel2 - damping;
+                    } else if (ang_vel2 < -damping) {
+                        cur->desc.lb_unk0.unk_44 = ang_vel2 + damping;
+                    } else {
+                        cur->desc.lb_unk0.unk_44 = 0.0f;
+                    }
+                }
+            }
+        }
+
+        /* Update JObj rotation via quaternion if angle is significant */
+        if (!(angle_diff < 0.00001f && angle_diff > -0.00001f)) {
+            PSMTXTranspose(parent_mtx, bone_mtx);
+            PSMTXMultVec(bone_mtx, &cross_vec, &local_axis);
+            if (local_axis.x >= 0.00001f || local_axis.x <= -0.00001f ||
+                local_axis.y >= 0.00001f || local_axis.y <= -0.00001f ||
+                local_axis.z >= 0.00001f || local_axis.z <= -0.00001f) {
+                HSD_QuatLib_8037ECE0(&local_axis, &angle_quat, angle_diff);
+                euler_angles.x = jobj->rotate.x;
+                euler_angles.y = jobj->rotate.y;
+                euler_angles.z = jobj->rotate.z;
+                EulerToQuat(&euler_angles, &euler_quat);
+                HSD_QuatLib_8037EC4C(&angle_quat, &euler_quat, &result_quat);
+                PSMTXQuat(bone_mtx, &result_quat);
+                HSD_QuatLib_8037EB28(bone_mtx, (Vec3*) &euler_angles);
+                HSD_JObjSetRotation(jobj, (Quaternion*) &euler_angles);
+                if (!(jobj->flags & JOBJ_MTX_INDEP_SRT)) {
+                    HSD_JObjSetMtxDirty(jobj);
+                }
+                HSD_JObjClearFlagsAll(jobj, 0x20000U);
+            }
+        }
+
+        /* Dominant axis damping */
+        {
+            s32 axis = cur->desc.lb_unk0.unk_54;
+            if (axis == -1) {
+                f32 rot_z = HSD_JObjGetRotationZ(jobj);
+                HSD_JObjSetRotationZ(jobj, 0.9f * rot_z);
+            } else if (axis == 0) {
+                f32 rot_x = HSD_JObjGetRotationX(jobj);
+                HSD_JObjSetRotationX(jobj, 0.9f * rot_x);
+            } else {
+                f32 rot_y = HSD_JObjGetRotationY(jobj);
+                HSD_JObjSetRotationY(jobj, 0.9f * rot_y);
+            }
+        }
+
+        /* Update parent matrix for next iteration */
+        PSMTXConcat(parent_mtx, trans_mtx, parent_mtx);
+        lbVector_CreateEulerMatrix(temp_mtx, (Vec3*) &jobj->rotate);
+        PSMTXConcat(parent_mtx, temp_mtx, parent_mtx);
+        PSMTXConcat(parent_mtx, scale_mtx, parent_mtx);
+
+        jobj = jobj->child;
+        idx += 1;
+        cur = cur->next;
+    }
+
+    /* Tail node: compute final world position */
+    PSMTXTrans(temp_mtx, jobj->translate.x, jobj->translate.y,
+               jobj->translate.z);
+    PSMTXConcat(parent_mtx, temp_mtx, parent_mtx);
+    lbVector_CreateEulerMatrix(temp_mtx, (Vec3*) &jobj->rotate);
+    PSMTXConcat(parent_mtx, temp_mtx, parent_mtx);
+    PSMTXScale(temp_mtx, jobj->scale.x, jobj->scale.y, jobj->scale.z);
+    PSMTXConcat(parent_mtx, temp_mtx, parent_mtx);
+    cur->desc.lb_unk0.unk_2C = parent_mtx[0][3];
+    cur->desc.lb_unk0.unk_30 = parent_mtx[1][3];
+    cur->desc.lb_unk0.unk_34 = parent_mtx[2][3];
+}
 
 static inline double inlineB0(void)
 {
