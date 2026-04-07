@@ -257,7 +257,6 @@ static void fn_8019F2D4(u32 arg0)
             lbl_80479A98.x14 = 0;
             return;
         }
-        return;
     } else if ((u8) lbl_80479A98.x0 == 8) {
         jobj = lbl_804D66C0.x0;
         HSD_JObjReqAnimAll(jobj, (f32) lbl_804D66C8.x4);
