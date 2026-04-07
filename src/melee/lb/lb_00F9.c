@@ -274,26 +274,36 @@ void lb_80011710(DynamicsDesc* arg0, DynamicsDesc* arg1)
     arg1->pos.z = arg0->pos.z;
     data1 = arg1->data;
     data0 = &arg0->data->desc.lb_unk1.array[0];
-    for (data1 = arg1->data, i = 0; i < arg0->count; data1 = data1->next, i++)
+    for (data1 = arg1->data, i = 0; i < (int) arg0->count;
+         data1 = data1->next, i++)
     {
-        data1->desc.lb_unk0.unk_10 = data0[i].unk_0;
-        data1->desc.lb_unk0.unk_14 = data0[i].unk_4;
-        data1->desc.lb_unk0.unk_1C = data0[i].unk_8;
-        data1->desc.lb_unk0.unk_20 = data0[i].unk_C;
-        data1->desc.lb_unk0.unk_24 = data0[i].unk_10;
-        data1->desc.lb_unk0.unk_28 = data0[i].unk_14;
-        data1->desc.lb_unk0.unk_2C = data0[i].unk_18;
-        data1->desc.lb_unk0.unk_30 = data0[i].unk_1C;
-        data1->desc.lb_unk0.unk_34 = data0[i].unk_20;
-        data1->desc.lb_unk0.unk_38 = data0[i].unk_24;
-        data1->desc.lb_unk0.unk_78 = data0[i].unk_28;
-        data1->desc.lb_unk0.unk_7C = data0[i].unk_2C;
+        s32 tmp0, tmp1;
+        data1->desc.lb_unk0.unk_4C = data0[i].unk_0;
+        data1->desc.lb_unk0.unk_50 = data0[i].unk_4;
+        tmp0 = data0[i].unk_8;
+        tmp1 = data0[i].unk_C;
+        data1->desc.lb_unk0.unk_58 = tmp0;
+        data1->desc.lb_unk0.unk_5C = tmp1;
+        tmp0 = data0[i].unk_10;
+        tmp1 = data0[i].unk_14;
+        data1->desc.lb_unk0.unk_60 = tmp0;
+        data1->desc.lb_unk0.unk_64 = tmp1;
+        data1->desc.lb_unk0.unk_68 = data0[i].unk_18;
+        tmp0 = data0[i].unk_1C;
+        tmp1 = data0[i].unk_20;
+        data1->desc.lb_unk0.unk_6C = tmp0;
+        data1->desc.lb_unk0.unk_70 = tmp1;
+        data1->desc.lb_unk0.unk_74 = data0[i].unk_24;
+        tmp0 = data0[i].unk_28;
+        tmp1 = data0[i].unk_2C;
+        data1->desc.lb_unk0.unk_78 = tmp0;
+        data1->desc.lb_unk0.unk_7C = tmp1;
         data1->desc.lb_unk0.unk_80 = data0[i].unk_30;
         data1->desc.lb_unk0.unk_84 = data0[i].unk_34;
         data1->desc.lb_unk0.unk_88 = data0[i].unk_38;
-        if (data1->desc.lb_unk0.unk_C != 0.0f) {
+        if (data1->desc.lb_unk0.unk_48 != 0.0) {
             data1->desc.lb_unk0.unk_8C =
-                arg0->pos.z / data1->desc.lb_unk0.unk_C;
+                arg0->pos.z / data1->desc.lb_unk0.unk_48;
         } else {
             data1->desc.lb_unk0.unk_8C = 0.0f;
         }

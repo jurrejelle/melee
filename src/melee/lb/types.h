@@ -475,7 +475,7 @@ struct lb_00F9_UnkDesc1Inner {
     /* 0x18 */ f32 unk_18; /* inferred */
     /* 0x1C */ s32 unk_1C; /* inferred */
     /* 0x20 */ s32 unk_20; /* inferred */
-    /* 0x24 */ f32 unk_24; /* inferred */
+    /* 0x24 */ s32 unk_24; /* inferred */
     /* 0x28 */ s32 unk_28; /* inferred */
     /* 0x2C */ s32 unk_2C; /* inferred */
     /* 0x30 */ s32 unk_30; /* inferred */
@@ -504,7 +504,19 @@ struct lb_00F9_UnkDesc0 {
     /* 0x30 */ s32 unk_30;
     /* 0x34 */ s32 unk_34;
     /* 0x38 */ f32 unk_38;
-    char pad_3C[0x78 - 0x3C];
+    /* 0x3C */ char pad_3C[0x48 - 0x3C];
+    /* 0x48 */ f32 unk_48;
+    /* 0x4C */ f32 unk_4C;
+    /* 0x50 */ f32 unk_50;
+    /* 0x54 */ char pad_54[4];
+    /* 0x58 */ s32 unk_58;
+    /* 0x5C */ s32 unk_5C;
+    /* 0x60 */ s32 unk_60;
+    /* 0x64 */ s32 unk_64;
+    /* 0x68 */ f32 unk_68;
+    /* 0x6C */ s32 unk_6C;
+    /* 0x70 */ s32 unk_70;
+    /* 0x74 */ s32 unk_74;
     int unk_78;
     int unk_7C;
     int unk_80;
