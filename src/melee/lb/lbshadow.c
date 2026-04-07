@@ -1,8 +1,11 @@
 #include "lbshadow.h"
 
+#include <MSL/math_ppc.h>
 #include <dolphin/gx/GXVert.h>
 #include <sysdolphin/baselib/debug.h>
 #include <sysdolphin/baselib/gobj.h>
+#include <sysdolphin/baselib/initialize.h>
+#include <sysdolphin/baselib/lobj.h>
 #include <sysdolphin/baselib/perf.h>
 #include <sysdolphin/baselib/pobj.h>
 #include <sysdolphin/baselib/shadow.h>
@@ -10,7 +13,13 @@
 #include <sysdolphin/baselib/state.h>
 #include <sysdolphin/baselib/tev.h>
 #include <sysdolphin/baselib/util.h>
+#include <sysdolphin/baselib/video.h>
+#include <melee/cm/types.h>
+#include <melee/ft/ftdrawcommon.h>
 #include <melee/ft/ftlib.h>
+#include <melee/ft/types.h>
+#include <melee/gr/ground.h>
+#include <melee/lb/lbvector.h>
 #include <melee/lb/types.h>
 
 /// #lbShadow_8000E9F0
@@ -270,3 +279,243 @@ void lbShadow_8000F214(HSD_Shadow* shadow)
 }
 
 /// #lbShadow_8000F38C
+
+void lbShadow_8000F38C(s32 arg0)
+{
+    HSD_ViewingRect rect;
+    Vec3 lightPos;
+    Vec3 lightDir;
+    Vec3 upVec;
+    Vec3 lightVec;
+    Vec3 rightVec;
+    Vec3 normDir;
+    Vec3 eyePos;
+    Vec3 interestPos;
+    Vec3 camPos;
+    f32 dist;
+    s32 noLight;
+    HSD_GObj* gobj;
+    HSD_LObj* lobj;
+    HSD_LObj* fallback;
+
+    PAD_STACK(0x48);
+
+    noLight = 0;
+
+    for (gobj = HSD_GObj_Entities->fighters; gobj != NULL;
+         gobj = gobj->next)
+    {
+        LbShadow* lbs = ftLib_800872B0(gobj);
+        if (lbs != NULL) {
+            lbs->x0_b2 = false;
+        }
+    }
+
+    lobj = NULL;
+    fallback = lobj;
+    {
+        HSD_GObj* lgobj;
+        for (lgobj = HSD_GObj_804D7824[4]; lgobj != NULL;) {
+            HSD_GObj* nextGx = lgobj->next_gx;
+            lobj = (HSD_LObj*) lgobj->hsd_obj;
+            while (lobj != NULL) {
+                if (lobj->flags & 3) {
+                    fallback = lobj;
+                }
+                if (HSD_LObjGetFlags(lobj) & 0x400) {
+                    nextGx = NULL;
+                    break;
+                }
+                if (lobj == NULL) {
+                    lobj = NULL;
+                } else {
+                    lobj = lobj->next;
+                }
+            }
+            lgobj = nextGx;
+        }
+    }
+
+    if (lobj == NULL && fallback != NULL) {
+        lobj = fallback;
+    }
+    if (lobj == NULL) {
+        __assert("lbshadow.c", 0x181, "lobj");
+    }
+
+    if (!HSD_LObjGetPosition(lobj, &lightPos)) {
+        OSReport("lbshadow.c");
+        __assert("lbshadow.c", 0x184, "0");
+    }
+
+    if (HSD_LObjGetInterest(lobj, &lightDir)) {
+        lbVector_Sub(&lightPos, &lightDir);
+        lightDir.z = 0.0f;
+        lightDir.y = 0.0f;
+        lightDir.x = 0.0f;
+    } else {
+        lightDir.z = 0.0f;
+        lightDir.y = 0.0f;
+        lightDir.x = 0.0f;
+    }
+
+    lbVector_Diff(&lightPos, &lightDir, &lightVec);
+
+    dist = (lightVec.z * lightVec.z) +
+           ((lightVec.x * lightVec.x) + (lightVec.y * lightVec.y));
+    if (dist > 0.0f) {
+        dist = sqrtf(dist);
+    }
+
+    if (dist < 0.001f) {
+        noLight = 1;
+        lightPos.x = 0.0f;
+        lightDir.x = 0.0f;
+        upVec.x = 0.0f;
+        lightPos.y = 0.0f;
+        lightDir.y = 0.0f;
+        upVec.y = 1.0f;
+        lightPos.z = 1.0f;
+        lightDir.z = 0.0f;
+        upVec.z = 0.0f;
+    } else {
+        f32 xz_sq =
+            (lightVec.x * lightVec.x) + (lightVec.z * lightVec.z);
+        if (xz_sq > 0.0000010000001f) {
+            upVec.z = 0.0f;
+            upVec.y = 1.0f;
+            upVec.x = 0.0f;
+            lbVector_Diff(&lightDir, &lightPos, &normDir);
+            if (lbVector_Normalize(&normDir) < 100.0f) {
+                lightPos.x = -((100.0f * normDir.x) - lightDir.x);
+                lightPos.y = -((100.0f * normDir.y) - lightDir.y);
+                lightPos.z = -((100.0f * normDir.z) - lightDir.z);
+            }
+            lbVector_CrossprodNormalized(&upVec, &normDir, &rightVec);
+            lbVector_CrossprodNormalized(&normDir, &rightVec, &upVec);
+        } else {
+            upVec.y = 0.0f;
+            upVec.x = 0.0f;
+            upVec.z = -1.0f;
+        }
+    }
+
+    ftDrawCommon_80081200();
+
+    for (gobj = HSD_GObj_Entities->fighters; gobj != NULL;
+         gobj = gobj->next)
+    {
+        Fighter* fp = gobj->user_data;
+        CmSubject* cm = fp->x890_cameraBox;
+
+        if (noLight) {
+            fp->x20A4.x0_b0 = true;
+        } else {
+            fp->x20A4.x0_b0 = false;
+        }
+
+        {
+            Fighter* fp2 = gobj->user_data;
+            if (fp2->x20A4.shadow != NULL) {
+                s32 hasObj = 0;
+                HSD_ShadowDeleteObject(fp2->x20A4.shadow, NULL);
+
+                if (fp2->x21FC_flag.b7) {
+                    if (!fp2->invisible && !fp2->x221E_b5 &&
+                        fp2->x5AC.xC[1] != NULL)
+                    {
+                        HSD_ShadowAddObject(fp2->x20A4.shadow,
+                                            (HSD_JObj*) gobj->hsd_obj);
+                        hasObj = 1;
+                    }
+                    if (fp2->x20A0_accessory != NULL) {
+                        HSD_ShadowAddObject(fp2->x20A4.shadow,
+                                            fp2->x20A0_accessory);
+                        hasObj = 1;
+                    }
+                }
+
+                if (hasObj) {
+                    fp2->x20A4.x0_b3 = false;
+                } else {
+                    fp2->x20A4.x0_b3 = true;
+                }
+            }
+        }
+
+        if (ftLib_80086960(gobj)) {
+            LbShadow* lbs = ftLib_800872B0(gobj);
+            if (lbs != NULL) {
+                bool anyFlag = lbs->x0_b0 || lbs->x0_b1 ||
+                               lbs->x0_b2 || lbs->x0_b3 ||
+                               lbs->x0_b4 || lbs->x0_b5;
+                if (!anyFlag && ftLib_800872BC(gobj)) {
+                    HSD_ShadowSetActive(lbs->shadow, 1);
+                } else {
+                    HSD_ShadowSetActive(lbs->shadow, 0);
+                }
+            }
+        }
+
+        if (fp->x20A4.shadow != NULL && cm != NULL &&
+            !fp->x20A4.x0_b3)
+        {
+            u8 intensity = Ground_801C0508();
+            HSD_Shadow* shadow2 = fp->x20A4.shadow;
+
+            if (shadow2 == NULL) {
+                __assert("shadow.h", 0x63, "shadow");
+            }
+            shadow2->intensity = intensity;
+
+            PSVECAdd(&cm->x1C, &lightPos, &eyePos);
+            PSVECAdd(&cm->x1C, &lightDir, &interestPos);
+            HSD_CObjSetEyePosition(fp->x20A4.shadow->camera, &eyePos);
+            HSD_CObjSetInterest(fp->x20A4.shadow->camera, &interestPos);
+            HSD_CObjSetUpVector(fp->x20A4.shadow->camera, &upVec);
+
+            if (cm != NULL) {
+                camPos = cm->x1C;
+                HSD_ViewingRectInit(&rect, &eyePos, &interestPos,
+                                    &upVec, 0);
+
+                {
+                    s32 i = 0;
+                    do {
+                        f32 scale = cm->x48.z;
+                        f32 top = 1.2f * scale;
+                        f32 bot = 1.2f * -scale;
+                        HSD_ViewingRectAddRect(&rect, &camPos, top,
+                                               bot, bot, top);
+                        if (HSD_ViewingRectCheck(&rect) != 0) {
+                            break;
+                        }
+                        i++;
+                    } while (i < 0x14);
+
+                    if (i < 0x14) {
+                        HSD_ShadowSetViewingRect(fp->x20A4.shadow,
+                                                 rect.top, rect.bottom,
+                                                 rect.left, rect.right);
+                    } else {
+                        HSD_CObjSetOrtho(fp->x20A4.shadow->camera,
+                                         128.0f, -128.0f, -128.0f,
+                                         128.0f);
+                    }
+                }
+            }
+
+            HSD_ShadowInit(fp->x20A4.shadow);
+            HSD_StartRender(HSD_RP_OFFSCREEN);
+            HSD_GObj_804D7814 = gobj;
+            HSD_ShadowStartRender(fp->x20A4.shadow);
+            if (arg0 != 0) {
+                lbShadow_8000F214(fp->x20A4.shadow);
+            }
+            HSD_ShadowEndRender(fp->x20A4.shadow);
+            HSD_Init_803755A8();
+        }
+    }
+
+    ftDrawCommon_80081168();
+}
