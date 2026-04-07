@@ -103,7 +103,7 @@ typedef struct grCn_Data {
     /* 0x28C */ u8 pad3[0x6C];
     /* 0x2F8 */ s32 anim_ids[14];
     /* 0x330 */ Vec3 positions[14];
-    /* 0x3D8 */ s32 x3D8[9][3];
+    /* 0x3D8 */ s32 x3D8[27];
     /* 0x444 */ s32 x444[5];
     /* 0x458 */ s32 x458[8];
     /* 0x478 */ s32 x478[3];
@@ -633,7 +633,7 @@ void grCorneria_801DDAC4(Ground_GObj* gobj)
     grCn_803E1D38.arwing_gobj[grCn_804D69A4] = gobj;
     {
         s32 idx = grCn_803E1D38.arwing_group[gp->gv.arwing.xC8];
-        HSD_GObj* arwing = grCorneria_801DD534(grCn_803E1D38.x3D8[idx][0]);
+        HSD_GObj* arwing = grCorneria_801DD534(grCn_803E1D38.x3D8[idx]);
         if (arwing != NULL) {
             GET_GROUND(arwing)->x10_flags.b2 = 0;
             {
@@ -1102,13 +1102,11 @@ void grCorneria_801DED50(Ground_GObj* gobj)
                                     }
                                     grAnime_801C8098(
                                         gobj,
-                                        data->x478
-                                            [data->arwing_group
-                                                 [gp->gv.corneria2
-                                                      .xC8]],
+                                        data->x478[data->arwing_group
+                                                       [gp->gv.corneria2.xC8]],
                                         7,
-                                        ((s32*) data->x3D8)
-                                            [new_state * 2 + grp_off + 15],
+                                        (data->x3D8)[new_state * 2 + grp_off +
+                                                     15],
                                         0.0f, 1.0f);
                                 } else {
                                     HSD_JObjSetRotationZ(
