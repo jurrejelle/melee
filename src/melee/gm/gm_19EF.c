@@ -56,15 +56,70 @@ static struct {
     u8 pad_21;
     u16 x22;
     HSD_Text* x24;
-    u8 pad_28[0x60 - 0x28];
+    HSD_GObj* x28;
+    HSD_JObj* x2C[10];
+    HSD_JObj* x54;
+    HSD_JObj* x58;
+    HSD_JObj* x5C;
     u8 x60;
-    u8 pad_61[0x70 - 0x61];
+    u8 pad_61[3];
+    s32 x64;
+    s32 x68;
+    s32 x6C;
     s32 x70;
     u8 pad_74[0x78 - 0x74];
 } lbl_80479A98;
 
-static void fn_8019EFC4(HSD_PadStatus*);
 static void fn_8019F2D4(u32);
+
+static void fn_8019EFC4(HSD_PadStatus* pad)
+{
+    HSD_JObj* child_next;
+
+    child_next = GET_JOBJ(lbl_80479A98.x28);
+    if ((u8) lbl_80479A98.x60 != 0) {
+        if (child_next == NULL) {
+            child_next = NULL;
+        } else {
+            child_next = child_next->child;
+        }
+        if (child_next == NULL) {
+            child_next = NULL;
+        } else {
+            child_next = child_next->next;
+        }
+        if (lbl_80479A98.x70 != 0) {
+            lbl_80479A98.x64++;
+            if ((lbl_80479A98.x64 % 5 == 0) && lbl_80479A98.x70 != 0) {
+                lbl_80479A98.x70--;
+            }
+            if (lbl_80479A98.x64 > 0 && lbl_80479A98.x64 <= 5) {
+                lbl_80479A98.x68 =
+                    lbl_80479A98.x64 + (lbl_80479A98.x68 / 5 * 5);
+                if (lbl_80479A98.x68 > 0 && lbl_80479A98.x68 <= 5) {
+                    lbl_80479A98.x6C =
+                        lbl_80479A98.x68 + (lbl_80479A98.x6C / 5 * 5);
+                }
+            } else if (lbl_80479A98.x64 == 0x32) {
+                lbl_80479A98.x64 = 0;
+            }
+        }
+        HSD_JObjReqAnimAll(lbl_80479A98.x54, (f32) lbl_80479A98.x64);
+        HSD_JObjReqAnimAll(lbl_80479A98.x58, (f32) lbl_80479A98.x68);
+        HSD_JObjReqAnimAll(lbl_80479A98.x5C, (f32) lbl_80479A98.x6C);
+        {
+            s32 i;
+            for (i = 10; i > 0; i--) {
+                if (i > lbl_80479A98.x70) {
+                    HSD_JObjSetFlags(lbl_80479A98.x2C[i - 1], 0x10U);
+                } else {
+                    HSD_JObjClearFlags(lbl_80479A98.x2C[i - 1], 0x10U);
+                }
+            }
+        }
+        HSD_JObjAnimAll(child_next);
+    }
+}
 
 /// seems to handle "Go!" animations, based on .dat filenames
 
