@@ -1,6 +1,7 @@
 #include "lb_00F9.static.h"
 
 #include "math.h"
+#include "stdarg.h"
 #include "stddef.h"
 
 #include "baselib/debug.h"
@@ -474,6 +475,81 @@ void lb_80011C18(HSD_JObj* jobj, u32 flags)
  * variable arguments passed until -1 is passed.
  */
 /// #lb_80011E24
+int lb_80011E24(HSD_JObj* root, HSD_JObj** result, ...)
+{
+    va_list ap;
+    HSD_JObj** out;
+    HSD_JObj* jobj;
+    HSD_JObj* saved;
+    HSD_JObj* next_node;
+    int found;
+    int prev;
+    int cur;
+    s32 target;
+
+    out = result;
+    found = 0;
+    prev = -1;
+
+    if (root == NULL || out == NULL) {
+        return 0;
+    }
+
+    va_start(ap, result);
+    for (;;) {
+        target = va_arg(ap, s32);
+        if (target == -1) {
+            break;
+        }
+        if (prev > target || prev == -1) {
+            jobj = root;
+            cur = 0;
+        } else {
+            cur = prev;
+        }
+
+        while (jobj != NULL) {
+            if (cur == target) {
+                break;
+            }
+            saved = jobj;
+            if (!(jobj->flags & JOBJ_INSTANCE) &&
+                HSD_JObjGetChild(jobj) != NULL)
+            {
+                next_node = HSD_JObjGetChild(jobj);
+            } else if (HSD_JObjGetNext(jobj) != NULL) {
+                next_node = HSD_JObjGetNext(jobj);
+            } else {
+                while (true) {
+                    if (HSD_JObjGetParent(saved) == NULL) {
+                        next_node = NULL;
+                        break;
+                    }
+                    if (HSD_JObjGetNext(
+                            HSD_JObjGetParent(saved)) != NULL)
+                    {
+                        next_node = HSD_JObjGetNext(
+                            HSD_JObjGetParent(saved));
+                        break;
+                    }
+                    saved = HSD_JObjGetParent(saved);
+                }
+            }
+            jobj = next_node;
+            cur++;
+        }
+
+        *out = jobj;
+        prev = cur;
+        out++;
+        if (jobj != NULL) {
+            found++;
+        }
+    }
+    va_end(ap);
+
+    return found;
+}
 
 int lb_8001204C(HSD_JObj* root, HSD_JObj** result, u16* indices, int count)
 {
