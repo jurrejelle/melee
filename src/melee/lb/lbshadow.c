@@ -22,8 +22,6 @@
 #include <melee/lb/lbvector.h>
 #include <melee/lb/types.h>
 
-/// #lbShadow_8000E9F0
-
 void lbShadow_8000E9F0(Vec3* p, HSD_Spline* spline, f32 u)
 {
     Vec3* cp;
