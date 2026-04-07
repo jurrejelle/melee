@@ -11,9 +11,11 @@
 #include "baselib/tobj.h"
 #include "dolphin/gx/GXCull.h"
 #include "dolphin/gx/GXGeometry.h"
+#include "dolphin/gx/GXLighting.h"
 #include "dolphin/gx/GXPixel.h"
 #include "dolphin/gx/GXTev.h"
 #include "dolphin/gx/GXTexture.h"
+#include "dolphin/gx/GXTransform.h"
 #include "dolphin/gx/GXVert.h"
 #include "dolphin/pad.h"
 
@@ -2191,6 +2193,76 @@ bool lb_80014638(struct lb_80014638_arg0_t* arg0,
 }
 
 /// #lb_80014770
+bool lb_80014770(Vec3* arg0, int arg1)
+{
+    if ((u32) arg1 == 2U) {
+        Vec3* near_pt;
+        Vec3* far_pt;
+        GXColor* near_clr;
+        GXColor* far_clr;
+
+        GXSetColorUpdate(GX_TRUE);
+        GXSetAlphaUpdate(GX_FALSE);
+        GXSetBlendMode(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA,
+                        GX_LO_NOOP);
+        GXSetAlphaCompare(GX_GREATER, 0, GX_AOP_AND, GX_GREATER, 0);
+        GXSetZMode(GX_TRUE, GX_LEQUAL, GX_FALSE);
+        GXSetZCompLoc(GX_FALSE);
+        GXSetNumTexGens(0);
+        GXSetTevClampMode(GX_TEVSTAGE0, 0);
+        GXSetNumTevStages(1);
+        GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL,
+                       GX_COLOR0A0);
+        GXSetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+        GXSetNumChans(1);
+        GXSetChanCtrl(GX_COLOR0A0, GX_FALSE, GX_SRC_REG, GX_SRC_VTX, 0,
+                       GX_DF_NONE, GX_AF_NONE);
+        GXSetCullMode(GX_CULL_NONE);
+        GXClearVtxDesc();
+        GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_POS, GX_POS_XYZ, GX_F32, 0);
+        GXSetVtxAttrFmt(GX_VTXFMT0, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8, 0);
+        GXSetVtxDesc(GX_VA_POS, GX_DIRECT);
+        GXSetVtxDesc(GX_VA_CLR0, GX_DIRECT);
+        {
+            MtxPtr mtx = HSD_CObjGetCurrent()->view_mtx;
+            GXLoadPosMtxImm(mtx, 0);
+        }
+        GXSetCurrentMtx(0);
+        GXBegin(GX_TRIANGLESTRIP, GX_VTXFMT0, 5);
+
+        if (arg0[1].z > arg0[0].z) {
+            near_pt = &arg0[0];
+            far_pt = &arg0[1];
+            near_clr = &lb_804D3768;
+            far_clr = &lb_804D376C;
+        } else {
+            near_pt = &arg0[1];
+            far_pt = &arg0[0];
+            near_clr = &lb_804D376C;
+            far_clr = &lb_804D3768;
+        }
+
+        GXPosition3f32(near_pt->y, near_pt->z, 0.0f);
+        GXColor4u8(near_clr->r, near_clr->g, near_clr->b, near_clr->a);
+
+        GXPosition3f32(near_pt->x, near_pt->z, 0.0f);
+        GXColor4u8(near_clr->r, near_clr->g, near_clr->b, near_clr->a);
+
+        GXPosition3f32(far_pt->y, far_pt->z, 0.0f);
+        GXColor4u8(far_clr->r, far_clr->g, far_clr->b, far_clr->a);
+
+        GXPosition3f32(near_pt->x, near_pt->z, 0.0f);
+        GXColor4u8(near_clr->r, near_clr->g, near_clr->b, near_clr->a);
+
+        GXPosition3f32(far_pt->x, far_pt->z, 0.0f);
+        GXColor4u8(far_clr->r, far_clr->g, far_clr->b, far_clr->a);
+
+        GXEnd();
+        PAD_STACK(8);
+        return true;
+    }
+    return false;
+}
 
 bool lb_800149E0(Mtx arg0, u32 arg1)
 {
