@@ -369,8 +369,6 @@ static void fn_8019F810(void)
     fn_8019F1D0();
 }
 
-/// #fn_8019F9C4
-
 void fn_8019F9C4(u32 arg0)
 {
     HSD_Archive* archive;
@@ -387,6 +385,7 @@ void fn_8019F9C4(u32 arg0)
     s32 i;
     f32 f;
     f32 scale;
+    PAD_STACK(8);
 
     switch (gm_801A4310()) {
     case 3:
@@ -478,43 +477,12 @@ void fn_8019F9C4(u32 arg0)
         node = child->child;
     }
 
-    lbl_80479A98.x2C[0] = node;
-    if (node->next != NULL) {
-        node = node->next;
+    for (i = 0; i < 10; i++) {
+        lbl_80479A98.x2C[i] = node;
+        if (node->next != NULL) {
+            node = node->next;
+        }
     }
-    lbl_80479A98.x2C[1] = node;
-    if (node->next != NULL) {
-        node = node->next;
-    }
-    lbl_80479A98.x2C[2] = node;
-    if (node->next != NULL) {
-        node = node->next;
-    }
-    lbl_80479A98.x2C[3] = node;
-    if (node->next != NULL) {
-        node = node->next;
-    }
-    lbl_80479A98.x2C[4] = node;
-    if (node->next != NULL) {
-        node = node->next;
-    }
-    lbl_80479A98.x2C[5] = node;
-    if (node->next != NULL) {
-        node = node->next;
-    }
-    lbl_80479A98.x2C[6] = node;
-    if (node->next != NULL) {
-        node = node->next;
-    }
-    lbl_80479A98.x2C[7] = node;
-    if (node->next != NULL) {
-        node = node->next;
-    }
-    lbl_80479A98.x2C[8] = node;
-    if (node->next != NULL) {
-        node = node->next;
-    }
-    lbl_80479A98.x2C[9] = node;
 
     lbl_80479A98.x70 = lbl_80479A98.x1C;
 
@@ -677,8 +645,6 @@ void fn_8019F9C4(u32 arg0)
         lbAudioAx_80023F28(5);
     }
 }
-
-/// #gm_801A0A10_OnEnter
 
 void gm_801A0A10_OnEnter(void* arg0_)
 {
