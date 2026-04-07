@@ -1532,7 +1532,199 @@ void lb_8001285C(HSD_ImageDesc* image_desc, GXTexObj* tex_obj)
 }
 
 /// #lb_80012994
+void lb_80012994(HSD_ImageDesc* img, u8 alpha, u8 blur_size, f32 x,
+                 f32 y, f32 scale_x, f32 scale_y, f32 color_factor)
+{
+    GXTexObj tex;
+    GXColor color;
+    u16 w = img->width;
+    u16 h = img->height;
+    f32 off1 = (f32) blur_size * 0.015625f;
+    f32 off2 = 2.0f * off1;
+    f32 x_p1, x_m1, y_p1, y_m1;
+    f32 x_p2, x_m2, y_p2, y_m2;
 
+    lb_800122F0(img, &tex, color_factor);
+    PAD_STACK(88);
+
+    color.a = alpha;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    lb_8001271C(&tex, x, y, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0x7F;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    x_p1 = x + off1;
+    lb_8001271C(&tex, x_p1, y, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xA9;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    x_m1 = x - off1;
+    lb_8001271C(&tex, x_m1, y, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xBF;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    y_p1 = y + off1;
+    lb_8001271C(&tex, x, y_p1, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xCC;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    y_m1 = y - off1;
+    lb_8001271C(&tex, x, y_m1, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xD4;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    lb_8001271C(&tex, x_p1, y_p1, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xDA;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    lb_8001271C(&tex, x_m1, y_m1, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xDF;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    lb_8001271C(&tex, x_p1, y_m1, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xE2;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    lb_8001271C(&tex, x_m1, y_p1, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xE5;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    x_p2 = x + off2;
+    lb_8001271C(&tex, x_p2, y, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xE7;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    x_m2 = x - off2;
+    lb_8001271C(&tex, x_m2, y, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xE9;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    lb_8001271C(&tex, x_p2, y_p1, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xEB;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    lb_8001271C(&tex, x_m2, y_p1, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xEC;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    lb_8001271C(&tex, x_p2, y_m1, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xEE;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    lb_8001271C(&tex, x_m2, y_m1, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xEF;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    y_p2 = y + off2;
+    lb_8001271C(&tex, x, y_p2, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xF0;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    y_m2 = y - off2;
+    lb_8001271C(&tex, x, y_m2, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xF0;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    lb_8001271C(&tex, x_p1, y_p2, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xF1;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    lb_8001271C(&tex, x_p1, y_m2, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xF2;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    lb_8001271C(&tex, x_m1, y_p2, (f32) w, (f32) h, scale_x, scale_y);
+
+    color.a = 0xF2;
+    GXSetTevColor(GX_TEVREG0, color);
+    GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                    GX_CA_ZERO);
+    GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, 1,
+                    GX_TEVPREV);
+    lb_8001271C(&tex, x_m1, y_m2, (f32) w, (f32) h, scale_x, scale_y);
+
+    HSD_StateInvalidate(2);
+}
 static struct {
     u8 pad_0[0x28];
     HSD_Chan chan0;
