@@ -2021,23 +2021,23 @@ void grCorneria_801E1060(Ground_GObj* gobj)
 
     pos = gm_801883C0();
     total = 3200.0f * Ground_801C0498();
-
-    total = 3200.0f * Ground_801C0498() * 0.5f + total;
-    pos = pos * ((4800.0f * Ground_801C0498() * 0.5f + total) / 2400.0f);
+    pos *= ((4800.0f * Ground_801C0498() / 2 +
+             (total + 3200.0f * Ground_801C0498() / 2)) /
+            2400.0f);
 
     bg = Ground_801C2BA4(8);
     if (bg != NULL) {
         Fake_HSD_JObjSetTranslateX(bg->hsd_obj, pos);
     }
-    total = 3200.0f * Ground_801C0498() * 0.5f;
-    pos = pos - (3200.0f * Ground_801C0498() * 0.5f + total);
+    pos = pos -
+          (3200.0f * Ground_801C0498() / 2 + 3200.0f * Ground_801C0498() / 2);
 
     bg = Ground_801C2BA4(9);
     if (bg != NULL) {
         Fake_HSD_JObjSetTranslateX(bg->hsd_obj, pos);
     }
-    total = 4800.0f * Ground_801C0498() * 0.5f;
-    pos = pos - (3200.0f * Ground_801C0498() * 0.5f + total);
+    pos = pos -
+          (4800.0f * Ground_801C0498() / 2 + 3200.0f * Ground_801C0498() / 2);
 
     bg = Ground_801C2BA4(4);
     if (bg != NULL) {
