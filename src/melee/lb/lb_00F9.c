@@ -99,15 +99,15 @@ static inline struct lb_80011A50_t* inlineA1(void)
     }
     {
         struct lb_80011A50_t* ret = cur;
-        int max = cur->x1;
+        u8 max = cur->x1;
         while (cur != NULL) {
-            if (max < cur->x1) {
+            if ((s32) max < (s32) cur->x1) {
                 max = cur->x1;
                 ret = cur;
             }
             cur = cur->next;
         }
-        return cur;
+        return ret;
     }
 }
 
