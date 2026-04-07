@@ -25,6 +25,7 @@
 #include <baselib/jobj.h>
 #include <baselib/lobj.h>
 #include <baselib/memory.h>
+#include <baselib/state.h>
 #include <melee/sc/types.h>
 
 typedef bool (*lb_803BA248_fn)(ColorOverlay*);
@@ -718,7 +719,88 @@ void lb_8001285C(HSD_ImageDesc* image_desc, GXTexObj* tex_obj)
 
 /// #lb_80012994
 
-/// #fn_80013614
+static struct {
+    u8 pad_0[0x28];
+    HSD_Chan chan0;
+    HSD_Chan chan1;
+} lb_803BA1C0;
+
+void fn_80013614(HSD_GObj* gobj)
+{
+    struct CameraBlurData* data = gobj->user_data;
+    Mtx view_mtx;
+    Mtx view_mtx2;
+    GXTexObj tex_obj;
+    GXColor color;
+    PAD_STACK(16);
+
+    if (data->x18 != NULL) {
+        data->x18(gobj);
+    }
+
+    if (data->x12 == 1) {
+        HSD_CObj* cobj = (HSD_CObj*) gobj->hsd_obj;
+        f32 alpha = data->x20;
+        u8 x11 = data->x11;
+        u8 x10 = data->x10;
+        f32 xC = data->xC;
+        f32 x8 = data->x8;
+        f32 x4 = data->x4;
+        f32 x0 = data->x0;
+        HSD_ImageDesc* image = data->x1C;
+
+        HSD_CObjSetCurrent(cobj);
+        HSD_StateSetZMode(0, 7, 0);
+        GXSetCurrentMtx(0);
+        HSD_CObjGetViewingMtx(HSD_CObjGetCurrent(), view_mtx);
+        GXLoadPosMtxImm(view_mtx, 0);
+        GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, 0x3C, 0,
+                          0x7D);
+        HSD_SetupChannel(&lb_803BA1C0.chan0);
+        HSD_SetupChannel(&lb_803BA1C0.chan1);
+        HSD_StateSetNumChans(1);
+
+        if (alpha != 0.0f) {
+            GXSetScissor(0, 0x6E, 0x280, 0x122);
+        }
+
+        lb_80012994(image, x10, x11, x0, x4, x8, xC, alpha);
+    } else {
+        HSD_CObj* cobj = (HSD_CObj*) gobj->hsd_obj;
+        u8 x10 = data->x10;
+        f32 xC = data->xC;
+        f32 x8 = data->x8;
+        f32 x4 = data->x4;
+        f32 x0 = data->x0;
+        HSD_ImageDesc* image = data->x1C;
+        u16 width;
+        u16 height;
+
+        HSD_CObjSetCurrent(cobj);
+        HSD_StateSetZMode(0, 7, 0);
+        GXSetCurrentMtx(0);
+        HSD_CObjGetViewingMtx(HSD_CObjGetCurrent(), view_mtx2);
+        GXLoadPosMtxImm(view_mtx2, 0);
+        GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, 0x3C, 0,
+                          0x7D);
+        HSD_SetupChannel(&lb_803BA1C0.chan0);
+        HSD_SetupChannel(&lb_803BA1C0.chan1);
+        HSD_StateSetNumChans(1);
+
+        width = image->width;
+        height = image->height;
+        lb_8001285C(image, &tex_obj);
+
+        color.a = x10;
+        GXSetTevColor(GX_TEVREG0, color);
+        GXSetTevAlphaIn(GX_TEVSTAGE0, GX_CA_TEXA, GX_CA_ZERO, GX_CA_A0,
+                        GX_CA_ZERO);
+        GXSetTevAlphaOp(GX_TEVSTAGE0, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1,
+                        1, GX_TEVPREV);
+        lb_8001271C(&tex_obj, x0, x4, (f32) width, (f32) height, x8, xC);
+        HSD_StateInvalidate(2);
+    }
+}
 
 void fn_800138AC(void* ptr)
 {
