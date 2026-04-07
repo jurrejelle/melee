@@ -472,20 +472,30 @@ struct grSmashTaunt_GroundVars {
 
 struct grGreatBay_GroundVars {
     u8 xC4;
-    u8 _[9];
-    s32 x10;
-    s32 x14;
-    u32 x18;
-    f32 x1C;
-    f32 x20;
+    struct {
+        u8 b0123456 : 7;
+        u8 b7 : 1;
+    } xC5;
+    s16 xC6;
+    HSD_Generator* xC8;
+    f32 xCC;
+    s32 xD0;
+    s32 xD4;
+    u32 xD8;
+    f32 xDC;
+    f32 xE0;
 };
 
 struct grGreatBay_GroundVars2 {
-    HSD_GObj* gobj5;
-    HSD_GObj* gobj6;
-    HSD_GObj* gobj7;
-    HSD_GObj* gobj8;
+    HSD_GObj* gobjs[4];
     s16 x10;
+    struct {
+        u8 b0 : 1;
+        u8 b1 : 1;
+        u8 b2 : 1;
+        u8 b3 : 1;
+        u8 b4567 : 4;
+    } x12;
     s32 x14;
     u32 x18;
     f32 x1C;
@@ -500,6 +510,22 @@ struct grGreatBay_GroundVars3 {
     f32 xDC;
     f32 xE0;
     HSD_JObj* jobj;
+    f32 xE8;
+    f32 xEC;
+    s32 xF0;
+};
+
+struct grGreatBay_GroundVars4 {
+    s32 xC4;
+    s32 xC8;
+    s32 xCC;
+    s32 xD0;
+    s32 xD4;
+    s32 xD8;
+    s32 xDC;
+    f32 xE0;
+    Vec3 xE4;
+    Item_GObj* xF0;
 };
 
 struct grGarden_GroundVars { // Cranky Kong
@@ -1211,23 +1237,29 @@ struct ShyGuys {
 };
 
 struct grShrineroute_GroundVars {
-    /* +0 gp+C4 */ u32 xC4;
-    /* +4 gp+C8 */ u16 xC8;
-    /* +6 gp+CA */ u16 xCA;
-    /* +8 gp+CA */ u16 xCC;
+    /* +0x00 gp+C4 */ u16 xC4;
+    /* +0x02 gp+C6 */ u16 xC6;
+    /* +0x04 gp+C8 */ u16 xC8;
+    /* +0x06 gp+CA */ u16 xCA;
+    /* +0x08 gp+CC */ u16 xCC;
+    /* +0x0A gp+CE */ u16 xCE;
+    /* +0x0C gp+D0 */ u16 xD0;
+    u8 _pad[0xD4 - 0xD2];
+    /* +0x10 gp+D4 */ u32 xD4;
+    /* +0x14 gp+D8 */ struct {
+        /* +0x00 */ Vec3 offset;
+        /* +0x0C */ HSD_JObj* jobj;
+    } platforms[3];
+    /* +0x44 gp+108 */ HSD_GObj* symbols[6];
 };
 
 struct grShrineroute_GroundVars2 {
-    /* +0 gp+C4 */ HSD_GObj* xC4;
-    /* +4 gp+C8 */ HSD_LObj* xC8;
-    u8 _[0x108 - 0xCC];
-    HSD_GObj* x108;
-    u8 _2[0x118 - 0x10C];
-    u32 x118;
-    u8 _3[0x168 - 0x11C];
-    /* +0 gp+168 */ u32 x168;
-    /* +0 gp+16C */ HSD_LObj* x16C;
-    /* +0 gp+170 */ HSD_LObj* x170;
+    /* +0x00 gp+C4 */ HSD_GObj* xC4;
+    /* +0x04 gp+C8 */ HSD_LObj* xC8[20];
+    /* +0x54 gp+118 */ u32 x118[20];
+    /* +0xA4 gp+168 */ u32 x168;
+    /* +0xA8 gp+16C */ HSD_LObj* x16C;
+    /* +0xAC gp+170 */ HSD_LObj* x170;
 };
 
 struct grShrineroute_GroundVars3 {
@@ -1236,6 +1268,10 @@ struct grShrineroute_GroundVars3 {
     /* +8 gp+CC */ f32 xCC;
     /* +C gp+D0 */ f32 xD0;
     /* +10 gp+D4 */ f32 xD4;
+    /* +14 gp+D8 */ f32 xD8;
+    /* +18 gp+DC */ f32 xDC;
+    /* +1C gp+E0 */ f32 xE0;
+    /* +20 gp+E4 */ HSD_JObj* xE4;
 };
 
 struct Battlefield {
@@ -1378,6 +1414,7 @@ struct Ground {
             struct grGreatBay_GroundVars greatbay;
             struct grGreatBay_GroundVars2 greatbay2;
             struct grGreatBay_GroundVars3 greatbay3;
+            struct grGreatBay_GroundVars4 greatbay4;
             struct grFigureGet_GroundVars figureget;
             struct GroundVars_flatzone flatzone;
             struct GroundVars_flatzone2 flatzone2;
