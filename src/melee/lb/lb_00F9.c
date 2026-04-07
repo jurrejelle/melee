@@ -668,68 +668,29 @@ void lb_800122C8(HSD_ImageDesc* image_desc, u16 origx, u16 origy, bool clear)
 void lb_8001271C(GXTexObj* arg0, float x0, float arg2, float tex_width,
                  float tex_height, float scale_x, float scale_y)
 {
-#define SOLUTION 0
-#if SOLUTION == 0
     f32 s, t;
-    PAD_STACK(16);
+    f32 w, h, y0, x1, y_sum, y1;
+    PAD_STACK(8);
 
     t = tex_width / GXGetTexObjWidth(arg0);
     s = tex_height / GXGetTexObjHeight(arg0);
 
     GXBegin(GX_QUADS, GX_VTXFMT0, 4);
-    {
-        GXPosition2f32(x0, -arg2);
-        GXTexCoord2f32(0.0f, 0.0f);
-    }
-    {
-        GXPosition2f32(x0 + tex_width * scale_x, -arg2);
-        GXTexCoord2f32(s, 0.0f);
-    }
-    {
-        GXPosition2f32(x0 + tex_width * scale_x,
-                       -(arg2 + tex_height * scale_y));
-        GXTexCoord2f32(s, t);
-    }
-    {
-        GXPosition2f32(x0, -(arg2 + tex_height * scale_y));
-        GXTexCoord2f32(0.0f, t);
-    }
+    w = tex_width * scale_x;
+    h = tex_height * scale_y;
+    y0 = -arg2;
+    GXPosition2f32(x0, y0);
+    x1 = x0 + w;
+    y_sum = arg2 + h;
+    GXTexCoord2f32(0.0f, 0.0f);
+    GXPosition2f32(x1, y0);
+    GXTexCoord2f32(s, 0.0f);
+    y1 = -y_sum;
+    GXPosition2f32(x1, y1);
+    GXTexCoord2f32(s, t);
+    GXPosition2f32(x0, y1);
+    GXTexCoord2f32(0.0f, t);
     GXEnd();
-
-#elif SOLUTION == 1
-    f32 y2;
-    f32 x1;
-    f32 s1;
-    f32 t2;
-    f32 y0;
-    PAD_STACK(16);
-
-    t2 = tex_width / GXGetTexObjWidth(arg0);
-    s1 = tex_height / GXGetTexObjHeight(arg0);
-    GXBegin(GX_QUADS, GX_VTXFMT0, 4);
-
-    {
-        y0 = -arg2;
-        GXPosition2f32(x0, y0);
-        x1 = x0 + (tex_width * scale_x);
-        GXTexCoord2f32(0.0f, 0.0f);
-        y2 = -(arg2 + (tex_height * scale_y));
-    }
-    {
-        GXPosition2f32(x1, y0);
-        GXTexCoord2f32(s1, 0.0f);
-    }
-    {
-        GXPosition2f32(x1, y2);
-        GXTexCoord2f32(s1, t2);
-    }
-    {
-        GXPosition2f32(x0, y2);
-        GXTexCoord2f32(0.0f, t2);
-    }
-    GXEnd();
-#endif
-#undef SOLUTION
 }
 
 void lb_8001285C(HSD_ImageDesc* image_desc, GXTexObj* tex_obj)
