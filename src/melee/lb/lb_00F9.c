@@ -1039,7 +1039,63 @@ bool lb_80014234(ColorOverlay* arg0)
     return false;
 }
 
-/// #lb_80014258
+bool lb_80014258(HSD_GObj* gobj, void* arg1, FtCmd2 cmd)
+{
+    ColorOverlay* co = arg1;
+    u8* ptr;
+
+    if (co->x8_ptr1 != NULL) {
+        s32 timer = co->x0_timer;
+        if (timer != 0) {
+            co->x0_timer = timer - 1;
+        }
+    }
+
+    while ((ptr = (u8*) co->x8_ptr1) != NULL && co->x0_timer == 0) {
+        u32 opcode = (*ptr >> 2) & 0x3F;
+        if (!Command_Execute((CommandInfo*) co, opcode)) {
+            if (opcode < 0x15U) {
+                u32 idx = opcode - 0xA;
+                if (lb_803BA248[idx](co)) {
+                    return true;
+                }
+            } else {
+                cmd(gobj, (CommandInfo*) co, (int) opcode);
+            }
+        }
+    }
+
+    if (co->x7C_color_enable) {
+        co->x30_color_red += co->x40_colorblend_red;
+        co->x34_color_green += co->x44_colorblend_green;
+        co->x38_color_blue += co->x48_colorblend_blue;
+        co->x3C_color_alpha += co->x4C_colorblend_alpha;
+        co->x2C_hex.r = (u8) co->x30_color_red;
+        co->x2C_hex.g = (u8) co->x34_color_green;
+        co->x2C_hex.b = (u8) co->x38_color_blue;
+        co->x2C_hex.a = (u8) co->x3C_color_alpha;
+    }
+    if (co->x7C_flag2) {
+        co->x54_light_red += co->x64_lightblend_red;
+        co->x58_light_green += co->x68_lightblend_green;
+        co->x5C_light_blue += co->x6C_lightblend_blue;
+        co->x60_light_alpha += co->x70_lightblend_alpha;
+        co->x50_light_color.r = (u8) co->x54_light_red;
+        co->x50_light_color.g = (u8) co->x58_light_green;
+        co->x50_light_color.b = (u8) co->x5C_light_blue;
+        co->x50_light_color.a = (u8) co->x60_light_alpha;
+    }
+    {
+        s32 fc = co->x4_pri;
+        if (fc != 0) {
+            co->x4_pri = fc - 1;
+            if (co->x4_pri == 0) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 void lb_80014498(ColorOverlay* arg0)
 {
