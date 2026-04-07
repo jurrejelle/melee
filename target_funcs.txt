@@ -1,9 +1,0 @@
-File: src/melee/gm/gm_19EF.c
-Funcs:
-- [ ] fn_8019F1D0               
-- [ ] gm_801A0A10_OnEnter       
-- [ ] fn_8019F6EC               
-- [ ] fn_8019F810               
-- [ ] fn_8019EFC4               
-- [ ] fn_8019F2D4               
-- [ ] fn_8019F9C4          
