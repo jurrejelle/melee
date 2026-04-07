@@ -739,6 +739,69 @@ void lb_800138D8(HSD_GObj* gobj, s8 arg1)
 }
 
 /// #lb_800138EC
+static Vec3 lb_803B72A8 = { 0.0F, 0.0F, 1.0F };
+static Vec3 lb_803B72B4 = { 0.0F, 0.0F, 0.0F };
+
+void lb_800138EC(s32 arg0, GObj_RenderFunc render_func, u32 arg2, s8 arg3,
+                 f32 x, f32 y, f32 w, f32 h)
+{
+    HSD_GObj* gobj;
+    HSD_CObj* cobj;
+    struct lb_800138D8_t* data;
+    HSD_RectS16 viewport;
+    Scissor scissor;
+    Vec3 eye;
+    Vec3 interest;
+    f32 zero = 0.0F;
+    f32 ortho_top = zero;
+    f32 far = 2.0F;
+    f32 ortho_left = zero;
+    f32 ortho_bot = -480.0F;
+    f32 ortho_right = 640.0F;
+
+    eye = lb_803B72A8;
+    interest = lb_803B72B4;
+
+    gobj = GObj_Create(14, 15, 0);
+    cobj = HSD_CObjAlloc();
+
+    viewport.xmin = 0;
+    scissor.left = 0;
+    viewport.xmax = 640;
+    scissor.right = 640;
+    viewport.ymin = 0;
+    scissor.top = 0;
+    viewport.ymax = 480;
+    scissor.bottom = 480;
+
+    HSD_CObjSetProjectionType(cobj, 3);
+    HSD_CObjSetViewport(cobj, &viewport);
+    HSD_CObjSetScissor(cobj, &scissor);
+    HSD_CObjSetEyePosition(cobj, &eye);
+    HSD_CObjSetInterest(cobj, &interest);
+    HSD_CObjSetRoll(cobj, zero);
+    HSD_CObjSetNear(cobj, zero);
+    HSD_CObjSetFar(cobj, far);
+    HSD_CObjSetOrtho(cobj, ortho_top, ortho_bot, ortho_left, ortho_right);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D784B, cobj);
+
+    data = HSD_MemAlloc(sizeof(struct lb_800138D8_t));
+    data->x0 = x;
+    data->x4 = y;
+    data->x8 = w;
+    data->xC = h;
+    data->x10 = arg3;
+    data->x12 = 0;
+    data->x1C = arg0;
+    data->x18 = 0;
+    GObj_InitUserData(gobj, 0, fn_800138AC, data);
+
+    if (render_func == NULL) {
+        GObj_SetupGXLinkMax(gobj, (GObj_RenderFunc) fn_80013614, arg2);
+    } else {
+        GObj_SetupGXLinkMax(gobj, render_func, arg2);
+    }
+}
 
 HSD_CObj* lb_80013B14(HSD_CameraDescPerspective* desc)
 {
