@@ -13,6 +13,7 @@
 #include <melee/lb/lb_00F9.h>
 #include <melee/lb/lbarchive.h>
 #include <melee/lb/lbaudio_ax.h>
+#include <sysdolphin/baselib/sislib.h>
 #include <melee/sc/types.h>
 
 static HSD_Archive* lbl_804D6698;
@@ -27,9 +28,42 @@ static struct {
     int x18;
     u8 pad1C[0x22 - 0x1C];
     u16 x22;
+    HSD_Text* x24;
 } lbl_80479A98;
 
 /// seems to handle "Go!" animations, based on .dat filenames
+
+static void fn_8019F1D0(void)
+{
+    char sp8[28];
+    u32 value;
+    char* ptr;
+    u32 rem;
+    u8 count;
+
+    count = 0;
+    value = lbl_80479A98.x8;
+    HSD_SisLib_803A7664(lbl_80479A98.x24);
+    if (value != 0) {
+        while (value != 0) {
+            value /= 10;
+            count++;
+        }
+        rem = lbl_80479A98.x8;
+        ptr = &sp8[count];
+        *ptr = '\0';
+        while (count != 0) {
+            *(ptr - 1) = (char) ((rem % 10) + 0x30);
+            rem /= 10;
+            ptr--;
+            count--;
+        }
+    } else {
+        sp8[0] = 0x30;
+        sp8[1] = 0;
+    }
+    HSD_SisLib_803A6B98(lbl_80479A98.x24, 240.0f, 176.0f, sp8);
+}
 
 /// #fn_8019F9C4
 
