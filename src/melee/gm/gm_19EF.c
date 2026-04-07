@@ -1,6 +1,7 @@
 #include "gm_19EF.h"
 
 #include "gm_1A36.h"
+#include "gm_1A45.h"
 #include "gm_unsplit.h"
 
 #include <sysdolphin/baselib/archive.h>
@@ -17,12 +18,19 @@
 #include <melee/sc/types.h>
 
 static HSD_Archive* lbl_804D6698;
+static HSD_JObj* lbl_804D66B8;
+static struct {
+    s32 x0;
+    s32 x4;
+} lbl_804D66E0;
+static HSD_JObj* lbl_804D66E8;
 static HSD_Archive* lbl_804D66F0;
 static HSD_JObj* lbl_804D66F4;
 static u32 lbl_804D66F8;
 
 static struct {
-    u8 pad_00[0x4];
+    u8 x0;
+    u8 pad_01[0x3];
     s32 x4;
     int x8;
     s32 xC;
@@ -40,7 +48,9 @@ static struct {
     HSD_Text* x24;
     u8 pad_28[0x60 - 0x28];
     u8 x60;
-    u8 pad_61[0x78 - 0x61];
+    u8 pad_61[0x70 - 0x61];
+    s32 x70;
+    u8 pad_74[0x78 - 0x74];
 } lbl_80479A98;
 
 /// seems to handle "Go!" animations, based on .dat filenames
@@ -75,6 +85,34 @@ static void fn_8019F1D0(void)
         sp8[1] = 0;
     }
     HSD_SisLib_803A6B98(lbl_80479A98.x24, 240.0f, 176.0f, sp8);
+}
+
+static void fn_8019F6EC(HSD_GObj* gobj)
+{
+    HSD_JObj* jobj = GET_JOBJ(gobj);
+
+    HSD_JObjReqAnimAll(jobj, (f32) lbl_804D66E0.x4);
+    if (lbl_80479A98.x0 == 0) {
+        if (lbl_804D66E0.x4 < 0x32) {
+            lbl_804D66E0.x4 += 1;
+        } else if (lbl_80479A98.x20 != 0) {
+            lbAudioAx_800237A8(0x9C43, 0x7F, 0x40);
+            lbAudioAx_80023F28(0x20);
+            lbl_80479A98.x0 = 0xAU;
+        }
+    } else if (lbl_80479A98.x0 == 9) {
+        if (lbl_804D66E0.x4 < 0x50) {
+            lbl_804D66E0.x4 += 1;
+        } else if ((u32) lbl_80479A98.x8 == (u32) lbl_80479A98.xC &&
+                   lbl_80479A98.x70 == 0)
+        {
+            gm_801A4B60();
+            lbl_80479A98.x18 = 1;
+        }
+    }
+    HSD_JObjAnimAll(jobj);
+    HSD_JObjAnimAll(lbl_804D66B8);
+    HSD_JObjAnimAll(lbl_804D66E8);
 }
 
 /// #fn_8019F9C4
