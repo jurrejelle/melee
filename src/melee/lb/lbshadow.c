@@ -135,8 +135,6 @@ void lbShadow_8000EE8C(LbShadow* lbshadow)
     }
 }
 
-/// #lbShadow_8000EE8C
-
 void lbShadow_8000EEE0(HSD_GObj* gobj)
 {
     LbShadow* lbshadow;
