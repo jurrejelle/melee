@@ -2,6 +2,7 @@
 
 #include "gm_1601.h"
 #include "gm_1A36.h"
+#include "gm_1A3F.h"
 #include "gm_1A45.h"
 #include "gm_unsplit.h"
 
@@ -15,13 +16,21 @@
 #include <sysdolphin/baselib/gobjproc.h>
 #include <sysdolphin/baselib/jobj.h>
 #include <sysdolphin/baselib/mobj.h>
+#include <melee/lb/lb_00B0.h>
 #include <melee/lb/lb_00F9.h>
 #include <melee/lb/lbarchive.h>
 #include <melee/lb/lbaudio_ax.h>
-#include <sysdolphin/baselib/sislib.h>
 #include <melee/sc/types.h>
+#include <melee/ty/toy.h>
+#include <melee/ty/tylist.h>
+#include <sysdolphin/baselib/sislib.h>
 
 static HSD_Archive* lbl_804D6698;
+static SceneDesc* lbl_804D669C;
+static SceneDesc* lbl_804D66A0;
+static SceneDesc* lbl_804D66A4;
+static SceneDesc* lbl_804D66A8;
+static HSD_Joint* lbl_804D66AC;
 static struct {
     HSD_JObj* x0;
     s32 x4;
@@ -39,8 +48,9 @@ static struct {
     HSD_JObj* x0;
     s32 x4;
 } lbl_804D66D0;
+static HSD_JObj* lbl_804D66D8;
 static struct {
-    s32 x0;
+    HSD_JObj* x0;
     s32 x4;
 } lbl_804D66E0;
 static HSD_JObj* lbl_804D66E8;
@@ -360,6 +370,313 @@ static void fn_8019F810(void)
 }
 
 /// #fn_8019F9C4
+
+void fn_8019F9C4(u32 arg0)
+{
+    HSD_Archive* archive;
+    HSD_CObj* cobj;
+    HSD_GObj* gobj;
+    HSD_GObj* cam_gobj;
+    HSD_JObj* jobj;
+    HSD_JObj* child;
+    HSD_JObj* next;
+    HSD_JObj* node;
+    HSD_JObj** ptr;
+    s32 char_idx;
+    u32 char_kind;
+    s32 i;
+    f32 f;
+    f32 scale;
+
+    switch (gm_801A4310()) {
+    case 3:
+        char_idx = gm_80160474(arg0, MJ_CLASSIC);
+        break;
+    case 4:
+        char_idx = gm_80160474(arg0, MJ_ADVENTURE);
+        break;
+    default:
+        char_idx = gm_80160474(arg0, MJ_ALLSTAR);
+        break;
+    }
+    if (char_idx == -1) {
+        char_kind = 8;
+    } else {
+        char_kind = arg0;
+    }
+    fn_80168F7C();
+    archive = lbArchive_80016DBC("GmGover.dat", &lbl_804D669C,
+                                 "ScGamRegGover_scene_data", 0);
+    lbl_804D6698 = archive;
+    lbArchive_80016DBC("GmGoCoin.dat", &lbl_804D66A0,
+                       "ScGamRegGover_scene_data", 0);
+    un_803124BC();
+    un_803102D0();
+    {
+        u8 game_mode = gm_801A4310();
+        char* model_name = gm_80160564(char_kind, game_mode);
+        char* scene_name = gm_801604DC(char_kind, game_mode);
+        lbArchive_LoadSymbols(scene_name, &lbl_804D66AC, model_name, 0);
+        lbArchive_LoadSymbols("GmGoAnim.dat", &lbl_804D66A4,
+                              "ScGamRegGover_scene_data", 0);
+        lbArchive_LoadSymbols("GmRgStnd.dat", &lbl_804D66A8, "standScene",
+                              0);
+    }
+    cobj = HSD_CObjLoadDesc(lbl_804D669C->cameras->desc);
+    cam_gobj = GObj_Create(0x13, 0x14, 0);
+    HSD_GObjObject_80390A70(cam_gobj, HSD_GObj_804D784B, cobj);
+    GObj_SetupGXLinkMax(cam_gobj, HSD_GObj_803910D8, 0);
+    cam_gobj->gx_link = 0x801;
+    cam_gobj->p_link = 0;
+
+    gobj = GObj_Create(0xB, 0xF, 0);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D784A,
+                            lb_80011AC4(lbl_804D669C->lights));
+    GObj_SetupGXLink(gobj, HSD_GObj_LObjCallback, 0, 0);
+
+    gobj = GObj_Create(0xE, 0xF, 0);
+    jobj = HSD_JObjLoadJoint(lbl_804D669C->models[0]->joint);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xB, 0);
+    HSD_GObj_SetupProc(gobj, (void (*)(HSD_GObj*)) fn_8019F810, 0);
+    gm_8016895C(jobj, lbl_804D669C->models[0], 0);
+    HSD_JObjReqAnimAll(jobj, 0.0f);
+    HSD_JObjAnimAll(jobj);
+    lbl_80479A98.x14 = 1;
+    lbl_80479A98.x0 = 0;
+    lbl_804D66B0.x4 = 0;
+    lbl_804D66C0.x4 = 0;
+    lbl_804D66C8.x4 = 0;
+    lbl_804D66E0.x4 = 0;
+    lbl_804D66D0.x4 = 0x24E;
+    lb_80011E24(jobj, &lbl_804D66B0.x0, 0x38, -1);
+    lb_80011E24(jobj, &lbl_804D66D8, 1, -1);
+    lb_80011E24(jobj, &lbl_804D66D0.x0, 2, -1);
+    lb_80011E24(jobj, &lbl_804D66C8.x0, 0x35, -1);
+    lb_80011E24(jobj, &lbl_804D66C0.x0, 0x37, -1);
+    if ((u8) lbl_80479A98.x20 != 0) {
+        HSD_JObjSetFlagsAll(lbl_804D66B0.x0, 0x10);
+        HSD_JObjSetFlagsAll(lbl_804D66C8.x0, 0x10);
+        HSD_JObjSetFlagsAll(lbl_804D66C0.x0, 0x10);
+    }
+
+    gobj = GObj_Create(0xE, 0xF, 0);
+    jobj = HSD_JObjLoadJoint(lbl_804D66A0->models[0]->joint);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xB, 0);
+    gm_8016895C(jobj, lbl_804D66A0->models[0], 0);
+    lbl_80479A98.x28 = gobj;
+
+    if (jobj == NULL) {
+        child = NULL;
+    } else {
+        child = jobj->child;
+    }
+    if (child == NULL) {
+        node = NULL;
+    } else {
+        node = child->child;
+    }
+
+    lbl_80479A98.x2C[0] = node;
+    if (node->next != NULL) {
+        node = node->next;
+    }
+    lbl_80479A98.x2C[1] = node;
+    if (node->next != NULL) {
+        node = node->next;
+    }
+    lbl_80479A98.x2C[2] = node;
+    if (node->next != NULL) {
+        node = node->next;
+    }
+    lbl_80479A98.x2C[3] = node;
+    if (node->next != NULL) {
+        node = node->next;
+    }
+    lbl_80479A98.x2C[4] = node;
+    if (node->next != NULL) {
+        node = node->next;
+    }
+    lbl_80479A98.x2C[5] = node;
+    if (node->next != NULL) {
+        node = node->next;
+    }
+    lbl_80479A98.x2C[6] = node;
+    if (node->next != NULL) {
+        node = node->next;
+    }
+    lbl_80479A98.x2C[7] = node;
+    if (node->next != NULL) {
+        node = node->next;
+    }
+    lbl_80479A98.x2C[8] = node;
+    if (node->next != NULL) {
+        node = node->next;
+    }
+    lbl_80479A98.x2C[9] = node;
+
+    lbl_80479A98.x70 = lbl_80479A98.x1C;
+
+    if (jobj == NULL) {
+        child = NULL;
+    } else {
+        child = jobj->child;
+    }
+    if (child == NULL) {
+        next = NULL;
+    } else {
+        next = child->next;
+    }
+
+    if (next == NULL) {
+        child = NULL;
+    } else {
+        child = next->child;
+    }
+    lbl_80479A98.x54 = child;
+
+    if (lbl_80479A98.x54 == NULL) {
+        child = NULL;
+    } else {
+        child = lbl_80479A98.x54->next;
+    }
+    lbl_80479A98.x58 = child;
+
+    if (lbl_80479A98.x58 == NULL) {
+        child = NULL;
+    } else {
+        child = lbl_80479A98.x58->next;
+    }
+    lbl_80479A98.x5C = child;
+
+    {
+        u16 val = lbl_80479A98.x1E;
+        lbl_80479A98.x6C =
+            ((0xA - ((val / 100) % 10)) * 5) % 50;
+        lbl_80479A98.x68 =
+            ((0xA - ((val / 10) % 10)) * 5) % 50;
+        lbl_80479A98.x64 =
+            ((0xA - (val % 10)) * 5) % 50;
+    }
+    HSD_JObjReqAnimAll(lbl_80479A98.x5C, (f32) lbl_80479A98.x6C);
+    HSD_JObjReqAnimAll(lbl_80479A98.x58, (f32) lbl_80479A98.x68);
+    HSD_JObjReqAnimAll(lbl_80479A98.x54, (f32) lbl_80479A98.x64);
+    for (i = 10; i > 0; i--) {
+        if (i > lbl_80479A98.x70) {
+            HSD_JObjSetFlags(lbl_80479A98.x2C[i - 1], 0x10);
+        } else {
+            HSD_JObjClearFlags(lbl_80479A98.x2C[i - 1], 0x10);
+        }
+    }
+    HSD_JObjAnimAll(jobj);
+
+    gobj = GObj_Create(0xE, 0xF, 0);
+    jobj = HSD_JObjLoadJoint(lbl_804D66A4->models[0]->joint);
+    lbl_804D66E0.x0 = jobj;
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xB, 0);
+    HSD_GObj_SetupProc(gobj, fn_8019F6EC, 0);
+    gm_8016895C(jobj, lbl_804D66A4->models[0], 0);
+    HSD_JObjReqAnimAll(jobj, 0.0f);
+    HSD_JObjAnimAll(jobj);
+
+    gobj = GObj_Create(0xE, 0xF, 0);
+    jobj = HSD_JObjLoadJoint(lbl_804D66A8->models[0]->joint);
+    lbl_804D66E8 = jobj;
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xB, 0);
+    HSD_JObjSetScaleX(jobj, 2.0f);
+    HSD_JObjSetScaleY(jobj, 2.0f);
+    HSD_JObjSetScaleZ(jobj, 2.0f);
+
+    if (lbl_804D66E0.x0 == NULL) {
+        child = NULL;
+    } else {
+        child = lbl_804D66E0.x0->child;
+    }
+    if (child == NULL) {
+        next = NULL;
+    } else {
+        next = child->child;
+    }
+    if (next == NULL) {
+        node = NULL;
+    } else {
+        node = next->child;
+    }
+    lb_8000C1C0(jobj, node);
+
+    if (lbl_804D66E0.x0 == NULL) {
+        child = NULL;
+    } else {
+        child = lbl_804D66E0.x0->child;
+    }
+    if (child == NULL) {
+        next = NULL;
+    } else {
+        next = child->child;
+    }
+    if (next == NULL) {
+        node = NULL;
+    } else {
+        node = next->child;
+    }
+    lb_8000C290(jobj, node);
+
+    gobj = GObj_Create(0xE, 0xF, 0);
+    jobj = HSD_JObjLoadJoint(lbl_804D66AC);
+    lbl_804D66B8 = jobj;
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xB, 0);
+
+    switch (gm_801A4310()) {
+    case 3:
+        char_idx = gm_80160474(char_kind, MJ_CLASSIC);
+        break;
+    case 4:
+        char_idx = gm_80160474(char_kind, MJ_ADVENTURE);
+        break;
+    default:
+        char_idx = gm_80160474(char_kind, MJ_ALLSTAR);
+        break;
+    }
+
+    if (jobj == NULL) {
+        child = NULL;
+    } else {
+        child = jobj->child;
+    }
+
+    HSD_JObjSetTranslateX(child, un_803060BC(char_idx, 0));
+    HSD_JObjSetTranslateY(child, un_803060BC(char_idx, 1));
+    HSD_JObjSetTranslateZ(child, un_803060BC(char_idx, 2));
+    HSD_JObjSetRotationY(child,
+                         0.017453292f * un_803060BC(char_idx, 5));
+    f = un_803060BC(char_idx, 4);
+    scale = un_803060BC(char_idx, 3) / f;
+    HSD_JObjSetScaleX(child, scale);
+    HSD_JObjSetScaleY(child, scale);
+    HSD_JObjSetScaleZ(child, scale);
+    HSD_JObjSetScaleX(jobj, 2.0f);
+    HSD_JObjSetScaleY(jobj, 2.0f);
+    HSD_JObjSetScaleZ(jobj, 2.0f);
+
+    lb_8000C1C0(jobj, lbl_804D66E8);
+    lb_8000C290(jobj, lbl_804D66E8);
+
+    HSD_SisLib_803A611C(0, cam_gobj, 9, 0x12, 0, 0xB, 0, 0x13);
+    HSD_SisLib_803A62A0(0, "SdIntro.dat", "SIS_IntroData");
+    lbl_80479A98.x24 = HSD_SisLib_803A6754(0, 0);
+    lbl_80479A98.x24->font_size.x = 0.1f;
+    lbl_80479A98.x24->font_size.y = 0.1f;
+    lbl_80479A98.x24->default_alignment = 2;
+    HSD_SisLib_803A6B98(lbl_80479A98.x24, 240.0f, 176.0f, " ");
+    if ((u8) lbl_80479A98.x20 == 0) {
+        lbAudioAx_800237A8(0x9C42, 0x7F, 0x40);
+        lbAudioAx_80023F28(5);
+    }
+}
 
 /// #gm_801A0A10_OnEnter
 
