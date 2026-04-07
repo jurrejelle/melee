@@ -423,8 +423,52 @@ void lb_80011B74(HSD_DObj* dobj, u32 flags)
     dobj->mobj->rendermode |= flags;
 }
 
-/// #lb_80011C18
+#pragma inline_depth(2)
+void lb_80011C18(HSD_JObj* jobj, u32 flags)
+{
+    HSD_JObj* cur;
 
+    cur = jobj->child;
+    if (cur != NULL) {
+        if (cur->child != NULL) {
+            lb_80011C18(cur->child, flags);
+        }
+        if (cur->next != NULL) {
+            lb_80011C18(cur->next, flags);
+        }
+        if (checkJObjFlags(cur)) {
+            if (cur->u.dobj != NULL) {
+                lb_80011B74(cur->u.dobj, flags);
+            }
+        }
+    }
+
+    cur = jobj->next;
+    if (cur != NULL) {
+        if (cur->child != NULL) {
+            lb_80011C18(cur->child, flags);
+        }
+        if (cur->next != NULL) {
+            lb_80011C18(cur->next, flags);
+        }
+        if (checkJObjFlags(cur)) {
+            if (cur->u.dobj != NULL) {
+                lb_80011B74(cur->u.dobj, flags);
+            }
+        }
+    }
+
+    if (checkJObjFlags(jobj)) {
+        HSD_DObj* dobj = jobj->u.dobj;
+        if (dobj != NULL) {
+            if (dobj->next != NULL) {
+                lb_80011B74(dobj->next, flags);
+            }
+            dobj->mobj->rendermode |= flags;
+        }
+    }
+}
+#pragma inline_depth(8)
 /**
  * @note: The number of HSD_JObjs that get passed into arg1 is the number of
  * variable arguments passed until -1 is passed.
