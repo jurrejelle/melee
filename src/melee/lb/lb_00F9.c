@@ -1,6 +1,7 @@
 #include "lb_00F9.static.h"
 
 #include "math.h"
+#include "math_ppc.h"
 #include "stdarg.h"
 #include "stddef.h"
 
@@ -112,7 +113,126 @@ void lb_8000FD18(DynamicsDesc* desc)
     desc->data = NULL;
 }
 
-/// #lb_8000FD48
+void lb_8000FD48(HSD_JObj* jobj, DynamicsDesc* desc, size_t max_count)
+{
+    struct DynamicsData* prev;
+    PAD_STACK(0x20);
+
+    if (desc == NULL) {
+        return;
+    }
+
+    if (jobj == NULL) {
+        desc->data = NULL;
+        return;
+    }
+
+    desc->count = 0;
+
+    while ((s32) desc->count < (s32) max_count) {
+        struct DynamicsData* entry;
+
+        if ((s32) desc->count == 0) {
+            entry = cur_data;
+            if (entry == NULL) {
+                entry = NULL;
+            } else {
+                cur_data = entry->next;
+                entry->next = NULL;
+            }
+            prev = entry;
+            desc->data = prev;
+        } else {
+            entry = cur_data;
+            if (entry == NULL) {
+                entry = NULL;
+            } else {
+                cur_data = entry->next;
+                entry->next = NULL;
+            }
+            prev->next = entry;
+            prev = prev->next;
+        }
+
+        if (prev == NULL) {
+            return;
+        }
+
+        HSD_JObjSetMtxDirty(jobj);
+        HSD_JObjSetupMatrix(jobj);
+
+        prev->desc.ft_unk.jobj = jobj;
+        *(Quaternion*) &prev->desc.lb_unk0.unk_4 = jobj->rotate;
+        *(Vec3*) &prev->desc.lb_unk0.unk_20 = jobj->scale;
+        *(Vec3*) &prev->desc.lb_unk0.unk_14 = jobj->translate;
+        prev->desc.lb_unk0.unk_2C = jobj->mtx[0][3];
+        prev->desc.lb_unk0.unk_30 = jobj->mtx[1][3];
+        prev->desc.lb_unk0.unk_34 = jobj->mtx[2][3];
+        *(Quaternion*) &prev->desc.lb_unk0.unk_58 =
+            *(Quaternion*) &prev->desc.lb_unk0.unk_4;
+        prev->desc.lb_unk0.unk_38 = 1.0f;
+        prev->desc.lb_unk1.array[1].unk_0 = 0;
+        prev->desc.lb_unk1.array[1].unk_4 = 0;
+        prev->desc.lb_unk0.unk_44 = 0.0f;
+        prev->desc.lb_unk0.unk_8C = 0.0f;
+        prev->desc.lb_unk0.unk_48 = 0.0f;
+        prev->next = NULL;
+        prev->unk_94 = 0;
+
+        jobj = jobj->child;
+        desc->count++;
+    }
+
+    {
+        struct DynamicsData* cur = desc->data;
+        struct DynamicsData* next;
+
+        while ((next = cur->next) != NULL) {
+            f32 dx, dy, dz, dist_sq;
+
+            dx = cur->desc.lb_unk0.unk_2C - next->desc.lb_unk0.unk_2C;
+            dy = cur->desc.lb_unk0.unk_30 - next->desc.lb_unk0.unk_30;
+            dz = cur->desc.lb_unk0.unk_34 - next->desc.lb_unk0.unk_34;
+            dist_sq = dx * dx + dy * dy + dz * dz;
+            if (dist_sq > 0.0f) {
+                dist_sq = sqrtf(dist_sq);
+            }
+            cur->desc.lb_unk0.unk_48 = dist_sq;
+
+            next = cur->next;
+            {
+                f32 tx, ty, tz;
+
+                tx = next->desc.lb_unk0.unk_14;
+                if (tx < 0.0f) {
+                    tx = -tx;
+                }
+                ty = next->desc.lb_unk0.unk_18;
+                if (ty < 0.0f) {
+                    ty = -ty;
+                }
+                tz = next->desc.lb_unk0.unk_1C;
+                if (tz < 0.0f) {
+                    tz = -tz;
+                }
+
+                if (tz > ty) {
+                    if (tz > tx) {
+                        cur->desc.lb_unk0.unk_54 = -1;
+                    } else {
+                        cur->desc.lb_unk0.unk_54 = 0;
+                    }
+                } else if (ty > tx) {
+                    cur->desc.lb_unk0.unk_54 = 1;
+                } else {
+                    cur->desc.lb_unk0.unk_54 = 0;
+                }
+            }
+
+            cur = cur->next;
+        }
+    }
+}
 
 static inline struct lb_80011A50_t* inlineA0(void)
 {

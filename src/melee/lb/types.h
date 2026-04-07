@@ -502,19 +502,20 @@ struct lb_00F9_UnkDesc0 {
     /* 0x10 */ f32 unk_10;
     /* 0x14 */ f32 unk_14;
     /* 0x18 */ f32 unk_18;
-    /* 0x1C */ s32 unk_1C;
+    /* 0x1C */ f32 unk_1C;
     /* 0x20 */ s32 unk_20;
     /* 0x24 */ s32 unk_24;
     /* 0x28 */ s32 unk_28;
     /* 0x2C */ f32 unk_2C;
-    /* 0x30 */ s32 unk_30;
-    /* 0x34 */ s32 unk_34;
+    /* 0x30 */ f32 unk_30;
+    /* 0x34 */ f32 unk_34;
     /* 0x38 */ f32 unk_38;
-    /* 0x3C */ char pad_3C[0x48 - 0x3C];
+    /* 0x3C */ char pad_3C[0x44 - 0x3C];
+    /* 0x44 */ f32 unk_44;
     /* 0x48 */ f32 unk_48;
     /* 0x4C */ f32 unk_4C;
     /* 0x50 */ f32 unk_50;
-    /* 0x54 */ char pad_54[4];
+    /* 0x54 */ s32 unk_54;
     /* 0x58 */ s32 unk_58;
     /* 0x5C */ s32 unk_5C;
     /* 0x60 */ s32 unk_60;
@@ -548,8 +549,9 @@ STATIC_ASSERT(sizeof(union PolymorphicDesc) == 0x90);
 struct DynamicsData {
     union PolymorphicDesc desc;
     /* 0x90 */ struct DynamicsData* next;
-}; /* size = 0x94 */
-STATIC_ASSERT(sizeof(struct DynamicsData) == 0x94);
+    /* 0x94 */ s32 unk_94;
+}; /* size = 0x98 */
+STATIC_ASSERT(sizeof(struct DynamicsData) == 0x98);
 
 struct DynamicsDesc {
     /* +0 */ struct DynamicsData* data;
