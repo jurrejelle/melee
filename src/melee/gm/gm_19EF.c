@@ -164,7 +164,7 @@ static void fn_8019F1D0(void)
         ptr = &sp8[count];
         *ptr = '\0';
         while (count != 0) {
-            *(ptr - 1) = (char) ((rem % 10) + 0x30);
+            *((&sp8[count]) - 1) = (char) ((rem % 10) + 0x30);
             rem /= 10;
             ptr--;
             count--;
