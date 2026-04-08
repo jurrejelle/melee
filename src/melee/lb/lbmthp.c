@@ -277,8 +277,8 @@ s32 fn_8001EF5C(THPDecComp* data)
         OSRestoreInterrupts(intr);
 
         if (data->width == 0x280) {
-            THPDec_80331340(data->unk_98, data->unk_50,
-                            data->unk_54, data->unk_58);
+            THPDec_80331340(data->unk_98, data->unk_50, data->unk_54,
+                            data->unk_58, data->width);
             DCStoreRange(data->unk_50,
                          data->width * data->height);
             DCStoreRange(data->unk_54,
@@ -685,7 +685,7 @@ void lbMthp8001FAA0(const char* filename, int width, int height)
                              (s32) lbl_804335B8.unk94, context);
     if ((u16) lbl_804335B8.x6C == 0x280) {
         THPDec_80331340(decoded, lbl_804335B8.x20, lbl_804335B8.x44,
-                        lbl_804335B8.x68);
+                        lbl_804335B8.x68, lbl_804335B8.x6C);
     } else {
         THPDec_803313D0(decoded, lbl_804335B8.x20, lbl_804335B8.x44,
                         lbl_804335B8.x68);
