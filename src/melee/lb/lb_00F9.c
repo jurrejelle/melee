@@ -97,7 +97,7 @@ void lb_8000FA94(void)
     struct lb_80011A50_t* next2;
 
     for (i = 0; i < 0x140; i++) {
-        lb_804D63A0->entries[i].desc.ft_unk.jobj = NULL;
+        lb_804D63A0->entries[i].desc.lb_unk0.jobj = NULL;
         if (i < 0x13F) {
             next = &lb_804D63A0->entries[i] + 1;
         } else {
@@ -191,18 +191,17 @@ void lb_8000FD48(HSD_JObj* jobj, DynamicsDesc* desc, size_t max_count)
         HSD_JObjSetMtxDirty(jobj);
         HSD_JObjSetupMatrix(jobj);
 
-        prev->desc.ft_unk.jobj = jobj;
-        *(Quaternion*) &prev->desc.lb_unk0.unk_4 = jobj->rotate;
-        *(Vec3*) &prev->desc.lb_unk0.unk_20 = jobj->scale;
-        *(Vec3*) &prev->desc.lb_unk0.unk_14 = jobj->translate;
-        prev->desc.lb_unk0.unk_2C = jobj->mtx[0][3];
-        prev->desc.lb_unk0.unk_30 = jobj->mtx[1][3];
-        prev->desc.lb_unk0.unk_34 = jobj->mtx[2][3];
-        *(Quaternion*) &prev->desc.lb_unk0.unk_58 =
-            *(Quaternion*) &prev->desc.lb_unk0.unk_4;
-        prev->desc.lb_unk0.unk_38 = 1.0f;
-        prev->desc.lb_unk1.array[1].unk_0 = 0;
-        prev->desc.lb_unk1.array[1].unk_4 = 0;
+        prev->desc.lb_unk0.jobj = jobj;
+        prev->desc.lb_unk0.rotate = jobj->rotate;
+        prev->desc.lb_unk0.scale = jobj->scale;
+        prev->desc.lb_unk0.translate = jobj->translate;
+        prev->desc.lb_unk0.unk_2C.x = jobj->mtx[0][3];
+        prev->desc.lb_unk0.unk_2C.y = jobj->mtx[1][3];
+        prev->desc.lb_unk0.unk_2C.z = jobj->mtx[2][3];
+        prev->desc.lb_unk0.unk_58 = prev->desc.lb_unk0.rotate;
+        prev->desc.lb_unk0.unk_38.x = 1.0f;
+        prev->desc.lb_unk0.unk_38.y = 0.0f;
+        prev->desc.lb_unk0.unk_38.z = 0.0f;
         prev->desc.lb_unk0.unk_44 = 0.0f;
         prev->desc.lb_unk0.unk_8C = 0.0f;
         prev->desc.lb_unk0.unk_48 = 0.0f;
@@ -220,9 +219,9 @@ void lb_8000FD48(HSD_JObj* jobj, DynamicsDesc* desc, size_t max_count)
         while ((next = cur->next) != NULL) {
             f32 dx, dy, dz, dist_sq;
 
-            dx = cur->desc.lb_unk0.unk_2C - next->desc.lb_unk0.unk_2C;
-            dy = cur->desc.lb_unk0.unk_30 - next->desc.lb_unk0.unk_30;
-            dz = cur->desc.lb_unk0.unk_34 - next->desc.lb_unk0.unk_34;
+            dx = cur->desc.lb_unk0.unk_2C.x - next->desc.lb_unk0.unk_2C.x;
+            dy = cur->desc.lb_unk0.unk_2C.y - next->desc.lb_unk0.unk_2C.y;
+            dz = cur->desc.lb_unk0.unk_2C.z - next->desc.lb_unk0.unk_2C.z;
             dist_sq = dx * dx + dy * dy + dz * dz;
             if (dist_sq > 0.0f) {
                 dist_sq = sqrtf(dist_sq);
@@ -233,15 +232,15 @@ void lb_8000FD48(HSD_JObj* jobj, DynamicsDesc* desc, size_t max_count)
             {
                 f32 tx, ty, tz;
 
-                tx = next->desc.lb_unk0.unk_14;
+                tx = next->desc.lb_unk0.translate.x;
                 if (tx < 0.0f) {
                     tx = -tx;
                 }
-                ty = next->desc.lb_unk0.unk_18;
+                ty = next->desc.lb_unk0.translate.y;
                 if (ty < 0.0f) {
                     ty = -ty;
                 }
-                tz = next->desc.lb_unk0.unk_1C;
+                tz = next->desc.lb_unk0.translate.z;
                 if (tz < 0.0f) {
                     tz = -tz;
                 }
@@ -460,7 +459,7 @@ void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
         }
     }
 
-    parent_jobj = cur->desc.ft_unk.jobj->parent;
+    parent_jobj = cur->desc.lb_unk0.jobj->parent;
     if (parent_jobj != NULL) {
         HSD_JObjSetMtxDirty(parent_jobj);
         HSD_JObjSetupMatrix(parent_jobj);
@@ -469,7 +468,7 @@ void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
         PSMTXIdentity(parent_mtx);
     }
 
-    jobj = cur->desc.ft_unk.jobj;
+    jobj = cur->desc.lb_unk0.jobj;
 
     while (cur->next != NULL) {
         f32 angle_diff;
@@ -481,12 +480,11 @@ void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
         PSMTXConcat(parent_mtx, trans_mtx, bone_mtx);
 
         /* Build rotation from saved rotation (offset 0x58) */
-        lbVector_CreateEulerMatrix(temp_mtx,
-                                   (Vec3*) &cur->desc.lb_unk0.unk_58);
+        lbVector_CreateEulerMatrix(temp_mtx, &cur->desc.lb_unk0.unk_58);
         PSMTXConcat(bone_mtx, temp_mtx, constrained_mtx);
 
         /* Build rotation from jobj euler rotation */
-        lbVector_CreateEulerMatrix(temp_mtx, (Vec3*) &jobj->rotate);
+        lbVector_CreateEulerMatrix(temp_mtx, &jobj->rotate);
         PSMTXConcat(bone_mtx, temp_mtx, bone_mtx);
 
         /* Build scale matrix and concat */
@@ -495,26 +493,29 @@ void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
         PSMTXConcat(constrained_mtx, scale_mtx, constrained_mtx);
 
         /* Store world position */
-        cur->desc.lb_unk0.unk_2C = bone_mtx[0][3];
-        cur->desc.lb_unk0.unk_30 = bone_mtx[1][3];
-        cur->desc.lb_unk0.unk_34 = bone_mtx[2][3];
+        cur->desc.lb_unk0.unk_2C.x = bone_mtx[0][3];
+        cur->desc.lb_unk0.unk_2C.y = bone_mtx[1][3];
+        cur->desc.lb_unk0.unk_2C.z = bone_mtx[2][3];
 
         /* Compute natural bone direction */
         PSMTXMultVec(constrained_mtx, &jobj->child->translate, &natural_dir);
-        natural_dir.x -= cur->desc.lb_unk0.unk_2C;
-        natural_dir.y -= cur->desc.lb_unk0.unk_30;
-        natural_dir.z -= cur->desc.lb_unk0.unk_34;
+        natural_dir.x -= cur->desc.lb_unk0.unk_2C.x;
+        natural_dir.y -= cur->desc.lb_unk0.unk_2C.y;
+        natural_dir.z -= cur->desc.lb_unk0.unk_2C.z;
 
         /* Compute current bone direction */
         PSMTXMultVec(bone_mtx, &jobj->child->translate, &current_dir);
-        current_dir.x -= cur->desc.lb_unk0.unk_2C;
-        current_dir.y -= cur->desc.lb_unk0.unk_30;
-        current_dir.z -= cur->desc.lb_unk0.unk_34;
+        current_dir.x -= cur->desc.lb_unk0.unk_2C.x;
+        current_dir.y -= cur->desc.lb_unk0.unk_2C.y;
+        current_dir.z -= cur->desc.lb_unk0.unk_2C.z;
 
         /* Compute link direction (next world pos - current world pos) */
-        link_dir.x = cur->next->desc.lb_unk0.unk_2C - cur->desc.lb_unk0.unk_2C;
-        link_dir.y = cur->next->desc.lb_unk0.unk_30 - cur->desc.lb_unk0.unk_30;
-        link_dir.z = cur->next->desc.lb_unk0.unk_34 - cur->desc.lb_unk0.unk_34;
+        link_dir.x =
+            cur->next->desc.lb_unk0.unk_2C.x - cur->desc.lb_unk0.unk_2C.x;
+        link_dir.y =
+            cur->next->desc.lb_unk0.unk_2C.y - cur->desc.lb_unk0.unk_2C.y;
+        link_dir.z =
+            cur->next->desc.lb_unk0.unk_2C.z - cur->desc.lb_unk0.unk_2C.z;
 
         lbVector_Normalize(&natural_dir);
         lbVector_Normalize(&current_dir);
@@ -563,8 +564,7 @@ void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
             force_mag = 0.0f;
             if (lb_804D63B0 != NULL && first_active <= idx) {
                 struct DynamicsData* next_node = cur->next;
-                Vec3 next_pos =
-                    *(Vec3*) &next_node->desc.lb_unk0.unk_2C;
+                Vec3 next_pos = next_node->desc.lb_unk0.unk_2C;
                 Vec3 force_dir;
                 force_mag = lb_800103B8(&next_pos, &force_dir);
                 {
@@ -585,9 +585,9 @@ void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
 
             /* Apply angular velocity rotation */
             if (0.0 != cur->desc.lb_unk0.unk_44) {
-                lbVector_RotateAboutUnitAxis(
-                    &link_dir, (Vec3*) &cur->desc.lb_unk0.unk_38,
-                    cur->desc.lb_unk0.unk_44);
+                lbVector_RotateAboutUnitAxis(&link_dir,
+                                             &cur->desc.lb_unk0.unk_38,
+                                             cur->desc.lb_unk0.unk_44);
             }
 
             /* Apply max angle constraint */
@@ -640,18 +640,18 @@ void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
                         f32 bone_len = cur->desc.lb_unk0.unk_48;
                         Vec3 next_bone_pos;
                         next_bone_pos.x =
-                            link_dir.x * bone_len + cur->desc.lb_unk0.unk_2C;
+                            link_dir.x * bone_len + cur->desc.lb_unk0.unk_2C.x;
                         next_bone_pos.y =
-                            link_dir.y * bone_len + cur->desc.lb_unk0.unk_30;
+                            link_dir.y * bone_len + cur->desc.lb_unk0.unk_2C.y;
                         next_bone_pos.z =
-                            link_dir.z * bone_len + cur->desc.lb_unk0.unk_34;
+                            link_dir.z * bone_len + cur->desc.lb_unk0.unk_2C.z;
 
                         coll_dir.x =
-                            collider->position.x - cur->desc.lb_unk0.unk_2C;
+                            collider->position.x - cur->desc.lb_unk0.unk_2C.x;
                         coll_dir.y =
-                            collider->position.y - cur->desc.lb_unk0.unk_30;
+                            collider->position.y - cur->desc.lb_unk0.unk_2C.y;
                         coll_dir.z =
-                            collider->position.z - cur->desc.lb_unk0.unk_34;
+                            collider->position.z - cur->desc.lb_unk0.unk_2C.z;
 
                         {
                             f32 coll_dist = coll_dir.z * coll_dir.z +
@@ -663,10 +663,10 @@ void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
 
                             if (coll_dist > collider->radius &&
                                 lbColl_80005C44(
-                                    (Vec3*) &cur->desc.lb_unk0.unk_2C,
-                                    &next_bone_pos, &collider->position,
-                                    &collision_point, 0.1f,
-                                    collider->radius) != 0) {
+                                    &cur->desc.lb_unk0.unk_2C, &next_bone_pos,
+                                    &collider->position, &collision_point,
+                                    0.1f, collider->radius) != 0)
+                            {
                                 f32 coll_angle =
                                     lbVector_Angle(&coll_dir, &link_dir);
                                 if (0.0 != coll_angle) {
@@ -711,9 +711,9 @@ void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
                     {
                         f32 bone_len = cur->desc.lb_unk0.unk_48;
                         f32 end_x =
-                            link_dir.x * bone_len + cur->desc.lb_unk0.unk_2C;
+                            link_dir.x * bone_len + cur->desc.lb_unk0.unk_2C.x;
                         f32 end_y =
-                            link_dir.y * bone_len + cur->desc.lb_unk0.unk_30;
+                            link_dir.y * bone_len + cur->desc.lb_unk0.unk_2C.y;
                         s32 floor_hit;
                         if (use_floor_fn != 0) {
                             floor_hit = lb_800103D8(
@@ -746,19 +746,17 @@ void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
                         s32 floor_hit2;
                         if (use_floor_fn != 0) {
                             floor_hit2 = lb_800103D8(
-                                &floor_point2, cur->desc.lb_unk0.unk_2C,
-                                (f32) (1.0 +
-                                       (f64) cur->desc.lb_unk0.unk_30),
-                                cur->desc.lb_unk0.unk_2C,
-                                cur->desc.lb_unk0.unk_30, pos_y);
+                                &floor_point2, cur->desc.lb_unk0.unk_2C.x,
+                                (f32) (1.0 + (f64) cur->desc.lb_unk0.unk_2C.y),
+                                cur->desc.lb_unk0.unk_2C.x,
+                                cur->desc.lb_unk0.unk_2C.y, pos_y);
                         } else {
                             sp8 = 0;
                             floor_hit2 = mpCheckFloor(
-                                cur->desc.lb_unk0.unk_2C,
-                                (f32) (1.0 +
-                                       (f64) cur->desc.lb_unk0.unk_30),
-                                cur->desc.lb_unk0.unk_2C,
-                                cur->desc.lb_unk0.unk_30, 0.1f,
+                                cur->desc.lb_unk0.unk_2C.x,
+                                (f32) (1.0 + (f64) cur->desc.lb_unk0.unk_2C.y),
+                                cur->desc.lb_unk0.unk_2C.x,
+                                cur->desc.lb_unk0.unk_2C.y, 0.1f,
                                 &floor_point2, &line_id2, &floor_flags2,
                                 &floor_normal2, -1, -1, -1, NULL, NULL);
                         }
@@ -773,27 +771,27 @@ void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
                         } else {
                             f32 bone_len = cur->desc.lb_unk0.unk_48;
                             f32 end_x2 = link_dir.x * bone_len +
-                                         cur->desc.lb_unk0.unk_2C;
+                                         cur->desc.lb_unk0.unk_2C.x;
                             f32 end_y2 = link_dir.y * bone_len +
-                                         cur->desc.lb_unk0.unk_30;
+                                         cur->desc.lb_unk0.unk_2C.y;
                             s32 floor_hit3;
                             if (use_floor_fn != 0) {
                                 floor_hit3 = lb_800103D8(
-                                    &floor_point2, cur->desc.lb_unk0.unk_2C,
-                                    cur->desc.lb_unk0.unk_30, end_x2, end_y2,
+                                    &floor_point2, cur->desc.lb_unk0.unk_2C.x,
+                                    cur->desc.lb_unk0.unk_2C.y, end_x2, end_y2,
                                     pos_y);
                             } else {
                                 sp8 = 0;
                                 floor_hit3 = mpCheckFloor(
-                                    cur->desc.lb_unk0.unk_2C,
-                                    cur->desc.lb_unk0.unk_30, end_x2, end_y2,
+                                    cur->desc.lb_unk0.unk_2C.x,
+                                    cur->desc.lb_unk0.unk_2C.y, end_x2, end_y2,
                                     0.1f, &floor_point2, &line_id2,
                                     &floor_flags2, &floor_normal2, -1, -1, -1,
                                     NULL, NULL);
                             }
                             if (floor_hit3 != 0) {
-                                f32 height_diff =
-                                    cur->desc.lb_unk0.unk_30 - floor_point2.y;
+                                f32 height_diff = cur->desc.lb_unk0.unk_2C.y -
+                                                  floor_point2.y;
                                 f32 horiz_sq;
                                 if (height_diff < 0.0f) {
                                     height_diff = -height_diff;
@@ -854,8 +852,8 @@ void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
                 }
                 if (ang_vel > 0.0) {
                     PSVECCrossProduct(&saved_dir, &link_dir,
-                                      (Vec3*) &cur->desc.lb_unk0.unk_38);
-                    lbVector_Normalize((Vec3*) &cur->desc.lb_unk0.unk_38);
+                                      &cur->desc.lb_unk0.unk_38);
+                    lbVector_Normalize(&cur->desc.lb_unk0.unk_38);
                 }
             }
 
@@ -889,8 +887,8 @@ void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
                 EulerToQuat(&euler_angles, &euler_quat);
                 HSD_QuatLib_8037EC4C(&angle_quat, &euler_quat, &result_quat);
                 PSMTXQuat(bone_mtx, &result_quat);
-                HSD_QuatLib_8037EB28(bone_mtx, (Vec3*) &euler_angles);
-                HSD_JObjSetRotation(jobj, (Quaternion*) &euler_angles);
+                HSD_QuatLib_8037EB28(bone_mtx, &euler_angles);
+                HSD_JObjSetRotation(jobj, &euler_quat);
                 if (!(jobj->flags & JOBJ_MTX_INDEP_SRT)) {
                     HSD_JObjSetMtxDirty(jobj);
                 }
@@ -915,7 +913,7 @@ void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
 
         /* Update parent matrix for next iteration */
         PSMTXConcat(parent_mtx, trans_mtx, parent_mtx);
-        lbVector_CreateEulerMatrix(temp_mtx, (Vec3*) &jobj->rotate);
+        lbVector_CreateEulerMatrix(temp_mtx, &jobj->rotate);
         PSMTXConcat(parent_mtx, temp_mtx, parent_mtx);
         PSMTXConcat(parent_mtx, scale_mtx, parent_mtx);
 
@@ -928,13 +926,13 @@ void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
     PSMTXTrans(temp_mtx, jobj->translate.x, jobj->translate.y,
                jobj->translate.z);
     PSMTXConcat(parent_mtx, temp_mtx, parent_mtx);
-    lbVector_CreateEulerMatrix(temp_mtx, (Vec3*) &jobj->rotate);
+    lbVector_CreateEulerMatrix(temp_mtx, &jobj->rotate);
     PSMTXConcat(parent_mtx, temp_mtx, parent_mtx);
     PSMTXScale(temp_mtx, jobj->scale.x, jobj->scale.y, jobj->scale.z);
     PSMTXConcat(parent_mtx, temp_mtx, parent_mtx);
-    cur->desc.lb_unk0.unk_2C = parent_mtx[0][3];
-    cur->desc.lb_unk0.unk_30 = parent_mtx[1][3];
-    cur->desc.lb_unk0.unk_34 = parent_mtx[2][3];
+    cur->desc.lb_unk0.unk_2C.x = parent_mtx[0][3];
+    cur->desc.lb_unk0.unk_2C.y = parent_mtx[1][3];
+    cur->desc.lb_unk0.unk_2C.z = parent_mtx[2][3];
 }
 
 static inline double inlineB0(void)
@@ -998,9 +996,9 @@ void lb_800115F4(void)
 
 void lb_80011710(DynamicsDesc* arg0, DynamicsDesc* arg1)
 {
-    int i;
     struct lb_00F9_UnkDesc1Inner* data0;
     struct DynamicsData* data1;
+    int i;
 
     arg1->pos.x = arg0->pos.x;
     arg1->pos.y = arg0->pos.y;
@@ -1013,25 +1011,10 @@ void lb_80011710(DynamicsDesc* arg0, DynamicsDesc* arg1)
         s32 tmp0, tmp1;
         data1->desc.lb_unk0.unk_4C = data0[i].unk_0;
         data1->desc.lb_unk0.unk_50 = data0[i].unk_4;
-        tmp0 = data0[i].unk_8;
-        tmp1 = data0[i].unk_C;
-        data1->desc.lb_unk0.unk_58 = tmp0;
-        data1->desc.lb_unk0.unk_5C = tmp1;
-        tmp0 = data0[i].unk_10;
-        tmp1 = data0[i].unk_14;
-        data1->desc.lb_unk0.unk_60 = tmp0;
-        data1->desc.lb_unk0.unk_64 = tmp1;
+        data1->desc.lb_unk0.unk_58 = data0[i].unk_8;
         data1->desc.lb_unk0.unk_68 = data0[i].unk_18;
-        tmp0 = data0[i].unk_1C;
-        tmp1 = data0[i].unk_20;
-        data1->desc.lb_unk0.unk_6C = tmp0;
-        data1->desc.lb_unk0.unk_70 = tmp1;
-        data1->desc.lb_unk0.unk_74 = data0[i].unk_24;
-        tmp0 = data0[i].unk_28;
-        tmp1 = data0[i].unk_2C;
-        data1->desc.lb_unk0.unk_78 = tmp0;
-        data1->desc.lb_unk0.unk_7C = tmp1;
-        data1->desc.lb_unk0.unk_80 = data0[i].unk_30;
+        data1->desc.lb_unk0.unk_6C = data0[i].unk_1C;
+        data1->desc.lb_unk0.unk_78 = data0[i].unk_28;
         data1->desc.lb_unk0.unk_84 = data0[i].unk_34;
         data1->desc.lb_unk0.unk_88 = data0[i].unk_38;
         if (data1->desc.lb_unk0.unk_48 != 0.0) {
@@ -1064,12 +1047,12 @@ bool lb_800117F4(DynamicsDesc* arg0, GXColor* arg1, GXColor* arg2, int arg3,
     GXSetLineWidth(12, GX_TO_ONE);
     GXBegin(GX_LINESTRIP, GX_VTXFMT0, arg0->count);
     for (cur = arg0->data, i = 0; cur != NULL; cur = cur->next, i++) {
-        HSD_JObjSetMtxDirtyInline(cur->desc.ft_unk.jobj);
-        HSD_JObjSetupMatrix(cur->desc.ft_unk.jobj);
+        HSD_JObjSetMtxDirtyInline(cur->desc.lb_unk0.jobj);
+        HSD_JObjSetupMatrix(cur->desc.lb_unk0.jobj);
         {
-            float x = cur->desc.ft_unk.jobj->mtx[0][3];
-            float y = cur->desc.ft_unk.jobj->mtx[1][3];
-            float z = cur->desc.ft_unk.jobj->mtx[2][3];
+            float x = cur->desc.lb_unk0.jobj->mtx[0][3];
+            float y = cur->desc.lb_unk0.jobj->mtx[1][3];
+            float z = cur->desc.lb_unk0.jobj->mtx[2][3];
             if (i < arg3) {
                 GXPosition3f32(x, y, z);
                 GXColor4u8(arg1->r / 2, arg1->g / 2, arg1->b / 2, arg1->a);

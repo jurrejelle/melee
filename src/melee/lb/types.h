@@ -474,17 +474,10 @@ STATIC_ASSERT(sizeof(struct Fighter_804D653C_t) == 8);
 struct lb_00F9_UnkDesc1Inner {
     /* 0x00 */ f32 unk_0;
     /* 0x04 */ f32 unk_4;  /* inferred */
-    /* 0x08 */ s32 unk_8;  /* inferred */
-    /* 0x0C */ s32 unk_C;  /* inferred */
-    /* 0x10 */ s32 unk_10; /* inferred */
-    /* 0x14 */ s32 unk_14; /* inferred */
+    /* 0x08 */ Quaternion unk_8;
     /* 0x18 */ f32 unk_18; /* inferred */
-    /* 0x1C */ s32 unk_1C; /* inferred */
-    /* 0x20 */ s32 unk_20; /* inferred */
-    /* 0x24 */ s32 unk_24; /* inferred */
-    /* 0x28 */ s32 unk_28; /* inferred */
-    /* 0x2C */ s32 unk_2C; /* inferred */
-    /* 0x30 */ s32 unk_30; /* inferred */
+    /* 0x1C */ Vec3 unk_1C; /* inferred */
+    /* 0x28 */ Vec3 unk_28; /* inferred */
     /* 0x34 */ f32 unk_34; /* inferred */
     /* 0x38 */ f32 unk_38; /* inferred */
 };
@@ -495,52 +488,30 @@ struct lb_00F9_UnkDesc1 {
 };
 
 struct lb_00F9_UnkDesc0 {
-    /* 0x00 */ f32 unk_0;
-    /* 0x04 */ f32 unk_4;
-    /* 0x08 */ s32 unk_8;
-    /* 0x0C */ f32 unk_C;
-    /* 0x10 */ f32 unk_10;
-    /* 0x14 */ f32 unk_14;
-    /* 0x18 */ f32 unk_18;
-    /* 0x1C */ f32 unk_1C;
-    /* 0x20 */ s32 unk_20;
-    /* 0x24 */ s32 unk_24;
-    /* 0x28 */ s32 unk_28;
-    /* 0x2C */ f32 unk_2C;
-    /* 0x30 */ f32 unk_30;
-    /* 0x34 */ f32 unk_34;
-    /* 0x38 */ f32 unk_38;
-    /* 0x3C */ char pad_3C[0x44 - 0x3C];
+    /* 0x00 */ HSD_JObj* jobj;
+    /* 0x04 */ Quaternion rotate;
+    /* 0x14 */ Vec3 translate;
+    /* 0x20 */ Vec3 scale;
+    /* 0x2C */ Vec3 unk_2C;
+    /* 0x38 */ Vec3 unk_38;
     /* 0x44 */ f32 unk_44;
     /* 0x48 */ f32 unk_48;
     /* 0x4C */ f32 unk_4C;
     /* 0x50 */ f32 unk_50;
     /* 0x54 */ s32 unk_54;
-    /* 0x58 */ s32 unk_58;
-    /* 0x5C */ s32 unk_5C;
-    /* 0x60 */ s32 unk_60;
-    /* 0x64 */ s32 unk_64;
+    /* 0x58 */ Quaternion unk_58;
     /* 0x68 */ f32 unk_68;
-    /* 0x6C */ s32 unk_6C;
-    /* 0x70 */ s32 unk_70;
-    /* 0x74 */ s32 unk_74;
-    int unk_78;
-    int unk_7C;
-    int unk_80;
-    f32 unk_84;
-    f32 unk_88;
-    f32 unk_8C;
-};
-
-struct ftDynamics_UnkDesc {
-    HSD_JObj* jobj;
+    /* 0x6C */ Vec3 unk_6C;
+    /* 0x78 */ Vec3 unk_78;
+    /* 0x84 */ f32 unk_84;
+    /* 0x88 */ f32 unk_88;
+    /* 0x8C */ f32 unk_8C;
 };
 
 union PolymorphicDesc {
     u8 _[0x90];
     struct lb_00F9_UnkDesc0 lb_unk0;
     struct lb_00F9_UnkDesc1 lb_unk1;
-    struct ftDynamics_UnkDesc ft_unk;
     struct AbsorbDesc absorb;
     struct HurtCapsule hurt;
 };
