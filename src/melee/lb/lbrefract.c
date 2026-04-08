@@ -497,6 +497,162 @@ static void fn_80022650(void)
     lbl_803BB0B0.dobj_info.disp = lbRefract_DObjDispReset;
 }
 
+s32 lbRefract_PObjLoad(HSD_PObj* pobj, HSD_PObjDesc* desc)
+{
+    s32 ret;
+    HSD_VtxDescList* verts;
+    s32 stride;
+    s32 pnmtx_offset;
+    s32 last_offset;
+
+    ret = hsdPObj.load(pobj, desc);
+    if (ret != 0) {
+        return ret;
+    }
+
+    if (!(HSD_PObjGetFlags(pobj) & 0x2000)) {
+        return 0;
+    }
+
+    verts = pobj->verts;
+    stride = 0;
+    pnmtx_offset = -1;
+    last_offset = -1;
+
+    while (verts != NULL && verts->attr != GX_VA_NULL) {
+        GXAttr attr = verts->attr;
+
+        if (attr >= GX_VA_CLR0) {
+            if (attr >= GX_POS_MTX_ARRAY) {
+                /* unsupported, skip */
+            } else if (attr >= GX_VA_TEX0) {
+                if (verts->attr_type == GX_INDEX16) {
+                    stride += 2;
+                } else {
+                    stride++;
+                }
+            } else {
+                if (verts->attr_type == GX_INDEX16) {
+                    stride += 2;
+                } else if (verts->attr_type >= GX_INDEX8) {
+                    stride++;
+                } else {
+                    switch (verts->comp_type) {
+                    case GX_RGB565:
+                    case GX_RGBA4:
+                        stride += 2;
+                        break;
+                    case GX_RGB8:
+                    case GX_RGBA6:
+                        stride += 3;
+                        break;
+                    case GX_RGBX8:
+                        stride += 4;
+                        break;
+                    }
+                }
+            }
+        } else if (attr == GX_VA_PNMTXIDX) {
+            pnmtx_offset = stride;
+            stride++;
+        } else if (attr >= GX_VA_POS) {
+            if (verts->attr_type == GX_INDEX16) {
+                stride += 2;
+            } else {
+                stride++;
+            }
+        } else {
+            last_offset = stride;
+            stride++;
+        }
+
+        verts++;
+    }
+
+    if (pnmtx_offset == -1 || last_offset < 2) {
+        return 0;
+    }
+
+    {
+        u8* display = pobj->display;
+        s32 offset = 0;
+        s32 total_bytes = pobj->n_display << 5;
+        u8* src = display + pnmtx_offset;
+        u8* dst = display + last_offset;
+
+        while (offset < total_bytes) {
+            u8* ptr;
+            s32 hi;
+            s32 count;
+            s32 copied;
+            u8 cmd;
+
+            cmd = display[offset];
+            offset++;
+
+            if ((cmd & 0xF8) == 0) {
+                break;
+            }
+
+            ptr = display + offset;
+            hi = ptr[0];
+            copied = 0;
+            count = ptr[1];
+            offset += 2;
+            count = (hi << 8) | count;
+
+            if (count > 0) {
+                if (count > 8) {
+                    s32 n = count - 8;
+                    s32 iters = (n + 7) >> 3;
+
+                    if (n > 0) {
+                        do {
+                            dst[offset] = src[offset];
+                            offset += stride;
+                            dst[offset] = src[offset];
+                            offset += stride;
+                            dst[offset] = src[offset];
+                            offset += stride;
+                            dst[offset] = src[offset];
+                            offset += stride;
+                            dst[offset] = src[offset];
+                            offset += stride;
+                            dst[offset] = src[offset];
+                            offset += stride;
+                            dst[offset] = src[offset];
+                            offset += stride;
+                            dst[offset] = src[offset];
+                            offset += stride;
+                            copied += 8;
+                        } while (--iters > 0);
+                    }
+                }
+
+                {
+                    u8* sp = src + offset;
+                    u8* dp = dst + offset;
+
+                    if (copied < count) {
+                        s32 remaining = count - copied;
+
+                        do {
+                            *dp = *sp;
+                            sp += stride;
+                            offset += stride;
+                            dp += stride;
+                        } while (--remaining > 0);
+                    }
+                }
+            }
+        }
+
+        DCFlushRange(display, total_bytes);
+    }
+
+    return 0;
+}
+
 static void fn_80022940(void)
 {
     hsdInitClassInfo(HSD_CLASS_INFO(&lbl_803BB0B0.pobj_info),
