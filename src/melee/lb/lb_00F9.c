@@ -86,38 +86,32 @@ void lb_8000F9F8(HSD_JObj* jobj)
 void lb_8000FA94(void)
 {
     int i;
-    int offset;
     struct DynamicsData* next;
     struct lb_80011A50_t* next2;
 
-    offset = 0;
     for (i = 0; i < 0x140; i++) {
-        *(s32*)((u8*)lb_804D63A0 + offset) = 0;
+        lb_804D63A0->entries[i].desc.ft_unk.jobj = NULL;
         if (i < 0x13F) {
-            next = (struct DynamicsData*)((u8*)lb_804D63A0 + offset + 0x98);
+            next = &lb_804D63A0->entries[i] + 1;
         } else {
             next = NULL;
         }
-        *(struct DynamicsData**)((u8*)lb_804D63A0 + offset + 0x90) = next;
-        offset += 0x98;
+        lb_804D63A0->entries[i].next = next;
     }
 
-    cur_data = (struct DynamicsData*)lb_804D63A0;
+    cur_data = &lb_804D63A0->entries[0];
 
-    offset = 0;
     for (i = 0; i < 8; i++) {
-        *((u8*)lb_804D63A8 + offset) = 0;
+        lb_804D63A8->entries[i].x0 = 0;
         if (i < 7) {
-            next2 =
-                (struct lb_80011A50_t*)((u8*)lb_804D63A8 + offset + 0x38);
+            next2 = &lb_804D63A8->entries[i] + 1;
         } else {
             next2 = NULL;
         }
-        *(struct lb_80011A50_t**)((u8*)lb_804D63A8 + offset + 0x34) = next2;
-        offset += 0x38;
+        lb_804D63A8->entries[i].next = next2;
     }
 
-    lb_804D63AC = (struct lb_80011A50_t*)lb_804D63A8;
+    lb_804D63AC = &lb_804D63A8->entries[0];
     lb_804D63B0 = NULL;
     lb_804D63B4 = 0;
 }
@@ -390,7 +384,6 @@ bool lb_800103D8(Vec3* vec, float x0, float x1, float x2, float x3,
     return false;
 }
 
-/// #lb_8001044C
 void lb_8001044C(DynamicsDesc* desc, void* colliders_raw, int num_colliders,
                  float pos_y, bool use_floor_fn, Fighter_Part part,
                  int first_active, bool ground_check)
@@ -1206,7 +1199,6 @@ void lb_80011C18(HSD_JObj* jobj, u32 flags)
  * @note: The number of HSD_JObjs that get passed into arg1 is the number of
  * variable arguments passed until -1 is passed.
  */
-/// #lb_80011E24
 int lb_80011E24(HSD_JObj* root, HSD_JObj** result, ...)
 {
     va_list ap;
@@ -1392,7 +1384,6 @@ void lb_800122C8(HSD_ImageDesc* image_desc, u16 origx, u16 origy, bool clear)
     HSD_ImageDescCopyFromEFB(image_desc, origx, origy, clear, true);
 }
 
-/// #lb_800122F0
 void lb_800122F0(HSD_ImageDesc* img, GXTexObj* tex, f32 factor)
 {
     GXColor color0, color1, color2;
@@ -1533,7 +1524,6 @@ void lb_8001285C(HSD_ImageDesc* image_desc, GXTexObj* tex_obj)
                    GX_LO_CLEAR);
 }
 
-/// #lb_80012994
 void lb_80012994(HSD_ImageDesc* img, u8 alpha, u8 blur_size, f32 x,
                  f32 y, f32 scale_x, f32 scale_y, f32 color_factor)
 {
@@ -1828,7 +1818,6 @@ void lb_800138D8(HSD_GObj* gobj, s8 arg1)
     data->x11 = arg1;
 }
 
-/// #lb_800138EC
 static Vec3 lb_803B72A8 = { 0.0F, 0.0F, 1.0F };
 static Vec3 lb_803B72B4 = { 0.0F, 0.0F, 0.0F };
 
@@ -2050,7 +2039,6 @@ bool lb_80014234(ColorOverlay* arg0)
 bool lb_80014258(HSD_GObj* gobj, void* arg1, FtCmd2 cmd)
 {
     ColorOverlay* co = arg1;
-    u8* ptr;
 
     if (co->x8_ptr1 != NULL) {
         s32 timer = co->x0_timer;
@@ -2059,8 +2047,8 @@ bool lb_80014258(HSD_GObj* gobj, void* arg1, FtCmd2 cmd)
         }
     }
 
-    while ((ptr = (u8*) co->x8_ptr1) != NULL && co->x0_timer == 0) {
-        u32 opcode = (*ptr >> 2) & 0x3F;
+    while (co->x8_ptr1 != NULL && co->x0_timer == 0) {
+        u32 opcode = co->x8_ptr1->unk.unk;
         if (!Command_Execute((CommandInfo*) co, opcode)) {
             if (opcode < 0x15U) {
                 u32 idx = opcode - 0xA;
@@ -2192,7 +2180,6 @@ bool lb_80014638(struct lb_80014638_arg0_t* arg0,
     return true;
 }
 
-/// #lb_80014770
 bool lb_80014770(Vec3* arg0, int arg1)
 {
     if ((u32) arg1 == 2U) {

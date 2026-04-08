@@ -569,12 +569,12 @@ struct lb_8000FD18_t {
 };
 
 struct lb_804D63A0_t {
-    /* +0 */ char pad_0[0xBE00];
+    /* +0 */ struct DynamicsData entries[0x140];
 };
 STATIC_ASSERT(sizeof(struct lb_804D63A0_t) == 0xBE00);
 
 struct lb_804D63A8_t {
-    /* +0 */ char pad_0[0x1C0];
+    /* +0 */ struct lb_80011A50_t entries[8];
 };
 STATIC_ASSERT(sizeof(struct lb_804D63A8_t) == 0x1C0);
 
