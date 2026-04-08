@@ -24,7 +24,8 @@ extern HSD_DObjInfo hsdDObj;
 /* 021F34 */ static void
 lbRefract_WriteTexCoordIA4(lbRefract_CallbackData* data, s32 row, u32 col,
                            u32 arg3, u8 arg4, u8 intensity, u8 alpha);
-/* 021F70 */ static UNK_RET fn_80021F70(UNK_PARAMS);
+/* 021F70 */ static void fn_80021F70(lbRefract_CallbackData* data, s32 row,
+                                    u32 col, s32 r, s32 g, u32 b);
 /* 021FB4 */ static void fn_80021FB4(lbRefract_CallbackData* data, s32 row,
                                      u32 col, u8 arg3, u8 arg4, u8 arg5,
                                      u8 arg6);
@@ -72,6 +73,20 @@ static void lbRefract_WriteTexCoordIA4(lbRefract_CallbackData* data, s32 row,
     base[offset] = alpha;
     base += offset;
     base[1] = intensity;
+}
+
+static void fn_80021F70(lbRefract_CallbackData* data, s32 row, u32 col,
+                        s32 r, s32 g, u32 b)
+{
+    u8* base;
+    s32 offset;
+
+    base = (u8*) data->buffer + ((col >> 2) * data->row_stride) +
+           ((row * 8) & 0xFFFFFFE0);
+    row &= 3;
+    offset = (row + ((col * 4) & 0xC)) * 2;
+    *(u16*) (base + offset) =
+        (b >> 3) | ((g * 8 & 0x7E0 & ~0xF800) | ((r << 8) & 0xF800));
 }
 
 static void fn_80021FB4(lbRefract_CallbackData* data, s32 row, u32 col,
