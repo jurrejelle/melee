@@ -12,13 +12,16 @@
 
 #include <math.h>
 #include <dolphin/gx/GXTexture.h>
+#include <baselib/class.h>
 #include <baselib/cobj.h>
 #include <baselib/debug.h>
 #include <baselib/dobj.h>
+#include <baselib/pobj.h>
 #include <baselib/state.h>
 #include <MetroTRK/intrinsics.h>
 
 extern HSD_DObjInfo hsdDObj;
+extern HSD_PObjInfo hsdPObj;
 
 /// @brief Write IA4 texture coordinate to refraction buffer.
 /* 021F34 */ static void
@@ -42,6 +45,9 @@ lbRefract_ReadTexCoordRGBA8(lbRefract_CallbackData* data, s32 row, u32 col,
 /// @brief Initialize refraction callback data for a texture buffer.
 /* 02219C */ s32 lbRefract_8002219C(lbRefract_CallbackData* data, s32 buffer,
                                     s32 format, u16 width, u16 height);
+
+static void fn_80022650(void);
+static void fn_80022940(void);
 
 static int lbl_804336D0[0x10];
 
@@ -237,6 +243,34 @@ static void lbRefract_DObjDispReset(HSD_DObj* dobj, Mtx vmtx, Mtx pmtx,
     GXSetTevDirect(0);
     GXSetNumIndStages(0);
     HSD_StateInvalidate(-1);
+}
+
+struct lbRefract_DataLayout {
+    /* 0x000 */ u8 x00[0x168];
+    /* 0x168 */ HSD_DObjInfo dobj_info;
+    /* 0x1AC */ HSD_PObjInfo pobj_info;
+    /* 0x1F4 */ char lib_name[24];
+    /* 0x20C */ char dobj_name[16];
+    /* 0x21C */ char pobj_name[16];
+};
+
+struct lbRefract_DataLayout lbl_803BB0B0 = {
+    { 0 },
+    { fn_80022650 },
+    { fn_80022940 },
+    "refract_class_library",
+    "refract_dobj",
+    "refract_pobj",
+};
+
+static void fn_80022650(void)
+{
+    hsdInitClassInfo(HSD_CLASS_INFO(&lbl_803BB0B0.dobj_info),
+                     HSD_CLASS_INFO(&hsdDObj),
+                     lbl_803BB0B0.lib_name,
+                     lbl_803BB0B0.dobj_name,
+                     sizeof(HSD_DObjInfo), sizeof(HSD_DObj));
+    lbl_803BB0B0.dobj_info.disp = lbRefract_DObjDispReset;
 }
 
 /// @brief Increment refraction effect user count.
