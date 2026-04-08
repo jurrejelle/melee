@@ -245,41 +245,36 @@ s32 lbRefract_8002219C(lbRefract_CallbackData* data, s32 buffer, s32 format,
 /// @brief Copy framebuffer to refraction source texture.
 void lbRefract_8002247C(HSD_CObj* cobj)
 {
-    s32 proj_type;
-
     if (lbl_804336D0[0] == 0) {
         return;
     }
 
-    proj_type = HSD_CObjGetProjectionType(cobj);
-
-    switch (proj_type) {
-    case 1: {
-        f32 scale = 0.5F;
-        f32 trans = 0.5F;
-        MTXLightPerspective((MtxPtr) ((char*) lbl_804336D0 + 0x10),
-                            M2C_FIELD(cobj, f32*, 0x40),
-                            M2C_FIELD(cobj, f32*, 0x44), scale, scale, scale,
-                            trans);
+    switch (HSD_CObjGetProjectionType(cobj)) {
+    case 1:
+        MTXLightPerspective(
+            (MtxPtr) ((char*) lbl_804336D0 + 0x10),
+            cobj->projection_param.perspective.fov,
+            cobj->projection_param.perspective.aspect, 0.5F, -0.5F, 0.5F,
+            0.5F);
         break;
-    }
-    case 2: {
-        f32 scale = 0.5F;
+    case 2:
         MTXLightFrustum(
             (MtxPtr) ((char*) lbl_804336D0 + 0x10),
-            M2C_FIELD(cobj, f32*, 0x40), M2C_FIELD(cobj, f32*, 0x44),
-            M2C_FIELD(cobj, f32*, 0x48), M2C_FIELD(cobj, f32*, 0x4c),
-            M2C_FIELD(cobj, f32*, 0x38), scale, 0.5F, scale, scale);
+            cobj->projection_param.frustum.top,
+            cobj->projection_param.frustum.bottom,
+            cobj->projection_param.frustum.left,
+            cobj->projection_param.frustum.right, cobj->near, 0.5F, -0.5F,
+            0.5F, 0.5F);
         break;
-    }
-    default: {
-        f32 scale = 0.5F;
-        MTXLightOrtho((MtxPtr) ((char*) lbl_804336D0 + 0x10),
-                      M2C_FIELD(cobj, f32*, 0x40), M2C_FIELD(cobj, f32*, 0x44),
-                      M2C_FIELD(cobj, f32*, 0x48), M2C_FIELD(cobj, f32*, 0x4c),
-                      scale, 0.5F, scale, scale);
+    case 3:
+    default:
+        MTXLightOrtho(
+            (MtxPtr) ((char*) lbl_804336D0 + 0x10),
+            cobj->projection_param.ortho.top,
+            cobj->projection_param.ortho.bottom,
+            cobj->projection_param.ortho.left,
+            cobj->projection_param.ortho.right, 0.5F, -0.5F, 0.5F, 0.5F);
         break;
-    }
     }
 }
 
