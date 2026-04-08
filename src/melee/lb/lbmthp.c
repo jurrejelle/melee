@@ -15,7 +15,76 @@
 #include <melee/lb/lbanim.h>
 #include <melee/lb/types.h>
 
-/// #fn_8001E910
+void fn_8001E910(int arg0, int arg1, void* arg2, bool cancelflag)
+{
+    s32 tick_diff;
+    s32 var_r0;
+    s32 var_r4;
+    u32 tick;
+    BOOL intr;
+
+    if (cancelflag != 0) {
+        __assert("lbmthp.c", 0x148U, "!cancelflag");
+    }
+    tick_diff = OSGetTick() - lbl_804333E0.unk_13C;
+    lbl_804333E0.unk_134 = tick_diff;
+    lbl_804333E0.unk_130 = tick_diff >> 0x1F;
+    lbl_804333E0.unk_108 += 1;
+    if ((u32) lbl_804333E0.unk_74 != 0U) {
+        lbl_804333E0.unk_120 += lbl_804333E0.unk_124;
+    } else {
+        lbl_804333E0.unk_120 = lbl_804333E0.unk_20;
+    }
+    if ((u32) lbl_804333E0.unk_8C == 0) {
+        var_r0 = lbl_804333E0.unk_104 - 1;
+    } else {
+        var_r0 = lbl_804333E0.unk_8C - 1;
+    }
+    lbl_804333E0.unk_124 = *(u32*) lbl_804333E0.unk_4C[var_r0];
+    if (((u32) lbl_804333E0.unk_90 != (u32) lbl_804333E0.unk_8C) &&
+        ((s32) lbl_804333E0.unk_70 != 0))
+    {
+        intr = OSDisableInterrupts();
+        tick = OSGetTick();
+        lbl_804333E0.unk_13C = tick;
+        var_r4 = 0;
+        lbl_804333E0.unk_138 = 0;
+        if ((u32) lbl_804333E0.unk_74 != (u32) lbl_804333E0.unk_40) {
+            if ((u32) lbl_804333E0.unk_124 == 0U) {
+                OSReport("filnum = %d, ofs = %d, by sugano.",
+                         lbl_804333E0.unk_128, lbl_804333E0.unk_120);
+                __assert("lbmthp.c", 0x121U,
+                         "(u32)streamPlayer->currPackedSize != 0");
+            }
+            HSD_DevComRequest(
+                lbl_804333E0.unk_128, lbl_804333E0.unk_120,
+                (uintptr_t) lbl_804333E0.unk_4C[lbl_804333E0.unk_8C],
+                (lbl_804333E0.unk_124 + 0x1F) & 0xFFFFFFE0,
+                0x21, 1, fn_8001E910, NULL);
+            lbl_804333E0.unk_74 += 1;
+            if (((u32) lbl_804333E0.unk_74 == (u32) lbl_804333E0.unk_40) &&
+                ((s32) lbl_804333E0.unk_68 != 0))
+            {
+                lbl_804333E0.unk_74 = 0U;
+            }
+            {
+                u32 var_r3 = lbl_804333E0.unk_8C + 1;
+                if (var_r3 >= (u32) lbl_804333E0.unk_104) {
+                    var_r3 = 0;
+                }
+                lbl_804333E0.unk_8C = var_r3;
+            }
+            var_r4 = 1;
+            lbl_804333E0.unk_110 = 1;
+        }
+        if (var_r4 == 0) {
+            lbl_804333E0.unk_110 = 0;
+        }
+        OSRestoreInterrupts(intr);
+        return;
+    }
+    lbl_804333E0.unk_110 = 0;
+}
 
 s32 fn_8001EB14(THPDecComp* data, const char* path)
 {
