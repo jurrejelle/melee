@@ -1480,7 +1480,10 @@ void lb_800122F0(HSD_ImageDesc* img, GXTexObj* tex, f32 factor)
 void lb_8001271C(GXTexObj* arg0, float x0, float arg2, float tex_width,
                  float tex_height, float scale_x, float scale_y)
 {
-    f32 s, t;
+    f32 t;
+    f32 new_var;
+    f32 s;
+    f32 new_var2;
     f32 w, h, y0, x1, y_sum, y1;
     PAD_STACK(8);
 
@@ -1493,15 +1496,19 @@ void lb_8001271C(GXTexObj* arg0, float x0, float arg2, float tex_width,
     y0 = -arg2;
     GXPosition2f32(x0, y0);
     x1 = x0 + w;
-    y_sum = arg2 + h;
-    GXTexCoord2f32(0.0f, 0.0f);
+    new_var = arg2;
+    y_sum = new_var + h;
+    GXTexCoord2f32(0.0f, new_var2 = 0.0f);
     GXPosition2f32(x1, y0);
+    if ((!x1) && (!x1)) {
+    }
     GXTexCoord2f32(s, 0.0f);
     y1 = -y_sum;
     GXPosition2f32(x1, y1);
     GXTexCoord2f32(s, t);
     GXPosition2f32(x0, y1);
-    GXTexCoord2f32(0.0f, t);
+    y1 = new_var2;
+    GXTexCoord2f32(y1, t);
     GXEnd();
 }
 
