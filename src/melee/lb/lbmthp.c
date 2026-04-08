@@ -4,13 +4,85 @@
 #include "baselib/video.h"
 #include "lb/lbfile.h"
 
+#include <Runtime/runtime.h>
+#include <MSL/string.h>
 #include <dolphin/dvd.h>
 #include <dolphin/gx/GXTexture.h>
+#include <dolphin/os/OSCache.h>
+#include <sysdolphin/baselib/debug.h>
+#include <sysdolphin/baselib/devcom.h>
 #include <sysdolphin/baselib/sobjlib.h>
 #include <melee/lb/lbanim.h>
 #include <melee/lb/types.h>
 
-/// #fn_8001E910
+void fn_8001E910(int arg0, int arg1, void* arg2, bool cancelflag)
+{
+    s32 tick_diff;
+    s32 var_r0;
+    s32 var_r4;
+    u32 tick;
+    BOOL intr;
+
+    HSD_ASSERT(0x148, !cancelflag);
+
+    tick_diff = OSGetTick() - Movieplayer.unk_13C;
+    Movieplayer.unk_134 = tick_diff;
+    Movieplayer.unk_130 = tick_diff >> 0x1F;
+    Movieplayer.unk_108 += 1;
+    if ((u32) Movieplayer.unk_74 != 0U) {
+        Movieplayer.unk_120 += Movieplayer.currPackedSize;
+    } else {
+        Movieplayer.unk_120 = Movieplayer.unk_20;
+    }
+    if ((u32) Movieplayer.unk_8C == 0) {
+        var_r0 = Movieplayer.unk_104 - 1;
+    } else {
+        var_r0 = Movieplayer.unk_8C - 1;
+    }
+    Movieplayer.currPackedSize = *(u32*) Movieplayer.unk_4C[var_r0];
+    if (((u32) Movieplayer.unk_90 != (u32) Movieplayer.unk_8C) &&
+        ((s32) Movieplayer.unk_70 != 0))
+    {
+        intr = OSDisableInterrupts();
+        tick = OSGetTick();
+        Movieplayer.unk_13C = tick;
+        var_r4 = 0;
+        Movieplayer.unk_138 = 0;
+        if ((u32) Movieplayer.unk_74 != (u32) Movieplayer.unk_40) {
+            struct lbl_804333E0_t streamPlayer = Movieplayer;
+            HSD_ASSERTREPORT(0x121, (u32) streamPlayer.currPackedSize != 0,
+                             "filnum = %d, ofs = %d, by sugano.",
+                             Movieplayer.unk_128, Movieplayer.unk_120);
+
+            HSD_DevComRequest(
+                Movieplayer.unk_128, Movieplayer.unk_120,
+                (uintptr_t) Movieplayer.unk_4C[Movieplayer.unk_8C],
+                (Movieplayer.currPackedSize + 0x1F) & 0xFFFFFFE0, 0x21, 1,
+                fn_8001E910, NULL);
+            Movieplayer.unk_74 += 1;
+            if (((u32) Movieplayer.unk_74 == (u32) Movieplayer.unk_40) &&
+                ((s32) Movieplayer.unk_68 != 0))
+            {
+                Movieplayer.unk_74 = 0U;
+            }
+            {
+                u32 var_r3 = Movieplayer.unk_8C + 1;
+                if (var_r3 >= (u32) Movieplayer.unk_104) {
+                    var_r3 = 0;
+                }
+                Movieplayer.unk_8C = var_r3;
+            }
+            var_r4 = 1;
+            Movieplayer.unk_110 = 1;
+        }
+        if (var_r4 == 0) {
+            Movieplayer.unk_110 = 0;
+        }
+        OSRestoreInterrupts(intr);
+        return;
+    }
+    Movieplayer.unk_110 = 0;
+}
 
 s32 fn_8001EB14(THPDecComp* data, const char* path)
 {
@@ -52,6 +124,7 @@ s32 fn_8001EBF0(THPDecComp* data)
     u32 unk_104_val;
     u32 wh;
     u32 wh_div4;
+    PAD_STACK(16);
 
     data->unk_104 = 0x20;
 
@@ -119,9 +192,112 @@ s32 fn_8001EBF0(THPDecComp* data)
     return size;
 }
 
-/// #fn_8001ECF4
+void fn_8001ECF4(THPDecComp* data, void* buf)
+{
+    u32 y_size;
+    u32 uv_size;
+    u32 var_r24;
+    u32 var_r25;
+    u8* csizep;
+    u8* var_r29;
+    PAD_STACK(8);
 
-/// #fn_8001EF5C
+    data->unk_4C = (u32*) buf;
+    y_size = data->width * data->height;
+    data->unk_64 = 0;
+    uv_size = y_size >> 2U;
+    var_r29 = (u8*) buf + (((data->unk_104 * 4) + 0x1F) & 0xFFFFFFE0);
+    if (((s32) data->unk_6C != 0) && ((s32) data->unk_11C != 0)) {
+        var_r24 = data->unk_28;
+        csizep = (u8*) &data->unk_28;
+        var_r25 = 0;
+        data->unk_120 = data->unk_20;
+        for (; var_r25 < (u32) data->unk_104; var_r25++) {
+            data->unk_4C[var_r25] = (u32) var_r29;
+            if (var_r24 == 0) {
+                OSReport("by sugano & yoshiki.\n");
+                OSReport("base %x\n", var_r29);
+                OSReport("size %d\n", var_r24);
+                OSReport("count %d\n", var_r25);
+                OSReport("csizep %x\n", csizep);
+                OSReport("[LbMthp] magic = %s\n", data);
+                OSReport("[LbMthp] version = %d\n", data->unk_08);
+                OSReport("[LbMthp] bufSize = %d\n", data->unk_0C);
+                OSReport("[LbMthp] xSize = %d\n", data->unk_10);
+                OSReport("[LbMthp] ySize = %d\n", data->unk_14);
+                OSReport("[LbMthp] framerate = %d\n", data->unk_18);
+                OSReport("[LbMthp] numFrames = %d\n", data->unk_1C);
+                OSReport("[LbMthp] firstFrame = %d\n", data->unk_20);
+                OSReport("[LbMthp] frameOffsets = %d\n", data->unk_24);
+                OSReport("[LbMthp] firstFrameSize = %d\n", data->unk_28);
+                HSD_ASSERT(0x10A, NULL);
+            }
+            lbFile_800161C4(data->unk_128, data->unk_120,
+                            (u32) var_r29,
+                            (var_r24 + 0x1F) & 0xFFFFFFE0, 0x21, 1);
+            csizep = var_r29;
+            data->unk_120 += var_r24;
+            var_r24 = *(u32*) var_r29;
+            var_r29 = var_r29 + data->unk_100;
+        }
+        data->unk_74 = var_r25;
+        data->currPackedSize = var_r24;
+        if ((u32) data->unk_74 >= (u32) data->unk_40) {
+            data->unk_74 = 0;
+        }
+        data->unk_8C = 0;
+        {
+            s32 temp = data->unk_104 - 1;
+            data->unk_108 = temp;
+            data->unk_10C = temp;
+        }
+    }
+    data->unk_50 = var_r29;
+    DCInvalidateRange(var_r29, y_size);
+    var_r29 = var_r29 + y_size;
+    data->unk_54 = var_r29;
+    DCInvalidateRange(var_r29, uv_size);
+    var_r29 = var_r29 + uv_size;
+    data->unk_58 = var_r29;
+    DCInvalidateRange(var_r29, uv_size);
+    data->unk_98 = (s32) (var_r29 + uv_size);
+}
+
+s32 fn_8001EF5C(THPDecComp* data)
+{
+    s32 spC;
+    BOOL intr;
+
+    if ((u32) data->unk_94 != data->unk_90) {
+        intr = OSDisableInterrupts();
+        data->unk_98 = THPVideoDecode(
+            &data->unk_A8, &spC, data->unk_98,
+            data->unk_4C[data->unk_90] + 4,
+            &data->unk_9C);
+        OSRestoreInterrupts(intr);
+
+        if (data->width == 0x280) {
+            THPDec_80331340(data->unk_98, data->unk_50,
+                            data->unk_54, data->unk_58);
+            DCStoreRange(data->unk_50,
+                         data->width * data->height);
+            DCStoreRange(data->unk_54,
+                         (data->width * data->height) >> 2);
+            DCStoreRange(data->unk_58,
+                         (data->width * data->height) >> 2);
+        } else {
+            THPDec_803313D0(data->unk_98, data->unk_50,
+                            data->unk_54, data->unk_58);
+        }
+
+        intr = OSDisableInterrupts();
+        data->unk_94 = data->unk_90;
+        OSRestoreInterrupts(intr);
+        return fn_8001F13C(data);
+    }
+
+    return data->unk_94;
+}
 
 s32 fn_8001F06C(THPDecComp* data)
 {
@@ -158,53 +334,202 @@ end:
     return 1;
 }
 
-/// #fn_8001F13C
+s32 fn_8001F13C(THPDecComp* streamPlayer)
+{
+    BOOL intr;
+
+    intr = OSDisableInterrupts();
+    if ((streamPlayer->unk_90 != streamPlayer->unk_8C) && (streamPlayer->unk_110 == 0) &&
+        (streamPlayer->unk_70 != 0))
+    {
+        streamPlayer->unk_13C = OSGetTick();
+        streamPlayer->unk_138 = 0;
+        if (streamPlayer->unk_74 != streamPlayer->unk_40) {
+            HSD_ASSERTREPORT(0x121, (u32) streamPlayer->currPackedSize != 0,
+                             "filnum = %d, ofs = %d, by sugano.\n",
+                             streamPlayer->unk_128, streamPlayer->unk_120);
+            HSD_DevComRequest(streamPlayer->unk_128, streamPlayer->unk_120,
+                              streamPlayer->unk_4C[streamPlayer->unk_8C],
+                              ALIGN_32(streamPlayer->currPackedSize), 0x21, 1,
+                              fn_8001E910, NULL);
+            streamPlayer->unk_74++;
+            if ((streamPlayer->unk_74 == streamPlayer->unk_40) && (streamPlayer->unk_68 != 0)) {
+                streamPlayer->unk_74 = 0;
+            }
+            {
+                unsigned int next = streamPlayer->unk_8C + 1;
+                if (next >= streamPlayer->unk_104) {
+                    next = 0;
+                }
+                streamPlayer->unk_8C = next;
+            }
+            streamPlayer->unk_110 = 1;
+        }
+    }
+    return OSRestoreInterrupts(intr);
+}
 
 s32 fn_8001F294(void);
 
-/// #fn_8001F2A4
+s32 fn_8001F2A4(void)
+{
+    s32 frame;
+    s32* rate_ptr;
+    s32 counter;
+    s32 count, ticks, total;
 
-/// #lbMthp_8001F410
+    /* Convert unk_80 ticks to frame number using rate table */
+    frame = 0;
+    rate_ptr = (s32*) Movieplayer.unk_12C;
+    counter = Movieplayer.unk_80;
+    if ((u32) rate_ptr != 0U) {
+        for (;; rate_ptr += 2) {
+            count = rate_ptr[0];
+            ticks = rate_ptr[1];
+            total = count * ticks;
+            if ((u32) counter >= (u32) total) {
+                frame += count;
+                counter -= total;
+                continue;
+            }
+            frame += (u32) counter / (u32) ticks;
+            break;
+        }
+    } else {
+        frame = counter;
+    }
+
+    if ((u32) Movieplayer.unk_78 == (u32) frame) {
+        Movieplayer.unk_80 += 1;
+
+        /* Recompute frame after increment */
+        frame = 0;
+        rate_ptr = (s32*) Movieplayer.unk_12C;
+        counter = Movieplayer.unk_80;
+        if ((u32) rate_ptr != 0U) {
+            for (;; rate_ptr += 2) {
+                count = rate_ptr[0];
+                ticks = rate_ptr[1];
+                total = count * ticks;
+                if ((u32) counter >= (u32) total) {
+                    frame += count;
+                    counter -= total;
+                    continue;
+                }
+                frame += (u32) counter / (u32) ticks;
+                break;
+            }
+        } else {
+            frame = counter;
+        }
+
+        if ((u32) Movieplayer.unk_40 == (u32) frame) {
+            if (Movieplayer.unk_68 != 0) {
+                Movieplayer.unk_80 = 0;
+            } else {
+                Movieplayer.unk_80 -= 1;
+                Movieplayer.unk_144 = 1;
+            }
+        }
+    }
+
+    /* Final conversion for frame change check */
+    rate_ptr = (s32*) Movieplayer.unk_12C;
+    frame = 0;
+    counter = Movieplayer.unk_80;
+    if ((u32) rate_ptr != 0U) {
+        for (;; rate_ptr += 2) {
+            count = rate_ptr[0];
+            ticks = rate_ptr[1];
+            total = count * ticks;
+            if ((u32) counter >= (u32) total) {
+                frame += count;
+                counter -= total;
+                continue;
+            }
+            frame += (u32) counter / (u32) ticks;
+            break;
+        }
+    } else {
+        frame = counter;
+    }
+
+    if ((u32) Movieplayer.unk_78 != (u32) frame) {
+        return fn_8001F06C((THPDecComp*) &Movieplayer);
+    }
+    return (s32) &Movieplayer;
+}
+
+void lbMthp_8001F410(const char* filename, void* rate_table, int buf_arg,
+                     int heap_size, int loop)
+{
+    s32 memoryRequired;
+    void* buf = (void*) buf_arg;
+
+    HSD_ASSERT(0x341, !Movieplayer.power);
+
+    Movieplayer.power = 1;
+    fn_8001EB14((THPDecComp*) &Movieplayer, filename);
+    Movieplayer.unk_12C = (s32) rate_table;
+    memoryRequired = fn_8001EBF0((THPDecComp*) &Movieplayer);
+    if (buf != NULL) {
+        HSD_ASSERT(0x350, heap_size >= memoryRequired);
+        Movieplayer.unk_140 = NULL;
+    } else {
+        buf = HSD_MemAlloc(memoryRequired);
+        Movieplayer.unk_140 = buf;
+    }
+    Movieplayer.unk_68 = loop;
+    fn_8001ECF4((THPDecComp*) &Movieplayer, buf);
+    Movieplayer.unk_144 = 0;
+    Movieplayer.unk_148 = 1;
+    OSCreateAlarm(&Movieplayer.unk_150);
+    OSSetPeriodicAlarm(
+        &Movieplayer.unk_150,
+        __cvt_dbl_usll((f64) (0.016666668f * (f32) (*(u32*) 0x800000F8 >> 2))),
+        __cvt_dbl_usll((f64) (0.016666668f * (f32) (*(u32*) 0x800000F8 >> 2))),
+        (OSAlarmHandler) fn_8001F2A4);
+}
 
 void lbMthp_8001F578(void)
 {
     BOOL intr;
     PAD_STACK(8);
     intr = OSDisableInterrupts();
-    lbl_804333E0.unk_90 = lbl_804333E0.unk_88;
-    lbl_804333E0.unk_7C = lbl_804333E0.unk_78;
-    lbl_804333E0.unk_84 = lbl_804333E0.unk_80;
+    Movieplayer.unk_90 = Movieplayer.unk_88;
+    Movieplayer.unk_7C = Movieplayer.unk_78;
+    Movieplayer.unk_84 = Movieplayer.unk_80;
     OSRestoreInterrupts(intr);
 }
 
 s32 lbMthp_8001F5C4(void)
 {
-    return lbl_804333E0.unk_84;
+    return Movieplayer.unk_84;
 }
 
 s32 lbMthp_8001F5D4(void)
 {
-    return lbl_804333E0.unk_134;
+    return Movieplayer.unk_134;
 }
 
 s32 lbMthp_8001F5E4(void)
 {
-    return lbl_804333E0.unk_108;
+    return Movieplayer.unk_108;
 }
 
 s32 lbMthp_8001F5F4(void)
 {
-    return lbl_804333E0.unk_10C;
+    return Movieplayer.unk_10C;
 }
 
 s32 lbMthp_8001F604(void)
 {
-    return lbl_804333E0.unk_144;
+    return Movieplayer.unk_144;
 }
 
 void lbMthp_8001F614(s32 arg0)
 {
-    lbl_804333E0.unk_148 = arg0;
+    Movieplayer.unk_148 = arg0;
 }
 
 HSD_SObj* lbMthp_8001F624(HSD_GObj* gobj, int width, int height)
@@ -218,41 +543,64 @@ HSD_SObj* lbMthp_8001F624(HSD_GObj* gobj, int width, int height)
     return sobj;
 }
 
-/// #lbMthp_8001F67C
+void lbMthp_8001F67C(HSD_GObj* gobj, int arg1)
+{
+    fn_8001EF5C((THPDecComp*) &Movieplayer);
+    if ((s32) Movieplayer.unk_148 != 0) {
+        GXInitTexObj(&Movieplayer.unk_178, Movieplayer.unk_50,
+                     (u16) Movieplayer.unk_44, (u16) Movieplayer.unk_48,
+                     GX_TF_I8, GX_CLAMP, GX_CLAMP, 0U);
+        GXInitTexObjLOD(&Movieplayer.unk_178, GX_NEAR, GX_NEAR, 0.0f, 0.0f,
+                        0.0f, 0U, 0U, GX_ANISO_1);
+        GXLoadTexObj(&Movieplayer.unk_178, GX_TEXMAP0);
+
+        GXInitTexObj(&Movieplayer.unk_198, Movieplayer.unk_54,
+                     (u16) ((u32) Movieplayer.unk_44 >> 1U),
+                     (u16) ((u32) Movieplayer.unk_48 >> 1U), GX_TF_I8,
+                     GX_CLAMP, GX_CLAMP, 0U);
+        GXInitTexObjLOD(&Movieplayer.unk_198, GX_NEAR, GX_NEAR, 0.0f, 0.0f,
+                        0.0f, 0U, 0U, GX_ANISO_1);
+        GXLoadTexObj(&Movieplayer.unk_198, GX_TEXMAP1);
+
+        GXInitTexObj(&Movieplayer.unk_1B8, Movieplayer.unk_58,
+                     (u16) ((u32) Movieplayer.unk_44 >> 1U),
+                     (u16) ((u32) Movieplayer.unk_48 >> 1U), GX_TF_I8,
+                     GX_CLAMP, GX_CLAMP, 0U);
+        GXInitTexObjLOD(&Movieplayer.unk_1B8, GX_NEAR, GX_NEAR, 0.0f, 0.0f,
+                        0.0f, 0U, 0U, GX_ANISO_1);
+        GXLoadTexObj(&Movieplayer.unk_1B8, GX_TEXMAP2);
+
+        HSD_SObjLib_803A49E0(gobj, arg1);
+    }
+}
 
 void lbMthp_8001F800(void)
 {
-    struct lbl_804333E0_t* base;
-    s32* p_14C;
-
-    base = &lbl_804333E0;
-    p_14C = &base->unk_14C;
-
-    if (*p_14C != 0) {
-        *(s32*) ((u8*) base + 0x70) = 0;
+    if (Movieplayer.power != 0) {
+        Movieplayer.unk_70 = 0;
 
         while (fn_8001F294()) {
         }
 
-        OSCancelAlarm((OSAlarm*) ((u8*) base + 0x150));
+        OSCancelAlarm(&Movieplayer.unk_150);
         HSD_VIWaitXFBFlush();
 
-        if (*(void**) ((u8*) base + 0x140) != NULL) {
-            HSD_Free(*(void**) ((u8*) base + 0x140));
+        if (Movieplayer.unk_140 != NULL) {
+            HSD_Free(Movieplayer.unk_140);
         }
 
-        *p_14C = 0;
+        Movieplayer.power = 0;
     }
 }
 
 s32 fn_8001F294(void)
 {
-    return lbl_804333E0.unk_110;
+    return Movieplayer.unk_110;
 }
 
 void lbMthp_8001F87C(void)
 {
-    lbl_804333E0.unk_14C = 0;
+    Movieplayer.power = 0;
 }
 
 void* lbMthp8001F890(HSD_GObj* gobj)
@@ -301,4 +649,47 @@ void lbMthp8001F928(HSD_GObj* gobj, int arg1)
     HSD_SObjLib_803A49E0(gobj, arg1);
 }
 
-/// #lbMthp8001FAA0
+void lbMthp8001FAA0(const char* filename, int width, int height)
+{
+    struct {
+        u16 w;
+        u16 h;
+        u8 pad[0x18];
+    } header;
+    s32 output;
+    s32 yuv_size;
+    s32 uv_size;
+    void* context;
+    void* decode_buf;
+    s32 decoded;
+
+    lbl_804335B8.x6C = (u16) width;
+    lbl_804335B8.x6E = (u16) height;
+    THPInit();
+    lbFile_80016760(filename, &lbl_804335B8.unk94, &lbl_804335B8.unk98);
+    yuv_size = lbl_804335B8.x6C * lbl_804335B8.x6E;
+    lbl_804335B8.x20 = HSD_MemAlloc(yuv_size);
+    DCInvalidateRange(lbl_804335B8.x20, (u32) yuv_size);
+    uv_size = (s32) (lbl_804335B8.x6C * lbl_804335B8.x6E) >> 2;
+    lbl_804335B8.x44 = HSD_MemAlloc(uv_size);
+    DCInvalidateRange(lbl_804335B8.x44, (u32) uv_size);
+    lbl_804335B8.x68 = HSD_MemAlloc(uv_size);
+    DCInvalidateRange(lbl_804335B8.x68, (u32) uv_size);
+    context = HSD_MemAlloc(0xC);
+    memset(&header, 0, 0x1CU);
+    header.w = (u16) width;
+    header.h = (u16) height;
+    THPDec_8032F8D4(lbl_804335B8.unk94, context);
+    decode_buf = HSD_MemAlloc(THPDec_8032FD40(context, header.h));
+    decoded = THPVideoDecode(&header, &output, (s32) decode_buf,
+                             (s32) lbl_804335B8.unk94, context);
+    if ((u16) lbl_804335B8.x6C == 0x280) {
+        THPDec_80331340(decoded, lbl_804335B8.x20, lbl_804335B8.x44,
+                        lbl_804335B8.x68);
+    } else {
+        THPDec_803313D0(decoded, lbl_804335B8.x20, lbl_804335B8.x44,
+                        lbl_804335B8.x68);
+    }
+    HSD_Free(context);
+    HSD_Free(decode_buf);
+}
