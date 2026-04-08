@@ -1846,13 +1846,15 @@ void lb_800138EC(s32 arg0, GObj_RenderFunc render_func, u32 arg2, s8 arg3,
     Vec3 eye;
     Vec3 interest;
     f32 zero = 0.0F;
+    f32 roll;
+    f32 far = -480.0F;
     f32 ortho_top = zero;
-    f32 far = 2.0F;
+    f32 ortho_bot = 2.0F;
     f32 ortho_left = zero;
-    f32 ortho_bot = -480.0F;
     f32 ortho_right = 640.0F;
 
     eye = lb_803B72A8;
+    roll = zero;
     interest = lb_803B72B4;
 
     gobj = GObj_Create(14, 15, 0);
@@ -1872,7 +1874,7 @@ void lb_800138EC(s32 arg0, GObj_RenderFunc render_func, u32 arg2, s8 arg3,
     HSD_CObjSetScissor(cobj, &scissor);
     HSD_CObjSetEyePosition(cobj, &eye);
     HSD_CObjSetInterest(cobj, &interest);
-    HSD_CObjSetRoll(cobj, zero);
+    HSD_CObjSetRoll(cobj, roll);
     HSD_CObjSetNear(cobj, zero);
     HSD_CObjSetFar(cobj, far);
     HSD_CObjSetOrtho(cobj, ortho_top, ortho_bot, ortho_left, ortho_right);
