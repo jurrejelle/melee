@@ -301,8 +301,6 @@ s32 fn_8001EF5C(THPDecComp* data)
     return data->unk_94;
 }
 
-/// #fn_8001EF5C
-
 s32 fn_8001F06C(THPDecComp* data)
 {
     BOOL intr;
@@ -337,8 +335,6 @@ end:
     OSRestoreInterrupts(intr);
     return 1;
 }
-
-/// #fn_8001F13C
 
 s32 fn_8001F13C(THPDecComp* streamPlayer)
 {
@@ -465,8 +461,6 @@ s32 fn_8001F2A4(void)
     }
     return (s32) &lbl_804333E0;
 }
-
-/// #lbMthp_8001F410
 
 void lbMthp_8001F410(const char* filename, void* rate_table, int buf_arg,
                      int bufsize, int loop)
