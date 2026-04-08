@@ -420,7 +420,37 @@ HSD_SObj* lbMthp_8001F624(HSD_GObj* gobj, int width, int height)
     return sobj;
 }
 
-/// #lbMthp_8001F67C
+void lbMthp_8001F67C(HSD_GObj* gobj, int arg1)
+{
+    fn_8001EF5C((THPDecComp*) &lbl_804333E0);
+    if ((s32) lbl_804333E0.unk_148 != 0) {
+        GXInitTexObj(&lbl_804333E0.unk_178, lbl_804333E0.unk_50,
+                     (u16) lbl_804333E0.unk_44,
+                     (u16) lbl_804333E0.unk_48,
+                     GX_TF_I8, GX_CLAMP, GX_CLAMP, 0U);
+        GXInitTexObjLOD(&lbl_804333E0.unk_178, GX_NEAR, GX_NEAR,
+                        0.0f, 0.0f, 0.0f, 0U, 0U, GX_ANISO_1);
+        GXLoadTexObj(&lbl_804333E0.unk_178, GX_TEXMAP0);
+
+        GXInitTexObj(&lbl_804333E0.unk_198, lbl_804333E0.unk_54,
+                     (u16) ((u32) lbl_804333E0.unk_44 >> 1U),
+                     (u16) ((u32) lbl_804333E0.unk_48 >> 1U),
+                     GX_TF_I8, GX_CLAMP, GX_CLAMP, 0U);
+        GXInitTexObjLOD(&lbl_804333E0.unk_198, GX_NEAR, GX_NEAR,
+                        0.0f, 0.0f, 0.0f, 0U, 0U, GX_ANISO_1);
+        GXLoadTexObj(&lbl_804333E0.unk_198, GX_TEXMAP1);
+
+        GXInitTexObj(&lbl_804333E0.unk_1B8, lbl_804333E0.unk_58,
+                     (u16) ((u32) lbl_804333E0.unk_44 >> 1U),
+                     (u16) ((u32) lbl_804333E0.unk_48 >> 1U),
+                     GX_TF_I8, GX_CLAMP, GX_CLAMP, 0U);
+        GXInitTexObjLOD(&lbl_804333E0.unk_1B8, GX_NEAR, GX_NEAR,
+                        0.0f, 0.0f, 0.0f, 0U, 0U, GX_ANISO_1);
+        GXLoadTexObj(&lbl_804333E0.unk_1B8, GX_TEXMAP2);
+
+        HSD_SObjLib_803A49E0(gobj, arg1);
+    }
+}
 
 void lbMthp_8001F800(void)
 {

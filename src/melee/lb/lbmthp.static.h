@@ -9,7 +9,13 @@
 struct lbl_804333E0_t {
     /* 0x000 */ char pad_0[0x40];
     /* 0x040 */ u32 unk_40;
-    /* 0x044 */ char pad_44[0x24];
+    /* 0x044 */ u32 unk_44;
+    /* 0x048 */ u32 unk_48;
+    /* 0x04C */ char pad_4C[0x4];
+    /* 0x050 */ void* unk_50;
+    /* 0x054 */ void* unk_54;
+    /* 0x058 */ void* unk_58;
+    /* 0x05C */ char pad_5C[0xC];
     /* 0x068 */ s32 unk_68;
     /* 0x06C */ char pad_6C[0xC];
     /* 0x078 */ s32 unk_78;
@@ -33,7 +39,9 @@ struct lbl_804333E0_t {
     /* 0x148 */ s32 unk_148;
     /* 0x14C */ s32 unk_14C;
     /* 0x150 */ OSAlarm unk_150;
-    /* 0x178 */ char pad_178[0x60];
+    /* 0x178 */ GXTexObj unk_178;
+    /* 0x198 */ GXTexObj unk_198;
+    /* 0x1B8 */ GXTexObj unk_1B8;
 }; /* size = 0x1D8 */
 STATIC_ASSERT(sizeof(struct lbl_804333E0_t) == 0x1D8);
 
