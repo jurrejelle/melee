@@ -6,6 +6,7 @@
 
 #include <dolphin/dvd.h>
 #include <dolphin/gx/GXTexture.h>
+#include <dolphin/os/OSCache.h>
 #include <sysdolphin/baselib/sobjlib.h>
 #include <melee/lb/lbanim.h>
 #include <melee/lb/types.h>
@@ -121,6 +122,42 @@ s32 fn_8001EBF0(THPDecComp* data)
 }
 
 /// #fn_8001ECF4
+
+s32 fn_8001EF5C(THPDecComp* data)
+{
+    s32 spC;
+    BOOL intr;
+
+    if ((u32) data->unk_94 != data->unk_90) {
+        intr = OSDisableInterrupts();
+        data->unk_98 = THPVideoDecode(
+            &data->unk_A8, &spC, data->unk_98,
+            data->unk_4C[data->unk_90] + 4,
+            &data->unk_9C);
+        OSRestoreInterrupts(intr);
+
+        if (data->width == 0x280) {
+            THPDec_80331340(data->unk_98, data->unk_50,
+                            data->unk_54, data->unk_58);
+            DCStoreRange(data->unk_50,
+                         data->width * data->height);
+            DCStoreRange(data->unk_54,
+                         (data->width * data->height) >> 2);
+            DCStoreRange(data->unk_58,
+                         (data->width * data->height) >> 2);
+        } else {
+            THPDec_803313D0(data->unk_98, data->unk_50,
+                            data->unk_54, data->unk_58);
+        }
+
+        intr = OSDisableInterrupts();
+        data->unk_94 = data->unk_90;
+        OSRestoreInterrupts(intr);
+        return fn_8001F13C(data);
+    }
+
+    return data->unk_94;
+}
 
 /// #fn_8001EF5C
 

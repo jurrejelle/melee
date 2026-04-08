@@ -10,6 +10,9 @@
 /* THPDec function declarations */
 BOOL THPInit(void);
 s32 THPDec_8032FD40(void* arg0, u16 height);
+void THPDec_80331340(s32, void*, void*, void*);
+void THPDec_803313D0(s32, void*, void*, void*);
+s32 THPVideoDecode(void*, void*, s32, s32, void*);
 
 /* Struct used by fn_8001EBF0 for THP decode component init */
 typedef struct THPDecComp {
@@ -26,7 +29,11 @@ typedef struct THPDecComp {
     /* 0x40 */ u32 unk_40;
     /* 0x44 */ u32 width;
     /* 0x48 */ u32 height;
-    /* 0x4C */ u8 pad4C[0x68 - 0x4C];
+    /* 0x4C */ u32* unk_4C;
+    /* 0x50 */ void* unk_50;
+    /* 0x54 */ void* unk_54;
+    /* 0x58 */ void* unk_58;
+    /* 0x5C */ u8 pad5C[0x68 - 0x5C];
     /* 0x68 */ s32 unk_68;
     /* 0x6C */ s32 unk_6C;
     /* 0x70 */ s32 unk_70;
@@ -39,7 +46,7 @@ typedef struct THPDecComp {
     /* 0x8C */ u8 pad8C[0x90 - 0x8C];
     /* 0x90 */ u32 unk_90;
     /* 0x94 */ s32 unk_94;
-    /* 0x98 */ u8 pad98[0x9C - 0x98];
+    /* 0x98 */ s32 unk_98;
     /* 0x9C */ u32 unk_9C;
     /* 0xA0 */ u16 unk_A0;
     /* 0xA2 */ u16 unk_A2;
@@ -67,9 +74,9 @@ typedef struct THPDecComp {
 /* 01EB14 */ s32 fn_8001EB14(THPDecComp* data, const char* path);
 /* 01EBF0 */ s32 fn_8001EBF0(THPDecComp* data);
 /* 01ECF4 */ UNK_RET fn_8001ECF4(UNK_PARAMS);
-/* 01EF5C */ UNK_RET fn_8001EF5C(UNK_PARAMS);
+/* 01EF5C */ s32 fn_8001EF5C(THPDecComp* data);
 /* 01F06C */ s32 fn_8001F06C(THPDecComp* data);
-/* 01F13C */ UNK_RET fn_8001F13C(UNK_PARAMS);
+/* 01F13C */ s32 fn_8001F13C(THPDecComp* data);
 /* 01F294 */ s32 fn_8001F294(void);
 /* 01F2A4 */ UNK_RET fn_8001F2A4(UNK_PARAMS);
 /* 01F410 */ void lbMthp_8001F410(const char* filename, UNK_T, int, int, int);
