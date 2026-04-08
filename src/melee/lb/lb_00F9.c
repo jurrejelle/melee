@@ -288,9 +288,9 @@ static inline struct lb_80011A50_t* inlineA1(void)
     }
     {
         struct lb_80011A50_t* ret = cur;
-        u8 max = cur->x1;
+        s32 max = cur->x1;
         while (cur != NULL) {
-            if ((s32) max < (s32) cur->x1) {
+            if (max < (s32) cur->x1) {
                 max = cur->x1;
                 ret = cur;
             }
