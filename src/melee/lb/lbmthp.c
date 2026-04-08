@@ -52,6 +52,7 @@ s32 fn_8001EBF0(THPDecComp* data)
     u32 unk_104_val;
     u32 wh;
     u32 wh_div4;
+    PAD_STACK(16);
 
     data->unk_104 = 0x20;
 
