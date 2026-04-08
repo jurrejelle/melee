@@ -4,6 +4,8 @@
 #include <placeholder.h>
 #include <platform.h>
 
+#include "dolphin/gx/GXStruct.h"
+
 #include "mp/forward.h"
 #include <melee/cm/forward.h>
 #include <melee/gr/forward.h>
@@ -992,31 +994,39 @@ struct grGreens_GroundVars {
 struct grMuteCity_GroundVars {
     /* +0x00 gp+C4) */ s16 xC4;
     /* +0x02 gp+C6) */ s16 xC6;
-    /* +0x04 gp+C8) */ u32 xC8;
-    /* +0x00 gp+CC) */ u32 xCC;
-    /* +0x00 gp+D0) */ struct {
+    /* +0x04 gp+C8) */ HSD_GObj* xC8;
+    /* +0x08 gp+CC) */ HSD_GObj* xCC;
+    /* +0x0C gp+D0) */ struct {
         u8 b0 : 1;
         u8 b1 : 1;
-        u8 b2 : 1;
-        u8 b3 : 1;
+        u8 b23 : 2;
         u8 b4 : 1;
         u8 b5 : 1;
         u8 b6 : 1;
         u8 b7 : 1;
     } xD0_flags;
-    /* +0x0D gp+D1) */ u8 pad_D1[0xE4 - 0xD1];
-    /* +0x20 gp+E4) */ f32 xE4;
-    /* +0x24 gp+E8) */ f32 xE8;
-    /* +0x28 gp+EC) */ u8 pad_EC[0xF0 - 0xEC];
-    /* +0x2C gp+F0) */ f32 xF0;
-    /* +0x30 gp+F4) */ f32 xF4;
-    /* +0x34 gp+F8) */ u8 pad_F8[0xFC - 0xF8];
+    /* +0x0D gp+D1) */ u8 xD1;
+    /* +0x0E gp+D2) */ s16 xD2;
+    /* +0x10 gp+D4) */ f32 xD4;
+    /* +0x14 gp+D8) */ f32 xD8;
+    /* +0x18 gp+DC) */ HSD_JObj* xDC;
+    /* +0x1C gp+E0) */ HSD_JObj* xE0;
+    /* +0x20 gp+E4) */ Vec3 xE4;
+    /* +0x2C gp+F0) */ Vec3 xF0;
     /* +0x38 gp+FC) */ HSD_JObj* xFC;
     /* +0x3C gp+100) */ HSD_JObj* x100;
     /* +0x40 gp+104) */ HSD_JObj* x104;
     /* +0x44 gp+108) */ HSD_JObj* x108;
     /* +0x48 gp+10C) */ HSD_JObj* x10C;
     /* +0x4C gp+110) */ HSD_LObj* x110;
+    /* +0x50 gp+114) */ f32 x114;
+    /* +0x54 gp+118) */ f32 x118;
+    /* +0x58 gp+11C) */ f32 x11C;
+    /* +0x5C gp+120) */ f32 x120;
+    /* +0x60 gp+124) */ f32 x124;
+    /* +0x64 gp+128) */ f32 x128;
+    /* +0x68 gp+12C) */ f32 x12C;
+    /* +0x6C gp+130) */ f32 x130;
 };
 
 struct grMuteCity_GroundVars2 {
@@ -1030,30 +1040,66 @@ struct grMuteCity_GroundVars2 {
         u8 b6 : 1;
         u8 b7 : 1;
     } xC4_flags;
-    /* +0x00 gp+C8) */ HSD_JObj* xC8;
-    /* +0x00 gp+CC) */ f32 xCC;
-    /* +0x00 gp+D0) */ f32 xD0;
+    /* +0x04 gp+C8) */ HSD_JObj* xC8;
+    /* +0x08 gp+CC) */ f32 xCC;
+    /* +0x0C gp+D0) */ f32 xD0;
+    /* +0x10 gp+D4) */ GXColor saved_colors[4];
 };
 
-/// Onett collision element (0x1C bytes)
-/// Callback for joints 0 and 1; could be awning hit tracking?
-/// (counter, accumulator, state machine with reset timer)
-/// Thresholds loaded from stage data at runtime
+/// Onett awning physics element (0x1C bytes)
 struct grOnett_AwningData {
-    /* +0x00 (gp+0xCC) */ float accumulator;
-    /* +0x04 */ u8 pad04[4];
-    /* +0x08 (gp+0xD4) */ float initial;
-    /* +0x0C (gp+0xD8) */ s16 counter;
-    /* +0x0E */ u8 pad0E[4];
-    /* +0x12 (gp+0xDE) */ s16 flag;
-    /* +0x14 */ u8 pad14[8];
+    /* +0x00 */ HSD_JObj* jobj;
+    /* +0x04 */ f32 initial_y;
+    /* +0x08 */ f32 accumulator;
+    /* +0x0C */ f32 velocity;
+    /* +0x10 */ f32 initial;
+    /* +0x14 */ s16 counter;
+    /* +0x16 */ s16 counter_prev;
+    /* +0x18 */ s16 cooldown;
+    /* +0x1A */ s16 flag;
 };
 
+/// Traffic/awning GroundVars (gobj ID 5)
 struct grOnett_GroundVars {
+    /*  +0 gp+C4 */ struct grOnett_AwningData awnings[2];
+    /* +38 gp+FC */ s32 timer;
+    /* +3C gp+100 */ HSD_Generator* gen;
+    /* +40 gp+104 */ CmSubject* subject;
+};
+
+/// Building GroundVars (gobj ID 4)
+struct grOnett_Building_GroundVars {
+    /* +0 gp+C4 */ s16 state;
+    /* +2 gp+C6 */ s16 next_state;
+    /* +4 gp+C8 */ s32 hit_count;
+    /* +8 gp+CC */ s32 frame;
+    /* +C gp+D0 */ u32 timer;
+};
+
+/// Car GroundVars (gobj ID 3)
+struct grOnett_Car_GroundVars {
     /*  +0 gp+C4:0 */ u8 x0_b0 : 1;
-    u8 pad[0xCC - 0xC5];
-    struct grOnett_AwningData awnings[2];
-    /*  +0 gp+104:0 */ CmSubject* x104;
+    u8 pad0[3];
+    /* +04 gp+C8 */ HSD_JObj* car_jobjs[4];
+    /* +14 gp+D8 */ HSD_JObj* unk_jobj;
+    /* +18 gp+DC */ Item_GObj* car_items[4];
+    /* +28 gp+EC */ u8 pad28[4];
+    /* +2C gp+F0 */ HSD_JObj* car_jobjs2[4];
+    /* +3C gp+100 */ HSD_JObj* unk_jobj2;
+    /* +40 gp+104 */ s8 curr_car;
+    /* +41 gp+105 */ u8 state_a;
+    u8 pad42[2];
+    /* +44 gp+108 */ s32 x108;
+    u8 pad48[4];
+    /* +4C gp+110 */ s32 x110;
+    /* +50 gp+114 */ f32 car_speed;
+    /* +54 gp+118 */ s8 next_car;
+    /* +55 gp+119 */ u8 state_b;
+    u8 pad56[2];
+    /* +58 gp+11C */ s32 timer_b;
+    u8 pad5C[4];
+    /* +60 gp+124 */ s32 sub_state_b;
+    /* +64 gp+128 */ f32 speed_b;
 };
 
 /// Used by multiple Big Blue Ground subtypes (track, road, car gobjs).
@@ -1385,7 +1431,7 @@ struct Ground {
     int x60;
     int x64;
     int x68;
-    int x6C;
+    GXColor x6C;
     int x70;
     char pad_74[0xC0 - 0x74];
     f32 xC0;
@@ -1447,6 +1493,8 @@ struct Ground {
             struct grMuteCity_GroundVars mutecity;
             struct grMuteCity_GroundVars2 mutecity2;
             struct grOnett_GroundVars onett;
+            struct grOnett_Building_GroundVars onett_building;
+            struct grOnett_Car_GroundVars onettcar;
             struct grPura_GroundVars pura;
             struct grPura_GroundVars2 pura2;
             struct grRCruise_GroundVars rcruise;
