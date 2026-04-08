@@ -26,64 +26,64 @@ void fn_8001E910(int arg0, int arg1, void* arg2, bool cancelflag)
     if (cancelflag != 0) {
         __assert("lbmthp.c", 0x148U, "!cancelflag");
     }
-    tick_diff = OSGetTick() - lbl_804333E0.unk_13C;
-    lbl_804333E0.unk_134 = tick_diff;
-    lbl_804333E0.unk_130 = tick_diff >> 0x1F;
-    lbl_804333E0.unk_108 += 1;
-    if ((u32) lbl_804333E0.unk_74 != 0U) {
-        lbl_804333E0.unk_120 += lbl_804333E0.currPackedSize;
+    tick_diff = OSGetTick() - Movieplayer.unk_13C;
+    Movieplayer.unk_134 = tick_diff;
+    Movieplayer.unk_130 = tick_diff >> 0x1F;
+    Movieplayer.unk_108 += 1;
+    if ((u32) Movieplayer.unk_74 != 0U) {
+        Movieplayer.unk_120 += Movieplayer.currPackedSize;
     } else {
-        lbl_804333E0.unk_120 = lbl_804333E0.unk_20;
+        Movieplayer.unk_120 = Movieplayer.unk_20;
     }
-    if ((u32) lbl_804333E0.unk_8C == 0) {
-        var_r0 = lbl_804333E0.unk_104 - 1;
+    if ((u32) Movieplayer.unk_8C == 0) {
+        var_r0 = Movieplayer.unk_104 - 1;
     } else {
-        var_r0 = lbl_804333E0.unk_8C - 1;
+        var_r0 = Movieplayer.unk_8C - 1;
     }
-    lbl_804333E0.currPackedSize = *(u32*) lbl_804333E0.unk_4C[var_r0];
-    if (((u32) lbl_804333E0.unk_90 != (u32) lbl_804333E0.unk_8C) &&
-        ((s32) lbl_804333E0.unk_70 != 0))
+    Movieplayer.currPackedSize = *(u32*) Movieplayer.unk_4C[var_r0];
+    if (((u32) Movieplayer.unk_90 != (u32) Movieplayer.unk_8C) &&
+        ((s32) Movieplayer.unk_70 != 0))
     {
         intr = OSDisableInterrupts();
         tick = OSGetTick();
-        lbl_804333E0.unk_13C = tick;
+        Movieplayer.unk_13C = tick;
         var_r4 = 0;
-        lbl_804333E0.unk_138 = 0;
-        if ((u32) lbl_804333E0.unk_74 != (u32) lbl_804333E0.unk_40) {
-            if ((u32) lbl_804333E0.currPackedSize == 0U) {
+        Movieplayer.unk_138 = 0;
+        if ((u32) Movieplayer.unk_74 != (u32) Movieplayer.unk_40) {
+            if ((u32) Movieplayer.currPackedSize == 0U) {
                 OSReport("filnum = %d, ofs = %d, by sugano.",
-                         lbl_804333E0.unk_128, lbl_804333E0.unk_120);
+                         Movieplayer.unk_128, Movieplayer.unk_120);
                 __assert("lbmthp.c", 0x121U,
                          "(u32)streamPlayer->currPackedSize != 0");
             }
             HSD_DevComRequest(
-                lbl_804333E0.unk_128, lbl_804333E0.unk_120,
-                (uintptr_t) lbl_804333E0.unk_4C[lbl_804333E0.unk_8C],
-                (lbl_804333E0.currPackedSize + 0x1F) & 0xFFFFFFE0,
-                0x21, 1, fn_8001E910, NULL);
-            lbl_804333E0.unk_74 += 1;
-            if (((u32) lbl_804333E0.unk_74 == (u32) lbl_804333E0.unk_40) &&
-                ((s32) lbl_804333E0.unk_68 != 0))
+                Movieplayer.unk_128, Movieplayer.unk_120,
+                (uintptr_t) Movieplayer.unk_4C[Movieplayer.unk_8C],
+                (Movieplayer.currPackedSize + 0x1F) & 0xFFFFFFE0, 0x21, 1,
+                fn_8001E910, NULL);
+            Movieplayer.unk_74 += 1;
+            if (((u32) Movieplayer.unk_74 == (u32) Movieplayer.unk_40) &&
+                ((s32) Movieplayer.unk_68 != 0))
             {
-                lbl_804333E0.unk_74 = 0U;
+                Movieplayer.unk_74 = 0U;
             }
             {
-                u32 var_r3 = lbl_804333E0.unk_8C + 1;
-                if (var_r3 >= (u32) lbl_804333E0.unk_104) {
+                u32 var_r3 = Movieplayer.unk_8C + 1;
+                if (var_r3 >= (u32) Movieplayer.unk_104) {
                     var_r3 = 0;
                 }
-                lbl_804333E0.unk_8C = var_r3;
+                Movieplayer.unk_8C = var_r3;
             }
             var_r4 = 1;
-            lbl_804333E0.unk_110 = 1;
+            Movieplayer.unk_110 = 1;
         }
         if (var_r4 == 0) {
-            lbl_804333E0.unk_110 = 0;
+            Movieplayer.unk_110 = 0;
         }
         OSRestoreInterrupts(intr);
         return;
     }
-    lbl_804333E0.unk_110 = 0;
+    Movieplayer.unk_110 = 0;
 }
 
 s32 fn_8001EB14(THPDecComp* data, const char* path)
@@ -382,8 +382,8 @@ s32 fn_8001F2A4(void)
 
     /* Convert unk_80 ticks to frame number using rate table */
     frame = 0;
-    rate_ptr = (s32*) lbl_804333E0.unk_12C;
-    counter = lbl_804333E0.unk_80;
+    rate_ptr = (s32*) Movieplayer.unk_12C;
+    counter = Movieplayer.unk_80;
     if ((u32) rate_ptr != 0U) {
         for (;; rate_ptr += 2) {
             count = rate_ptr[0];
@@ -401,13 +401,13 @@ s32 fn_8001F2A4(void)
         frame = counter;
     }
 
-    if ((u32) lbl_804333E0.unk_78 == (u32) frame) {
-        lbl_804333E0.unk_80 += 1;
+    if ((u32) Movieplayer.unk_78 == (u32) frame) {
+        Movieplayer.unk_80 += 1;
 
         /* Recompute frame after increment */
         frame = 0;
-        rate_ptr = (s32*) lbl_804333E0.unk_12C;
-        counter = lbl_804333E0.unk_80;
+        rate_ptr = (s32*) Movieplayer.unk_12C;
+        counter = Movieplayer.unk_80;
         if ((u32) rate_ptr != 0U) {
             for (;; rate_ptr += 2) {
                 count = rate_ptr[0];
@@ -425,20 +425,20 @@ s32 fn_8001F2A4(void)
             frame = counter;
         }
 
-        if ((u32) lbl_804333E0.unk_40 == (u32) frame) {
-            if (lbl_804333E0.unk_68 != 0) {
-                lbl_804333E0.unk_80 = 0;
+        if ((u32) Movieplayer.unk_40 == (u32) frame) {
+            if (Movieplayer.unk_68 != 0) {
+                Movieplayer.unk_80 = 0;
             } else {
-                lbl_804333E0.unk_80 -= 1;
-                lbl_804333E0.unk_144 = 1;
+                Movieplayer.unk_80 -= 1;
+                Movieplayer.unk_144 = 1;
             }
         }
     }
 
     /* Final conversion for frame change check */
-    rate_ptr = (s32*) lbl_804333E0.unk_12C;
+    rate_ptr = (s32*) Movieplayer.unk_12C;
     frame = 0;
-    counter = lbl_804333E0.unk_80;
+    counter = Movieplayer.unk_80;
     if ((u32) rate_ptr != 0U) {
         for (;; rate_ptr += 2) {
             count = rate_ptr[0];
@@ -456,45 +456,40 @@ s32 fn_8001F2A4(void)
         frame = counter;
     }
 
-    if ((u32) lbl_804333E0.unk_78 != (u32) frame) {
-        return fn_8001F06C((THPDecComp*) &lbl_804333E0);
+    if ((u32) Movieplayer.unk_78 != (u32) frame) {
+        return fn_8001F06C((THPDecComp*) &Movieplayer);
     }
-    return (s32) &lbl_804333E0;
+    return (s32) &Movieplayer;
 }
 
 void lbMthp_8001F410(const char* filename, void* rate_table, int buf_arg,
-                     int bufsize, int loop)
+                     int heap_size, int loop)
 {
-    s32 size;
+    s32 memoryRequired;
     void* buf = (void*) buf_arg;
 
-    if (lbl_804333E0.unk_14C != 0) {
-        __assert("lbmthp.c", 0x341, "lbl_804333E0.unk_14C == 0");
-    }
-    lbl_804333E0.unk_14C = 1;
-    fn_8001EB14((THPDecComp*) &lbl_804333E0, filename);
-    lbl_804333E0.unk_12C = (s32) rate_table;
-    size = fn_8001EBF0((THPDecComp*) &lbl_804333E0);
+    HSD_ASSERT(0x341, !Movieplayer.power);
+
+    Movieplayer.power = 1;
+    fn_8001EB14((THPDecComp*) &Movieplayer, filename);
+    Movieplayer.unk_12C = (s32) rate_table;
+    memoryRequired = fn_8001EBF0((THPDecComp*) &Movieplayer);
     if (buf != NULL) {
-        if ((u32) bufsize < (u32) size) {
-            __assert("lbmthp.c", 0x350, "bufsize >= size");
-        }
-        lbl_804333E0.unk_140 = NULL;
+        HSD_ASSERT(0x350, heap_size >= memoryRequired);
+        Movieplayer.unk_140 = NULL;
     } else {
-        buf = HSD_MemAlloc(size);
-        lbl_804333E0.unk_140 = buf;
+        buf = HSD_MemAlloc(memoryRequired);
+        Movieplayer.unk_140 = buf;
     }
-    lbl_804333E0.unk_68 = loop;
-    fn_8001ECF4((THPDecComp*) &lbl_804333E0, buf);
-    lbl_804333E0.unk_144 = 0;
-    lbl_804333E0.unk_148 = 1;
-    OSCreateAlarm(&lbl_804333E0.unk_150);
+    Movieplayer.unk_68 = loop;
+    fn_8001ECF4((THPDecComp*) &Movieplayer, buf);
+    Movieplayer.unk_144 = 0;
+    Movieplayer.unk_148 = 1;
+    OSCreateAlarm(&Movieplayer.unk_150);
     OSSetPeriodicAlarm(
-        &lbl_804333E0.unk_150,
-        __cvt_dbl_usll(
-            (f64) (0.016666668f * (f32) (*(u32*) 0x800000F8 >> 2))),
-        __cvt_dbl_usll(
-            (f64) (0.016666668f * (f32) (*(u32*) 0x800000F8 >> 2))),
+        &Movieplayer.unk_150,
+        __cvt_dbl_usll((f64) (0.016666668f * (f32) (*(u32*) 0x800000F8 >> 2))),
+        __cvt_dbl_usll((f64) (0.016666668f * (f32) (*(u32*) 0x800000F8 >> 2))),
         (OSAlarmHandler) fn_8001F2A4);
 }
 
@@ -503,40 +498,40 @@ void lbMthp_8001F578(void)
     BOOL intr;
     PAD_STACK(8);
     intr = OSDisableInterrupts();
-    lbl_804333E0.unk_90 = lbl_804333E0.unk_88;
-    lbl_804333E0.unk_7C = lbl_804333E0.unk_78;
-    lbl_804333E0.unk_84 = lbl_804333E0.unk_80;
+    Movieplayer.unk_90 = Movieplayer.unk_88;
+    Movieplayer.unk_7C = Movieplayer.unk_78;
+    Movieplayer.unk_84 = Movieplayer.unk_80;
     OSRestoreInterrupts(intr);
 }
 
 s32 lbMthp_8001F5C4(void)
 {
-    return lbl_804333E0.unk_84;
+    return Movieplayer.unk_84;
 }
 
 s32 lbMthp_8001F5D4(void)
 {
-    return lbl_804333E0.unk_134;
+    return Movieplayer.unk_134;
 }
 
 s32 lbMthp_8001F5E4(void)
 {
-    return lbl_804333E0.unk_108;
+    return Movieplayer.unk_108;
 }
 
 s32 lbMthp_8001F5F4(void)
 {
-    return lbl_804333E0.unk_10C;
+    return Movieplayer.unk_10C;
 }
 
 s32 lbMthp_8001F604(void)
 {
-    return lbl_804333E0.unk_144;
+    return Movieplayer.unk_144;
 }
 
 void lbMthp_8001F614(s32 arg0)
 {
-    lbl_804333E0.unk_148 = arg0;
+    Movieplayer.unk_148 = arg0;
 }
 
 HSD_SObj* lbMthp_8001F624(HSD_GObj* gobj, int width, int height)
@@ -552,31 +547,30 @@ HSD_SObj* lbMthp_8001F624(HSD_GObj* gobj, int width, int height)
 
 void lbMthp_8001F67C(HSD_GObj* gobj, int arg1)
 {
-    fn_8001EF5C((THPDecComp*) &lbl_804333E0);
-    if ((s32) lbl_804333E0.unk_148 != 0) {
-        GXInitTexObj(&lbl_804333E0.unk_178, lbl_804333E0.unk_50,
-                     (u16) lbl_804333E0.unk_44,
-                     (u16) lbl_804333E0.unk_48,
+    fn_8001EF5C((THPDecComp*) &Movieplayer);
+    if ((s32) Movieplayer.unk_148 != 0) {
+        GXInitTexObj(&Movieplayer.unk_178, Movieplayer.unk_50,
+                     (u16) Movieplayer.unk_44, (u16) Movieplayer.unk_48,
                      GX_TF_I8, GX_CLAMP, GX_CLAMP, 0U);
-        GXInitTexObjLOD(&lbl_804333E0.unk_178, GX_NEAR, GX_NEAR,
-                        0.0f, 0.0f, 0.0f, 0U, 0U, GX_ANISO_1);
-        GXLoadTexObj(&lbl_804333E0.unk_178, GX_TEXMAP0);
+        GXInitTexObjLOD(&Movieplayer.unk_178, GX_NEAR, GX_NEAR, 0.0f, 0.0f,
+                        0.0f, 0U, 0U, GX_ANISO_1);
+        GXLoadTexObj(&Movieplayer.unk_178, GX_TEXMAP0);
 
-        GXInitTexObj(&lbl_804333E0.unk_198, lbl_804333E0.unk_54,
-                     (u16) ((u32) lbl_804333E0.unk_44 >> 1U),
-                     (u16) ((u32) lbl_804333E0.unk_48 >> 1U),
-                     GX_TF_I8, GX_CLAMP, GX_CLAMP, 0U);
-        GXInitTexObjLOD(&lbl_804333E0.unk_198, GX_NEAR, GX_NEAR,
-                        0.0f, 0.0f, 0.0f, 0U, 0U, GX_ANISO_1);
-        GXLoadTexObj(&lbl_804333E0.unk_198, GX_TEXMAP1);
+        GXInitTexObj(&Movieplayer.unk_198, Movieplayer.unk_54,
+                     (u16) ((u32) Movieplayer.unk_44 >> 1U),
+                     (u16) ((u32) Movieplayer.unk_48 >> 1U), GX_TF_I8,
+                     GX_CLAMP, GX_CLAMP, 0U);
+        GXInitTexObjLOD(&Movieplayer.unk_198, GX_NEAR, GX_NEAR, 0.0f, 0.0f,
+                        0.0f, 0U, 0U, GX_ANISO_1);
+        GXLoadTexObj(&Movieplayer.unk_198, GX_TEXMAP1);
 
-        GXInitTexObj(&lbl_804333E0.unk_1B8, lbl_804333E0.unk_58,
-                     (u16) ((u32) lbl_804333E0.unk_44 >> 1U),
-                     (u16) ((u32) lbl_804333E0.unk_48 >> 1U),
-                     GX_TF_I8, GX_CLAMP, GX_CLAMP, 0U);
-        GXInitTexObjLOD(&lbl_804333E0.unk_1B8, GX_NEAR, GX_NEAR,
-                        0.0f, 0.0f, 0.0f, 0U, 0U, GX_ANISO_1);
-        GXLoadTexObj(&lbl_804333E0.unk_1B8, GX_TEXMAP2);
+        GXInitTexObj(&Movieplayer.unk_1B8, Movieplayer.unk_58,
+                     (u16) ((u32) Movieplayer.unk_44 >> 1U),
+                     (u16) ((u32) Movieplayer.unk_48 >> 1U), GX_TF_I8,
+                     GX_CLAMP, GX_CLAMP, 0U);
+        GXInitTexObjLOD(&Movieplayer.unk_1B8, GX_NEAR, GX_NEAR, 0.0f, 0.0f,
+                        0.0f, 0U, 0U, GX_ANISO_1);
+        GXLoadTexObj(&Movieplayer.unk_1B8, GX_TEXMAP2);
 
         HSD_SObjLib_803A49E0(gobj, arg1);
     }
@@ -587,8 +581,8 @@ void lbMthp_8001F800(void)
     struct lbl_804333E0_t* base;
     s32* p_14C;
 
-    base = &lbl_804333E0;
-    p_14C = &base->unk_14C;
+    base = &Movieplayer;
+    p_14C = &base->power;
 
     if (*p_14C != 0) {
         *(s32*) ((u8*) base + 0x70) = 0;
@@ -609,12 +603,12 @@ void lbMthp_8001F800(void)
 
 s32 fn_8001F294(void)
 {
-    return lbl_804333E0.unk_110;
+    return Movieplayer.unk_110;
 }
 
 void lbMthp_8001F87C(void)
 {
-    lbl_804333E0.unk_14C = 0;
+    Movieplayer.power = 0;
 }
 
 void* lbMthp8001F890(HSD_GObj* gobj)

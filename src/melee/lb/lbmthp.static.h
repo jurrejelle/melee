@@ -46,7 +46,7 @@ struct lbl_804333E0_t {
     /* 0x140 */ void* unk_140;
     /* 0x144 */ s32 unk_144;
     /* 0x148 */ s32 unk_148;
-    /* 0x14C */ s32 unk_14C;
+    /* 0x14C */ s32 power;
     /* 0x150 */ OSAlarm unk_150;
     /* 0x178 */ GXTexObj unk_178;
     /* 0x198 */ GXTexObj unk_198;
@@ -54,7 +54,7 @@ struct lbl_804333E0_t {
 }; /* size = 0x1D8 */
 STATIC_ASSERT(sizeof(struct lbl_804333E0_t) == 0x1D8);
 
-/* 4333E0 */ static struct lbl_804333E0_t lbl_804333E0;
+/* 4333E0 */ static struct lbl_804333E0_t Movieplayer;
 /* 4D7CC0 */ static float lb_804D7CC0;
 
 struct lbl_804335B8_t {
