@@ -2234,13 +2234,13 @@ bool lb_80014770(Vec3* arg0, int arg1)
         GXBegin(GX_TRIANGLESTRIP, GX_VTXFMT0, 5);
 
         if (arg0[1].z > arg0[0].z) {
-            near_pt = &arg0[0];
-            far_pt = &arg0[1];
+            near_pt = &arg0[1];
+            far_pt = &arg0[0];
             near_clr = &lb_804D3768;
             far_clr = &lb_804D376C;
         } else {
-            near_pt = &arg0[1];
-            far_pt = &arg0[0];
+            near_pt = &arg0[0];
+            far_pt = &arg0[1];
             near_clr = &lb_804D376C;
             far_clr = &lb_804D3768;
         }
