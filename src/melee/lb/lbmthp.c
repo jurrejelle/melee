@@ -576,26 +576,20 @@ void lbMthp_8001F67C(HSD_GObj* gobj, int arg1)
 
 void lbMthp_8001F800(void)
 {
-    struct lbl_804333E0_t* base;
-    s32* p_14C;
-
-    base = &Movieplayer;
-    p_14C = &base->power;
-
-    if (*p_14C != 0) {
-        *(s32*) ((u8*) base + 0x70) = 0;
+    if (Movieplayer.power != 0) {
+        Movieplayer.unk_70 = 0;
 
         while (fn_8001F294()) {
         }
 
-        OSCancelAlarm((OSAlarm*) ((u8*) base + 0x150));
+        OSCancelAlarm(&Movieplayer.unk_150);
         HSD_VIWaitXFBFlush();
 
-        if (*(void**) ((u8*) base + 0x140) != NULL) {
-            HSD_Free(*(void**) ((u8*) base + 0x140));
+        if (Movieplayer.unk_140 != NULL) {
+            HSD_Free(Movieplayer.unk_140);
         }
 
-        *p_14C = 0;
+        Movieplayer.power = 0;
     }
 }
 
