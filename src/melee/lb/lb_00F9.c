@@ -1333,8 +1333,8 @@ int lb_8001204C(HSD_JObj* root, HSD_JObj** result, u16* indices, int count)
                     if (HSD_JObjGetNext(
                             HSD_JObjGetParent(saved)) != NULL)
                     {
-                        next_node = HSD_JObjGetNext(
-                            HSD_JObjGetParent(saved));
+                        next_node = (saved = HSD_JObjGetNext(
+                                         HSD_JObjGetParent(saved)));
                         break;
                     }
                     saved = HSD_JObjGetParent(saved);
