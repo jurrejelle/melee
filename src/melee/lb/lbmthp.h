@@ -22,11 +22,12 @@ typedef struct THPDecComp {
     /* 0x0C */ u32 unk_0C;
     /* 0x10 */ u32 unk_10;
     /* 0x14 */ u32 unk_14;
-    /* 0x18 */ u8 pad18[0x1C - 0x18];
+    /* 0x18 */ u32 unk_18;
     /* 0x1C */ u32 unk_1C;
-    /* 0x20 */ u8 pad20[0x24 - 0x20];
+    /* 0x20 */ u32 unk_20;
     /* 0x24 */ u32 unk_24;
-    /* 0x28 */ u8 pad28[0x40 - 0x28];
+    /* 0x28 */ u32 unk_28;
+    /* 0x2C */ u8 pad2C[0x40 - 0x2C];
     /* 0x40 */ u32 unk_40;
     /* 0x44 */ u32 width;
     /* 0x48 */ u32 height;
@@ -34,7 +35,8 @@ typedef struct THPDecComp {
     /* 0x50 */ void* unk_50;
     /* 0x54 */ void* unk_54;
     /* 0x58 */ void* unk_58;
-    /* 0x5C */ u8 pad5C[0x68 - 0x5C];
+    /* 0x5C */ u8 pad5C[0x64 - 0x5C];
+    /* 0x64 */ u32 unk_64;
     /* 0x68 */ s32 unk_68;
     /* 0x6C */ s32 unk_6C;
     /* 0x70 */ s32 unk_70;

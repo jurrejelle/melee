@@ -194,7 +194,76 @@ s32 fn_8001EBF0(THPDecComp* data)
     return size;
 }
 
-/// #fn_8001ECF4
+void fn_8001ECF4(THPDecComp* data, void* buf)
+{
+    u32 y_size;
+    u32 uv_size;
+    u32 var_r24;
+    u32 var_r25;
+    u8* csizep;
+    u8* var_r29;
+    PAD_STACK(8);
+
+    data->unk_4C = (u32*) buf;
+    y_size = data->width * data->height;
+    data->unk_64 = 0;
+    uv_size = y_size >> 2U;
+    var_r29 = (u8*) buf + (((data->unk_104 * 4) + 0x1F) & 0xFFFFFFE0);
+    if (((s32) data->unk_6C != 0) && ((s32) data->unk_11C != 0)) {
+        var_r24 = data->unk_28;
+        csizep = (u8*) &data->unk_28;
+        var_r25 = 0;
+        data->unk_120 = data->unk_20;
+        for (; var_r25 < (u32) data->unk_104; var_r25++) {
+            data->unk_4C[var_r25] = (u32) var_r29;
+            if (var_r24 == 0) {
+                OSReport("by sugano & yoshiki.\n");
+                OSReport("base %x\n", var_r29);
+                OSReport("size %d\n", var_r24);
+                OSReport("count %d\n", var_r25);
+                OSReport("csizep %x\n", csizep);
+                OSReport("[LbMthp] magic = %s\n", data);
+                OSReport("[LbMthp] version = %d\n", data->unk_08);
+                OSReport("[LbMthp] bufSize = %d\n", data->unk_0C);
+                OSReport("[LbMthp] xSize = %d\n", data->unk_10);
+                OSReport("[LbMthp] ySize = %d\n", data->unk_14);
+                OSReport("[LbMthp] framerate = %d\n", data->unk_18);
+                OSReport("[LbMthp] numFrames = %d\n", data->unk_1C);
+                OSReport("[LbMthp] firstFrame = %d\n", data->unk_20);
+                OSReport("[LbMthp] frameOffsets = %d\n", data->unk_24);
+                OSReport("[LbMthp] firstFrameSize = %d\n", data->unk_28);
+                __assert("lbmthp.c", 0x10AU, "0");
+            }
+            lbFile_800161C4(data->unk_128, data->unk_120,
+                            (u32) var_r29,
+                            (var_r24 + 0x1F) & 0xFFFFFFE0, 0x21, 1);
+            csizep = var_r29;
+            data->unk_120 += var_r24;
+            var_r24 = *(u32*) var_r29;
+            var_r29 = var_r29 + data->unk_100;
+        }
+        data->unk_74 = var_r25;
+        data->unk_124 = var_r24;
+        if ((u32) data->unk_74 >= (u32) data->unk_40) {
+            data->unk_74 = 0;
+        }
+        data->unk_8C = 0;
+        {
+            s32 temp = data->unk_104 - 1;
+            data->unk_108 = temp;
+            data->unk_10C = temp;
+        }
+    }
+    data->unk_50 = var_r29;
+    DCInvalidateRange(var_r29, y_size);
+    var_r29 = var_r29 + y_size;
+    data->unk_54 = var_r29;
+    DCInvalidateRange(var_r29, uv_size);
+    var_r29 = var_r29 + uv_size;
+    data->unk_58 = var_r29;
+    DCInvalidateRange(var_r29, uv_size);
+    data->unk_98 = (s32) (var_r29 + uv_size);
+}
 
 s32 fn_8001EF5C(THPDecComp* data)
 {
