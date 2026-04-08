@@ -23,9 +23,8 @@ void fn_8001E910(int arg0, int arg1, void* arg2, bool cancelflag)
     u32 tick;
     BOOL intr;
 
-    if (cancelflag != 0) {
-        __assert("lbmthp.c", 0x148U, "!cancelflag");
-    }
+    HSD_ASSERT(0x148, !cancelflag);
+
     tick_diff = OSGetTick() - Movieplayer.unk_13C;
     Movieplayer.unk_134 = tick_diff;
     Movieplayer.unk_130 = tick_diff >> 0x1F;
@@ -50,12 +49,11 @@ void fn_8001E910(int arg0, int arg1, void* arg2, bool cancelflag)
         var_r4 = 0;
         Movieplayer.unk_138 = 0;
         if ((u32) Movieplayer.unk_74 != (u32) Movieplayer.unk_40) {
-            if ((u32) Movieplayer.currPackedSize == 0U) {
-                OSReport("filnum = %d, ofs = %d, by sugano.",
-                         Movieplayer.unk_128, Movieplayer.unk_120);
-                __assert("lbmthp.c", 0x121U,
-                         "(u32)streamPlayer->currPackedSize != 0");
-            }
+            struct lbl_804333E0_t streamPlayer = Movieplayer;
+            HSD_ASSERTREPORT(0x121, (u32) streamPlayer.currPackedSize != 0,
+                             "filnum = %d, ofs = %d, by sugano.",
+                             Movieplayer.unk_128, Movieplayer.unk_120);
+
             HSD_DevComRequest(
                 Movieplayer.unk_128, Movieplayer.unk_120,
                 (uintptr_t) Movieplayer.unk_4C[Movieplayer.unk_8C],
@@ -232,7 +230,7 @@ void fn_8001ECF4(THPDecComp* data, void* buf)
                 OSReport("[LbMthp] firstFrame = %d\n", data->unk_20);
                 OSReport("[LbMthp] frameOffsets = %d\n", data->unk_24);
                 OSReport("[LbMthp] firstFrameSize = %d\n", data->unk_28);
-                __assert("lbmthp.c", 0x10AU, "0");
+                HSD_ASSERT(0x10A, NULL);
             }
             lbFile_800161C4(data->unk_128, data->unk_120,
                             (u32) var_r29,
