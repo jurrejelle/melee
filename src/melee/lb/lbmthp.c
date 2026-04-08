@@ -5,6 +5,7 @@
 #include "lb/lbfile.h"
 
 #include <Runtime/runtime.h>
+#include <MSL/string.h>
 #include <dolphin/dvd.h>
 #include <dolphin/gx/GXTexture.h>
 #include <dolphin/os/OSCache.h>
@@ -415,4 +416,47 @@ void lbMthp8001F928(HSD_GObj* gobj, int arg1)
     HSD_SObjLib_803A49E0(gobj, arg1);
 }
 
-/// #lbMthp8001FAA0
+void lbMthp8001FAA0(const char* filename, int width, int height)
+{
+    struct {
+        u16 w;
+        u16 h;
+        u8 pad[0x18];
+    } header;
+    s32 output;
+    s32 yuv_size;
+    s32 uv_size;
+    void* context;
+    void* decode_buf;
+    s32 decoded;
+
+    lbl_804335B8.x6C = (u16) width;
+    lbl_804335B8.x6E = (u16) height;
+    THPInit();
+    lbFile_80016760(filename, &lbl_804335B8.unk94, &lbl_804335B8.unk98);
+    yuv_size = lbl_804335B8.x6C * lbl_804335B8.x6E;
+    lbl_804335B8.x20 = HSD_MemAlloc(yuv_size);
+    DCInvalidateRange(lbl_804335B8.x20, (u32) yuv_size);
+    uv_size = (s32) (lbl_804335B8.x6C * lbl_804335B8.x6E) >> 2;
+    lbl_804335B8.x44 = HSD_MemAlloc(uv_size);
+    DCInvalidateRange(lbl_804335B8.x44, (u32) uv_size);
+    lbl_804335B8.x68 = HSD_MemAlloc(uv_size);
+    DCInvalidateRange(lbl_804335B8.x68, (u32) uv_size);
+    context = HSD_MemAlloc(0xC);
+    memset(&header, 0, 0x1CU);
+    header.w = (u16) width;
+    header.h = (u16) height;
+    THPDec_8032F8D4(lbl_804335B8.unk94, context);
+    decode_buf = HSD_MemAlloc(THPDec_8032FD40(context, header.h));
+    decoded = THPVideoDecode(&header, &output, (s32) decode_buf,
+                             (s32) lbl_804335B8.unk94, context);
+    if ((u16) lbl_804335B8.x6C == 0x280) {
+        THPDec_80331340(decoded, lbl_804335B8.x20, lbl_804335B8.x44,
+                        lbl_804335B8.x68);
+    } else {
+        THPDec_803313D0(decoded, lbl_804335B8.x20, lbl_804335B8.x44,
+                        lbl_804335B8.x68);
+    }
+    HSD_Free(context);
+    HSD_Free(decode_buf);
+}
