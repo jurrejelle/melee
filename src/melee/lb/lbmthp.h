@@ -67,7 +67,7 @@ typedef struct THPDecComp {
     /* 0x114 */ u8 pad114[0x11C - 0x114];
     /* 0x11C */ s32 unk_11C;
     /* 0x120 */ u32 unk_120;
-    /* 0x124 */ u32 unk_124;
+    /* 0x124 */ u32 currPackedSize;
     /* 0x128 */ s32 unk_128;
     /* 0x12C */ u8 pad12C[0x130 - 0x12C];
     /* 0x130 */ s32 unk_130;

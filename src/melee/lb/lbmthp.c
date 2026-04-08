@@ -31,7 +31,7 @@ void fn_8001E910(int arg0, int arg1, void* arg2, bool cancelflag)
     lbl_804333E0.unk_130 = tick_diff >> 0x1F;
     lbl_804333E0.unk_108 += 1;
     if ((u32) lbl_804333E0.unk_74 != 0U) {
-        lbl_804333E0.unk_120 += lbl_804333E0.unk_124;
+        lbl_804333E0.unk_120 += lbl_804333E0.currPackedSize;
     } else {
         lbl_804333E0.unk_120 = lbl_804333E0.unk_20;
     }
@@ -40,7 +40,7 @@ void fn_8001E910(int arg0, int arg1, void* arg2, bool cancelflag)
     } else {
         var_r0 = lbl_804333E0.unk_8C - 1;
     }
-    lbl_804333E0.unk_124 = *(u32*) lbl_804333E0.unk_4C[var_r0];
+    lbl_804333E0.currPackedSize = *(u32*) lbl_804333E0.unk_4C[var_r0];
     if (((u32) lbl_804333E0.unk_90 != (u32) lbl_804333E0.unk_8C) &&
         ((s32) lbl_804333E0.unk_70 != 0))
     {
@@ -50,7 +50,7 @@ void fn_8001E910(int arg0, int arg1, void* arg2, bool cancelflag)
         var_r4 = 0;
         lbl_804333E0.unk_138 = 0;
         if ((u32) lbl_804333E0.unk_74 != (u32) lbl_804333E0.unk_40) {
-            if ((u32) lbl_804333E0.unk_124 == 0U) {
+            if ((u32) lbl_804333E0.currPackedSize == 0U) {
                 OSReport("filnum = %d, ofs = %d, by sugano.",
                          lbl_804333E0.unk_128, lbl_804333E0.unk_120);
                 __assert("lbmthp.c", 0x121U,
@@ -59,7 +59,7 @@ void fn_8001E910(int arg0, int arg1, void* arg2, bool cancelflag)
             HSD_DevComRequest(
                 lbl_804333E0.unk_128, lbl_804333E0.unk_120,
                 (uintptr_t) lbl_804333E0.unk_4C[lbl_804333E0.unk_8C],
-                (lbl_804333E0.unk_124 + 0x1F) & 0xFFFFFFE0,
+                (lbl_804333E0.currPackedSize + 0x1F) & 0xFFFFFFE0,
                 0x21, 1, fn_8001E910, NULL);
             lbl_804333E0.unk_74 += 1;
             if (((u32) lbl_804333E0.unk_74 == (u32) lbl_804333E0.unk_40) &&
@@ -243,7 +243,7 @@ void fn_8001ECF4(THPDecComp* data, void* buf)
             var_r29 = var_r29 + data->unk_100;
         }
         data->unk_74 = var_r25;
-        data->unk_124 = var_r24;
+        data->currPackedSize = var_r24;
         if ((u32) data->unk_74 >= (u32) data->unk_40) {
             data->unk_74 = 0;
         }
@@ -340,38 +340,36 @@ end:
 
 /// #fn_8001F13C
 
-s32 fn_8001F13C(THPDecComp* data)
+s32 fn_8001F13C(THPDecComp* streamPlayer)
 {
     BOOL intr;
-    u32 next;
 
     intr = OSDisableInterrupts();
-    if ((data->unk_90 != data->unk_8C) && (data->unk_110 == 0) &&
-        (data->unk_70 != 0))
+    if ((streamPlayer->unk_90 != streamPlayer->unk_8C) && (streamPlayer->unk_110 == 0) &&
+        (streamPlayer->unk_70 != 0))
     {
-        data->unk_13C = OSGetTick();
-        data->unk_138 = 0;
-        if (data->unk_74 != data->unk_40) {
-            if (data->unk_124 == 0) {
-                OSReport("filnum = %d, ofs = %d, by sugano.\n",
-                         data->unk_128, data->unk_120);
-                __assert("lbmthp.c", 0x121,
-                         "(u32)streamPlayer->currPackedSize != 0");
-            }
-            HSD_DevComRequest(data->unk_128, data->unk_120,
-                              data->unk_4C[data->unk_8C],
-                              ALIGN_32(data->unk_124), 0x21, 1,
+        streamPlayer->unk_13C = OSGetTick();
+        streamPlayer->unk_138 = 0;
+        if (streamPlayer->unk_74 != streamPlayer->unk_40) {
+            HSD_ASSERTREPORT(0x121, (u32) streamPlayer->currPackedSize != 0,
+                             "filnum = %d, ofs = %d, by sugano.\n",
+                             streamPlayer->unk_128, streamPlayer->unk_120);
+            HSD_DevComRequest(streamPlayer->unk_128, streamPlayer->unk_120,
+                              streamPlayer->unk_4C[streamPlayer->unk_8C],
+                              ALIGN_32(streamPlayer->currPackedSize), 0x21, 1,
                               fn_8001E910, NULL);
-            data->unk_74++;
-            if ((data->unk_74 == data->unk_40) && (data->unk_68 != 0)) {
-                data->unk_74 = 0;
+            streamPlayer->unk_74++;
+            if ((streamPlayer->unk_74 == streamPlayer->unk_40) && (streamPlayer->unk_68 != 0)) {
+                streamPlayer->unk_74 = 0;
             }
-            next = data->unk_8C + 1;
-            if (next >= data->unk_104) {
-                next = 0;
+            {
+                unsigned int next = streamPlayer->unk_8C + 1;
+                if (next >= streamPlayer->unk_104) {
+                    next = 0;
+                }
+                streamPlayer->unk_8C = next;
             }
-            data->unk_8C = next;
-            data->unk_110 = 1;
+            streamPlayer->unk_110 = 1;
         }
     }
     return OSRestoreInterrupts(intr);

@@ -36,7 +36,7 @@ struct lbl_804333E0_t {
     /* 0x110 */ s32 unk_110;
     /* 0x114 */ char pad_114[0xC];
     /* 0x120 */ u32 unk_120;
-    /* 0x124 */ u32 unk_124;
+    /* 0x124 */ u32 currPackedSize;
     /* 0x128 */ s32 unk_128;
     /* 0x12C */ s32 unk_12C;
     /* 0x130 */ s32 unk_130;
