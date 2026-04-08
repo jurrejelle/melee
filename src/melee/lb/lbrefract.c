@@ -720,8 +720,7 @@ void lbRefract_80022BD0(void)
 {
     lbl_804336D0.refractionUserCount -= 1;
     if (lbl_804336D0.refractionUserCount < 0) {
-        OSReport("lbRefSetUnuse error!\n");
-        __assert("lbrefract.c", 0x31c, "0");
+        HSD_ASSERTREPORT(0x31c, NULL, "lbRefSetUnuse error!\n");
     }
 }
 
