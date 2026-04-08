@@ -273,6 +273,16 @@ static void fn_80022650(void)
     lbl_803BB0B0.dobj_info.disp = lbRefract_DObjDispReset;
 }
 
+static void fn_80022940(void)
+{
+    hsdInitClassInfo(HSD_CLASS_INFO(&lbl_803BB0B0.pobj_info),
+                     HSD_CLASS_INFO(&hsdPObj),
+                     lbl_803BB0B0.lib_name,
+                     lbl_803BB0B0.pobj_name,
+                     sizeof(HSD_PObjInfo), sizeof(HSD_PObj));
+    lbl_803BB0B0.pobj_info.load = lbRefract_PObjLoad;
+}
+
 /// @brief Increment refraction effect user count.
 void lbRefract_80022BB8(void)
 {
