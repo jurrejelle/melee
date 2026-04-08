@@ -76,13 +76,14 @@ typedef struct THPDecComp {
 /* 01E910 */ void fn_8001E910(int, int, void*, bool);
 /* 01EB14 */ s32 fn_8001EB14(THPDecComp* data, const char* path);
 /* 01EBF0 */ s32 fn_8001EBF0(THPDecComp* data);
-/* 01ECF4 */ UNK_RET fn_8001ECF4(UNK_PARAMS);
+/* 01ECF4 */ void fn_8001ECF4(THPDecComp* data, void* buf);
 /* 01EF5C */ s32 fn_8001EF5C(THPDecComp* data);
 /* 01F06C */ s32 fn_8001F06C(THPDecComp* data);
 /* 01F13C */ s32 fn_8001F13C(THPDecComp* data);
 /* 01F294 */ s32 fn_8001F294(void);
 /* 01F2A4 */ UNK_RET fn_8001F2A4(UNK_PARAMS);
-/* 01F410 */ void lbMthp_8001F410(const char* filename, UNK_T, int, int, int);
+/* 01F410 */ void lbMthp_8001F410(const char* filename, UNK_T, int, int,
+                                  int);
 /* 01F578 */ void lbMthp_8001F578(void);
 /* 01F5C4 */ s32 lbMthp_8001F5C4(void);
 /* 01F5D4 */ s32 lbMthp_8001F5D4(void);

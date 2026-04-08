@@ -4,6 +4,7 @@
 #include "baselib/video.h"
 #include "lb/lbfile.h"
 
+#include <Runtime/runtime.h>
 #include <dolphin/dvd.h>
 #include <dolphin/gx/GXTexture.h>
 #include <dolphin/os/OSCache.h>
@@ -242,6 +243,42 @@ s32 fn_8001F294(void);
 /// #fn_8001F2A4
 
 /// #lbMthp_8001F410
+
+void lbMthp_8001F410(const char* filename, void* rate_table, int buf_arg,
+                     int bufsize, int loop)
+{
+    s32 size;
+    void* buf = (void*) buf_arg;
+
+    if (lbl_804333E0.unk_14C != 0) {
+        __assert("lbmthp.c", 0x341, "lbl_804333E0.unk_14C == 0");
+    }
+    lbl_804333E0.unk_14C = 1;
+    fn_8001EB14((THPDecComp*) &lbl_804333E0, filename);
+    lbl_804333E0.unk_12C = (s32) rate_table;
+    size = fn_8001EBF0((THPDecComp*) &lbl_804333E0);
+    if (buf != NULL) {
+        if ((u32) bufsize < (u32) size) {
+            __assert("lbmthp.c", 0x350, "bufsize >= size");
+        }
+        lbl_804333E0.unk_140 = NULL;
+    } else {
+        buf = HSD_MemAlloc(size);
+        lbl_804333E0.unk_140 = buf;
+    }
+    lbl_804333E0.unk_68 = loop;
+    fn_8001ECF4((THPDecComp*) &lbl_804333E0, buf);
+    lbl_804333E0.unk_144 = 0;
+    lbl_804333E0.unk_148 = 1;
+    OSCreateAlarm(&lbl_804333E0.unk_150);
+    OSSetPeriodicAlarm(
+        &lbl_804333E0.unk_150,
+        __cvt_dbl_usll(
+            (f64) (0.016666668f * (f32) (*(u32*) 0x800000F8 >> 2))),
+        __cvt_dbl_usll(
+            (f64) (0.016666668f * (f32) (*(u32*) 0x800000F8 >> 2))),
+        (OSAlarmHandler) fn_8001F2A4);
+}
 
 void lbMthp_8001F578(void)
 {
