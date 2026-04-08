@@ -10,9 +10,11 @@
 
 #include "lb/types.h"
 
+#include <placeholder.h>
 #include <math.h>
 #include <string.h>
 #include <dolphin/gx/GXBump.h>
+#include <dolphin/os/OSCache.h>
 #include <dolphin/gx/GXGeometry.h>
 #include <dolphin/gx/GXLighting.h>
 #include <dolphin/gx/GXPixel.h>
@@ -93,6 +95,76 @@ extern float MSL_TrigF_80400770[], MSL_TrigF_80400774[];
 
 #define NAN MSL_TrigF_80400770[0]
 #define INF MSL_TrigF_80400774[0]
+
+void lbRefract_80021CE8(void* arg0, s32 arg1)
+{
+    lbRefract_CallbackData* cb = arg0;
+    u32 col, row;
+    f32 x_step, y_step;
+    f32 x, y, y_sq;
+    f32 dist_sq;
+    f32 dist;
+    f32 param0;
+    u32 y_tex;
+    f32* params;
+    volatile f32 sp18;
+
+    PAD_STACK(20);
+
+    x_step = 2.0f / (f32)(u32)(cb->width - 1);
+    y_step = 2.0f / (f32)(u32)(cb->height - 1);
+    y = -1.0f;
+
+    for (col = 0; col < (u32) cb->height; col++) {
+        y_sq = y * y;
+        x = -1.0f;
+        for (row = 0; row < (u32) cb->width; row++) {
+            dist_sq = x * x + y_sq;
+            if (dist_sq > 0.0f) {
+                f64 est = __frsqrte((f64) dist_sq);
+                est = 0.5 * est *
+                      -(((f64) dist_sq * (est * est)) - 3.0);
+                est = 0.5 * est *
+                      -(((f64) dist_sq * (est * est)) - 3.0);
+                sp18 = (f32) ((f64) dist_sq *
+                              (0.5 * est *
+                               -(((f64) dist_sq * (est * est)) - 3.0)));
+                dist_sq = sp18;
+            }
+            dist = dist_sq;
+            if (dist_sq > 1.0f) {
+                dist = 1.0f;
+            }
+            params = *(f32**) (lbl_804D63E8 + 4);
+            param0 = params[arg1 * 2];
+            if (param0 != 0.0f) {
+                f32 rem;
+                if (__fabsf(param0) > __fabsf(dist)) {
+                    rem = dist;
+                } else {
+                    rem = -(param0 *
+                            (f32) (s64) (u64) (dist / param0) - dist);
+                }
+                param0 = dist * rem;
+            } else {
+                param0 = dist;
+            }
+            params = *(f32**) (lbl_804D63E8 + 4);
+            param0 *= params[arg1 * 2 + 1];
+            if (param0 > 1.0f) {
+                param0 = 1.0f;
+            }
+            y_tex = (u32) (127.0f * (y * param0) + 128.0f);
+            ((void (*)(lbRefract_CallbackData*, s32, s32, s32, s32, u32,
+                       u32)) cb->callback0)(
+                cb, row, col, 0, 0, y_tex,
+                (u32) (127.0f * (x * param0) + 128.0f));
+            x += x_step;
+        }
+        y += y_step;
+    }
+    DCFlushRange((void*) cb->buffer, cb->buffer_size);
+}
 
 static void lbRefract_WriteTexCoordIA4(lbRefract_CallbackData* data, s32 row,
                                        u32 col, u32 arg3, u8 arg4,
