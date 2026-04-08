@@ -32,7 +32,7 @@ lbRefract_WriteTexCoordIA4(lbRefract_CallbackData* data, s32 row, u32 col,
 /* 021FB4 */ static void fn_80021FB4(lbRefract_CallbackData* data, s32 row,
                                      u32 col, u8 arg3, u8 arg4, u8 arg5,
                                      u8 arg6);
-/* 021FF8 */ static UNK_RET fn_80021FF8(UNK_PARAMS);
+/* 021FF8 */ static void fn_80021FF8(lbRefract_CallbackData*, s32, u32, s32*, s32*, s32*, s32*);
 /* 02206C */ static UNK_RET fn_8002206C(UNK_PARAMS);
 /// @brief Display DObj then reset TEV/indirect stages for refraction cleanup.
 /* 022608 */ static void lbRefract_DObjDispReset(HSD_DObj* dobj, Mtx vmtx,
@@ -93,6 +93,30 @@ static void fn_80021F70(lbRefract_CallbackData* data, s32 row, u32 col,
     offset = (row + ((col * 4) & 0xC)) * 2;
     *(u16*) (base + offset) =
         (b >> 3) | ((g * 8 & 0x7E0 & ~0xF800) | ((r << 8) & 0xF800));
+}
+
+static void fn_80021FF8(lbRefract_CallbackData* data, s32 row, u32 col,
+                        s32* arg3, s32* arg4, s32* arg5, s32* arg6)
+{
+    u8* base;
+    s32 offset;
+
+    base = (u8*) data->buffer + ((col >> 2) * data->row_stride) +
+           ((row * 8) & 0xFFFFFFE0);
+    row &= 3;
+    offset = (row + ((col * 4) & 0xC)) * 2;
+    if (arg3 != NULL) {
+        *arg3 = 0xFF;
+    }
+    if (arg4 != NULL) {
+        *arg4 = 0xFF;
+    }
+    if (arg5 != NULL) {
+        *arg5 = base[offset + 1];
+    }
+    if (arg6 != NULL) {
+        *arg6 = base[offset];
+    }
 }
 
 static void fn_80021FB4(lbRefract_CallbackData* data, s32 row, u32 col,
