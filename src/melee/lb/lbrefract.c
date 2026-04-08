@@ -44,7 +44,7 @@ lbRefract_ReadTexCoordRGBA8(lbRefract_CallbackData* data, s32 row, u32 col,
 /* 022DF8 */ static inline float lbRefract_80022DF8(float x);
 /// @brief Initialize refraction callback data for a texture buffer.
 /* 02219C */ s32 lbRefract_8002219C(lbRefract_CallbackData* data, s32 buffer,
-                                    s32 format, u16 width, u16 height);
+                                    s32 format, s32 width, s32 height);
 
 static void fn_80022650(void);
 static void fn_80022940(void);
@@ -211,35 +211,35 @@ static void lbRefract_ReadTexCoordRGBA8(lbRefract_CallbackData* data, s32 row,
 /// @param height Texture height in pixels.
 /// @return 0 on success, -1 if format is unsupported.
 s32 lbRefract_8002219C(lbRefract_CallbackData* data, s32 buffer, s32 format,
-                       u16 width, u16 height)
+                       s32 width, s32 height)
 {
     data->buffer = buffer;
     data->format = format;
-    data->width = (s32) width;
-    data->height = (s32) height;
-    data->buffer_size = GXGetTexBufferSize(width, height, format, 0U, 0U);
-    switch (format) { /* irregular */
+    data->width = width;
+    data->height = height;
+    data->buffer_size =
+        GXGetTexBufferSize((u16) width, (u16) height, format, 0, 0);
+    switch (format) {
     case 3:
         data->callback0 = lbRefract_WriteTexCoordIA4;
         data->callback1 = fn_80021FF8;
         data->row_stride = (width * 8) & 0xFFFFFFE0;
-    block_11:
-        return 0;
+        break;
     case 4:
         data->callback0 = fn_80021F70;
         data->callback1 = fn_8002206C;
         data->row_stride = (width * 8) & 0xFFFFFFE0;
-        goto block_11;
+        break;
     case 6:
         data->callback0 = fn_80021FB4;
         data->callback1 = lbRefract_ReadTexCoordRGBA8;
         data->row_stride = (width * 0x10) & 0xFFFFFFC0;
-        goto block_11;
+        break;
     case 5:
-        /* fallthrough */
     default:
         return -1;
     }
+    return 0;
 }
 
 /// @brief Copy framebuffer to refraction source texture.
