@@ -82,7 +82,21 @@ struct lbRefract_DataLayout {
 
 extern struct lbRefract_DataLayout lbl_803BB0B0;
 
-static int lbl_804336D0[0x10];
+struct lbl_804336D0_t {
+    int refractionUserCount;
+    void* image_ptr;
+    HSD_ImageDesc** unk_8;
+    HSD_TObj** unk_C;
+    MtxPtr unk_10;
+    MtxPtr unk_14;
+    int unk_18;
+    int unk_1C;
+    int unk_20;
+    int unk_24;
+};
+STATIC_ASSERT(sizeof(struct lbl_804336D0_t) == 0x28);
+
+static struct lbl_804336D0_t lbl_804336D0;
 static u8* lbl_804D63E8;
 
 extern float MSL_TrigF_80400770[], MSL_TrigF_80400774[];
@@ -350,103 +364,86 @@ void lbRefract_800222A4(void)
 {
     lbRefract_CallbackData cb;
     void* buf;
-    s32 save_off;
-    s32 tobj_off;
-    s32 store_off;
     u32 i;
 
-    store_off = 0;
-    lbl_804336D0[0] = 0;
+    lbl_804336D0.refractionUserCount = 0;
     lbArchive_LoadSymbols(lbl_803BB0B0.filename, &lbl_804D63E8,
                           lbl_803BB0B0.symbol, 0);
     {
         s32 buf_size = GXGetTexBufferSize(0x140, 0xF0, 4, 0, 0);
-        lbl_804336D0[1] = (s32) HSD_MemAlloc(buf_size);
-        memset((void*) lbl_804336D0[1], 0, (u32) buf_size);
+        lbl_804336D0.image_ptr = HSD_MemAlloc(buf_size);
+        memset((void*) lbl_804336D0.image_ptr, 0, (u32) buf_size);
     }
-    lbl_804336D0[3] = (s32) HSD_MemAlloc(*lbl_804D63E8 * 4);
-    lbl_804336D0[2] = (s32) HSD_MemAlloc(*lbl_804D63E8 * 0x18);
+    lbl_804336D0.unk_C = HSD_MemAlloc(*lbl_804D63E8 * 4);
+    lbl_804336D0.unk_8 = HSD_MemAlloc(*lbl_804D63E8 * 0x18);
 
-    save_off = 0;
-    tobj_off = 0;
     i = 0;
 
-    while (i < *lbl_804D63E8) {
+    for (i = 0; i < *lbl_804D63E8; i++) {
         buf = HSD_MemAlloc(GXGetTexBufferSize(0x20, 0x20, 3, 0, 0));
         lbRefract_8002219C(&cb, (s32) buf, 3, 0x20, 0x20);
         lbRefract_80021CE8(&cb, (s32) i);
 
         {
-            HSD_ImageDesc* dst =
-                (HSD_ImageDesc*) ((u8*) lbl_804336D0[2] + save_off);
+            HSD_ImageDesc* dst = lbl_804336D0.unk_8[i];
             *dst = lbl_803BB0B0.imagedesc0;
         }
 
-        lbl_803BB0B0.tobj1.imagedesc =
-            (HSD_ImageDesc*) ((u8*) lbl_804336D0[2] + save_off);
+        lbl_803BB0B0.tobj1.imagedesc = lbl_804336D0.unk_8[i];
 
-        *(void**) ((u8*) lbl_804336D0[3] + tobj_off) =
-            HSD_TObjLoadDesc(&lbl_803BB0B0.tobj1);
+        lbl_804336D0.unk_C[i] = HSD_TObjLoadDesc(&lbl_803BB0B0.tobj1);
 
-        lbl_803BB0B0.imagedesc0.image_ptr = (void*) lbl_804336D0[1];
+        lbl_803BB0B0.imagedesc0.image_ptr = (void*) lbl_804336D0.image_ptr;
         lbl_803BB0B0.imagedesc0.format = 4;
         lbl_803BB0B0.imagedesc0.width = 0x140;
         lbl_803BB0B0.imagedesc0.height = 0xF0;
 
-        *(void**) ((u8*) lbl_804336D0[2] + store_off) = buf;
-        *(s32*) ((u8*) lbl_804336D0[2] + store_off + 8) = 3;
-        *(u16*) ((u8*) lbl_804336D0[2] + store_off + 4) = 0x20;
-        *(u16*) ((u8*) lbl_804336D0[2] + store_off + 6) = 0x20;
-
-        save_off += 0x18;
-        tobj_off += 4;
-        store_off += 0x18;
-        i++;
+        lbl_804336D0.unk_8[i]->image_ptr = buf;
+        lbl_804336D0.unk_8[i]->format = 3;
+        lbl_804336D0.unk_8[i]->height = 0x20;
+        lbl_804336D0.unk_8[i]->width = 0x20;
     }
 }
 
 /// @brief Copy framebuffer to refraction source texture.
 void lbRefract_8002247C(HSD_CObj* cobj)
 {
-    if (lbl_804336D0[0] == 0) {
+    if (lbl_804336D0.refractionUserCount == 0) {
         return;
     }
 
     switch (HSD_CObjGetProjectionType(cobj)) {
     case 1:
-        MTXLightPerspective(
-            (MtxPtr) ((char*) lbl_804336D0 + 0x10),
-            cobj->projection_param.perspective.fov,
-            cobj->projection_param.perspective.aspect, 0.5F, -0.5F, 0.5F,
-            0.5F);
+        MTXLightPerspective(lbl_804336D0.unk_10,
+                            cobj->projection_param.perspective.fov,
+                            cobj->projection_param.perspective.aspect, 0.5F,
+                            -0.5F, 0.5F, 0.5F);
         break;
     case 2:
-        MTXLightFrustum(
-            (MtxPtr) ((char*) lbl_804336D0 + 0x10),
-            cobj->projection_param.frustum.top,
-            cobj->projection_param.frustum.bottom,
-            cobj->projection_param.frustum.left,
-            cobj->projection_param.frustum.right, cobj->near, 0.5F, -0.5F,
-            0.5F, 0.5F);
+        MTXLightFrustum(lbl_804336D0.unk_10,
+                        cobj->projection_param.frustum.top,
+                        cobj->projection_param.frustum.bottom,
+                        cobj->projection_param.frustum.left,
+                        cobj->projection_param.frustum.right, cobj->near, 0.5F,
+                        -0.5F, 0.5F, 0.5F);
         break;
     case 3:
     default:
-        MTXLightOrtho(
-            (MtxPtr) ((char*) lbl_804336D0 + 0x10),
-            cobj->projection_param.ortho.top,
-            cobj->projection_param.ortho.bottom,
-            cobj->projection_param.ortho.left,
-            cobj->projection_param.ortho.right, 0.5F, -0.5F, 0.5F, 0.5F);
+        MTXLightOrtho(lbl_804336D0.unk_10, cobj->projection_param.ortho.top,
+                      cobj->projection_param.ortho.bottom,
+                      cobj->projection_param.ortho.left,
+                      cobj->projection_param.ortho.right, 0.5F, -0.5F, 0.5F,
+                      0.5F);
         break;
     }
 }
 
 void lbRefract_80022560(void)
 {
-    if (lbl_804336D0[0] != 0) {
+    if (lbl_804336D0.refractionUserCount != 0) {
         GXSetTexCopySrc(0, 0, 0x280, 0x1E0);
         GXSetTexCopyDst(0x140, 0xF0, 4, 1);
-        GXCopyTex((void*) lbl_804336D0[1], 0);
+        GXCopyTex((void*) lbl_804336D0.image_ptr, 0);
         GXPixModeSync();
         GXInvalidateTexAll();
     }
@@ -668,7 +665,7 @@ void lbRefract_80022998(HSD_MObj* mobj, u32 rendermode, s32 arg2)
     u8 write_z;
     enum _GXCompare compare;
 
-    HSD_TObjSetup(((HSD_TObj**) lbl_804336D0[3])[arg2]);
+    HSD_TObjSetup(((HSD_TObj**) lbl_804336D0.unk_C)[arg2]);
 
     GXSetNumTexGens(2);
     GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX3x4, GX_TG_NRM, GX_TEXMTX0,
@@ -677,7 +674,7 @@ void lbRefract_80022998(HSD_MObj* mobj, u32 rendermode, s32 arg2)
                       GX_PTTEXMTX1);
 
     GXLoadTexMtxImm(lbl_803BB0B0.texture_mtx, GX_PTTEXMTX0, GX_MTX3x4);
-    GXLoadTexMtxImm((MtxPtr) &lbl_804336D0[4], GX_PTTEXMTX1, GX_MTX3x4);
+    GXLoadTexMtxImm(lbl_804336D0.unk_10, GX_PTTEXMTX1, GX_MTX3x4);
 
     GXSetNumChans(0);
     GXSetNumTevStages(1);
@@ -724,14 +721,14 @@ void lbRefract_80022998(HSD_MObj* mobj, u32 rendermode, s32 arg2)
 /// @brief Increment refraction effect user count.
 void lbRefract_80022BB8(void)
 {
-    lbl_804336D0[0] += 1;
+    lbl_804336D0.refractionUserCount += 1;
 }
 
 /// @brief Decrement refraction effect user count.
 void lbRefract_80022BD0(void)
 {
-    lbl_804336D0[0] -= 1;
-    if (lbl_804336D0[0] < 0) {
+    lbl_804336D0.refractionUserCount -= 1;
+    if (lbl_804336D0.refractionUserCount < 0) {
         OSReport("lbRefSetUnuse error!\n");
         __assert("lbrefract.c", 0x31c, "0");
     }
