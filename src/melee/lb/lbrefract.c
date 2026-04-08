@@ -11,14 +11,18 @@
 #include "lb/types.h"
 
 #include <math.h>
+#include <string.h>
 #include <dolphin/gx/GXTexture.h>
 #include <baselib/class.h>
 #include <baselib/cobj.h>
 #include <baselib/debug.h>
 #include <baselib/dobj.h>
+#include <baselib/memory.h>
 #include <baselib/pobj.h>
 #include <baselib/state.h>
 #include <MetroTRK/intrinsics.h>
+
+#include "lb/lbarchive.h"
 
 extern HSD_DObjInfo hsdDObj;
 extern HSD_PObjInfo hsdPObj;
@@ -49,7 +53,28 @@ lbRefract_ReadTexCoordRGBA8(lbRefract_CallbackData* data, s32 row, u32 col,
 static void fn_80022650(void);
 static void fn_80022940(void);
 
+struct lbRefract_DataLayout {
+    /* 0x000 */ Mtx texture_mtx;
+    /* 0x030 */ f32 half_mtx[6];
+    /* 0x048 */ HSD_ImageDesc imagedesc0;
+    /* 0x060 */ HSD_TexLODDesc lod0;
+    /* 0x070 */ HSD_TObjDesc tobj0;
+    /* 0x0CC */ HSD_ImageDesc imagedesc1;
+    /* 0x0E4 */ HSD_TexLODDesc lod1;
+    /* 0x0F4 */ HSD_TObjDesc tobj1;
+    /* 0x150 */ char filename[12];
+    /* 0x15C */ char symbol[12];
+    /* 0x168 */ HSD_DObjInfo dobj_info;
+    /* 0x1AC */ HSD_PObjInfo pobj_info;
+    /* 0x1F4 */ char lib_name[24];
+    /* 0x20C */ char dobj_name[16];
+    /* 0x21C */ char pobj_name[16];
+};
+
+extern struct lbRefract_DataLayout lbl_803BB0B0;
+
 static int lbl_804336D0[0x10];
+static u8* lbl_804D63E8;
 
 extern float MSL_TrigF_80400770[], MSL_TrigF_80400774[];
 
@@ -242,6 +267,65 @@ s32 lbRefract_8002219C(lbRefract_CallbackData* data, s32 buffer, s32 format,
     return 0;
 }
 
+void lbRefract_800222A4(void)
+{
+    lbRefract_CallbackData cb;
+    void* buf;
+    s32 save_off;
+    s32 tobj_off;
+    s32 store_off;
+    u32 i;
+
+    store_off = 0;
+    lbl_804336D0[0] = 0;
+    lbArchive_LoadSymbols(lbl_803BB0B0.filename, &lbl_804D63E8,
+                          lbl_803BB0B0.symbol, 0);
+    {
+        s32 buf_size = GXGetTexBufferSize(0x140, 0xF0, 4, 0, 0);
+        lbl_804336D0[1] = (s32) HSD_MemAlloc(buf_size);
+        memset((void*) lbl_804336D0[1], 0, (u32) buf_size);
+    }
+    lbl_804336D0[3] = (s32) HSD_MemAlloc(*lbl_804D63E8 * 4);
+    lbl_804336D0[2] = (s32) HSD_MemAlloc(*lbl_804D63E8 * 0x18);
+
+    save_off = 0;
+    tobj_off = 0;
+    i = 0;
+
+    while (i < *lbl_804D63E8) {
+        buf = HSD_MemAlloc(GXGetTexBufferSize(0x20, 0x20, 3, 0, 0));
+        lbRefract_8002219C(&cb, (s32) buf, 3, 0x20, 0x20);
+        lbRefract_80021CE8(&cb, (s32) i);
+
+        {
+            HSD_ImageDesc* dst =
+                (HSD_ImageDesc*) ((u8*) lbl_804336D0[2] + save_off);
+            *dst = lbl_803BB0B0.imagedesc0;
+        }
+
+        lbl_803BB0B0.tobj1.imagedesc =
+            (HSD_ImageDesc*) ((u8*) lbl_804336D0[2] + save_off);
+
+        *(void**) ((u8*) lbl_804336D0[3] + tobj_off) =
+            HSD_TObjLoadDesc(&lbl_803BB0B0.tobj1);
+
+        lbl_803BB0B0.imagedesc0.image_ptr = (void*) lbl_804336D0[1];
+        lbl_803BB0B0.imagedesc0.format = 4;
+        lbl_803BB0B0.imagedesc0.width = 0x140;
+        lbl_803BB0B0.imagedesc0.height = 0xF0;
+
+        *(void**) ((u8*) lbl_804336D0[2] + store_off) = buf;
+        *(s32*) ((u8*) lbl_804336D0[2] + store_off + 8) = 3;
+        *(u16*) ((u8*) lbl_804336D0[2] + store_off + 4) = 0x20;
+        *(u16*) ((u8*) lbl_804336D0[2] + store_off + 6) = 0x20;
+
+        save_off += 0x18;
+        tobj_off += 4;
+        store_off += 0x18;
+        i++;
+    }
+}
+
 /// @brief Copy framebuffer to refraction source texture.
 void lbRefract_8002247C(HSD_CObj* cobj)
 {
@@ -306,17 +390,17 @@ static void lbRefract_DObjDispReset(HSD_DObj* dobj, Mtx vmtx, Mtx pmtx,
     HSD_StateInvalidate(-1);
 }
 
-struct lbRefract_DataLayout {
-    /* 0x000 */ u8 x00[0x168];
-    /* 0x168 */ HSD_DObjInfo dobj_info;
-    /* 0x1AC */ HSD_PObjInfo pobj_info;
-    /* 0x1F4 */ char lib_name[24];
-    /* 0x20C */ char dobj_name[16];
-    /* 0x21C */ char pobj_name[16];
-};
-
 struct lbRefract_DataLayout lbl_803BB0B0 = {
+    { { 0 } },
     { 0 },
+    { 0 },
+    { 0 },
+    { 0 },
+    { 0 },
+    { 0 },
+    { 0 },
+    "",
+    "",
     { fn_80022650 },
     { fn_80022940 },
     "refract_class_library",
