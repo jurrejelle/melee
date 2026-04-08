@@ -241,7 +241,94 @@ s32 fn_8001F13C(THPDecComp* data)
 
 s32 fn_8001F294(void);
 
-/// #fn_8001F2A4
+s32 fn_8001F2A4(void)
+{
+    s32 frame;
+    s32* rate_ptr;
+    s32 counter;
+    s32 count, ticks, total;
+
+    /* Convert unk_80 ticks to frame number using rate table */
+    frame = 0;
+    rate_ptr = (s32*) lbl_804333E0.unk_12C;
+    counter = lbl_804333E0.unk_80;
+    if ((u32) rate_ptr != 0U) {
+        for (;; rate_ptr += 2) {
+            count = rate_ptr[0];
+            ticks = rate_ptr[1];
+            total = count * ticks;
+            if ((u32) counter >= (u32) total) {
+                frame += count;
+                counter -= total;
+                continue;
+            }
+            frame += (u32) counter / (u32) ticks;
+            break;
+        }
+    } else {
+        frame = counter;
+    }
+
+    if ((u32) lbl_804333E0.unk_78 == (u32) frame) {
+        lbl_804333E0.unk_80 += 1;
+
+        /* Recompute frame after increment */
+        frame = 0;
+        rate_ptr = (s32*) lbl_804333E0.unk_12C;
+        counter = lbl_804333E0.unk_80;
+        if ((u32) rate_ptr != 0U) {
+            for (;; rate_ptr += 2) {
+                count = rate_ptr[0];
+                ticks = rate_ptr[1];
+                total = count * ticks;
+                if ((u32) counter >= (u32) total) {
+                    frame += count;
+                    counter -= total;
+                    continue;
+                }
+                frame += (u32) counter / (u32) ticks;
+                break;
+            }
+        } else {
+            frame = counter;
+        }
+
+        if ((u32) lbl_804333E0.unk_40 == (u32) frame) {
+            if (lbl_804333E0.unk_68 != 0) {
+                lbl_804333E0.unk_80 = 0;
+            } else {
+                lbl_804333E0.unk_80 -= 1;
+                lbl_804333E0.unk_144 = 1;
+            }
+        }
+    }
+
+    /* Final conversion for frame change check */
+    rate_ptr = (s32*) lbl_804333E0.unk_12C;
+    frame = 0;
+    counter = lbl_804333E0.unk_80;
+    if ((u32) rate_ptr != 0U) {
+        for (;; rate_ptr += 2) {
+            count = rate_ptr[0];
+            ticks = rate_ptr[1];
+            total = count * ticks;
+            if ((u32) counter >= (u32) total) {
+                frame += count;
+                counter -= total;
+                continue;
+            }
+            frame += (u32) counter / (u32) ticks;
+            break;
+        }
+    } else {
+        frame = counter;
+    }
+
+    if ((u32) lbl_804333E0.unk_78 != (u32) frame) {
+        return fn_8001F06C((THPDecComp*) &lbl_804333E0);
+    }
+    return (s32) &lbl_804333E0;
+}
 
 /// #lbMthp_8001F410
 

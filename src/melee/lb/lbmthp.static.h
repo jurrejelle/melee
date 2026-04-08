@@ -7,7 +7,9 @@
 #include <dolphin/os/OSAlarm.h>
 
 struct lbl_804333E0_t {
-    /* 0x000 */ char pad_0[0x68];
+    /* 0x000 */ char pad_0[0x40];
+    /* 0x040 */ u32 unk_40;
+    /* 0x044 */ char pad_44[0x24];
     /* 0x068 */ s32 unk_68;
     /* 0x06C */ char pad_6C[0xC];
     /* 0x078 */ s32 unk_78;
