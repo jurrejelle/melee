@@ -8,19 +8,22 @@
 
 #include "lbrefract.h"
 
+#include <placeholder.h>
+
+#include "dolphin/gx/GXEnum.h"
+#include "lb/lbarchive.h"
 #include "lb/types.h"
 
-#include <placeholder.h>
 #include <math.h>
 #include <string.h>
 #include <dolphin/gx/GXBump.h>
-#include <dolphin/os/OSCache.h>
 #include <dolphin/gx/GXGeometry.h>
 #include <dolphin/gx/GXLighting.h>
 #include <dolphin/gx/GXPixel.h>
 #include <dolphin/gx/GXTev.h>
 #include <dolphin/gx/GXTexture.h>
 #include <dolphin/gx/GXTransform.h>
+#include <dolphin/os/OSCache.h>
 #include <baselib/class.h>
 #include <baselib/cobj.h>
 #include <baselib/debug.h>
@@ -29,8 +32,6 @@
 #include <baselib/pobj.h>
 #include <baselib/state.h>
 #include <MetroTRK/intrinsics.h>
-
-#include "lb/lbarchive.h"
 
 extern HSD_DObjInfo hsdDObj;
 extern HSD_PObjInfo hsdPObj;
@@ -87,14 +88,9 @@ struct lbl_804336D0_t {
     void* image_ptr;
     HSD_ImageDesc** unk_8;
     HSD_TObj** unk_C;
-    MtxPtr unk_10;
-    MtxPtr unk_14;
-    int unk_18;
-    int unk_1C;
-    int unk_20;
-    int unk_24;
+    Mtx texture_mtx;
 };
-STATIC_ASSERT(sizeof(struct lbl_804336D0_t) == 0x28);
+STATIC_ASSERT(sizeof(struct lbl_804336D0_t) == 0x40);
 
 static struct lbl_804336D0_t lbl_804336D0;
 static u8* lbl_804D63E8;
@@ -377,8 +373,6 @@ void lbRefract_800222A4(void)
     lbl_804336D0.unk_C = HSD_MemAlloc(*lbl_804D63E8 * 4);
     lbl_804336D0.unk_8 = HSD_MemAlloc(*lbl_804D63E8 * 0x18);
 
-    i = 0;
-
     for (i = 0; i < *lbl_804D63E8; i++) {
         buf = HSD_MemAlloc(GXGetTexBufferSize(0x20, 0x20, 3, 0, 0));
         lbRefract_8002219C(&cb, (s32) buf, 3, 0x20, 0x20);
@@ -414,13 +408,13 @@ void lbRefract_8002247C(HSD_CObj* cobj)
 
     switch (HSD_CObjGetProjectionType(cobj)) {
     case 1:
-        MTXLightPerspective(lbl_804336D0.unk_10,
+        MTXLightPerspective(lbl_804336D0.texture_mtx,
                             cobj->projection_param.perspective.fov,
                             cobj->projection_param.perspective.aspect, 0.5F,
                             -0.5F, 0.5F, 0.5F);
         break;
     case 2:
-        MTXLightFrustum(lbl_804336D0.unk_10,
+        MTXLightFrustum(lbl_804336D0.texture_mtx,
                         cobj->projection_param.frustum.top,
                         cobj->projection_param.frustum.bottom,
                         cobj->projection_param.frustum.left,
@@ -429,11 +423,11 @@ void lbRefract_8002247C(HSD_CObj* cobj)
         break;
     case 3:
     default:
-        MTXLightOrtho(lbl_804336D0.unk_10, cobj->projection_param.ortho.top,
-                      cobj->projection_param.ortho.bottom,
-                      cobj->projection_param.ortho.left,
-                      cobj->projection_param.ortho.right, 0.5F, -0.5F, 0.5F,
-                      0.5F);
+        MTXLightOrtho(
+            lbl_804336D0.texture_mtx, cobj->projection_param.ortho.top,
+            cobj->projection_param.ortho.bottom,
+            cobj->projection_param.ortho.left,
+            cobj->projection_param.ortho.right, 0.5F, -0.5F, 0.5F, 0.5F);
         break;
     }
 }
@@ -662,10 +656,10 @@ static void fn_80022940(void)
 
 void lbRefract_80022998(HSD_MObj* mobj, u32 rendermode, s32 arg2)
 {
-    u8 write_z;
+    unsigned long long write_z;
     enum _GXCompare compare;
 
-    HSD_TObjSetup(((HSD_TObj**) lbl_804336D0.unk_C)[arg2]);
+    HSD_TObjSetup(lbl_804336D0.unk_C[arg2]);
 
     GXSetNumTexGens(2);
     GXSetTexCoordGen2(GX_TEXCOORD0, GX_TG_MTX3x4, GX_TG_NRM, GX_TEXMTX0,
@@ -674,10 +668,11 @@ void lbRefract_80022998(HSD_MObj* mobj, u32 rendermode, s32 arg2)
                       GX_PTTEXMTX1);
 
     GXLoadTexMtxImm(lbl_803BB0B0.texture_mtx, GX_PTTEXMTX0, GX_MTX3x4);
-    GXLoadTexMtxImm(lbl_804336D0.unk_10, GX_PTTEXMTX1, GX_MTX3x4);
+    GXLoadTexMtxImm(lbl_804336D0.texture_mtx, GX_PTTEXMTX1, GX_MTX3x4);
 
     GXSetNumChans(0);
     GXSetNumTevStages(1);
+    write_z = GX_ITF_8;
     GXSetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD1, GX_TEXMAP1, GX_COLOR_NULL);
     GXSetTevColorIn(GX_TEVSTAGE0, GX_CC_ZERO, GX_CC_ZERO, GX_CC_ZERO,
                     GX_CC_TEXC);
@@ -692,18 +687,14 @@ void lbRefract_80022998(HSD_MObj* mobj, u32 rendermode, s32 arg2)
     GXSetIndTexCoordScale(GX_INDTEXSTAGE0, GX_ITS_1, GX_ITS_1);
     GXSetIndTexMtx(GX_ITM_0, (f32(*)[3]) lbl_803BB0E0, 1);
 
-    write_z = 0;
-    GXSetTevIndirect(GX_TEVSTAGE0, GX_INDTEXSTAGE0, GX_ITF_8, GX_ITB_ST,
-                     GX_ITM_0, GX_ITW_OFF, GX_ITW_OFF, GX_FALSE, GX_FALSE,
+    GXSetTevIndirect(GX_TEVSTAGE0, GX_INDTEXSTAGE0, write_z, GX_ITB_ST,
+                     GX_ITM_0, GX_ITW_OFF, GX_ITW_OFF, (GXBool) 0, (GXBool) 0,
                      GX_ITBA_OFF);
 
     GXSetColorUpdate(GX_TRUE);
     GXSetAlphaUpdate(GX_FALSE);
 
-    if (rendermode & 0x20000000) {
-    } else {
-        write_z = 1;
-    }
+    write_z = (rendermode & 0x20000000) ? 0 : 1;
 
     if (rendermode & 0x08000000) {
         compare = GX_ALWAYS;
