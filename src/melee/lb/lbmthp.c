@@ -7,6 +7,8 @@
 #include <dolphin/dvd.h>
 #include <dolphin/gx/GXTexture.h>
 #include <dolphin/os/OSCache.h>
+#include <sysdolphin/baselib/debug.h>
+#include <sysdolphin/baselib/devcom.h>
 #include <sysdolphin/baselib/sobjlib.h>
 #include <melee/lb/lbanim.h>
 #include <melee/lb/types.h>
@@ -197,6 +199,43 @@ end:
 }
 
 /// #fn_8001F13C
+
+s32 fn_8001F13C(THPDecComp* data)
+{
+    BOOL intr;
+    u32 next;
+
+    intr = OSDisableInterrupts();
+    if ((data->unk_90 != data->unk_8C) && (data->unk_110 == 0) &&
+        (data->unk_70 != 0))
+    {
+        data->unk_13C = OSGetTick();
+        data->unk_138 = 0;
+        if (data->unk_74 != data->unk_40) {
+            if (data->unk_124 == 0) {
+                OSReport("filnum = %d, ofs = %d, by sugano.\n",
+                         data->unk_128, data->unk_120);
+                __assert("lbmthp.c", 0x121,
+                         "(u32)streamPlayer->currPackedSize != 0");
+            }
+            HSD_DevComRequest(data->unk_128, data->unk_120,
+                              data->unk_4C[data->unk_8C],
+                              ALIGN_32(data->unk_124), 0x21, 1,
+                              fn_8001E910, NULL);
+            data->unk_74++;
+            if ((data->unk_74 == data->unk_40) && (data->unk_68 != 0)) {
+                data->unk_74 = 0;
+            }
+            next = data->unk_8C + 1;
+            if (next >= data->unk_104) {
+                next = 0;
+            }
+            data->unk_8C = next;
+            data->unk_110 = 1;
+        }
+    }
+    return OSRestoreInterrupts(intr);
+}
 
 s32 fn_8001F294(void);
 

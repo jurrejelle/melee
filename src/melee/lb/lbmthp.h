@@ -37,13 +37,13 @@ typedef struct THPDecComp {
     /* 0x68 */ s32 unk_68;
     /* 0x6C */ s32 unk_6C;
     /* 0x70 */ s32 unk_70;
-    /* 0x74 */ u8 pad74[0x78 - 0x74];
+    /* 0x74 */ u32 unk_74;
     /* 0x78 */ u32 unk_78;
     /* 0x7C */ u32 unk_7C;
     /* 0x80 */ u32 unk_80;
     /* 0x84 */ u32 unk_84;
     /* 0x88 */ u32 unk_88;
-    /* 0x8C */ u8 pad8C[0x90 - 0x8C];
+    /* 0x8C */ u32 unk_8C;
     /* 0x90 */ u32 unk_90;
     /* 0x94 */ s32 unk_94;
     /* 0x98 */ s32 unk_98;
@@ -63,14 +63,17 @@ typedef struct THPDecComp {
     /* 0x110 */ s32 unk_110;
     /* 0x114 */ u8 pad114[0x11C - 0x114];
     /* 0x11C */ s32 unk_11C;
-    /* 0x120 */ u8 pad120[0x128 - 0x120];
+    /* 0x120 */ u32 unk_120;
+    /* 0x124 */ u32 unk_124;
     /* 0x128 */ s32 unk_128;
     /* 0x12C */ u8 pad12C[0x130 - 0x12C];
     /* 0x130 */ s32 unk_130;
     /* 0x134 */ s32 unk_134;
+    /* 0x138 */ u32 unk_138;
+    /* 0x13C */ u32 unk_13C;
 } THPDecComp;
 
-/* 01E910 */ UNK_RET fn_8001E910(UNK_PARAMS);
+/* 01E910 */ void fn_8001E910(int, int, void*, bool);
 /* 01EB14 */ s32 fn_8001EB14(THPDecComp* data, const char* path);
 /* 01EBF0 */ s32 fn_8001EBF0(THPDecComp* data);
 /* 01ECF4 */ UNK_RET fn_8001ECF4(UNK_PARAMS);
