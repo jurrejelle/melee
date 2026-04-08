@@ -5,6 +5,8 @@
 #include "stdarg.h"
 #include "stddef.h"
 
+#include <MSL/trigf.h>
+
 #include "baselib/debug.h"
 #include "baselib/displayfunc.h"
 #include "baselib/rumble.h"
@@ -23,6 +25,7 @@
 
 #include "lb/lbarchive.h"
 #include "lb/lbcollision.h"
+#include "lb/lbcommand.h"
 #include "lb/lbdvd.h"
 #include "lb/lbvector.h"
 #include "lb/types.h"
@@ -30,11 +33,15 @@
 #include <baselib/cobj.h>
 #include <baselib/dobj.h>
 #include <baselib/gobj.h>
+#include <baselib/gobjgxlink.h>
+#include <baselib/gobjobject.h>
+#include <baselib/gobjuserdata.h>
 #include <baselib/jobj.h>
 #include <baselib/lobj.h>
 #include <baselib/memory.h>
 #include <baselib/quatlib.h>
 #include <baselib/state.h>
+#include <baselib/tev.h>
 #include <melee/mp/mplib.h>
 #include <melee/sc/types.h>
 
