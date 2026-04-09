@@ -239,7 +239,7 @@ static u8 unk_arr_803BC4A0[0x21][2] = {
     { 0x62, 0x62 }, { 0x62, 0x62 }, { 0x62, 0x62 }, { 0x62, 0x62 },
 };
 
-static int offsets_arr_803BC4E4[0x38][2] = { 0 };
+static int offsets_arr_803BC4E4[0x38][2];
 
 static int sfx_remap_803BC6A4[0x4A][2] = { 0 };
 

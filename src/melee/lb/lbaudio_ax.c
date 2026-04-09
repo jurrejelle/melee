@@ -483,7 +483,7 @@ bool fn_80023ED4(const char* arg0, int arg1, int arg2)
     return AXDriver_8038E8EC(arg0, var_r0, arg2);
 }
 
-u8 data_pad_0[0x1014 - 0xC80] = { 0 };
+u8 data_pad_0[0x144] = { 0 };
 char* lbl_803BC314[] = {
     "1p_qk.hps",      "akaneia.hps",    "baloon.hps",     "bigblue.hps",
     "castle.hps",     "continue.hps",   "corneria.hps",   "docmari.hps",
