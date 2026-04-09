@@ -16,6 +16,7 @@
 #include <melee/it/it_26B1.h>
 #include <melee/lb/lbarchive.h>
 #include <melee/lb/lblanguage.h>
+#include <melee/lb/lb_0192.h>
 
 extern s8 flags_arr_803BB800[0x62];
 
@@ -1891,6 +1892,36 @@ s32 fn_80027488(void)
 }
 
 /// #lbAudioAx_80027648
+
+void lbAudioAx_80027648(void)
+{
+    int* a = lbl_804338A4;
+    int* b = lbl_80433984;
+    int i;
+    s32 result = 0;
+
+    do {
+        if (result == 1) {
+            HSD_SynthSFXWaitForLoadCompletion(lb_800195D0);
+        }
+
+        for (i = 0; i < 55; i++) {
+            if (a[i] == 1 && b[i] == -1) {
+                result = 1;
+                goto check;
+            }
+        }
+
+        for (i = 0; i < 55; i++) {
+            if (a[i] == 1 && b[i] == 1) {
+                b[i] = 2;
+            }
+        }
+        result = 0;
+
+    check:;
+    } while (result == 1);
+}
 
 /// #lbAudioAx_8002785C
 
