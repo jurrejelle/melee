@@ -2113,20 +2113,22 @@ void ftColl_8007BE3C(Fighter_GObj* gobj)
     Fighter* owner_fp;
     Item* ip;
     bool should_process;
-    PAD_STACK(30);
+    PAD_STACK(46);
 
     fp = gobj->user_data;
     data_ptr = ftColl_803C0C40;
 
     /* inline getEnvDmg */
-    if (fp->dmg.x1898 == 0.0f) {
-        dmg_count = 0;
-    } else {
-        int result = (int) fp->dmg.x1898;
-        if (result > 0) {
-            dmg_count = result;
+    {
+        float dmg = fp->dmg.x1898;
+        if (dmg) {
+            if ((int) dmg) {
+                dmg_count = dmg;
+            } else {
+                dmg_count = 1;
+            }
         } else {
-            dmg_count = 1;
+            dmg_count = 0;
         }
     }
 
