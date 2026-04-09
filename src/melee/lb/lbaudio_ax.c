@@ -2,6 +2,7 @@
 
 #include "baselib/forward.h"
 #include <melee/ft/forward.h>
+#include "baselib/random.h"
 
 #include <m2c_macros.h>
 #include <baselib/axdriver.h>
