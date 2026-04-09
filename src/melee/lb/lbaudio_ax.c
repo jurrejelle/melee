@@ -398,6 +398,82 @@ int lbAudioAx_80023A44(int arg0, int arg1)
 
 /// #lbAudioAx_80023B24
 
+s32 lbAudioAx_80023B24(s32 arg0)
+{
+    char* base = (char*) &lbl_80433710;
+    char* bb = lbl_803BB300;
+    s32 slot;
+    s32 off;
+
+    if (arg0 >= 0 && arg0 < 0x83D60) {
+        s32* ranges = (s32*)(bb + 0x5D4);
+        for (slot = 0; slot < 0x37; slot++, ranges += 2) {
+            if (ranges[0] <= arg0 && arg0 <= ranges[1]) {
+                goto found;
+            }
+        }
+    }
+    slot = 0x37;
+
+found:
+    off = slot * 4;
+    if ((int)*(bb + 0x2D1 + off) != 5) {
+        HSD_AudioSFXKeyOffAll();
+        if (*(s32*)(base + 0x274 + off) != 2) {
+            s32 total = 0;
+            s32 j = 0;
+            do {
+                s32 k = 0;
+                do {
+                    s32 accum = 0;
+                    s32 n;
+                    for (n = 0; n < 9; n++) {
+                        accum += n;
+                    }
+                    total += accum;
+                    k++;
+                } while (k < 0x3E8);
+                j++;
+            } while (j < 0x3E8);
+
+            HSD_SynthSFXUnloadBank(2);
+
+            {
+                s8* arr = (s8*)(bb + 0x2D0);
+                int* a1 = (int*)(base + 0xB4);
+                int* a2 = (int*)(base + 0x194);
+                int* a3 = (int*)(base + 0x274);
+                int* a4 = (int*)(base + 0x354);
+                s32 k;
+                for (k = 0; k < 0x37; k++) {
+                    if ((int)(u8)arr[2] != 5) {
+                        *a1 = -1;
+                        *a2 = -1;
+                        *a3 = -1;
+                        *a4 = -1;
+                    }
+                    arr += 4;
+                    a1++;
+                    a2++;
+                    a3++;
+                    a4++;
+                }
+            }
+
+            {
+                char* bp = bb + off;
+                char* dp = bb + lbl_804D38D0;
+                strcpy(dp + 0x40, *(char**)(bp + 0x9FC));
+            }
+            *(s32*)(base + off + 0x354) = HSD_SynthSFXLoad(bb + 0x40, 2, 0, 0);
+            HSD_SynthSFXWaitForLoadCompletion(lb_800195D0);
+            *(s32*)(base + 0x274 + off) = 2;
+        }
+    }
+
+    return fn_80023750(arg0, 0x7F, 0x40, 0, 7);
+}
+
 bool fn_80023ED4(const char* arg0, int arg1, int arg2)
 {
     int var_r0 = arg1 * 2;

@@ -30,7 +30,7 @@
 /* 02392C */ void lbAudioAx_8002392C(void);
 /* 023968 */ int lbAudioAx_80023968(int);
 /* 023A44 */ int lbAudioAx_80023A44(int, int);
-/* 023B24 */ f32 lbAudioAx_80023B24(s32);
+/* 023B24 */ s32 lbAudioAx_80023B24(s32);
 /* 023ED4 */ bool fn_80023ED4(const char* arg0, int arg1, int arg2);
 /* 023F28 */ bool lbAudioAx_80023F28(s32);
 /* 024030 */ void lbAudioAx_80024030(s32);
