@@ -236,8 +236,7 @@ bool ftColl_80076640(Fighter* fp, float* dmg)
     }
     if (!fp->x221C_b4) {
         if (*dmg > 500) {
-            OSReport("attack power over 500!! %f\n", *dmg);
-            HSD_ASSERT(183, 0);
+            HSD_ASSERTREPORT(0xB7, NULL, "attack power over 500!! %f\n", *dmg);
         }
         fp->dmg.x1838_percentTemp += *dmg;
         if (env_dmg > fp->dmg.x183C_applied) {
@@ -262,8 +261,8 @@ void ftColl_80076764(int arg0, enum_t arg1, Fighter_GObj* arg2,
         entry->size_of_xC = arg3->count;
         ++dmg_log0_idx;
     } else {
-        OSReport("damage log over %d!!\n", ARRAY_SIZE(dmg_log0));
-        HSD_ASSERT(249, 0);
+        HSD_ASSERTREPORT(0xF9, NULL, "damage log over %d!!\n",
+                         ARRAY_SIZE(dmg_log0));
     }
 }
 
@@ -557,8 +556,7 @@ static inline bool inlineB2(Fighter* fp1, float dmg, int var_r24_3)
     int var_r0_3;
     if (fp1->x221C_b4 == 0) {
         if (dmg > 500.0f) {
-            OSReport("attack power over 500!! %f", dmg);
-            __assert("ftcoll.c", 183, "0");
+            HSD_ASSERTREPORT(0xB7, NULL, "attack power over 500!! %f", dmg);
         }
         fp1->dmg.x1838_percentTemp =
             (float) (fp1->dmg.x1838_percentTemp + dmg);
@@ -1178,9 +1176,9 @@ bool ftColl_80077C60(Item* item, HitCapsule* hit, Fighter* fp,
                                     (size_t) half_raw_f;
                                 dmg_log1_idx++;
                             } else {
-                                OSReport("tip log over %d!! ",
-                                         ARRAY_SIZE(dmg_log1));
-                                HSD_ASSERT(272, 0);
+                                HSD_ASSERTREPORT(0x110, NULL,
+                                                 "tip log over %d!! ",
+                                                 ARRAY_SIZE(dmg_log1));
                             }
                         }
                     }
@@ -1249,9 +1247,9 @@ bool ftColl_80077C60(Item* item, HitCapsule* hit, Fighter* fp,
 
                 if (!fp->x221C_b4) {
                     if (scaled_dmg > 500.0f) {
-                        OSReport("attack power over 500!! %f",
-                                 scaled_dmg);
-                        __assert("ftcoll.c", 183, "0");
+                        HSD_ASSERTREPORT(0xB7, NULL,
+                                         "attack power over 500!! %f",
+                                         scaled_dmg);
                     }
                     fp->dmg.x1838_percentTemp += scaled_dmg;
                     if (dmg_count > fp->dmg.x183C_applied) {
@@ -1278,9 +1276,8 @@ bool ftColl_80077C60(Item* item, HitCapsule* hit, Fighter* fp,
                         entry->size_of_xC = (size_t) raw_dmg;
                         dmg_log0_idx++;
                     } else {
-                        OSReport("damage log over %d!! ",
-                                 ARRAY_SIZE(dmg_log1));
-                        HSD_ASSERT(227, 0);
+                        HSD_ASSERTREPORT(0xE3, NULL, "damage log over %d!! ",
+                                         ARRAY_SIZE(dmg_log1));
                     }
                     inner_ret = true;
                 }
@@ -2886,8 +2883,8 @@ void ftColl_8007B128(Fighter_GObj* fighter_gobj, int bone_id,
         }
     }
 
-    OSReport("in ftCollisionSetHitStatus illegal parts!\n");
-    HSD_ASSERT(2184, 0);
+    HSD_ASSERTREPORT(0x888, NULL,
+                     "in ftCollisionSetHitStatus illegal parts!\n");
 }
 
 /// @todo @p shield is #AbsorbDesc, and #AbsorbDesc is part of #ShieldDesc
@@ -2940,8 +2937,7 @@ void ftColl_8007B320(Fighter_GObj* gobj)
     PAD_STACK(8);
 
     if (x30->count > 0xF) {
-        OSReport("too many hurt capsules\n");
-        HSD_ASSERT(0x8C9, 0);
+        HSD_ASSERTREPORT(0x8C9, NULL, "too many hurt capsules\n");
     }
 
     fp->hurt_capsules_len = x30->count;
@@ -2959,8 +2955,7 @@ void ftColl_8007B320(Fighter_GObj* gobj)
     }
 
     if (dyn->x4 > 0xB) {
-        OSReport("too many x1670 entries\n");
-        HSD_ASSERT(0x8DF, 0);
+        HSD_ASSERTREPORT(0x8DF, NULL, "too many x1670 entries\n");
     }
 
     fp->x166C = dyn->x4;
@@ -3386,8 +3381,8 @@ void ftColl_8007BE3C(Fighter_GObj* gobj)
 
     if (!fp->x221C_b4) {
         if (fp->dmg.x1898 > 500.0f) {
-            OSReport("attack power over 500!! %f\n", fp->dmg.x1898);
-            __assert("ftcoll.c", 0xb7, "0");
+            HSD_ASSERTREPORT(0xB7, NULL, "attack power over 500!! %f\n",
+                             fp->dmg.x1898);
         }
         fp->dmg.x1838_percentTemp += fp->dmg.x1898;
         if (dmg_count > fp->dmg.x183C_applied) {
