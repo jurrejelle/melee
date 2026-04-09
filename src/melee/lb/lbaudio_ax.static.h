@@ -92,7 +92,8 @@ typedef struct {
 
 static lbAudioAx_PoolAlloc lbl_80433710;
 
-static int lbl_80433984[0x38];
+extern int lbl_80433984[0x38];
+extern int lbl_80433A64[0x38];
 
 static struct {
     int** x0;

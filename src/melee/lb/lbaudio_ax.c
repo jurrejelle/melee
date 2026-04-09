@@ -1767,6 +1767,67 @@ void fn_800268B4(void)
 
 /// #fn_800269AC
 
+void fn_800269AC(void)
+{
+    s8 (*types)[4];
+    int* handles;
+    int* avail;
+    s8 (*types2)[4];
+    int* handles2;
+    int* avail2;
+    int i;
+    int total, j, k, m, s;
+
+    if (HSD_SynthSFXGetPendingLoadCount() != 0) {
+        types = s32_arr_803BB5D0;
+        handles = lbl_80433A64;
+        avail = lbl_80433984;
+        types2 = s32_arr_803BB5D0;
+        handles2 = lbl_80433A64;
+        avail2 = lbl_80433984;
+
+        for (i = 0; i < 0x37; i++) {
+            if (types2[0][1] != 5 && *handles2 != -1 && *avail2 == -1) {
+                int retry;
+                for (retry = 0; retry < 0x40; retry++) {
+                    if (HSD_SynthSFXCancelLoad(*handles2) == 1) {
+                        break;
+                    }
+                    total = 0;
+                    for (j = total; j < 0x3E8; j++) {
+                        for (k = 0; k < 0x3E8; k++) {
+                            s = 0;
+                            for (m = s; m < 9; m++) {
+                                s += m;
+                            }
+                            total += s;
+                        }
+                    }
+                }
+                *handles2 = -1;
+                *avail2 = -1;
+            }
+            types2++;
+            handles2++;
+            avail2++;
+        }
+
+        if (HSD_SynthSFXGetPendingLoadCount() != 0) {
+            HSD_SynthSFXWaitForLoadCompletion(lb_800195D0);
+            HSD_SynthSFXUnloadBank(2);
+            for (i = 0; i < 0x37; i++) {
+                if (types[0][1] != 5) {
+                    *avail = -1;
+                    *handles = -1;
+                }
+                types++;
+                avail++;
+                handles++;
+            }
+        }
+    }
+}
+
 /// #fn_80026C04
 
 s32 fn_80026C04(s32 arg0)
