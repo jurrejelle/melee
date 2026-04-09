@@ -1698,9 +1698,59 @@ void ftColl_8007BA0C(Fighter_GObj* gobj)
     }
 }
 
+extern int ft_804D6570;
+
 void ftColl_8007BAC0(Fighter_GObj* gobj)
 {
-    NOT_IMPLEMENTED;
+    int max;
+    int i;
+
+    if (gm_8016B1C4()) {
+        return;
+    }
+
+    {
+        Fighter* fp = gobj->user_data;
+        struct ftDeviceUnk3* arr;
+        PAD_STACK(8);
+
+        if (fp->x221D_b6) {
+            max = 1;
+        } else {
+            max = 0;
+        }
+        if (fp->x1988 > max) {
+            max = fp->x1988;
+        }
+        if (fp->x198C > max) {
+            max = fp->x198C;
+        }
+
+        arr = &ft_80459A8C;
+
+        for (i = 0; i < ft_804D6570; i++) {
+            Ground_GObj* ground = arr[i].ground;
+            if (ground != NULL) {
+                u32 type = arr[i].type;
+                if (ftCo_800C0A28(gobj, ground, type)) {
+                    DynamicsDesc* desc;
+                    if (arr[i].active_cb(ground, gobj,
+                                         (Vec3*) &desc))
+                    {
+                        if (max == 0) {
+                            ftCo_800C08A0(gobj,
+                                          (Fighter_GObj*) ground,
+                                          desc, type);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (max == 0) {
+            ftCo_800C0B20(gobj);
+        }
+    }
 }
 
 float ftColl_8007BBCC(UNUSED Fighter_GObj* gobj)
