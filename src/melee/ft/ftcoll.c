@@ -29,6 +29,7 @@
 #include "it/forward.h"
 
 #include "it/it_26B1.h"
+#include "it/it_2725.h"
 #include "it/itcoll.h"
 #include "it/types.h"
 #include "lb/lb_00B0.h"
@@ -817,7 +818,128 @@ void ftColl_80077464(Item* item, HitCapsule* hit, Fighter* fp)
 void ftColl_80077688(Item* item, HitCapsule* hurt, Fighter* fp, Vec3* pos,
                      f32 val)
 {
-    NOT_IMPLEMENTED;
+    int dmg;
+    int mode;
+    PAD_STACK(16);
+
+    if (hurt->x41_b6) {
+        mode = 2;
+    } else {
+        mode = 1;
+    }
+
+    it_8026FAC4(item, hurt, mode, fp, 0);
+
+    if (hurt->damage) {
+        if ((int) hurt->damage) {
+            dmg = hurt->damage;
+        } else {
+            dmg = 1;
+        }
+    } else {
+        dmg = 0;
+    }
+
+    if (dmg > item->xC34_damageDealt) {
+        float dir;
+        float vel_x;
+        float vel_x_mag;
+
+        item->xC50 = dmg;
+
+        if (!fp->x221B_b2) {
+            item->xDCE_flag.b5 = hurt->x42_b3;
+        } else {
+            item->xDCE_flag.b5 = 0;
+        }
+
+        item->xCF4_fighterGObjUnk = fp->gobj;
+
+        vel_x = item->x40_vel.x;
+        if (vel_x < 0.0f) {
+            vel_x_mag = -vel_x;
+        } else {
+            vel_x_mag = vel_x;
+        }
+
+        if (vel_x_mag < it_804D6D28->xD4) {
+            if (item->pos.x > fp->cur_pos.x) {
+                dir = -1.0f;
+            } else {
+                dir = 1.0f;
+            }
+        } else {
+            if (vel_x < 0.0f) {
+                dir = -1.0f;
+            } else {
+                dir = 1.0f;
+            }
+        }
+        item->xCB8_outDamageDirection = dir;
+
+        if (item->xDCE_flag.b5) {
+            if (fp->x221B_b1) {
+                float angle = ftColl_804D8300 * p_ftCommonData->x2D0;
+                float cos_val;
+                float sin_val;
+
+                item->xC54 = 0.0f;
+                cos_val = cosf(angle);
+                sin_val = sinf(angle);
+
+                if (pos->x >= 0.0f) {
+                    item->xC58.x = -cos_val;
+                } else {
+                    item->xC58.x = cos_val;
+                }
+                item->xC58.y = sin_val;
+                item->xC58.z = 0.0f;
+                item->xDCE_flag.b4 = 1;
+            } else {
+                item->xC54 = val;
+                item->xC58 = *pos;
+            }
+        }
+
+        if (fp->shield_unk1 != 0.0f) {
+            item->xCC0 = fp->shield_unk1;
+        }
+    }
+
+    {
+        int total = dmg + hurt->x34;
+        if (total < 0) {
+            total = 0;
+        }
+        fp->x19A0_shieldDamageTaken += total;
+    }
+
+    if (ftLib_80086960(item->owner)) {
+        Fighter* owner_fp = item->owner->user_data;
+        fp->x19BC_shieldDamageTaken3 = owner_fp->player_id;
+        fp->x221F_b6 = owner_fp->x221F_b4;
+    } else {
+        fp->x19BC_shieldDamageTaken3 = 6;
+    }
+
+    if (dmg > fp->x19A4) {
+        float dir;
+        fp->x19A4 = dmg;
+        if (fp->cur_pos.x > item->pos.x) {
+            dir = -1.0f;
+        } else {
+            dir = 1.0f;
+        }
+        fp->specialn_facing_dir = dir;
+        fp->x19B0 = hurt->element;
+        fp->x19A8 = item->entity;
+    }
+
+    if (fp->shield_unk1 != 0.0f && hurt->x42_b4) {
+        fp->x1964 = fp->shield_unk1;
+    }
+
+    efSync_Spawn(0x41C, NULL, &hurt->hurt_coll_pos);
 }
 
 void ftColl_80077970(void)
