@@ -11,7 +11,9 @@
 typedef struct lbAudioAx_UserData {
     /* 0x00 */ u8 x0[0x08];
     /* 0x08 */ HSD_GObj* entity;
-    /* 0x0C */ u8 xC[0x0C];
+    /* 0x0C */ u8 xC[0x04];
+    /* 0x10 */ bool (*x10)(HSD_GObj*);
+    /* 0x14 */ u8 x14[0x04];
     /* 0x18 */ s32 start_val;
     /* 0x1C */ s32 end_val;
     /* 0x20 */ s32 x20;

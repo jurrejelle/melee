@@ -1419,7 +1419,64 @@ end:
 }
 /// #fn_80025FAC
 
-/// #fn_800262A0
+void fn_800262A0(HSD_GObj* gobj)
+{
+    lbAudioAx_UserData* ud;
+    s32 pan;
+    s32 vol;
+    s32 vid;
+
+    if (gobj == NULL) {
+        return;
+    }
+
+    ud = gobj->user_data;
+    if (ud == NULL) {
+        return;
+    }
+
+    if (ud->x10 == NULL) {
+        return;
+    }
+
+    if (ud->x10(gobj) == 1) {
+        if (gobj != NULL) {
+            HSD_GObjPLink_80390228(gobj);
+        }
+        return;
+    }
+
+    vid = ud->voice_id;
+    if (vid != -1) {
+        pan = ud->x2C.pan;
+        if (pan < 0) {
+            pan = 0;
+        }
+        if (pan > 0x7F) {
+            pan = 0x7F;
+        }
+        AXDriver_8038D2B4(vid, (pan * 2) & 0xFE);
+
+        vol = ud->x20;
+        if (vol < 0) {
+            vol = 0;
+        }
+        if (vol > 0x7F) {
+            vol = 0x7F;
+        }
+        AXDriver_8038D3B8(ud->voice_id, (vol * 2) & 0xFE);
+    }
+
+    if (ud->current_frame != -1 && ud->end_frame != -1 &&
+        (ud->current_frame >= ud->end_frame || ud->end_frame == 0))
+    {
+        if (gobj != NULL) {
+            HSD_GObjPLink_80390228(gobj);
+        }
+    } else {
+        ud->current_frame += 1;
+    }
+}
 
 /// @brief Free an object from the audio allocator pool.
 void lbAudioAx_ObjFree(void* obj)
