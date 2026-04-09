@@ -20,6 +20,10 @@
 #include <melee/lb/lblanguage.h>
 #include <melee/lb/lb_0192.h>
 
+#include <dolphin/ai.h>
+#include <dolphin/ar.h>
+#include <dolphin/axfx.h>
+
 extern s8 flags_arr_803BB800[0x62];
 
 typedef bool (*lbl_803BCA24_fn)(HSD_GObj*);
@@ -2462,6 +2466,86 @@ void lbAudioAx_8002835C(void)
 /// #lbAudioAx_8002835C
 
 /// #lbAudioAx_8002838C
+
+void lbAudioAx_8002838C(void)
+{
+    struct AXFX_REVERBSTD rvb_std;
+    struct AXFX_DELAY delay;
+    char* base = (char*) &lbl_80433710;
+    int* p1;
+    int* p2;
+    int* p3;
+    int* p4;
+    int i;
+
+    ARInit((u32*)(base + 0x514), 0x10);
+    ARQInit();
+    AIInit(NULL);
+
+    lbl_804D643C = offsets_arr_803BC4E4[0][0];
+    lbl_804D6440 = offsets_arr_803BC4E4[0x33][0];
+    lbl_804D6440 += offsets_arr_803BC4E4[1][0];
+    lbl_804D6440 += offsets_arr_803BC4E4[0x36][0];
+
+    fn_80023254(3);
+    lbl_804D6444 = offsets_arr_803BC4E4[((int*)(base + 0x434))[0]][0];
+
+    fn_80023254(4);
+    lbl_804D6444 += offsets_arr_803BC4E4[((int*)(base + 0x434))[0]][0];
+    lbl_804D6444 += offsets_arr_803BC4E4[((int*)(base + 0x434))[1]][0];
+    lbl_804D6444 += offsets_arr_803BC4E4[((int*)(base + 0x434))[2]][0];
+    lbl_804D6444 += offsets_arr_803BC4E4[((int*)(base + 0x434))[3]][0];
+
+    fn_80023254(5);
+    lbl_804D6444 += offsets_arr_803BC4E4[((int*)(base + 0x434))[0]][0];
+
+    lbl_804D6438 = lbl_804D643C + (lbl_804D6440 + lbl_804D6444);
+    lbl_804D3870 = lbl_804D6438;
+
+    AXDriver_8038E498(0x40, 0, 0x40, lbl_804D3870);
+
+    AXDriver_8038E37C(AXDRIVER_AUX_REVERB_STD, &rvb_std);
+    rvb_std.time = 1.88f;
+    if (AXDriver_8038E034(AXDRIVER_AUX_REVERB_STD, &rvb_std) >= 0xD400) {
+        __assert("lbaudio_ax.c", 0xF6E,
+                 "HSD_AudioGetAuxHeapSize(2, &rvbStd) < 53*1024");
+    }
+    AXDriver_8038E30C(0, 2, &rvb_std, (u8*)(base + 0x554), 0xD400);
+
+    AXDriver_8038E37C(AXDRIVER_AUX_DELAY, &delay);
+    if (AXDriver_8038E034(AXDRIVER_AUX_REVERB_STD, &delay) >= 0x11C00) {
+        __assert("lbaudio_ax.c", 0xF72,
+                 "HSD_AudioGetAuxHeapSize(2, &delay) < 71*1024");
+    }
+    AXDriver_8038E30C(1, 4, &delay, (u8*)(base + 0xD954), 0x11C00);
+
+    HSD_SynthSFXAllocateBank(lbl_804D643C);
+    HSD_SynthSFXAllocateBank(lbl_804D6440);
+    HSD_SynthSFXAllocateBank(lbl_804D6444);
+
+    p1 = (int*)(base + 0xB4);
+    p2 = (int*)(base + 0x194);
+    p3 = (int*)(base + 0x274);
+    p4 = (int*)(base + 0x354);
+    for (i = 0; i < 7; i++) {
+        p1[0] = -1; p2[0] = -1; p3[0] = -1; p4[0] = -1;
+        p1[1] = -1; p2[1] = -1; p3[1] = -1; p4[1] = -1;
+        p1[2] = -1; p2[2] = -1; p3[2] = -1; p4[2] = -1;
+        p1[3] = -1; p2[3] = -1; p3[3] = -1; p4[3] = -1;
+        p1[4] = -1; p2[4] = -1; p3[4] = -1; p4[4] = -1;
+        p1[5] = -1; p2[5] = -1; p3[5] = -1; p4[5] = -1;
+        p1[6] = -1; p2[6] = -1; p3[6] = -1; p4[6] = -1;
+        p1[7] = -1; p1 += 8;
+        p2[7] = -1; p2 += 8;
+        p3[7] = -1; p3 += 8;
+        p4[7] = -1; p4 += 8;
+    }
+
+    lbl_804D3878 = -1;
+    lbl_804D6448 = 0;
+    lbl_804D644C = 0;
+    lbl_804D6450 = 0;
+}
 
 /// #lbAudioAx_80028690
 

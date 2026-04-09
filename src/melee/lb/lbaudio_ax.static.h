@@ -237,8 +237,14 @@ extern int lbl_804338A4[0x38];
 extern int lbl_80433B44[0x38];
 
 extern int lbl_804D6438;
+extern int lbl_804D643C;
+extern int lbl_804D6440;
+extern int lbl_804D6444;
 extern int lbl_804D6448;
 extern int lbl_804D644C;
 extern int lbl_804D6450;
+
+static s32 lbl_804D3870 = 0x700000;
+static s32 lbl_804D3878 = -1;
 
 #endif
