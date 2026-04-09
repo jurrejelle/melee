@@ -2403,33 +2403,33 @@ void lbAudioAx_8002702C(s32 flags, u64 base_val)
 
 void lbAudioAx_80027168(void)
 {
-    char* base = (char*) &lbl_80433710;
+    lbAudioAx_PoolAlloc* st = &lbl_80433710;
     char* bb = lbl_803BB300;
     s32 count;
     int i;
 
     {
-        s8* arr5d0 = (s8*)(bb + 0x2D0);
-        int* arr984 = (int*)(base + 0x274);
+        s8(*arr5d0)[4] = s32_arr_803BB5D0;
+        int* arr274 = st->x274;
         for (i = 0; i < 55; i++) {
-            if (arr5d0[1] != 5 && arr984[0] == 2) {
-                arr984[0] = 1;
+            if ((*arr5d0)[1] != 5 && arr274[0] == 2) {
+                arr274[0] = 1;
             }
-            arr5d0 += 4;
-            arr984++;
+            arr5d0++;
+            arr274++;
         }
     }
 
     count = 0;
     {
-        s8* arr5d0 = (s8*)(bb + 0x2D0);
-        int* arr_b4 = (int*)(base + 0xB4);
+        s8(*arr5d0)[4] = s32_arr_803BB5D0;
+        int* arr_b4 = st->xB4;
         i = 55;
         do {
-            if (arr5d0[1] != 5 && *arr_b4 != -1) {
+            if ((*arr5d0)[1] != 5 && *arr_b4 != -1) {
                 count++;
             }
-            arr5d0 += 4;
+            arr5d0++;
             arr_b4++;
         } while (--i);
     }
@@ -2438,8 +2438,8 @@ void lbAudioAx_80027168(void)
         fn_800269AC();
 
         {
-            int* src = (int*)(base + 0xB4);
-            int* dst = (int*)(base + 0x194);
+            int* src = st->xB4;
+            int* dst = st->x194;
             for (i = 0; i < 55; i++) {
                 dst[i] = src[i];
             }
@@ -2457,11 +2457,9 @@ void lbAudioAx_80027168(void)
             s32 slot = fn_80026650();
             if (slot != -1) {
                 s32 off = slot * 4;
-                char* bp = bb + off;
                 char* dp = bb + lbl_804D38D0;
-                char* sb = base + off;
-                strcpy(dp + 0x40, *(char**)(bp + 0x9FC));
-                *(s32*)(sb + 0x354) = HSD_SynthSFXLoad(bb + 0x40, 2, (s32)fn_80026C04, 0);
+                strcpy(dp + 0x40, *(char**)(bb + off + 0x9FC));
+                st->x354[slot] = HSD_SynthSFXLoad(bb + 0x40, 2, (s32)fn_80026C04, 0);
             }
         }
     }
