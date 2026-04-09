@@ -86,15 +86,20 @@ static int lbl_804D6430;
 static int lbl_804D6434;
 
 typedef struct {
-    /* 0x00 */ HSD_ObjAllocData alloc;
-    /* 0x2C */ s32 x2C[17];
-    /* 0x70 */ s32 x70[17];
-} lbAudioAx_PoolAlloc; // size: 0xB4
+    /* 0x0000 */ HSD_ObjAllocData alloc;
+    /* 0x002C */ s32 x2C[17];
+    /* 0x0070 */ s32 x70[17];
+    /* 0x00B4 */ int xB4[0x38];
+    /* 0x0194 */ int x194[0x38];
+    /* 0x0274 */ int x274[0x38];
+    /* 0x0354 */ int x354[0x38];
+    /* 0x0434 */ int x434[0x38];
+    /* 0x0514 */ u32 x514[0x10];
+    /* 0x0554 */ u8 x554[0xD400];
+    /* 0xD954 */ u8 xD954[0x11C00];
+} lbAudioAx_PoolAlloc; // size: 0x1F554
 
 static lbAudioAx_PoolAlloc lbl_80433710;
-
-extern int lbl_80433984[0x38];
-extern int lbl_80433A64[0x38];
 
 static struct {
     int** x0;
@@ -232,9 +237,7 @@ static int offsets_arr_803BC4E4[0x38][2];
 
 static int sfx_remap_803BC6A4[0x4A][2] = { 0 };
 
-extern int lbl_804337C4[0x38];
-extern int lbl_804338A4[0x38];
-extern int lbl_80433B44[0x38];
+
 
 extern int lbl_804D6438;
 extern int lbl_804D643C;
