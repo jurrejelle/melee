@@ -1190,12 +1190,10 @@ int fn_800250A0(int arg0, int arg1, int arg2, int arg3)
 
 bool fn_800251EC(HSD_GObj* gobj)
 {
-    lbAudioAx_UserData* ud;
-    s32 pad1;
-    s32 pad2;
     f32 cam_left;
     f32 cam_center;
     f32 cam_right;
+    lbAudioAx_UserData* ud;
     Vec3 pos;
     s32 result_flag;
     f32 pan;
@@ -1204,6 +1202,9 @@ bool fn_800251EC(HSD_GObj* gobj)
     f32 temp;
     HSD_GObj* entity;
     s32 type;
+    s32 pad1;
+    s32 pad2;
+    s32 pad3;
 
     if (gobj == NULL) {
         goto ret_true;
@@ -1238,9 +1239,9 @@ bool fn_800251EC(HSD_GObj* gobj)
         result_flag = 0;
         break;
     default:
-        pos.x = 0.0f;
-        pos.y = 0.0f;
         pos.z = 0.0f;
+        pos.y = 0.0f;
+        pos.x = 0.0f;
         goto set_flag;
     }
     goto check_flag;
