@@ -3,6 +3,9 @@
 #include "fighter.h"
 #include "ft_081B.h"
 #include "ft_0877.h"
+#include "ft_0881.h"
+#include "ft_0DF0.h"
+#include "ftchangeparam.h"
 #include "ftcolanim.h"
 #include "ftcommon.h"
 #include "ftdevice.h"
@@ -1247,7 +1250,20 @@ void ftColl_8007AB80(Fighter_GObj* gobj)
 
 void ftColl_8007ABD0(HitCapsule* arg0, u32 arg1, Fighter_GObj* arg2)
 {
-    NOT_IMPLEMENTED;
+    Fighter* fp;
+    float dmg;
+    float scaled_dmg;
+
+    fp = arg2->user_data;
+    dmg = (float) arg1;
+    if (fp->x34_scale.y != ftColl_804D82EC) {
+        dmg = ftCo_CalcYScaledKnockback(dmg, fp->x34_scale.y,
+                                         Fighter_804D6524->x4);
+    }
+    scaled_dmg = ftCo_800DEEB8(fp, dmg);
+    arg0->unk_count = (u32) (s32) scaled_dmg;
+    arg0->damage = ft_80089228(fp, fp->x2068_attackID,
+                               (s32) fp->x206C_attack_instance, scaled_dmg);
 }
 
 bool ftColl_8007AC68(u32 kb_angle)
