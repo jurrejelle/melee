@@ -161,8 +161,7 @@ void fn_80023254(s32 arg0)
                 n = 0x37 - count;
 
                 if ((n >> 3) != 0) {
-                    i = n >> 3;
-                    do {
+                    for (i = n >> 3; i != 0; i--) {
                         shift_ptr[0] = shift_ptr[-1];
                         shift_ptr[-1] = shift_ptr[-2];
                         shift_ptr[-2] = shift_ptr[-3];
@@ -172,20 +171,17 @@ void fn_80023254(s32 arg0)
                         shift_ptr[-6] = shift_ptr[-7];
                         shift_ptr[-7] = shift_ptr[-8];
                         shift_ptr -= 8;
-                        i--;
-                    } while (i != 0);
+                    }
                     n &= 7;
                     if (n == 0) {
                         goto insert;
                     }
                 }
 
-                i = n;
-                do {
+                for (i = n; i != 0; i--) {
                     shift_ptr[0] = shift_ptr[-1];
                     shift_ptr--;
-                    i--;
-                } while (i != 0);
+                };
             }
 
         insert:
@@ -401,6 +397,8 @@ int lbAudioAx_80023A44(int arg0, int arg1)
     return var_r3[arg1];
 }
 
+extern s32 (*lbl_803BB8D4)[2];
+
 s32 lbAudioAx_80023B24(s32 arg0)
 {
     lbAudioAx_PoolAlloc* st = &lbl_80433710;
@@ -408,7 +406,7 @@ s32 lbAudioAx_80023B24(s32 arg0)
     s32 off;
 
     if (arg0 >= 0 && arg0 < 0x83D60) {
-        s32(*ranges)[2] = (s32(*)[2])(lbl_803BB300 + 0x5D4);
+        s32(*ranges)[2] = lbl_803BB8D4;
         for (slot = 0; slot < 0x37; slot++, ranges++) {
             if ((*ranges)[0] <= arg0 && arg0 <= (*ranges)[1]) {
                 goto found;
@@ -423,20 +421,18 @@ found:
         HSD_AudioSFXKeyOffAll();
         if (st->x274[slot] != 2) {
             s32 total = 0;
-            s32 j = 0;
-            do {
-                s32 k = 0;
-                do {
+            s32 j;
+            for (j = 0; j < 0x3E8; j++) {
+                s32 k;
+                for (k = 0; k < 0x3E8; k++) {
                     s32 accum = 0;
                     s32 n;
                     for (n = 0; n < 9; n++) {
                         accum += n;
                     }
                     total += accum;
-                    k++;
-                } while (k < 0x3E8);
-                j++;
-            } while (j < 0x3E8);
+                };
+            }
 
             HSD_SynthSFXUnloadBank(2);
 
@@ -444,13 +440,12 @@ found:
                 s8(*arr)[4] = s32_arr_803BB5D0;
                 s32 k;
                 for (k = 0; k < 0x37; k++) {
-                    if ((int)(u8)(*arr)[2] != 5) {
+                    if ((int) (u8) (*arr)[k + 2] != 5) {
                         st->xB4[k] = -1;
                         st->x194[k] = -1;
                         st->x274[k] = -1;
                         st->x354[k] = -1;
                     }
-                    arr++;
                 }
             }
 
@@ -2385,12 +2380,11 @@ void lbAudioAx_80027168(void)
     {
         s8(*arr5d0)[4] = s32_arr_803BB5D0;
         int* arr_b4 = st->xB4;
-        i = 55;
-        do {
+        for (i = 55; i != 0; i--) {
             if (arr5d0[i][1] != 5 && arr_b4[i] != -1) {
                 count++;
             }
-        } while (--i);
+        };
     }
 
     if (count != 0) {
