@@ -35,7 +35,7 @@
                                   HitCapsule* hit1);
 /* 077464 */ void ftColl_80077464(Item*, HitCapsule*, Fighter*);
 /* 077688 */ void ftColl_80077688(Item*, HitCapsule*, Fighter*, Vec3*, f32);
-/* 077970 */ UNK_RET ftColl_80077970(UNK_PARAMS);
+/* 077970 */ void ftColl_80077970(Item*, HitCapsule*, Fighter*, HitCapsule*);
 /* 077C60 */ UNK_RET ftColl_80077C60(UNK_PARAMS);
 /* 078384 */ void ftColl_80078384(Fighter*, FighterHurtCapsule*, HitCapsule*);
 /* 078488 */ void ftColl_80078488(Fighter*);

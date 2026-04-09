@@ -942,9 +942,124 @@ void ftColl_80077688(Item* item, HitCapsule* hurt, Fighter* fp, Vec3* pos,
     efSync_Spawn(0x41C, NULL, &hurt->hurt_coll_pos);
 }
 
-void ftColl_80077970(void)
+void ftColl_80077970(Item* item, HitCapsule* hit1, Fighter* fp,
+                     HitCapsule* hit2)
 {
-    NOT_IMPLEMENTED;
+    Vec3 midpoint;
+    int dmg1_int, dmg2_int;
+    int dmg_count;
+    int i;
+    PAD_STACK(16);
+
+    midpoint.x = (hit1->hurt_coll_pos.x + hit2->hurt_coll_pos.x) *
+                 ftColl_804D82E8;
+    midpoint.y = (hit1->hurt_coll_pos.y + hit2->hurt_coll_pos.y) *
+                 ftColl_804D82E8;
+    midpoint.z = (hit1->hurt_coll_pos.z + hit2->hurt_coll_pos.z) *
+                 ftColl_804D82E8;
+
+    dmg1_int = (int) hit1->damage;
+    dmg2_int = (int) hit2->damage;
+
+    if (dmg2_int - p_ftCommonData->x3CC < dmg1_int) {
+        if (hit2->damage) {
+            if ((int) hit2->damage) {
+                dmg_count = hit2->damage;
+            } else {
+                dmg_count = 1;
+            }
+        } else {
+            dmg_count = 0;
+        }
+
+        for (i = 0; i < 4; i++) {
+            if (fp->x914[i].state != HitCapsule_Disabled &&
+                fp->x914[i].x4 == hit2->x4)
+            {
+                if (lbColl_80008688(&fp->x914[i], 3, item)) {
+                    ftColl_804D6560[i] = 0;
+                }
+            }
+        }
+
+        if (dmg_count > fp->dmg.int_value) {
+            fp->dmg.int_value = dmg_count;
+
+            if ((u32) hit2->x40_b1 == 1 && fp->ground_or_air == GA_Ground) {
+                float dir;
+
+                fp->dmg.x191C = (float) dmg_count * p_ftCommonData->x3D0 +
+                                p_ftCommonData->x3D4;
+
+                if (fp->cur_pos.x < item->pos.x) {
+                    dir = 1.0f;
+                } else {
+                    dir = -1.0f;
+                }
+                fp->dmg.facing_dir = dir;
+            }
+        }
+
+        efSync_Spawn(0x41C, NULL, &midpoint);
+    }
+
+    dmg1_int = (int) hit1->damage;
+    dmg2_int = (int) hit2->damage;
+
+    if (dmg1_int - p_ftCommonData->x3CC < dmg2_int) {
+        int mode;
+
+        if (hit1->damage) {
+            if ((int) hit1->damage) {
+                dmg_count = hit1->damage;
+            } else {
+                dmg_count = 1;
+            }
+        } else {
+            dmg_count = 0;
+        }
+
+        if (hit1->x41_b5) {
+            mode = 4;
+        } else {
+            mode = 3;
+        }
+
+        it_8026FAC4(item, hit1, mode, fp, 0);
+
+        if (dmg_count > item->xC48) {
+            float vel_x;
+            float vel_x_mag;
+            float dir;
+
+            item->xCF4_fighterGObjUnk = fp->gobj;
+            item->xC48 = dmg_count;
+
+            vel_x = item->x40_vel.x;
+            if (vel_x < 0.0f) {
+                vel_x_mag = -vel_x;
+            } else {
+                vel_x_mag = vel_x;
+            }
+
+            if (vel_x_mag < it_804D6D28->xD4) {
+                if (item->pos.x > fp->cur_pos.x) {
+                    dir = -1.0f;
+                } else {
+                    dir = 1.0f;
+                }
+            } else {
+                if (vel_x < 0.0f) {
+                    dir = -1.0f;
+                } else {
+                    dir = 1.0f;
+                }
+            }
+            item->xCB8_outDamageDirection = dir;
+        }
+
+        efSync_Spawn(0x41C, NULL, &midpoint);
+    }
 }
 
 void ftColl_80077C60(void)
