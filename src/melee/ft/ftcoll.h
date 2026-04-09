@@ -54,7 +54,7 @@
 /* 07925C */ void ftColl_8007925C(Fighter_GObj*);
 /* 079AB0 */ float ftColl_80079AB0(Fighter*, HitCapsule*, int, float, float,
                                    float, float);
-/* 079C70 */ float ftColl_80079C70(Fighter*, Fighter*, void*, int);
+/* 079C70 */ float ftColl_80079C70(Fighter*, Fighter*, HitCapsule*, int);
 /* 079EA8 */ float ftColl_80079EA8(Fighter*, HitCapsule*, int);
 /// /* 07A06C */ static void ftColl_8007A06C(float facing_dir, DmgLogEntry**
 /// log,

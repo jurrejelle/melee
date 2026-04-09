@@ -36,6 +36,7 @@
 #include "lb/types.h"
 #include "pl/pl_040D.h"
 #include "pl/plbonuslib.h"
+#include "pl/player.h"
 #include "pl/plstale.h"
 
 #include <common_structs.h>
@@ -1310,9 +1311,69 @@ float ftColl_80079AB0(Fighter* fp, HitCapsule* hit, int unk_count, float arg3,
     return result;
 }
 
-float ftColl_80079C70(Fighter* arg0, Fighter* arg1, UNK_T arg2, int arg3)
+float ftColl_80079C70(Fighter* fp, Fighter* attacker, HitCapsule* hit,
+                      int unk_count)
 {
-    NOT_IMPLEMENTED;
+    float weight = fp->co_attrs.weight;
+    float defense = Player_GetDefenseRatio(fp->player_id);
+    float attack = Player_GetAttackRatio(attacker->player_id);
+    float arg3 = gm_8016B248();
+    ftCommonData* ftd = p_ftCommonData;
+    float w = weight * ftd->xF4;
+    float decay;
+    float result;
+
+    if (hit->x28 != 0) {
+        float x24_f;
+
+        decay = ftd->xF8;
+        result = (w * decay) / (ftColl_804D82EC + w);
+        decay -= result;
+
+        result = ftd->x118 * (float)(u32) hit->x28;
+        result = ftd->x118 * ftd->x110 + ftd->x114 * result;
+        result = decay * result;
+        result = ftd->x11C * result + ftd->x120;
+        x24_f = ftColl_804D8314 * (float)(u32) hit->x24;
+        result = x24_f * result + (float)(u32) hit->x2C;
+        result = arg3 * result;
+        result = attack * result;
+        result = defense * result;
+    } else {
+        s32 count;
+        float damage;
+        float x24_f;
+
+        if (fp->x2225_b7) {
+            if (fp->x2224_b2) {
+                count = (s32) ftd->x6D8[0];
+            } else {
+                count = (s32) ftd->x6D4;
+            }
+        } else {
+            count = (s32) fp->dmg.x1830_percent;
+        }
+
+        decay = ftd->xF8;
+        result = (w * decay) / (ftColl_804D82EC + w);
+        decay -= result;
+        damage = (float) count + fp->dmg.x1838_percentTemp;
+        result = (float)(u32) unk_count * damage;
+        result = ftd->x110 * damage + ftd->x114 * result;
+        result = decay * result;
+        result = ftd->x11C * result + ftd->x120;
+        x24_f = ftColl_804D8314 * (float)(u32) hit->x24;
+        result = x24_f * result + (float)(u32) hit->x2C;
+        result = arg3 * result;
+        result = attack * result;
+        result = defense * result;
+    }
+
+    if (result >= ftd->x108) {
+        result = ftd->x108;
+    }
+
+    return result;
 }
 
 float ftColl_80079EA8(Fighter* fp, HitCapsule* hit, int unk_count)
