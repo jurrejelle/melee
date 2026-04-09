@@ -595,55 +595,60 @@ bool ftColl_80076ED8(Fighter* fp0, HitCapsule* hit0, Fighter* fp1,
     float dmg = inlineB3(fp0, hit0, fp1);
     PAD_STACK(32);
     if (inlineB1(hit0)) {
-        if (dmg_log0_idx == 0 && !fp1->dmg.x189C_unk_num_frames) {
-            HitCapsuleState state = checkTipLog(fp1, hit0);
-            if (state == HitCapsule_Disabled) {
-                float temp_dmg = 0.5f * dmg;
-                if (!((int) temp_dmg) && dmg) {
-                    temp_dmg = 1;
-                }
+        HitCapsuleState state;
 
-                inlineB0(fp0, hit0, fp1, 0, lbColl_80008820);
-                if (fp1->x1988 == 0 && fp1->x198C == 0 && !fp1->x221D_b6 &&
-                    hit1->state == HitCapsule_Disabled)
-                {
-                    size_t count = hit0->unk_count;
-                    Fighter* fp = fp0;
-                    size_t len = count >> 1;
-                    if (len == 0 && count != 0) {
-                        len = 1;
-                    }
-                    if ((int) temp_dmg > fp1->dmg.x1840) {
-                        fp1->dmg.x1840 = temp_dmg;
-                    }
-                    if (fp0->x1064_thrownHitbox.owner != NULL) {
-                        fp = GET_FIGHTER(fp0->x1064_thrownHitbox.owner);
-                    }
-                    {
-                        HSD_GObj* gobj = fp->gobj;
-                        FighterKind kind = fp->kind;
-                        if (dmg_log1_idx < ARRAY_SIZE(dmg_log1)) {
-                            DmgLogEntry* entry = &dmg_log1[dmg_log1_idx];
-                            entry->x0 = 1;
-                            entry->kind = kind;
-                            entry->gobj = gobj;
-                            entry->hit0 = hit0;
-                            entry->hit1 = hit1;
-                            entry->pos = hit0->hurt_coll_pos;
-                            entry->x20 = temp_dmg;
-                            entry->size_of_xC = len;
-                            ++dmg_log1_idx;
-                        } else {
-                            OSReport("tip log over %d!! ",
-                                     ARRAY_SIZE(dmg_log1));
-                            HSD_ASSERT(272, 0);
-                        }
-                    }
-                }
-
-                ftColl_80078488(fp1);
-                return true;
+        if (dmg_log0_idx != 0) {
+            goto retfalse;
+        }
+        if (fp1->dmg.x189C_unk_num_frames) {
+            goto retfalse;
+        }
+        state = checkTipLog(fp1, hit0);
+        if (state == HitCapsule_Disabled) {
+            float temp_dmg = 0.5f * dmg;
+            if (!((int) temp_dmg) && dmg) {
+                temp_dmg = 1;
             }
+
+            inlineB0(fp0, hit0, fp1, 0, lbColl_80008820);
+            if (fp1->x1988 == 0 && fp1->x198C == 0 && !fp1->x221D_b6 &&
+                hit1->state == HitCapsule_Disabled)
+            {
+                size_t count = hit0->unk_count;
+                Fighter* fp = fp0;
+                size_t len = count >> 1;
+                if (len == 0 && count != 0) {
+                    len = 1;
+                }
+                if ((int) temp_dmg > fp1->dmg.x1840) {
+                    fp1->dmg.x1840 = temp_dmg;
+                }
+                if (fp0->x1064_thrownHitbox.owner != NULL) {
+                    fp = GET_FIGHTER(fp0->x1064_thrownHitbox.owner);
+                }
+                {
+                    HSD_GObj* gobj = fp->gobj;
+                    FighterKind kind = fp->kind;
+                    if (dmg_log1_idx < ARRAY_SIZE(dmg_log1)) {
+                        DmgLogEntry* entry = &dmg_log1[dmg_log1_idx];
+                        entry->x0 = 1;
+                        entry->kind = kind;
+                        entry->gobj = gobj;
+                        entry->hit0 = hit0;
+                        entry->hit1 = hit1;
+                        entry->pos = hit0->hurt_coll_pos;
+                        entry->x20 = temp_dmg;
+                        entry->size_of_xC = len;
+                        ++dmg_log1_idx;
+                    } else {
+                        HSD_ASSERTREPORT(0x110, NULL, "tip log over %d!! ",
+                                         ARRAY_SIZE(dmg_log1));
+                    }
+                }
+            }
+
+            ftColl_80078488(fp1);
+            return true;
         }
     }
 
@@ -696,9 +701,9 @@ bool ftColl_80076ED8(Fighter* fp0, HitCapsule* hit0, Fighter* fp1,
                             damageLog2->size_of_xC = len;
                             dmg_log0_idx++;
                         } else {
-                            OSReport("damage log over %d!! ",
-                                     ARRAY_SIZE(dmg_log1));
-                            HSD_ASSERT(227, 0);
+                            HSD_ASSERTREPORT(0xe3, NULL,
+                                             "damage log over %d!! ",
+                                             ARRAY_SIZE(dmg_log1));
                         }
                         inner_ret = true;
                     }
@@ -713,6 +718,7 @@ bool ftColl_80076ED8(Fighter* fp0, HitCapsule* hit0, Fighter* fp1,
 
         return true;
     }
+retfalse:
 
     return false;
 }
@@ -1258,7 +1264,7 @@ bool ftColl_80077C60(Item* item, HitCapsule* hit, Fighter* fp,
 
                 if (inner_ret) {
                     HSD_GObj* entity = item->entity;
-                    FighterKind kind = item->kind;
+                    FighterKind kind = (FighterKind) item->kind;
                     if (dmg_log0_idx < 20U) {
                         DmgLogEntry* entry =
                             &dmg_log0[dmg_log0_idx];
