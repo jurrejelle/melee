@@ -2693,14 +2693,14 @@ end:
 void ftColl_8007AB48(Fighter_GObj* gobj)
 {
     Fighter* fp = GET_FIGHTER(gobj);
-    ftColl_8007A06C(gobj, (char*) fp + 0x1844, dmg_log0, dmg_log0_idx, 1);
+    ftColl_8007A06C(gobj, &fp->dmg.facing_dir_1, dmg_log0, dmg_log0_idx, 1);
 }
 
 void ftColl_8007AB80(Fighter_GObj* gobj)
 {
     Fighter* fp = GET_FIGHTER(gobj);
     fp->dmg.x187c = 0.0f;
-    ftColl_8007A06C(gobj, (char*) fp + 0x1870, dmg_log1, dmg_log1_idx, 0);
+    ftColl_8007A06C(gobj, &fp->dmg.x1870, dmg_log1, dmg_log1_idx, 0);
     fp->dmg.x18a0 = fp->dmg.x187c;
 }
 
