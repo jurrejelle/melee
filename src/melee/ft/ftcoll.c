@@ -1800,10 +1800,89 @@ float ftColl_8007BBCC(UNUSED Fighter_GObj* gobj)
     return dmg;
 }
 
+#pragma push
+#pragma dont_inline on
 void ftColl_8007BC90(Fighter_GObj* gobj)
 {
-    NOT_IMPLEMENTED;
+    Fighter* fp = gobj->user_data;
+    Item_GObj* cur;
+    int i;
+    PAD_STACK(16);
+
+    fp->target_item_gobj = 0;
+    fp->unk_grab_val = F32_MAX;
+
+    for (cur = HSD_GObj_Entities->items; cur != NULL; cur = cur->next) {
+        Item* ip = cur->user_data;
+
+        if (ip->xD0C != 0) {
+            continue;
+        }
+        if (!ip->xDD0_flag.b4) {
+            continue;
+        }
+        if (ip->xD09 != 0) {
+            continue;
+        }
+
+        for (i = 0; (u32) i < 4; i++) {
+            HitCapsule* hit = &fp->x914[i];
+
+            if (hit->state == HitCapsule_Disabled) {
+                continue;
+            }
+            if (hit->element != 8) {
+                continue;
+            }
+
+            if (hit->x40_b2) {
+                if (ip->ground_or_air != GA_Air) {
+                    goto check_b3;
+                }
+            } else {
+            check_b3:
+                if (!hit->x40_b3) {
+                    continue;
+                }
+                if (ip->ground_or_air != GA_Ground) {
+                    continue;
+                }
+            }
+
+            if (lbColl_8000ACFC(ip, hit)) {
+                continue;
+            }
+
+            {
+                u32 j;
+                for (j = 0; j < ip->xAC8_hurtboxNum; j++) {
+                    if (lbColl_80007ECC(hit, &ip->xACC_itemHurtbox[j],
+                                        NULL, fp->x34_scale.y, ip->scl,
+                                        0.0f))
+                    {
+                        float dist;
+                        HSD_GObj* ent;
+                        ftColl_80076808(fp, hit, 0, ip, false);
+                        dist = ip->pos.x - fp->cur_pos.x;
+                        if (dist < 0.0f) {
+                            dist = -dist;
+                        }
+                        if (dist < fp->unk_grab_val) {
+                            ent = ip->entity;
+                            fp->x1A64 = ent;
+                            fp->target_item_gobj = ent;
+                            fp->x221B_b6 = true;
+                            fp->unk_grab_val = dist;
+                        }
+                        goto next_item;
+                    }
+                }
+            }
+        }
+    next_item:;
+    }
 }
+#pragma pop
 
 void ftColl_8007BE3C(Fighter_GObj* gobj)
 {
