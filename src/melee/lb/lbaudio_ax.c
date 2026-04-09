@@ -2133,13 +2133,13 @@ void fn_800268B4(void)
         int flag1, flag2;
         int flags;
 
-        if (*arr_38a4 == -1) {
+        if (arr_38a4[i] == -1) {
             flag1 = 0;
         } else {
             flag1 = 1;
         }
 
-        if (*arr_3984 == -1) {
+        if (arr_3984[i] == -1) {
             flag2 = 0;
         } else {
             flag2 = 2;
@@ -2151,21 +2151,17 @@ void fn_800268B4(void)
         case 0:
             break;
         case 1:
-            lbl_804D644C += (*arr_4e4)[0];
-            lbl_804D6450 += (*arr_4e4)[0];
+            lbl_804D644C += arr_4e4[i][0];
+            lbl_804D6450 += arr_4e4[i][0];
             break;
         case 2:
-            lbl_804D6448 += (*arr_4e4)[0];
+            lbl_804D6448 += arr_4e4[i][0];
             break;
         case 3:
-            lbl_804D644C += (*arr_4e4)[0];
-            lbl_804D6448 += (*arr_4e4)[0];
+            lbl_804D644C += arr_4e4[i][0];
+            lbl_804D6448 += arr_4e4[i][0];
             break;
         }
-
-        arr_38a4++;
-        arr_3984++;
-        arr_4e4++;
     }
 }
 
@@ -2218,13 +2214,10 @@ void fn_800269AC(void)
             HSD_SynthSFXWaitForLoadCompletion(lb_800195D0);
             HSD_SynthSFXUnloadBank(2);
             for (i = 0; i < 0x37; i++) {
-                if (types[0][1] != 5) {
-                    *avail = -1;
-                    *handles = -1;
+                if (types[i][0] != 5) {
+                    avail[i] = -1;
+                    handles[i] = -1;
                 }
-                types++;
-                avail++;
-                handles++;
             }
         }
     }
@@ -2259,15 +2252,11 @@ s32 fn_80026C04(s32 arg0)
         int* arr_274 = st->x274;
 
         for (slot = 0; slot < 0x37; slot++) {
-            if (priority == (s8)(u8)(*arr_5d0)[1] &&
-                *arr_194 == 1 &&
-                *arr_274 == -1)
+            if (priority == arr_5d0[slot][1] && arr_194[slot] == 1 &&
+                arr_274[slot] == -1)
             {
                 goto found;
             }
-            arr_5d0++;
-            arr_194++;
-            arr_274++;
         }
     }
     slot = -1;
@@ -2395,11 +2384,9 @@ void lbAudioAx_80027168(void)
         s8(*arr5d0)[4] = s32_arr_803BB5D0;
         int* arr274 = st->x274;
         for (i = 0; i < 55; i++) {
-            if ((*arr5d0)[1] != 5 && arr274[0] == 2) {
+            if (arr5d0[i][1] != 5 && arr274[i] == 2) {
                 arr274[0] = 1;
             }
-            arr5d0++;
-            arr274++;
         }
     }
 
@@ -2409,11 +2396,9 @@ void lbAudioAx_80027168(void)
         int* arr_b4 = st->xB4;
         i = 55;
         do {
-            if ((*arr5d0)[1] != 5 && *arr_b4 != -1) {
+            if (arr5d0[i][1] != 5 && arr_b4[i] != -1) {
                 count++;
             }
-            arr5d0++;
-            arr_b4++;
         } while (--i);
     }
 
@@ -2582,9 +2567,11 @@ void lbAudioAx_80027AB0(s32 arg0)
             int* d = st->x274;
             for (idx = 0; idx < 55; idx++) {
                 if (idx != 0) {
-                    *a = -1; *b = -1; *c = -1; *d = -1;
+                    a[idx] = -1;
+                    b[idx] = -1;
+                    c[idx] = -1;
+                    d[idx] = -1;
                 }
-                a++; b++; c++; d++;
             }
         }
 
@@ -2718,22 +2705,19 @@ void lbAudioAx_80027DF8(void)
     if (lbl_804D641C == 1) {
         s32* slots = lbl_80433710.x2C;
         s32* timers = lbl_80433710.x70;
-        s32 idx = 0;
-        do {
-            s32 val = *slots;
+        s32 idx;
+        for (idx = 0; idx < 0x10; idx++) {
+            s32 val = slots[idx];
             if ((u32)(val - 0x80000) != 0x3D60U) {
                 if (val >= 0x83D61) {
                     lbAudioAx_800237A8(0x83D60, 0, 0x40);
                 } else {
                     lbAudioAx_800237A8(val, 0x7F, 0x40);
                 }
-                *slots = 0x83D60;
-                *timers = 0;
+                slots[idx] = 0x83D60;
+                timers[idx] = 0;
             }
-            idx++;
-            slots++;
-            timers++;
-        } while (idx < 0x10);
+        }
         lbl_804D641C = 0;
         return;
     }
@@ -2743,15 +2727,13 @@ void lbAudioAx_80027DF8(void)
         s32* t = lbl_80433710.x70;
         s32* sl = lbl_80433710.x2C;
         for (i = 0; i < 16; i++) {
-            if (*t > 0) {
-                (*t)--;
+            if (t[i] > 0) {
+                (t[i])--;
             }
-            if (*t <= 0) {
-                *sl = 0x83D60;
-                *t = 0;
+            if (t[i] <= 0) {
+                sl[i] = 0x83D60;
+                t[i] = 0;
             }
-            t++;
-            sl++;
         }
     }
 }
@@ -2893,9 +2875,11 @@ s32 lbAudioAx_80028690(void)
         d = st->x274;
         for (idx = 0; idx < 55; idx++) {
             if (idx != 0) {
-                *a = -1; *b = -1; *c = -1; *d = -1;
+                a[idx] = -1;
+                b[idx] = -1;
+                c[idx] = -1;
+                d[idx] = -1;
             }
-            a++; b++; c++; d++;
         }
 
         HSD_SynthSFXUnloadBank(1);
