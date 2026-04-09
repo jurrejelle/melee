@@ -1886,7 +1886,7 @@ void fn_800262A0(HSD_GObj* gobj)
             pan = 0x7F;
         }
         AXDriver_8038D2B4(vid, (pan * 2) & 0xFE);
-
+        vid = ud->voice_id;
         vol = ud->x20;
         if (vol < 0) {
             vol = 0;
@@ -1894,11 +1894,11 @@ void fn_800262A0(HSD_GObj* gobj)
         if (vol > 0x7F) {
             vol = 0x7F;
         }
-        AXDriver_8038D3B8(ud->voice_id, (vol * 2) & 0xFE);
+        AXDriver_8038D3B8(vid, (vol * 2) & 0xFE);
     }
 
     if (ud->current_frame != -1 && ud->end_frame != -1 &&
-        (ud->current_frame >= ud->end_frame || ud->end_frame == 0))
+        (ud->current_frame >= ud->end_frame || ud->end_frame == (ud->voice_id * 0)))
     {
         if (gobj != NULL) {
             HSD_GObjPLink_80390228(gobj);
