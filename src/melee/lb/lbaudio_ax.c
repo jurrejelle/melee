@@ -1767,6 +1767,66 @@ void fn_800268B4(void)
 
 /// #fn_80026C04
 
+s32 fn_80026C04(s32 arg0)
+{
+    char* base433 = (char*) &lbl_80433710;
+    char* base300 = lbl_803BB300;
+    s32 priority;
+    s32 slot;
+    int i;
+
+    if (arg0 != -1) {
+        int* p = (int*)(base433 + 0x354);
+        for (i = 0; i < 0x37; i++) {
+            if (arg0 == *p) {
+                char* bp;
+                s32 offset;
+                bp = base433 + i * 4;
+                *(int*)(bp + 0x274) = 1;
+                bp = base300 + i * 8;
+                offset = *(int*)(bp + 0x11E4);
+                lbl_804D644C -= offset;
+                lbl_804D6450 -= offset;
+                lbl_804D6448 += offset;
+                break;
+            }
+            p++;
+        }
+    }
+
+    for (priority = 4; priority >= 0; priority--) {
+        s8(*arr_5d0)[4] = (s8(*)[4])(base300 + 0x2D0);
+        int* arr_38a4 = (int*)(base433 + 0x194);
+        int* arr_3984 = (int*)(base433 + 0x274);
+
+        for (slot = 0; slot < 0x37; slot++) {
+            if (priority == (s8)(u8)(*arr_5d0)[1] &&
+                *arr_38a4 == 1 &&
+                *arr_3984 == -1)
+            {
+                goto found;
+            }
+            arr_5d0++;
+            arr_38a4++;
+            arr_3984++;
+        }
+    }
+    slot = -1;
+
+found:
+    if (slot != -1) {
+        s32 idx = slot * 4;
+        char* src_p = base300 + idx;
+        char* dst_p = base300 + lbl_804D38D0;
+        strcpy(dst_p + 0x40, *(char**)(src_p + 0x9FC));
+        priority = HSD_SynthSFXLoad(base300 + 0x40, 2,
+                                    (int) fn_80026C04, 0);
+        *(int*)((base433 + idx) + 0x354) = priority;
+    }
+
+    return priority;
+}
+
 bool fn_80026E58(int arg0)
 {
     if (lbl_80433984[arg0] == 2) {

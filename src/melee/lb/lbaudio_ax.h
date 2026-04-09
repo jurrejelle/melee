@@ -87,7 +87,7 @@
 /* 0267B0 */ void fn_800267B0(void);
 /* 0268B4 */ void fn_800268B4(void);
 /* 0269AC */ UNK_RET fn_800269AC(UNK_PARAMS);
-/* 026C04 */ UNK_RET fn_80026C04(UNK_PARAMS);
+/* 026C04 */ s32 fn_80026C04(s32 arg0);
 /* 026E58 */ bool fn_80026E58(int);
 /* 026E84 */ u64 lbAudioAx_80026E84(CharacterKind);
 /* 026EBC */ u64 lbAudioAx_80026EBC(InternalStageId);

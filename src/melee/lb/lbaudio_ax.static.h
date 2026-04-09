@@ -60,6 +60,7 @@ static f32 lbl_804D38C0 = 1.0F;
 static f32 lbl_804D38C4 = 1.0F;
 static f32 lbl_804D38C8 = 1.0F;
 static int lbl_804D38CC = 0x7F;
+static int lbl_804D38D0 = 7;
 static int lbl_804D38D4 = 7;
 static int lbl_804D38D8 = 1;
 static int lbl_804D38DC = -1;
