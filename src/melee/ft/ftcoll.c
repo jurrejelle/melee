@@ -909,10 +909,23 @@ void ftColl_800788D4(Fighter_GObj* gobj)
     ftColl_8007861C(0, gobj, 0, -10, 0, 0, 0, 0, 0);
 }
 
+#pragma push
+#pragma dont_inline on
 void ftColl_8007891C(Fighter_GObj* arg0, Fighter_GObj* arg1, float arg2)
 {
-    NOT_IMPLEMENTED;
+    Fighter* fp0;
+    Fighter* fp1;
+    PAD_STACK(8);
+
+    plStale_UpdateStaleMovesFromFighter(arg0, arg1);
+    ftColl_80076444(arg0, arg1);
+    fp0 = arg0->user_data;
+    fp1 = arg1->user_data;
+    pl_8003EB30(arg2, fp0->player_id, fp0->x221F_b4,
+                fp1->player_id, fp1->x221F_b4,
+                fp0->x2070.x2073);
 }
+#pragma pop
 
 void ftColl_80078998(void)
 {
