@@ -1702,10 +1702,359 @@ void ftColl_80078C70(Fighter_GObj* this_gobj)
     }
 } // clang-format on
 
+#pragma dont_inline on
 void ftColl_8007925C(Fighter_GObj* gobj)
-{
-    NOT_IMPLEMENTED;
-}
+{ // clang-format off
+    Fighter* fp;
+    HSD_GObj* entity;
+    Item* item;
+    HitCapsule* hurt;
+    HitCapsule* this_hit;
+    HitCapsule* temp_hit;
+    int hit_count;
+    u32 i, j, m, n;
+    int var_r22;
+    int var_r18;
+    int var_r3;
+    Vec3 coll_pos;
+    float coll_dist;
+    PAD_STACK(24);
+
+    fp = gobj->user_data;
+
+    for (entity = HSD_GObj_Entities->items; entity != NULL;
+         entity = entity->next)
+    {
+        item = entity->user_data;
+        if (item->kind == 0x9E) {
+            continue;
+        }
+
+        if (ftLib_80086FD4(gobj, item->owner)) {
+            if (!item->xDCD_flag.b5) {
+                continue;
+            }
+        }
+
+        if (gm_8016B168() && !gm_8016B0D4() && !item->xDCD_flag.b6) {
+            if (item->x20_team_id == fp->team) {
+                continue;
+            }
+        }
+
+        if (!fp->x221B_b5) {
+            hit_count = 0;
+
+            if (fp->x1064_thrownHitbox.owner != NULL) {
+                if (ftLib_80086FD4(fp->x1064_thrownHitbox.owner,
+                                   item->owner))
+                {
+                    if (!item->xDCD_flag.b5) {
+                        goto skip_hit_loop;
+                    }
+                }
+                if (gm_8016B168() && !gm_8016B0D4() &&
+                    !item->xDCD_flag.b6)
+                {
+                    if (item->x20_team_id == fp->x119C_teamUnk) {
+                        goto skip_hit_loop;
+                    }
+                }
+            }
+
+            for (i = 0; i < (sizeof(fp->x914) / sizeof(HitCapsule)); i++) {
+            this_hit = &fp->x914[i];
+                if ((this_hit->state != HitCapsule_Disabled) &&
+                    !((u8) this_hit->x43_b2) &&
+                    ((u32) this_hit->element != (u8) HitElement_Catch) &&
+                    ((u32)(((u8) this_hit->x42_b5) == 1)) &&
+                    (((this_hit->x40_b2) &&
+                      (item->ground_or_air == GA_Air)) ||
+                     (((u8) this_hit->x40_b3) &&
+                      (item->ground_or_air == GA_Ground))) &&
+                    (lbColl_8000ACFC(item, this_hit) == 0))
+                {
+                    ftColl_804D6560[i] = 1;
+                    hit_count++;
+                } else {
+                    ftColl_804D6560[i] = 0;
+                }
+            }
+        }
+
+    skip_hit_loop:
+
+        for (j = 0; j < 4; j++) {
+            hurt = &item->x5D4_hitboxes[j].hit;
+
+            if (hurt->state == HitCapsule_Disabled) {
+                continue;
+            }
+            if ((u32)(((u8) hurt->x42_b5)) != true) {
+                continue;
+            }
+            if (!(((u8) hurt->x40_b2) &&
+                  (fp->ground_or_air == GA_Air)) &&
+                !(((u8) hurt->x40_b3) &&
+                  ((int) fp->ground_or_air == GA_Ground)))
+            {
+                continue;
+            }
+
+            if (((u8) hurt->x42_b2) &&
+                (fp->facing_dir == item->facing_dir))
+            {
+                continue;
+            }
+
+            if (gm_8016B1C4() && !item->x5D4_hitboxes[j].x138) {
+                continue;
+            }
+
+            if (lbColl_8000ACFC(fp, hurt) != 0) {
+                continue;
+            }
+
+            var_r22 = ((u8) hurt->x43_b2 != false) ? true : false;
+
+            if ((u32) hurt->element == 0xB || var_r22 ||
+                !(u8) hurt->x42_b4)
+            {
+                goto catch_path;
+            }
+
+            if (fp->reflecting && (u8) hurt->x41_b7) {
+                if (lbColl_80007BCC(hurt, &fp->reflect_hit,
+                        ftCommon_8007F804(fp), 0, item->scl,
+                        fp->x34_scale.y, fp->cur_pos.z))
+                {
+                    ftColl_80077464(item, hurt, fp);
+                    continue;
+                }
+            }
+
+            if (!(u8) fp->x2218_b6) {
+                goto catch_path;
+            }
+
+            if (!(u8) hurt->x42_b0) {
+                if (!(u8) fp->x2218_b7 || !(u8) hurt->x41_b7) {
+                    goto catch_path;
+                }
+            }
+
+            if (lbColl_80007BCC(hurt, &fp->absorb_hit,
+                    ftCommon_8007F804(fp), 0, item->scl,
+                    fp->x34_scale.y, fp->cur_pos.z))
+            {
+                int dmg_count;
+                float dmg;
+
+                it_8026FAC4(item, hurt, 6, fp, 0);
+
+                dmg = hurt->damage;
+                if (dmg) {
+                    if ((int) dmg) {
+                        dmg_count = dmg;
+                    } else {
+                        dmg_count = 1;
+                    }
+                } else {
+                    dmg_count = 0;
+                }
+
+                item->xC90_absorbGObj = fp->gobj;
+
+                {
+                    float dir;
+                    if (fp->cur_pos.x > item->pos.x) {
+                        dir = ftColl_804D82F0;
+                    } else {
+                        float one = ftColl_804D82EC;
+                        dir = one;
+                    }
+                    fp->AbsorbAttr.x1A40_absorbHitDirection = dir;
+                }
+
+                if (!(u8) hurt->x42_b0) {
+                    continue;
+                }
+
+                fp->AbsorbAttr.x1A44_damageTaken += dmg_count;
+                fp->AbsorbAttr.x1A48_hitsTaken++;
+                continue;
+            }
+
+            goto catch_path;
+
+        catch_path:
+            if (!(u8) fp->x221B_b5 && var_r22 == 0 &&
+                hit_count != 0)
+            {
+                var_r18 = 0;
+                for (m = 0; m < (sizeof(fp->x914) / sizeof(HitCapsule)); m++) {
+                    if ((u8) ftColl_804D6560[m] == 0) {
+                        continue;
+                    }
+                    temp_hit = &fp->x914[m];
+
+                    if ((u32) hurt->element == 0xB ||
+                        (u32) temp_hit->element == 0xB)
+                    {
+                        if (hurt->element == temp_hit->element) {
+                            continue;
+                        }
+                        if (lbColl_80007AFC(hurt, temp_hit,
+                                item->scl, fp->x34_scale.y))
+                        {
+                            item->xDCE_flag.b6 = true;
+                            var_r18 = 1;
+                            item->toucher = gobj;
+                            break;
+                        }
+                    } else {
+                        if ((u8) hurt->x40_b0 != 1) {
+                            continue;
+                        }
+                        if ((u8) temp_hit->x40_b0 != 1) {
+                            continue;
+                        }
+                        if (lbColl_80007AFC(hurt, temp_hit,
+                                item->scl, fp->x34_scale.y))
+                        {
+                            ftColl_80077970(item, hurt, fp, temp_hit);
+                            var_r18 = 1;
+                            break;
+                        }
+                    }
+                }
+                if (var_r18 != 0) {
+                    continue;
+                }
+            }
+
+            if ((u32) hurt->element == 0xB) {
+                goto catch_elem_path;
+            }
+            if (!(u8) fp->x221B_b0) {
+                goto catch_elem_path;
+            }
+            if (!(u8) hurt->x42_b1) {
+                goto catch_elem_path;
+            }
+
+            var_r3 = true;
+            if (fp->x221B_b3) {
+                if (ftColl_804D82F0 == fp->facing_dir) {
+                    if (fp->cur_pos.x < item->pos.x) {
+                        var_r3 = false;
+                    }
+                } else if (fp->cur_pos.x > item->pos.x) {
+                    var_r3 = false;
+                }
+            }
+
+            if ((u8) fp->x221B_b4 && !(u8) hurt->x42_b4) {
+                var_r3 = false;
+            }
+
+            if (var_r3 == 0) {
+                goto catch_elem_path;
+            }
+
+            if (lbColl_80007BCC(hurt, &fp->shield_hit,
+                    ftCommon_8007F804(fp), var_r22, item->scl,
+                    fp->x34_scale.y, fp->cur_pos.z))
+            {
+                if (!(u8) fp->x221B_b2) {
+                    if ((u8) hurt->x42_b3 || (u8) fp->x221B_b1) {
+                        lbColl_80007DD8(hurt, &fp->shield_hit,
+                            ftCommon_8007F804(fp), &coll_pos,
+                            &coll_dist, item->scl);
+                    }
+                }
+
+                ftColl_80077688(item, hurt, fp, &coll_pos, coll_dist);
+                continue;
+            }
+
+        catch_elem_path:
+            if ((u32) hurt->element == 0xB) {
+                for (m = 0; m < fp->hurt_capsules_len; m++) {
+                    if (lbColl_80008248(hurt,
+                            &fp->hurt_capsules[m].capsule,
+                            ftCommon_8007F804(fp), item->scl,
+                            fp->x34_scale.y, fp->cur_pos.z))
+                    {
+                        item->xDCE_flag.b6 = true;
+                        item->toucher = gobj;
+                        break;
+                    }
+                }
+            } else {
+                if ((int) fp->x1988 == 2 || (int) fp->x198C == 2) {
+                    continue;
+                }
+                if ((u32)(((u8) hurt->x42_b5)) != true) {
+                    continue;
+                }
+
+                for (n = 0; n < fp->hurt_capsules_len; n++) {
+                    if ((u8) hurt->x42_b6 &&
+                        !fp->hurt_capsules[n].is_grabbable)
+                    {
+                        continue;
+                    }
+
+                    if (lbColl_8000805C(hurt,
+                            &fp->hurt_capsules[n].capsule,
+                            ftCommon_8007F804(fp), var_r22,
+                            item->scl, fp->x34_scale.y,
+                            fp->cur_pos.z))
+                    {
+                        if (ftColl_80077C60(item, hurt, fp,
+                                (HitCapsule*) &fp->hurt_capsules[n])
+                            == false)
+                        {
+                            break;
+                        }
+
+                        if (((int) fp->x1988 != 0) ||
+                            ((int) fp->x198C != 0) ||
+                            fp->x221D_b6 ||
+                            fp->hurt_capsules[n].capsule.state != 0)
+                        {
+                            ft_PlaySFX(fp,
+                                ftColl_803C0C40[hurt->sfx_severity],
+                                0x7FU, 0x40U);
+                            var_r3 = true;
+                        } else {
+                            var_r3 = false;
+                        }
+
+                        if (var_r3 != 0) {
+                            break;
+                        }
+
+                        if ((u32) hurt->sfx_kind == 0xDU &&
+                            (u32) hurt->sfx_severity == 2)
+                        {
+                            fp->x215C = lbColl_80005BB0(hurt,
+                                (0x72 + (fp->player_id * 2) +
+                                 (u8) fp->x221F_b4));
+                        } else {
+                            fp->x2160 = lbColl_80005BB0(hurt,
+                                (0x7E + (fp->player_id * 2) +
+                                 (u8) fp->x221F_b4));
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+    }
+} // clang-format on
+#pragma dont_inline off
 
 extern double const ftColl_804D8308;
 extern float const ftColl_804D8314;
