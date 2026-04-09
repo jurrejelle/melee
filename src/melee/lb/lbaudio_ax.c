@@ -1617,6 +1617,7 @@ bool fn_80025B44(HSD_GObj* gobj)
 end:
     return false;
 }
+
 bool fn_80025CBC(HSD_GObj* gobj)
 {
     lbAudioAx_UserData* ud;
@@ -1638,6 +1639,8 @@ bool fn_80025CBC(HSD_GObj* gobj)
 
     end_frame = ud->end_frame;
     current_frame = ud->current_frame;
+    if (ud && ud) {
+    }
     target = ud->pan_right;
     current = ud->pan_left;
 
@@ -1645,8 +1648,8 @@ bool fn_80025CBC(HSD_GObj* gobj)
         current_frame = end_frame;
     }
 
-    if (current != target) {
-        if (current < target) {
+    if (ud->pan_left != target) {
+        if (current <= target) {
             f_result = (f32) current +
                        ((f32) current_frame * ((f32) target - (f32) current)) /
                            (f32) end_frame;
