@@ -1481,7 +1481,25 @@ void ftColl_8007B320(Fighter_GObj* gobj)
 
 void ftColl_8007B4E0(Fighter_GObj* gobj)
 {
-    NOT_IMPLEMENTED;
+    Fighter* fp = GET_FIGHTER(gobj);
+    void* x30 = fp->ft_data->x30;
+    int i;
+
+    for (i = 0; i < (s32) fp->hurt_capsules_len; i++) {
+        ftHurtboxInit* init =
+            &((ftHurtboxInit*) (((void**) x30)[1]))[i];
+        fp->hurt_capsules[i].capsule.bone_idx = init->bone_idx;
+        fp->hurt_capsules[i].height = init->height;
+        fp->hurt_capsules[i].is_grabbable = init->is_grabbable;
+        fp->hurt_capsules[i].capsule.state = HurtCapsule_Enabled;
+        fp->hurt_capsules[i].capsule.bone =
+            fp->parts[fp->hurt_capsules[i].capsule.bone_idx].joint;
+        fp->hurt_capsules[i].capsule.a_offset = init->a_offset;
+        fp->hurt_capsules[i].capsule.b_offset = init->b_offset;
+        fp->hurt_capsules[i].capsule.scale = init->scale;
+        fp->hurt_capsules[i].capsule.skip_update_pos = false;
+    }
+    fp->x221A_b6 = false;
 }
 
 void ftColl_HurtboxInit(Fighter* fp, FighterHurtCapsule* hurt,
