@@ -439,16 +439,16 @@ found:
             HSD_SynthSFXUnloadBank(2);
 
             {
-                s8* arr = (s8*)(bb + 0x2D0);
+                s8(*arr)[4] = s32_arr_803BB5D0;
                 s32 k;
                 for (k = 0; k < 0x37; k++) {
-                    if ((int)(u8)arr[2] != 5) {
+                    if ((int)(u8)(*arr)[2] != 5) {
                         st->xB4[k] = -1;
                         st->x194[k] = -1;
                         st->x274[k] = -1;
                         st->x354[k] = -1;
                     }
-                    arr += 4;
+                    arr++;
                 }
             }
 
