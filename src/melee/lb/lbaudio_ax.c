@@ -1199,7 +1199,6 @@ bool fn_800251EC(HSD_GObj* gobj)
     s32 val;
     f32 ratio;
     f32 temp;
-    HSD_GObj* entity;
     s32 type;
     s32 pad1;
     s32 pad2;
@@ -1222,19 +1221,18 @@ bool fn_800251EC(HSD_GObj* gobj)
     if (gobj->user_data == NULL) {
         goto set_flag;
     }
-    entity = ((lbAudioAx_UserData*) gobj->user_data)->entity;
-    if (entity == NULL) {
+    if (((lbAudioAx_UserData*) gobj->user_data)->entity == NULL) {
         goto set_flag;
     }
 
-    type = entity->classifier;
+    type = ((lbAudioAx_UserData*) gobj->user_data)->entity->classifier;
     switch (type) {
     case 4:
-        ftLib_80086644(entity, &pos);
+        ftLib_80086644(((lbAudioAx_UserData*) gobj->user_data)->entity, &pos);
         result_flag = 0;
         break;
     case 6:
-        it_8026B294(entity, &pos);
+        it_8026B294(((lbAudioAx_UserData*) gobj->user_data)->entity, &pos);
         result_flag = 0;
         break;
     default:
@@ -1273,11 +1271,10 @@ check_flag:
             goto store_pan;
         }
         ratio = (pos.x - cam_center) / (cam_right - cam_center);
-        temp = (f32) (val - 0x40) * ratio;
-        if (temp < 0.0f) {
-            temp = -temp;
-        }
-        pan = 64.0f + temp;
+        temp = (f32) (val - 0x40);
+        temp = temp * ratio;
+
+        pan = 64.0f + (temp < 0.0f ? -temp : temp);
     } else {
         if (!(cam_center > pos.x)) {
             goto store_pan;
@@ -1287,7 +1284,8 @@ check_flag:
             goto store_pan;
         }
         ratio = (cam_center - pos.x) / (cam_center - cam_left);
-        temp = (f32) (0x40 - val) * ratio;
+        temp = (f32) (0x40 - val);
+        temp = temp * ratio;
         if (temp < 0.0f) {
             temp = -temp;
         }
