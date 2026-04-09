@@ -2071,7 +2071,7 @@ s32 fn_80026650(void)
 
 void fn_800267B0(void)
 {
-    char* base;
+    lbAudioAx_PoolAlloc* st = &lbl_80433710;
     int* arr_274;
     s8(*arr_5d0)[4];
     int* arr_194;
@@ -2080,8 +2080,6 @@ void fn_800267B0(void)
     int j;
     int i;
 
-    base = (char*) &lbl_80433710;
-
     if ((u32) lbl_804D6450 == 0) {
         return;
     }
@@ -2089,9 +2087,9 @@ void fn_800267B0(void)
     for (i = 0; i < 5; i++) {
         arr_5d0 = s32_arr_803BB5D0;
         arr_4e4 = offsets_arr_803BC4E4;
-        arr_274 = (int*) (base + 0x274);
-        arr_194 = (int*) (base + 0x194);
-        arr_354 = (int*) (base + 0x354);
+        arr_274 = st->x274;
+        arr_194 = st->x194;
+        arr_354 = st->x354;
         j = 0;
 
         goto loop_check;
@@ -2249,46 +2247,42 @@ void fn_800269AC(void)
 
 s32 fn_80026C04(s32 arg0)
 {
-    char* base433 = (char*) &lbl_80433710;
-    char* base300 = lbl_803BB300;
+    lbAudioAx_PoolAlloc* st = &lbl_80433710;
+    char* bb = lbl_803BB300;
     s32 priority;
     s32 slot;
     int i;
 
     if (arg0 != -1) {
-        int* p = (int*)(base433 + 0x354);
         for (i = 0; i < 0x37; i++) {
-            if (arg0 == *p) {
-                char* bp;
-                s32 offset;
-                bp = base433 + i * 4;
-                *(int*)(bp + 0x274) = 1;
-                bp = base300 + i * 8;
-                offset = *(int*)(bp + 0x11E4);
-                lbl_804D644C -= offset;
-                lbl_804D6450 -= offset;
-                lbl_804D6448 += offset;
+            if (arg0 == st->x354[i]) {
+                st->x274[i] = 1;
+                {
+                    s32 offset = offsets_arr_803BC4E4[i][0];
+                    lbl_804D644C -= offset;
+                    lbl_804D6450 -= offset;
+                    lbl_804D6448 += offset;
+                }
                 break;
             }
-            p++;
         }
     }
 
     for (priority = 4; priority >= 0; priority--) {
-        s8(*arr_5d0)[4] = (s8(*)[4])(base300 + 0x2D0);
-        int* arr_38a4 = (int*)(base433 + 0x194);
-        int* arr_3984 = (int*)(base433 + 0x274);
+        s8(*arr_5d0)[4] = s32_arr_803BB5D0;
+        int* arr_194 = st->x194;
+        int* arr_274 = st->x274;
 
         for (slot = 0; slot < 0x37; slot++) {
             if (priority == (s8)(u8)(*arr_5d0)[1] &&
-                *arr_38a4 == 1 &&
-                *arr_3984 == -1)
+                *arr_194 == 1 &&
+                *arr_274 == -1)
             {
                 goto found;
             }
             arr_5d0++;
-            arr_38a4++;
-            arr_3984++;
+            arr_194++;
+            arr_274++;
         }
     }
     slot = -1;
@@ -2296,12 +2290,11 @@ s32 fn_80026C04(s32 arg0)
 found:
     if (slot != -1) {
         s32 idx = slot * 4;
-        char* src_p = base300 + idx;
-        char* dst_p = base300 + lbl_804D38D0;
-        strcpy(dst_p + 0x40, *(char**)(src_p + 0x9FC));
-        priority = HSD_SynthSFXLoad(base300 + 0x40, 2,
+        char* dst_p = bb + lbl_804D38D0;
+        strcpy(dst_p + 0x40, *(char**)(bb + idx + 0x9FC));
+        priority = HSD_SynthSFXLoad(bb + 0x40, 2,
                                     (int) fn_80026C04, 0);
-        *(int*)((base433 + idx) + 0x354) = priority;
+        st->x354[slot] = priority;
     }
 
     return priority;
