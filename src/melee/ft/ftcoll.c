@@ -2099,6 +2099,8 @@ void ftColl_8007BC90(Fighter_GObj* gobj)
 }
 #pragma pop
 
+#pragma push
+#pragma dont_inline on
 void ftColl_8007BE3C(Fighter_GObj* gobj)
 {
     Fighter* fp;
@@ -2115,7 +2117,18 @@ void ftColl_8007BE3C(Fighter_GObj* gobj)
 
     fp = gobj->user_data;
     data_ptr = ftColl_803C0C40;
-    dmg_count = getEnvDmg(fp->dmg.x1898);
+
+    /* inline getEnvDmg */
+    if (fp->dmg.x1898 == 0.0f) {
+        dmg_count = 0;
+    } else {
+        int result = (int) fp->dmg.x1898;
+        if (result > 0) {
+            dmg_count = result;
+        } else {
+            dmg_count = 1;
+        }
+    }
 
     if (fp->x221C_b4) {
         fp->dmg.x1834 = fp->dmg.x1834 - fp->dmg.x1898;
@@ -2182,6 +2195,7 @@ void ftColl_8007BE3C(Fighter_GObj* gobj)
     {
         float x187c = fp->dmg.x187c;
         u32 dmg_unsigned = fp->dmg.x1898;
+        int x1890 = fp->dmg.x1890;
         int effect_idx = data_ptr[27 + fp->dmg.x188c];
         Fighter* vfp = gobj->user_data;
         switch (effect_idx) {
@@ -2190,6 +2204,7 @@ void ftColl_8007BE3C(Fighter_GObj* gobj)
             break;
         case 1001:
         case 1002:
+        case 1004:
         case 1046:
         case 1145:
         case 1255:
@@ -2203,3 +2218,4 @@ void ftColl_8007BE3C(Fighter_GObj* gobj)
         }
     }
 }
+#pragma pop
