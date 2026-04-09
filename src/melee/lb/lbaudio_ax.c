@@ -197,7 +197,6 @@ void fn_80023254(s32 arg0)
     }
 }
 
-/// #lbAudioAx_800233EC
 s32 lbAudioAx_800233EC(s32 arg0)
 {
     char* base = lbl_803BB300;
@@ -396,8 +395,6 @@ int lbAudioAx_80023A44(int arg0, int arg1)
     return var_r3[arg1];
 }
 
-/// #lbAudioAx_80023B24
-
 s32 lbAudioAx_80023B24(s32 arg0)
 {
     lbAudioAx_PoolAlloc* st = &lbl_80433710;
@@ -581,8 +578,6 @@ int lbAudioAx_8002411C(int arg0)
 {
     return fn_80023750(arg0, 0x7F, 0x40, 0, 6);
 }
-
-/// #lbAudioAx_8002411C
 
 int lbAudioAx_80024184(int arg0, int arg1, int arg2, int arg3)
 {
@@ -1302,7 +1297,7 @@ store_pan:
 ret_true:
     return true;
 }
-/// #fn_800253D8
+
 bool fn_800253D8(HSD_GObj* gobj)
 {
     lbAudioAx_UserData* ud;
@@ -1383,7 +1378,7 @@ bool fn_800253D8(HSD_GObj* gobj)
     }
     return false;
 }
-/// #fn_800256BC
+
 bool fn_800256BC(HSD_GObj* gobj)
 {
     lbAudioAx_UserData* ud;
@@ -1739,7 +1734,6 @@ typedef struct SoundParams {
     int x28;
 } SoundParams;
 
-/// #fn_80025FAC
 void fn_80025FAC(HSD_GObj* gobj, void* userdata, void* params)
 {
     SoundParams* sp = params;
@@ -2043,7 +2037,6 @@ bool lbAudioAx_800265C4(HSD_GObj* arg0, int arg1)
     }
     return false;
 }
-/// #fn_80026650
 
 s32 fn_80026650(void)
 {
@@ -2181,8 +2174,6 @@ void fn_800268B4(void)
     }
 }
 
-/// #fn_800269AC
-
 void fn_800269AC(void)
 {
     s8 (*types)[4];
@@ -2243,8 +2234,6 @@ void fn_800269AC(void)
         }
     }
 }
-
-/// #fn_80026C04
 
 s32 fn_80026C04(s32 arg0)
 {
@@ -2400,8 +2389,6 @@ void lbAudioAx_8002702C(s32 flags, u64 base_val)
     }
 }
 
-/// #lbAudioAx_80027168
-
 void lbAudioAx_80027168(void)
 {
     lbAudioAx_PoolAlloc* st = &lbl_80433710;
@@ -2466,8 +2453,6 @@ void lbAudioAx_80027168(void)
     }
 }
 
-/// #fn_80027488
-
 s32 fn_80027488(void)
 {
     int* a = lbl_80433710.x194;
@@ -2488,8 +2473,6 @@ s32 fn_80027488(void)
 
     return 0;
 }
-
-/// #lbAudioAx_80027648
 
 void lbAudioAx_80027648(void)
 {
@@ -2520,8 +2503,6 @@ void lbAudioAx_80027648(void)
     check:;
     } while (result == 1);
 }
-
-/// #lbAudioAx_8002785C
 
 s32 lbAudioAx_8002785C(void)
 {
@@ -2568,8 +2549,6 @@ s32 lbAudioAx_8002785C(void)
         }
     }
 }
-
-/// #lbAudioAx_80027AB0
 
 void lbAudioAx_80027AB0(s32 arg0)
 {
@@ -2787,10 +2766,6 @@ void lbAudioAx_8002835C(void)
     HSD_ObjAllocInit(&lbl_80433710.alloc, 0x48, 4);
 }
 
-/// #lbAudioAx_8002835C
-
-/// #lbAudioAx_8002838C
-
 void lbAudioAx_8002838C(void)
 {
     struct AXFX_REVERBSTD rvb_std;
@@ -2870,8 +2845,6 @@ void lbAudioAx_8002838C(void)
     lbl_804D644C = 0;
     lbl_804D6450 = 0;
 }
-
-/// #lbAudioAx_80028690
 
 s32 lbAudioAx_80028690(void)
 {
