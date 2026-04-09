@@ -1062,9 +1062,231 @@ void ftColl_80077970(Item* item, HitCapsule* hit1, Fighter* fp,
     }
 }
 
-void ftColl_80077C60(void)
+bool ftColl_80077C60(Item* item, HitCapsule* hit, Fighter* fp,
+                     HitCapsule* hit2)
 {
-    NOT_IMPLEMENTED;
+    if (item->xCC_item_attr->x0_78 == 4) {
+        int mode;
+        if (hit->x41_b5) {
+            mode = 5;
+        } else {
+            mode = 0;
+        }
+        it_8026FAC4(item, hit, mode, fp, 0);
+        if (!fp->x2224_b2) {
+            switch (item->kind) {
+            case It_Kind_Star:
+            hit->state = HitCapsule_Disabled;
+            item->xC34_damageDealt = 1;
+            ftColl_8007B7FC(fp, (int) it_80272818(item));
+            ft_PlaySFX(fp, 0xF9, 0x7F, 0x40);
+            ftCommon_8007EBAC(fp, 0x11, 0);
+            break;
+        case 0x1A:
+            hit->state = HitCapsule_Disabled;
+            fp->x200C++;
+            item->xC34_damageDealt = 1;
+            break;
+        case 0x1B:
+            hit->state = HitCapsule_Disabled;
+            fp->x2010++;
+            item->xC34_damageDealt = 1;
+            break;
+            }
+        }
+        pl_8003E17C(fp->x221F_b4, fp->player_id, item->entity);
+        return false;
+    }
+
+    {
+        float raw_dmg = it_8026B1D4(item->entity, hit);
+        float f3 = raw_dmg;
+        float scaled_dmg;
+
+        if (fp->victim_gobj != NULL && !fp->x221B_b5 &&
+            fp->victim_gobj != NULL)
+        {
+            f3 *= p_ftCommonData->x128;
+        }
+        if (fp->motion_id == ftCo_MS_DamageIce) {
+            f3 *= p_ftCommonData->x714;
+        }
+        scaled_dmg = f3 * fp->dmg.x182c_behavior;
+
+        if (inlineB1(hit)) {
+            if (dmg_log0_idx == 0 &&
+                fp->dmg.x189C_unk_num_frames == 0.0f)
+            {
+                HitCapsuleState state = checkTipLog(fp, hit);
+                if (state == HitCapsule_Disabled) {
+                    int mode;
+                    if (hit->x41_b5) {
+                        mode = 5;
+                    } else {
+                        mode = 0;
+                    }
+                    it_8026FC00(item, hit, mode, fp);
+
+                    if (fp->x1988 == 0 && fp->x198C == 0 &&
+                        !fp->x221D_b6 &&
+                        hit2->state == HitCapsule_Disabled)
+                    {
+                        int int_scaled = (int) scaled_dmg;
+                        int int_raw = (int) raw_dmg;
+                        float temp_dmg =
+                            0.5f * (float) int_scaled;
+                        float f4 = temp_dmg;
+                        int half_raw;
+                        float half_raw_f;
+
+                        if (!((int) temp_dmg) && int_scaled != 0) {
+                            f4 = 1.0f;
+                        }
+
+                        half_raw = int_raw / 2;
+                        half_raw_f = (float) half_raw;
+                        if (half_raw_f == 0.0f && int_raw != 0) {
+                            half_raw_f = 1.0f;
+                        }
+
+                        if ((int) f4 > fp->dmg.x1840) {
+                            fp->dmg.x1840 = (int) f4;
+                        }
+
+                        {
+                            HSD_GObj* entity = item->entity;
+                            FighterKind kind = item->kind;
+                            if (dmg_log1_idx < ARRAY_SIZE(dmg_log1)) {
+                                DmgLogEntry* entry =
+                                    &dmg_log1[dmg_log1_idx];
+                                entry->x0 = 2;
+                                entry->kind = kind;
+                                entry->gobj = entity;
+                                entry->hit0 = hit;
+                                entry->hit1 = hit2;
+                                entry->pos = hit->hurt_coll_pos;
+                                entry->x20 = f4;
+                                entry->size_of_xC =
+                                    (size_t) half_raw_f;
+                                dmg_log1_idx++;
+                            } else {
+                                OSReport("tip log over %d!! ",
+                                         ARRAY_SIZE(dmg_log1));
+                                HSD_ASSERT(272, 0);
+                            }
+                        }
+                    }
+
+                    ftColl_80078488(fp);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        {
+            bool inner_ret;
+            int mode;
+
+            dmg_log1_idx = 0;
+            inner_ret = false;
+
+            mode = 0;
+            if (hit->x41_b5) {
+                mode = 5;
+            }
+            it_8026FAC4(item, hit, mode, fp, 0);
+
+            if (scaled_dmg > (float) item->xC34_damageDealt) {
+                float vel_x, vel_x_mag, dir;
+
+                item->xC34_damageDealt = (int) scaled_dmg;
+                item->xCF4_fighterGObjUnk = fp->gobj;
+
+                vel_x = item->x40_vel.x;
+                if (vel_x < 0.0f) {
+                    vel_x_mag = -vel_x;
+                } else {
+                    vel_x_mag = vel_x;
+                }
+
+                if (vel_x_mag < it_804D6D28->xD4) {
+                    if (item->pos.x > fp->cur_pos.x) {
+                        dir = -1.0f;
+                    } else {
+                        dir = 1.0f;
+                    }
+                } else {
+                    if (vel_x < 0.0f) {
+                        dir = -1.0f;
+                    } else {
+                        dir = 1.0f;
+                    }
+                }
+                item->xCB8_outDamageDirection = dir;
+            }
+
+            if (fp->x1988 == 0 && fp->x198C == 0 && !fp->x221D_b6 &&
+                hit2->state == HitCapsule_Disabled)
+            {
+                int dmg_count = getEnvDmg(scaled_dmg);
+
+                if (fp->x221C_b4) {
+                    fp->dmg.x1834 -= scaled_dmg;
+                    if (fp->dmg.x1834 < 0) {
+                        scaled_dmg = -fp->dmg.x1834;
+                        fp->x221C_b4 = false;
+                    }
+                }
+
+                if (!fp->x221C_b4) {
+                    if (scaled_dmg > 500.0f) {
+                        OSReport("attack power over 500!! %f",
+                                 scaled_dmg);
+                        __assert("ftcoll.c", 183, "0");
+                    }
+                    fp->dmg.x1838_percentTemp += scaled_dmg;
+                    if (dmg_count > fp->dmg.x183C_applied) {
+                        fp->dmg.x183C_applied = dmg_count;
+                    }
+                    inner_ret = true;
+                } else {
+                    inner_ret = false;
+                }
+
+                if (inner_ret) {
+                    HSD_GObj* entity = item->entity;
+                    FighterKind kind = item->kind;
+                    if (dmg_log0_idx < 20U) {
+                        DmgLogEntry* entry =
+                            &dmg_log0[dmg_log0_idx];
+                        entry->x0 = 2;
+                        entry->kind = kind;
+                        entry->gobj = entity;
+                        entry->hit0 = hit;
+                        entry->hit1 = hit2;
+                        entry->pos = hit->hurt_coll_pos;
+                        entry->x20 = hit->damage;
+                        entry->size_of_xC = (size_t) raw_dmg;
+                        dmg_log0_idx++;
+                    } else {
+                        OSReport("damage log over %d!! ",
+                                 ARRAY_SIZE(dmg_log1));
+                        HSD_ASSERT(227, 0);
+                    }
+                    inner_ret = true;
+                }
+
+                ftColl_80078998(item->entity, fp->gobj, scaled_dmg);
+            }
+
+            if (!inner_ret) {
+                efSync_Spawn(0x41C, NULL, &hit->hurt_coll_pos);
+            }
+
+            return true;
+        }
+    }
 }
 
 static inline int getUnkVal(Fighter* fp, int i)
