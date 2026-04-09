@@ -1329,13 +1329,12 @@ void ftColl_800784B4(Fighter* arg0, HitCapsule* arg1, HitCapsule* arg2)
     }
 }
 
-#pragma push
-#pragma dont_inline on
+// dmg is probably a u32?
 void ftColl_80078538(Fighter_GObj* gobj, Vec3* pos, float dmg, float scale)
 {
     Fighter* fp = gobj->user_data;
     u32 dmg_bits = *(u32*) &dmg;
-    PAD_STACK(24);
+    PAD_STACK(20);
 
     if (scale < p_ftCommonData->x3F0) {
         efSync_Spawn(0x3E8, 0, pos, &dmg);
@@ -1356,7 +1355,6 @@ void ftColl_80078538(Fighter_GObj* gobj, Vec3* pos, float dmg, float scale)
         }
     }
 }
-#pragma pop
 
 void ftColl_8007861C(Fighter_GObj* arg0, Fighter_GObj* gobj, int arg2,
                      int arg3, int arg4, UNK_T arg5, int arg6, UNK_T arg7,
