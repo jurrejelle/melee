@@ -870,7 +870,28 @@ void ftColl_800784B4(Fighter* arg0, HitCapsule* arg1, HitCapsule* arg2)
 #pragma dont_inline on
 void ftColl_80078538(Fighter_GObj* gobj, Vec3* pos, float dmg, float scale)
 {
-    NOT_IMPLEMENTED;
+    Fighter* fp = gobj->user_data;
+    u32 dmg_bits = *(u32*) &dmg;
+    PAD_STACK(24);
+
+    if (scale < p_ftCommonData->x3F0) {
+        efSync_Spawn(0x3E8, 0, pos, &dmg);
+    } else {
+        efSync_Spawn(0x3F3, 0, pos);
+    }
+
+    if (dmg_bits >= 1) {
+        switch (fp->co_attrs.xA0) {
+        case 0:
+            if (HSD_Randi((s32) p_ftCommonData->x3F4) == 0) {
+                efSync_Spawn(0x3EF, 0, pos, &fp->facing_dir);
+            }
+            break;
+        case 1:
+            HSD_Randi((s32) p_ftCommonData->x3F8);
+            break;
+        }
+    }
 }
 #pragma pop
 
