@@ -2600,12 +2600,16 @@ void lbAudioAx_80027AB0(s32 arg0)
             lbAudioAx_800237A8(arg0, 0x7F, 0x40);
         }
 
-        for (idx = 0; idx < 55; idx++) {
-            if (idx != 0) {
-                st->x354[idx] = -1;
-                st->xB4[idx] = -1;
-                st->x194[idx] = -1;
-                st->x274[idx] = -1;
+        {
+            int* a = st->x354;
+            int* b = st->xB4;
+            int* c = st->x194;
+            int* d = st->x274;
+            for (idx = 0; idx < 55; idx++) {
+                if (idx != 0) {
+                    *a = -1; *b = -1; *c = -1; *d = -1;
+                }
+                a++; b++; c++; d++;
             }
         }
 
@@ -2904,19 +2908,25 @@ s32 lbAudioAx_80028690(void)
 
     if (lbl_804D3878 != var_r29) {
         int idx;
+        int* a;
+        int* b;
+        int* c;
+        int* d;
 
         lbl_804D3878 = var_r29;
         AXDriver_8038DCFC();
         strcpy(&bb[lbl_804D38D0] + 0x40, bb + 0x17A8);
         AXDriver_8038DA70(bb + 0x40, lb_800195D0);
 
+        a = st->x354;
+        b = st->xB4;
+        c = st->x194;
+        d = st->x274;
         for (idx = 0; idx < 55; idx++) {
             if (idx != 0) {
-                st->x354[idx] = -1;
-                st->xB4[idx] = -1;
-                st->x194[idx] = -1;
-                st->x274[idx] = -1;
+                *a = -1; *b = -1; *c = -1; *d = -1;
             }
+            a++; b++; c++; d++;
         }
 
         HSD_SynthSFXUnloadBank(1);
