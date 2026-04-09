@@ -1334,19 +1334,19 @@ void ftColl_800784B4(Fighter* arg0, HitCapsule* arg1, HitCapsule* arg2)
 }
 
 // dmg is probably a u32?
-void ftColl_80078538(Fighter_GObj* gobj, Vec3* pos, float dmg, float scale)
+void ftColl_80078538(Fighter_GObj* gobj, Vec3* pos, u32 dmg, float ignored,
+                     float scale)
 {
     Fighter* fp = gobj->user_data;
-    u32 dmg_bits = *(u32*) &dmg;
     PAD_STACK(20);
 
     if (scale < p_ftCommonData->x3F0) {
-        efSync_Spawn(0x3E8, 0, pos, &dmg);
+        efSync_Spawn(0x3E8, 0, pos, &ignored);
     } else {
         efSync_Spawn(0x3F3, 0, pos);
     }
 
-    if (dmg_bits >= 1) {
+    if (dmg >= 1) {
         switch (fp->co_attrs.xA0) {
         case 0:
             if (HSD_Randi((s32) p_ftCommonData->x3F4) == 0) {
@@ -2327,7 +2327,8 @@ void ftColl_8007A06C(Fighter_GObj* gobj, void* dmg_ptr, void* log, size_t idx,
 
                 switch (sfx_id) {
                 case 0x3E8:
-                    ftColl_80078538(gobj, &entry->pos, (float) u_dmg, kb);
+                    ftColl_80078538(gobj, &entry->pos, u_dmg,
+                                    hit->sfx_severity, kb);
                     break;
                 case 0x3E9:
                 case 0x3EA:
@@ -2426,7 +2427,8 @@ void ftColl_8007A06C(Fighter_GObj* gobj, void* dmg_ptr, void* log, size_t idx,
 
                 switch (sfx_id) {
                 case 0x3E8:
-                    ftColl_80078538(gobj, &entry->pos, (float) u_dmg, kb);
+                    ftColl_80078538(gobj, &entry->pos, u_dmg,
+                                    hit->sfx_severity, kb);
                     break;
                 case 0x3E9:
                 case 0x3EA:
@@ -3441,7 +3443,8 @@ void ftColl_8007BE3C(Fighter_GObj* gobj)
         Fighter* vfp = gobj->user_data;
         switch (effect_idx) {
         case 1000:
-            ftColl_80078538(gobj, &fp->dmg.x1880, dmg_unsigned, x187c);
+            ftColl_80078538(gobj, &fp->dmg.x1880, dmg_unsigned,
+                            data_ptr[19 + fp->dmg.x188c], x187c);
             break;
         case 1001:
         case 1002:
