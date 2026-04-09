@@ -2446,6 +2446,78 @@ s32 lbAudioAx_8002785C(void)
 
 /// #lbAudioAx_80027AB0
 
+void lbAudioAx_80027AB0(s32 arg0)
+{
+    char* base = (char*) &lbl_80433710;
+    char* bb = lbl_803BB300;
+    s32 lang;
+
+    if (lbLang_IsSavedLanguageUS()) {
+        strcpy(bb + 0x40, bb + 0x1790);
+        lbl_804D38D0 = 10;
+        lang = 1;
+    } else {
+        strcpy(bb + 0x40, bb + 0x179C);
+        lbl_804D38D0 = 7;
+        lang = 0;
+    }
+
+    HSD_AudioSFXKeyOffAll();
+
+    if (lbl_804D3878 != lang) {
+        int i;
+        int idx;
+        int* a;
+        int* b;
+        int* c;
+        int* d;
+
+        lbl_804D3878 = lang;
+        AXDriver_8038DCFC();
+        strcpy(&bb[lbl_804D38D0] + 0x40, bb + 0x17A8);
+        AXDriver_8038DA70(bb + 0x40, lb_800195D0);
+
+        if (arg0 != 0x83D61) {
+            lbAudioAx_800237A8(arg0, 0x7F, 0x40);
+        }
+
+        a = (int*)(base + 0x354);
+        b = (int*)(base + 0xB4);
+        c = (int*)(base + 0x194);
+        d = (int*)(base + 0x274);
+        for (idx = 0; idx < 55; idx++) {
+            if (idx != 0) {
+                *a = -1; *b = -1; *c = -1; *d = -1;
+            }
+            a++; b++; c++; d++;
+        }
+
+        HSD_SynthSFXUnloadBank(1);
+        HSD_SynthSFXUnloadBank(2);
+
+        if (*(s32*)(base + 0x340) < 1) {
+            strcpy(&bb[lbl_804D38D0] + 0x40, *(char**)(bb + 0xAC8));
+            *(s32*)(base + 0x420) = HSD_SynthSFXLoad(bb + 0x40, 1, 0, 0);
+            HSD_SynthSFXWaitForLoadCompletion(lb_800195D0);
+            *(s32*)(base + 0x340) = 2;
+        }
+
+        if (*(s32*)(base + 0x278) < 1) {
+            strcpy(&bb[lbl_804D38D0] + 0x40, *(char**)(bb + 0xA00));
+            *(s32*)(base + 0x358) = HSD_SynthSFXLoad(bb + 0x40, 1, 0, 0);
+            HSD_SynthSFXWaitForLoadCompletion(lb_800195D0);
+            *(s32*)(base + 0x278) = 2;
+        }
+
+        if (*(s32*)(base + 0x34C) < 1) {
+            strcpy(&bb[lbl_804D38D0] + 0x40, *(char**)(bb + 0xAD4));
+            *(s32*)(base + 0x42C) = HSD_SynthSFXLoad(bb + 0x40, 1, 0, 0);
+            HSD_SynthSFXWaitForLoadCompletion(lb_800195D0);
+            *(s32*)(base + 0x34C) = 2;
+        }
+    }
+}
+
 extern int lbl_804D6418;
 
 void lbAudioAx_80027DBC(void)

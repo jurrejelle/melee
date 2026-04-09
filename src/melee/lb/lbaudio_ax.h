@@ -97,7 +97,7 @@
 /* 027488 */ s32 fn_80027488(void);
 /* 027648 */ void lbAudioAx_80027648(void);
 /* 02785C */ s32 lbAudioAx_8002785C(void);
-/* 027AB0 */ void lbAudioAx_80027AB0(int);
+/* 027AB0 */ void lbAudioAx_80027AB0(s32);
 /* 027DBC */ void lbAudioAx_80027DBC(void);
 /* 027DF8 */ UNK_RET lbAudioAx_80027DF8(UNK_PARAMS);
 /* 02835C */ void lbAudioAx_8002835C(void);
