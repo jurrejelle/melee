@@ -206,7 +206,7 @@ s32 lbAudioAx_800233EC(s32 arg0)
 
     if (fn_80026E58(0x21) == 1) {
         if (arg0 >= 0 && arg0 < 0x83D60) {
-            int (*ranges)[2] = (int (*)[2])(base + 0x5D4);
+            int(*ranges)[2] = (int(*)[2])(base + 0x5D4);
             for (slot = 0; slot < 0x37; slot++) {
                 if (ranges[slot][0] <= arg0 &&
                     arg0 <= ranges[slot][1])
@@ -244,7 +244,7 @@ s32 lbAudioAx_800233EC(s32 arg0)
     }
 
     if (arg0 >= 0 && arg0 < 0x83D60) {
-        int (*ranges)[2] = (int (*)[2])(base + 0x5D4);
+        int(*ranges)[2] = (int(*)[2])(base + 0x5D4);
         for (slot = 0; slot < 0x37; slot++) {
             if (ranges[slot][0] <= arg0 &&
                 arg0 <= ranges[slot][1])
@@ -400,15 +400,15 @@ int lbAudioAx_80023A44(int arg0, int arg1)
 
 s32 lbAudioAx_80023B24(s32 arg0)
 {
-    char* base = (char*) &lbl_80433710;
+    lbAudioAx_PoolAlloc* st = &lbl_80433710;
     char* bb = lbl_803BB300;
     s32 slot;
     s32 off;
 
     if (arg0 >= 0 && arg0 < 0x83D60) {
-        s32* ranges = (s32*)(bb + 0x5D4);
-        for (slot = 0; slot < 0x37; slot++, ranges += 2) {
-            if (ranges[0] <= arg0 && arg0 <= ranges[1]) {
+        s32(*ranges)[2] = (s32(*)[2])(bb + 0x5D4);
+        for (slot = 0; slot < 0x37; slot++, ranges++) {
+            if ((*ranges)[0] <= arg0 && arg0 <= (*ranges)[1]) {
                 goto found;
             }
         }
@@ -419,7 +419,7 @@ found:
     off = slot * 4;
     if ((int)*(bb + 0x2D1 + off) != 5) {
         HSD_AudioSFXKeyOffAll();
-        if (*(s32*)(base + 0x274 + off) != 2) {
+        if (st->x274[slot] != 2) {
             s32 total = 0;
             s32 j = 0;
             do {
@@ -440,34 +440,25 @@ found:
 
             {
                 s8* arr = (s8*)(bb + 0x2D0);
-                int* a1 = (int*)(base + 0xB4);
-                int* a2 = (int*)(base + 0x194);
-                int* a3 = (int*)(base + 0x274);
-                int* a4 = (int*)(base + 0x354);
                 s32 k;
                 for (k = 0; k < 0x37; k++) {
                     if ((int)(u8)arr[2] != 5) {
-                        *a1 = -1;
-                        *a2 = -1;
-                        *a3 = -1;
-                        *a4 = -1;
+                        st->xB4[k] = -1;
+                        st->x194[k] = -1;
+                        st->x274[k] = -1;
+                        st->x354[k] = -1;
                     }
                     arr += 4;
-                    a1++;
-                    a2++;
-                    a3++;
-                    a4++;
                 }
             }
 
             {
-                char* bp = bb + off;
                 char* dp = bb + lbl_804D38D0;
-                strcpy(dp + 0x40, *(char**)(bp + 0x9FC));
+                strcpy(dp + 0x40, *(char**)(bb + off + 0x9FC));
             }
-            *(s32*)(base + off + 0x354) = HSD_SynthSFXLoad(bb + 0x40, 2, 0, 0);
+            st->x354[slot] = HSD_SynthSFXLoad(bb + 0x40, 2, 0, 0);
             HSD_SynthSFXWaitForLoadCompletion(lb_800195D0);
-            *(s32*)(base + 0x274 + off) = 2;
+            st->x274[slot] = 2;
         }
     }
 
