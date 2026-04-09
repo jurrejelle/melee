@@ -2341,6 +2341,72 @@ void lbAudioAx_8002702C(s32 flags, u64 base_val)
 
 /// #lbAudioAx_80027168
 
+void lbAudioAx_80027168(void)
+{
+    char* base = (char*) &lbl_80433710;
+    char* bb = lbl_803BB300;
+    s32 count;
+    int i;
+
+    {
+        s8* arr5d0 = (s8*)(bb + 0x2D0);
+        int* arr984 = (int*)(base + 0x274);
+        for (i = 0; i < 55; i++) {
+            if (arr5d0[1] != 5 && arr984[0] == 2) {
+                arr984[0] = 1;
+            }
+            arr5d0 += 4;
+            arr984++;
+        }
+    }
+
+    count = 0;
+    {
+        s8* arr5d0 = (s8*)(bb + 0x2D0);
+        int* arr_b4 = (int*)(base + 0xB4);
+        i = 55;
+        do {
+            if (arr5d0[1] != 5 && *arr_b4 != -1) {
+                count++;
+            }
+            arr5d0 += 4;
+            arr_b4++;
+        } while (--i);
+    }
+
+    if (count != 0) {
+        fn_800269AC();
+
+        {
+            int* src = (int*)(base + 0xB4);
+            int* dst = (int*)(base + 0x194);
+            for (i = 0; i < 55; i++) {
+                dst[i] = src[i];
+            }
+        }
+
+        fn_800268B4();
+        fn_800267B0();
+
+        if ((u32)lbl_804D6438 < (u32)(lbl_804D6448 + lbl_804D6450)) {
+            OSReport(bb + 0x174C, lbl_804D6438);
+            __assert(bb + 0x1780, 0xDB3U, "0");
+        }
+
+        {
+            s32 slot = fn_80026650();
+            if (slot != -1) {
+                s32 off = slot * 4;
+                char* bp = bb + off;
+                char* dp = bb + lbl_804D38D0;
+                char* sb = base + off;
+                strcpy(dp + 0x40, *(char**)(bp + 0x9FC));
+                *(s32*)(sb + 0x354) = HSD_SynthSFXLoad(bb + 0x40, 2, (s32)fn_80026C04, 0);
+            }
+        }
+    }
+}
+
 /// #fn_80027488
 
 s32 fn_80027488(void)
