@@ -1,10 +1,17 @@
 #include "lbaudio_ax.static.h"
 
+#include "math.h"
+
 #include "baselib/forward.h"
-#include <melee/ft/forward.h>
+
 #include "baselib/random.h"
 
+#include <melee/ft/forward.h>
+
 #include <m2c_macros.h>
+#include <dolphin/ai.h>
+#include <dolphin/ar.h>
+#include <dolphin/axfx.h>
 #include <baselib/axdriver.h>
 #include <baselib/gobjplink.h>
 #include <baselib/gobjproc.h>
@@ -15,15 +22,11 @@
 #include <melee/gm/gm_1601.h>
 #include <melee/gm/gm_16AE.h>
 #include <melee/gr/stage.h>
-#include <melee/pl/player.h>
 #include <melee/it/it_26B1.h>
+#include <melee/lb/lb_0192.h>
 #include <melee/lb/lbarchive.h>
 #include <melee/lb/lblanguage.h>
-#include <melee/lb/lb_0192.h>
-
-#include <dolphin/ai.h>
-#include <dolphin/ar.h>
-#include <dolphin/axfx.h>
+#include <melee/pl/player.h>
 
 extern s8 flags_arr_803BB800[0x62];
 
@@ -1673,6 +1676,8 @@ bool fn_80025CBC(HSD_GObj* gobj)
 end:
     return false;
 }
+
+// TODO: This is 100% permute-able
 bool fn_80025E38(HSD_GObj* gobj)
 {
     lbAudioAx_UserData* ud;
@@ -1683,47 +1688,37 @@ bool fn_80025E38(HSD_GObj* gobj)
     f32 diff;
     f32 ratio;
 
-    if (gobj == NULL) {
-        goto end;
-    }
+    if (gobj != NULL) {
+        ud = gobj->user_data;
+        if (ud != NULL) {
+            current_frame = ud->current_frame;
+            end_frame = ud->end_frame;
 
-    ud = gobj->user_data;
-    if (ud == NULL) {
-        goto end;
-    }
+            if (current_frame <= end_frame) {
+                start_val = ud->start_val;
+                end_val = ud->end_val;
 
-    current_frame = ud->current_frame;
-    end_frame = ud->end_frame;
-
-    if (current_frame > end_frame) {
-        goto set_7f;
-    }
-
-    start_val = ud->start_val;
-    end_val = ud->end_val;
-
-    if (start_val < end_val) {
-        diff = (f32) end_val - (f32) start_val;
-        if (diff < 0.0f) {
-            diff = -diff;
+                if (start_val < end_val) {
+                    diff = (f32) end_val - (f32) start_val;
+                    if (diff < 0.0f) {
+                        diff = -diff;
+                    }
+                    ratio = (f32) current_frame / (f32) end_frame;
+                    ud->x20 = start_val + (s32) (ratio * diff);
+                } else {
+                    diff = (f32) end_val - (f32) start_val;
+                    if (diff < 0.0f) {
+                        diff = -diff;
+                    }
+                    ratio = (f32) current_frame / (f32) end_frame;
+                    ud->x20 = end_val - (s32) (ratio * diff);
+                }
+            } else {
+                ud->x20 = 0x7F;
+            }
         }
-        ratio = (f32) current_frame / (f32) end_frame;
-        ud->x20 = start_val + (s32) (ratio * diff);
-        goto end;
     }
 
-    diff = (f32) end_val - (f32) start_val;
-    if (diff < 0.0f) {
-        diff = -diff;
-    }
-    ratio = (f32) current_frame / (f32) end_frame;
-    ud->x20 = end_val - (s32) (ratio * diff);
-    goto end;
-
-set_7f:
-    ud->x20 = 0x7F;
-
-end:
     return false;
 }
 typedef struct SoundParams {
