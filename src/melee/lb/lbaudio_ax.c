@@ -1653,7 +1653,134 @@ set_7f:
 end:
     return false;
 }
+typedef struct SoundParams {
+    HSD_GObj* gobj;
+    int x4;
+    int sfx_id;
+    int xC;
+    int x10;
+    int x14;
+    int x18;
+    int x1C;
+    float x20;
+    int x24;
+    int x28;
+} SoundParams;
+
 /// #fn_80025FAC
+void fn_80025FAC(HSD_GObj* gobj, void* userdata, void* params)
+{
+    SoundParams* sp = params;
+    lbAudioAx_UserData* ud = userdata;
+
+    if (gobj == NULL || ud == NULL || sp == NULL) {
+        return;
+    }
+
+    ud->gobj = gobj;
+    ud->entity = sp->gobj;
+    ud->xC = sp->x4;
+    ud->x14 = sp->sfx_id;
+    ud->current_frame = 0;
+    ud->end_frame = sp->x1C;
+    {
+        f32 dir = sp->x20;
+        if (dir == 0.0f) {
+            if (HSD_Randi(2) == 0) {
+                ud->x3C = 1.0f;
+            } else {
+                ud->x3C = -1.0f;
+            }
+        } else {
+            ud->x3C = dir;
+        }
+    }
+    ud->x40 = sp->x24;
+    ud->start_val = sp->xC;
+    ud->end_val = sp->x10;
+    ud->pan_left = sp->x14;
+    ud->pan_right = sp->x18;
+    ud->x44 = 0;
+    ud->x20 = 0x7F;
+    ud->x2C.pan = 0x40;
+    ud->x10 = lbl_803BCA24[ud->xC];
+    ud->voice_id = -1;
+
+    switch (ud->xC) {
+    case 0:
+    case 3:
+    {
+        s32 sv = ud->start_val;
+        if (sv == ud->end_val) {
+            ud->x20 = sv;
+        }
+        break;
+    }
+    case 1:
+    case 2:
+    case 4:
+    case 5:
+    {
+        s32 sv = ud->start_val;
+        if (sv == ud->end_val) {
+            ud->x20 = sv;
+        }
+        break;
+    }
+    case 6:
+    case 7:
+    {
+        s32 sv = ud->start_val;
+        if (sv == ud->end_val) {
+            ud->x20 = sv;
+        }
+        break;
+    }
+    case 8:
+    case 9:
+    {
+        s32 sv = ud->start_val;
+        if (sv == ud->end_val) {
+            ud->x20 = sv;
+        }
+        break;
+    }
+    }
+
+    {
+        s32 type = ud->xC;
+        if (type == 9) {
+            goto case9;
+        } else if (type >= 0 && type < 9) {
+            if (ud->current_frame < 0) {
+                ud->current_frame = 0;
+            }
+            if (ud->end_frame < 0) {
+                ud->end_frame = 0;
+            }
+            {
+                s32 group = ud->x40;
+                if (group == 0) {
+                    ud->voice_id = lbAudioAx_800237A8(ud->x14, ud->x20,
+                                                       ud->x2C.pan);
+                    return;
+                }
+                ud->voice_id = lbAudioAx_80023870(ud->x14, ud->x20,
+                                                    ud->x2C.pan, group);
+            }
+        }
+        goto done;
+    case9:
+        if (ud->current_frame < 0) {
+            ud->current_frame = 0;
+        }
+        if (ud->end_frame < 0) {
+            ud->end_frame = 0;
+        }
+        ud->voice_id = sp->x28;
+    done:;
+    }
+}
 
 void fn_800262A0(HSD_GObj* gobj)
 {
@@ -1722,20 +1849,6 @@ void lbAudioAx_ObjFree(void* obj)
         HSD_ObjFree(&lbl_80433710.alloc, p);
     }
 }
-typedef struct SoundParams {
-    HSD_GObj* gobj;
-    int x4;
-    int sfx_id;
-    int xC;
-    int x10;
-    int x14;
-    int x18;
-    int x1C;
-    float x20;
-    int x24;
-    int x28;
-} SoundParams;
-
 HSD_GObj* lbAudioAx_800263E8(float f1, HSD_GObj* arg1, int sfx_id, int arg3,
                              int arg4, int arg5, int arg6, int arg7, int arg8,
                              int arg9, int arg10)

@@ -9,11 +9,12 @@
 
 /// Sound object userdata (0x48 bytes, allocated by HSD_ObjAlloc)
 typedef struct lbAudioAx_UserData {
-    /* 0x00 */ u8 x0[0x08];
+    /* 0x00 */ s32 x0;
+    /* 0x04 */ HSD_GObj* gobj;
     /* 0x08 */ HSD_GObj* entity;
-    /* 0x0C */ u8 xC[0x04];
+    /* 0x0C */ s32 xC;
     /* 0x10 */ bool (*x10)(HSD_GObj*);
-    /* 0x14 */ u8 x14[0x04];
+    /* 0x14 */ s32 x14;
     /* 0x18 */ s32 start_val;
     /* 0x1C */ s32 end_val;
     /* 0x20 */ s32 x20;
@@ -27,7 +28,7 @@ typedef struct lbAudioAx_UserData {
     /* 0x34 */ s32 current_frame;
     /* 0x38 */ s32 end_frame;
     /* 0x3C */ f32 x3C;
-    /* 0x40 */ u8 x40[0x04];
+    /* 0x40 */ s32 x40;
     /* 0x44 */ s32 x44;
 } lbAudioAx_UserData;
 
