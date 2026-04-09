@@ -514,7 +514,97 @@ int lbAudioAx_8002438C(int arg0)
     return fn_80023750(arg0, 0x7F, 0x40, 0, 8);
 }
 
-/// #lbAudioAx_800243F4
+s32 lbAudioAx_800243F4(int arg0)
+{
+    s32 var_r6 = 0xCA;
+    switch (arg0) {
+    case 0x7C830:
+        var_r6 = 0xCB;
+        /* fallthrough */
+    case 0x7C831:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C835:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C83A:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C83F:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C840:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C842:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C844:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C845:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C846:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C848:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C84A:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C84B:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C84D:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C83B:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C83D:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C84E:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C84F:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C850:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C851:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C834:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C843:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C832:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C83C:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C84C:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C836:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C849:
+        var_r6 += 1;
+        /* fallthrough */
+    case 0x7C838:
+        var_r6 += 1;
+        break;
+    }
+    return fn_80023750(arg0, 0x7F, 0x40, var_r6, 7);
+}
 
 void fn_800244F4(void)
 {
