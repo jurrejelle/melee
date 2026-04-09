@@ -3170,16 +3170,20 @@ void ftColl_8007BAC0(Fighter_GObj* gobj)
 {
     int max;
     int i;
+    Ground_GObj* ground;
+    Fighter* fp;
+    DynamicsDesc* desc;
+    u32 type;
+    struct ftDeviceUnk3* arr;
+    PAD_STACK(8);
+
 
     if (gm_8016B1C4()) {
         return;
     }
 
     {
-        Fighter* fp = gobj->user_data;
-        struct ftDeviceUnk3* arr;
-        PAD_STACK(8);
-
+        fp = gobj->user_data;
         if (fp->x221D_b6) {
             max = 1;
         } else {
@@ -3195,11 +3199,10 @@ void ftColl_8007BAC0(Fighter_GObj* gobj)
         arr = &ft_80459A8C;
 
         for (i = 0; i < ft_804D6570; i++) {
-            Ground_GObj* ground = arr[i].ground;
+            ground = arr[i].ground;
             if (ground != NULL) {
-                u32 type = arr[i].type;
+                type = arr[i].type;
                 if (ftCo_800C0A28(gobj, ground, type)) {
-                    DynamicsDesc* desc;
                     if (arr[i].active_cb(ground, gobj,
                                          (Vec3*) &desc))
                     {
