@@ -131,7 +131,7 @@ void fn_80023254(s32 arg0)
         j = 0;
 
         do {
-            if (arg0 != (s8) (*arr_5d0)[2]) {
+            if (arg0 != (s8) (*arr_5d0)[0]) {
                 goto next;
             }
             if (*local_ptr != 0) {
