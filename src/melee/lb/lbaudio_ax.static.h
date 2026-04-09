@@ -101,6 +101,12 @@ typedef struct {
 
 static lbAudioAx_PoolAlloc lbl_80433710;
 
+extern int lbl_804337C4[0x38];
+extern int lbl_804338A4[0x38];
+extern int lbl_80433984[0x38];
+extern int lbl_80433A64[0x38];
+extern int lbl_80433B44[0x38];
+
 static struct {
     int** x0;
     int** x4;
@@ -233,7 +239,7 @@ static u8 unk_arr_803BC4A0[0x21][2] = {
     { 0x62, 0x62 }, { 0x62, 0x62 }, { 0x62, 0x62 }, { 0x62, 0x62 },
 };
 
-static int offsets_arr_803BC4E4[0x38][2];
+static int offsets_arr_803BC4E4[0x38][2] = { 0 };
 
 static int sfx_remap_803BC6A4[0x4A][2] = { 0 };
 

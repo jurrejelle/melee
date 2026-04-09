@@ -2302,7 +2302,7 @@ found:
 
 bool fn_80026E58(int arg0)
 {
-    if (lbl_80433710.x274[arg0] == 2) {
+    if (lbl_80433984[arg0] == 2) {
         return true;
     }
     return false;
@@ -2358,7 +2358,7 @@ void lbAudioAx_80026F2C(s32 arg0)
 
     for (i = 0; i < 0x37; i++) {
         if ((mask & 1) != 0) {
-            lbl_80433710.xB4[i] = -1;
+            lbl_804337C4[i] = -1;
         }
         mask >>= 1;
     }
@@ -2391,7 +2391,7 @@ void lbAudioAx_8002702C(s32 flags, u64 base_val)
     for (i = 0; i < 0x37; i++) {
         if ((result & 1) != 0) {
             if ((mask & 1) != 0) {
-                lbl_80433710.xB4[i] = 1;
+                lbl_804337C4[i] = 1;
             }
         }
         result >>= 1;
