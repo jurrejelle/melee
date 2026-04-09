@@ -194,6 +194,80 @@ void fn_80023254(s32 arg0)
 }
 
 /// #lbAudioAx_800233EC
+s32 lbAudioAx_800233EC(s32 arg0)
+{
+    char* base = lbl_803BB300;
+    int slot;
+    int i;
+
+    if (fn_80026E58(0x21) == 1) {
+        if (arg0 >= 0 && arg0 < 0x83D60) {
+            int (*ranges)[2] = (int (*)[2])(base + 0x5D4);
+            for (slot = 0; slot < 0x37; slot++) {
+                if (ranges[slot][0] <= arg0 &&
+                    arg0 <= ranges[slot][1])
+                {
+                    break;
+                }
+            }
+        } else {
+            slot = 0x37;
+        }
+
+        if (slot != 0xD) {
+            if (slot < 0xD) {
+                if (slot < 0xC) {
+                    if (slot < 6) goto ret;
+                } else {
+                    goto ret;
+                }
+            } else if (slot < 0x20) {
+                if (slot < 0xF) goto ret;
+            } else {
+                goto ret;
+            }
+        }
+
+        {
+            int* p = (int*)(base + 0x13A4);
+            for (i = 0; i < 0x4A; i++, p += 2) {
+                if (arg0 == *p) {
+                    return *(int*)(base + (i << 3) + 0x13A8);
+                }
+            }
+        }
+        goto ret;
+    }
+
+    if (arg0 >= 0 && arg0 < 0x83D60) {
+        int (*ranges)[2] = (int (*)[2])(base + 0x5D4);
+        for (slot = 0; slot < 0x37; slot++) {
+            if (ranges[slot][0] <= arg0 &&
+                arg0 <= ranges[slot][1])
+            {
+                break;
+            }
+        }
+    } else {
+        slot = 0x37;
+    }
+
+    if (slot != 0x21) {
+        goto ret;
+    }
+
+    {
+        int* p = (int*)(base + 0x13A4);
+        for (i = 0; i < 0x4A; i++, p += 2) {
+            if (arg0 == p[1]) {
+                return *(int*)(base + (i << 3) + 0x13A4);
+            }
+        }
+    }
+
+ret:
+    return arg0;
+}
 
 int lbAudioAx_80023694(void)
 {

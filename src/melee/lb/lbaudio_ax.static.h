@@ -229,6 +229,8 @@ static u8 unk_arr_803BC4A0[0x21][2] = {
 
 static int offsets_arr_803BC4E4[0x38][2];
 
+static int sfx_remap_803BC6A4[0x4A][2] = { 0 };
+
 extern int lbl_804337C4[0x38];
 extern int lbl_804338A4[0x38];
 extern int lbl_80433B44[0x38];
