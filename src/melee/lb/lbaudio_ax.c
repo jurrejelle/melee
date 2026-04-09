@@ -2185,7 +2185,7 @@ void fn_800269AC(void)
         avail2 = lbl_80433710.x274;
 
         for (i = 0; i < 0x37; i++) {
-            if (types2[0][1] != 5 && *handles2 != -1 && *avail2 == -1) {
+            if (types2[i][1] != 5 && handles2[i] != -1 && avail2[i] == -1) {
                 int retry;
                 for (retry = 0; retry < 0x40; retry++) {
                     if (HSD_SynthSFXCancelLoad(*handles2) == 1) {
@@ -2202,12 +2202,9 @@ void fn_800269AC(void)
                         }
                     }
                 }
-                *handles2 = -1;
-                *avail2 = -1;
+                handles2[i] = -1;
+                avail2[i] = -1;
             }
-            types2++;
-            handles2++;
-            avail2++;
         }
 
         if (HSD_SynthSFXGetPendingLoadCount() != 0) {
