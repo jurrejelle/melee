@@ -428,6 +428,7 @@ enum EntityKind {
     EntityKind_None,
     EntityKind_Fighter,
     EntityKind_Item,
+    EntityKind_UNKNOWN,
 };
 
 #endif

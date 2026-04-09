@@ -3226,8 +3226,8 @@ float ftColl_8007BBCC(UNUSED Fighter_GObj* gobj)
 {
     float dmg = 0;
     size_t i;
-    PAD_STACK(2 * 4);
-    if (dmg_log0_idx != 0) {
+    PAD_STACK(8);
+    if (dmg_log0_idx != (u32) 0) {
         for (i = 0; i < dmg_log0_idx; i++) {
             DmgLogEntry* entry = &dmg_log0[i];
             switch (entry->x0) {
@@ -3244,6 +3244,9 @@ float ftColl_8007BBCC(UNUSED Fighter_GObj* gobj)
                 }
                 break;
             }
+            default:
+            case EntityKind_UNKNOWN:
+                break;
             }
         }
     }
