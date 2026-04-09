@@ -48,7 +48,7 @@
 /* 0787B4 */ void ftColl_800787B4(Item_GObj*, Fighter_GObj*, int);
 /* 0788D4 */ void ftColl_800788D4(Fighter_GObj* gobj);
 /* 07891C */ void ftColl_8007891C(Fighter_GObj*, Fighter_GObj*, float);
-/* 078998 */ UNK_RET ftColl_80078998(UNK_PARAMS);
+/* 078998 */ void ftColl_80078998(HSD_GObj*, HSD_GObj*, float);
 /* 078A2C */ void ftColl_80078A2C(Fighter_GObj*);
 /* 078C70 */ void ftColl_80078C70(Fighter_GObj*);
 /* 07925C */ void ftColl_8007925C(Fighter_GObj*);

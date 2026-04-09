@@ -927,10 +927,25 @@ void ftColl_8007891C(Fighter_GObj* arg0, Fighter_GObj* arg1, float arg2)
 }
 #pragma pop
 
-void ftColl_80078998(void)
+#pragma push
+#pragma dont_inline on
+void ftColl_80078998(HSD_GObj* arg0, HSD_GObj* arg1, float arg2)
 {
-    NOT_IMPLEMENTED;
+    Item* ip;
+    PAD_STACK(16);
+
+    plStale_UpdateStaleMovesFromItem(arg0, arg1);
+    ftColl_8007646C(arg0, arg1);
+    ip = arg0->user_data;
+    if (ftLib_80086960(ip->owner)) {
+        Fighter* owner_fp = ip->owner->user_data;
+        Fighter* victim_fp = arg1->user_data;
+        pl_8003EB30(arg2, owner_fp->player_id, owner_fp->x221F_b4,
+                    victim_fp->player_id, victim_fp->x221F_b4,
+                    ip->xD90.x2073);
+    }
 }
+#pragma pop
 
 extern float const ftColl_804D8310;
 
