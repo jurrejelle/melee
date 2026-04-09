@@ -1749,13 +1749,9 @@ void fn_80025FAC(HSD_GObj* gobj, void* userdata, void* params)
     ud->current_frame = 0;
     ud->end_frame = sp->x1C;
     {
-        f32 dir = sp->x20;
-        if (dir == 0.0f) {
-            if (HSD_Randi(2) == 0) {
-                ud->x3C = 1.0f;
-            } else {
-                ud->x3C = -1.0f;
-            }
+        f32 dir;
+        if ((dir = sp->x20) == 0.0f) {
+            ud->x3C = (HSD_Randi(2) == 0) ? 1.0f : -1.0f;
         } else {
             ud->x3C = dir;
         }
