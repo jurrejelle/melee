@@ -83,7 +83,7 @@
 /* 0264E4 */ bool lbAudioAx_800264E4(void* data);
 /* 026510 */ bool lbAudioAx_80026510(HSD_GObj*);
 /* 0265C4 */ bool lbAudioAx_800265C4(HSD_GObj*, int sfx);
-/* 026650 */ UNK_RET fn_80026650(UNK_PARAMS);
+/* 026650 */ s32 fn_80026650(void);
 /* 0267B0 */ void fn_800267B0(void);
 /* 0268B4 */ void fn_800268B4(void);
 /* 0269AC */ UNK_RET fn_800269AC(UNK_PARAMS);

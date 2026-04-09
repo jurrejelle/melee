@@ -1624,6 +1624,31 @@ bool lbAudioAx_800265C4(HSD_GObj* arg0, int arg1)
 }
 /// #fn_80026650
 
+s32 fn_80026650(void)
+{
+    s32 priority;
+    s32 i;
+
+    for (priority = 4; priority >= 0; priority--) {
+        s8(*arr_5d0)[4] = s32_arr_803BB5D0;
+        int* arr_38a4 = lbl_804338A4;
+        int* arr_3984 = lbl_80433984;
+
+        for (i = 0; i < 0x37; i++) {
+            if (priority == (s8)(u8)(*arr_5d0)[1] &&
+                *arr_38a4 == 1 &&
+                *arr_3984 == -1)
+            {
+                return i;
+            }
+            arr_5d0++;
+            arr_38a4++;
+            arr_3984++;
+        }
+    }
+    return -1;
+}
+
 void fn_800267B0(void)
 {
     char* base;
