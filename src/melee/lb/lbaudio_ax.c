@@ -1227,7 +1227,7 @@ bool fn_800251EC(HSD_GObj* gobj)
         goto set_flag;
     }
 
-    type = *(u16*) entity;
+    type = entity->classifier;
     switch (type) {
     case 4:
         ftLib_80086644(entity, &pos);
