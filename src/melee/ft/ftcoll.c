@@ -1681,9 +1681,8 @@ float ftColl_8007BBCC(UNUSED Fighter_GObj* gobj)
                 break;
             }
             case EntityKind_Item: {
-                HitCapsule* hit = entry->hit0;
-                if (hit->element == HitElement_Lipstick) {
-                    dmg += it_8026B1D4(entry->gobj, hit);
+                if (entry->hit0->element == HitElement_Lipstick) {
+                    dmg += it_8026B1D4(entry->gobj, entry->hit0);
                 }
                 break;
             }
