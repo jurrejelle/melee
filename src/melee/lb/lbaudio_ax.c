@@ -2048,15 +2048,11 @@ s32 fn_80026650(void)
         int* arr_3984 = lbl_80433710.x274;
 
         for (i = 0; i < 0x37; i++) {
-            if (priority == (s8)(u8)(*arr_5d0)[1] &&
-                *arr_38a4 == 1 &&
-                *arr_3984 == -1)
+            if (priority == arr_5d0[i][1] && arr_38a4[i] == 1 &&
+                arr_3984[i] == -1)
             {
                 return i;
             }
-            arr_5d0++;
-            arr_38a4++;
-            arr_3984++;
         }
     }
     return -1;
