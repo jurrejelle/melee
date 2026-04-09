@@ -1247,7 +1247,15 @@ bool ftColl_8007AC68(u32 kb_angle)
 
 void ftColl_8007AC9C(HitCapsule* arg0, int arg1, Fighter_GObj* arg2)
 {
-    NOT_IMPLEMENTED;
+    Fighter* fp = arg2->user_data;
+
+    arg0->kb_angle = arg1;
+    if (ftColl_8007AC68(arg1)) {
+        if (!fp->x2074.x2084_b0) {
+            fp->x2074.x2084_b0 = true;
+            pl_80037ECC(arg2);
+        }
+    }
 }
 
 void ftColl_8007AD18(Fighter* fp, HitCapsule* arg1)
