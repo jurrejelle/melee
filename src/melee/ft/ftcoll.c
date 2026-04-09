@@ -34,6 +34,7 @@
 #include "lb/lb_00B0.h"
 #include "lb/lbcollision.h"
 #include "lb/types.h"
+#include "pl/pl_040D.h"
 #include "pl/plbonuslib.h"
 #include "pl/plstale.h"
 
@@ -925,7 +926,25 @@ void ftColl_80078754(Fighter_GObj* arg0, Fighter_GObj* arg1, bool arg2)
 
 void ftColl_800787B4(Item_GObj* arg0, Fighter_GObj* arg1, int arg2)
 {
-    NOT_IMPLEMENTED;
+    Item* ip = arg0->user_data;
+    Fighter* fp = arg1->user_data;
+    HSD_GObj* owner = ip->owner;
+    PAD_STACK(8);
+
+    if (ip->kind == 6) {
+        pl_80041B08(fp->player_id, (UNK_T) fp->x221F_b4, (u16) ip->x1C);
+    }
+
+    if (ftLib_80086960(owner)) {
+        ftColl_8007861C(owner, arg1, 2, ip->kind, ip->xD90.x2070_int,
+                        &ip->xD94, ip->xDA8_short, (UNK_T) arg2, 0);
+    } else if (pl_8003D60C(ip->kind)) {
+        ftColl_8007861C(NULL, arg1, 2, ip->kind, ip->xD90.x2070_int,
+                        &ip->xD94, ip->xDA8_short, (UNK_T) arg2, 1);
+    } else {
+        ftColl_8007861C(NULL, arg1, 2, ip->kind, ip->xD90.x2070_int,
+                        &ip->xD94, ip->xDA8_short, (UNK_T) arg2, 0);
+    }
 }
 
 void ftColl_800788D4(Fighter_GObj* gobj)
