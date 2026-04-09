@@ -1231,7 +1231,86 @@ ret_true:
     return true;
 }
 /// #fn_800253D8
+bool fn_800253D8(HSD_GObj* gobj)
+{
+    lbAudioAx_UserData* ud;
 
+    if (gobj != NULL) {
+        ud = gobj->user_data;
+        if (ud != NULL) {
+            if (ud->x3C == 1.0f) {
+                int end_frame = ud->end_frame;
+                int cur_frame = ud->current_frame;
+                int pan_right = ud->pan_right;
+                int pan_left = ud->pan_left;
+                int result;
+                float val;
+
+                if (cur_frame > end_frame) {
+                    cur_frame = end_frame;
+                }
+                if (pan_left != pan_right) {
+                    if (pan_left <= pan_right) {
+                        val = (float)pan_left +
+                              ((float)cur_frame *
+                               ((float)pan_right - (float)pan_left)) /
+                                  (float)end_frame;
+                    } else {
+                        val = (float)pan_right +
+                              ((float)cur_frame *
+                               ((float)pan_left - (float)pan_right)) /
+                                  (float)end_frame;
+                    }
+                    if (val < 0.0f) {
+                        val = 0.0f;
+                    }
+                    if (val > 127.0f) {
+                        val = 127.0f;
+                    }
+                    result = (int)val;
+                } else {
+                    result = 0x40;
+                }
+                ud->x2C.pan = result;
+            } else {
+                int end_frame = ud->end_frame;
+                int cur_frame = ud->current_frame;
+                int pan_right = ud->pan_right;
+                int pan_left = ud->pan_left;
+                int result;
+                float val;
+
+                if (cur_frame > end_frame) {
+                    cur_frame = end_frame;
+                }
+                if (pan_left != pan_right) {
+                    if (pan_left <= pan_right) {
+                        val = (float)pan_left +
+                              ((float)cur_frame *
+                               ((float)pan_right - (float)pan_left)) /
+                                  (float)end_frame;
+                    } else {
+                        val = (float)pan_right +
+                              ((float)cur_frame *
+                               ((float)pan_left - (float)pan_right)) /
+                                  (float)end_frame;
+                    }
+                    if (val < 0.0f) {
+                        val = 0.0f;
+                    }
+                    if (val > 127.0f) {
+                        val = 127.0f;
+                    }
+                    result = (int)val;
+                } else {
+                    result = 0x40;
+                }
+                ud->x2C.pan = 0x7F - result;
+            }
+        }
+    }
+    return false;
+}
 /// #fn_800256BC
 
 bool fn_800259A0(HSD_GObj* gobj)
