@@ -36,16 +36,17 @@
 #include "lb/lbcollision.h"
 #include "lb/types.h"
 #include "pl/pl_040D.h"
-#include "pl/plbonuslib.h"
 #include "pl/player.h"
+#include "pl/plbonuslib.h"
 #include "pl/plstale.h"
+#include "pl/pltrick.h"
 
 #include <common_structs.h>
 #include <math.h>
-#include <MSL/trigf.h>
 #include <dolphin/mtx.h>
 #include <baselib/debug.h>
 #include <baselib/gobj.h>
+#include <MSL/trigf.h>
 #include <Runtime/runtime.h>
 
 /* 07A06C */ void ftColl_8007A06C(Fighter_GObj*, void*, void*, size_t, int);
@@ -1156,7 +1157,7 @@ bool ftColl_80077C60(Item* item, HitCapsule* hit, Fighter* fp,
 
                         {
                             HSD_GObj* entity = item->entity;
-                            FighterKind kind = item->kind;
+                            FighterKind kind = (FighterKind) item->kind;
                             if (dmg_log1_idx < ARRAY_SIZE(dmg_log1)) {
                                 DmgLogEntry* entry =
                                     &dmg_log1[dmg_log1_idx];
@@ -1392,7 +1393,8 @@ void ftColl_800787B4(Item_GObj* arg0, Fighter_GObj* arg1, int arg2)
     PAD_STACK(8);
 
     if (ip->kind == 6) {
-        pl_80041B08(fp->player_id, (UNK_T) fp->x221F_b4, (u16) ip->x1C);
+        pl_80041B08(fp->player_id, (UNK_T) (uintptr_t) fp->x221F_b4,
+                    (u16) ip->x1C);
     }
 
     if (ftLib_80086960(owner)) {
@@ -2648,7 +2650,7 @@ void ftColl_8007A06C(Fighter_GObj* gobj, void* dmg_ptr, void* log, size_t idx,
         HSD_GObj* owner_gobj;
 
         if (ip->kind == 6) {
-            pl_80041B08(fp->player_id, (UNK_T) fp->x221F_b4,
+            pl_80041B08(fp->player_id, (UNK_T) (uintptr_t) fp->x221F_b4,
                         (u16) ip->x1C);
         }
 
