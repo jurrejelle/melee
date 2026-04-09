@@ -1869,6 +1869,27 @@ void lbAudioAx_8002702C(s32 flags, u64 base_val)
 
 /// #fn_80027488
 
+s32 fn_80027488(void)
+{
+    int* a = lbl_804338A4;
+    int* b = lbl_80433984;
+    int i;
+
+    for (i = 0; i < 55; i++) {
+        if (a[i] == 1 && b[i] == -1) {
+            return 1;
+        }
+    }
+
+    for (i = 0; i < 55; i++) {
+        if (a[i] == 1 && b[i] == 1) {
+            b[i] = 2;
+        }
+    }
+
+    return 0;
+}
+
 /// #lbAudioAx_80027648
 
 /// #lbAudioAx_8002785C
