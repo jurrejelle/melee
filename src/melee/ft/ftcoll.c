@@ -3263,6 +3263,7 @@ void ftColl_8007BC90(Fighter_GObj* gobj)
     Fighter* fp = gobj->user_data;
     Item_GObj* cur;
     int i;
+    HitCapsule* hit_tmp;
     PAD_STACK(16);
 
     fp->target_item_gobj = 0;
@@ -3283,21 +3284,21 @@ void ftColl_8007BC90(Fighter_GObj* gobj)
 
         for (i = 0; (u32) i < 4; i++) {
             HitCapsule* hit = &fp->x914[i];
-
-            if (hit->state == HitCapsule_Disabled) {
+            hit_tmp = hit;
+            if (hit_tmp->state == HitCapsule_Disabled) {
                 continue;
             }
-            if (hit->element != 8) {
+            if (hit_tmp->element != 8) {
                 continue;
             }
 
-            if (hit->x40_b2) {
+            if (hit_tmp->x40_b2) {
                 if (ip->ground_or_air != GA_Air) {
                     goto check_b3;
                 }
             } else {
             check_b3:
-                if (!hit->x40_b3) {
+                if (!hit_tmp->x40_b3) {
                     continue;
                 }
                 if (ip->ground_or_air != GA_Ground) {
@@ -3305,21 +3306,22 @@ void ftColl_8007BC90(Fighter_GObj* gobj)
                 }
             }
 
-            if (lbColl_8000ACFC(ip, hit)) {
+            if (lbColl_8000ACFC(ip, hit_tmp)) {
                 continue;
             }
 
             {
                 u32 j;
                 for (j = 0; j < ip->xAC8_hurtboxNum; j++) {
-                    if (lbColl_80007ECC(hit, &ip->xACC_itemHurtbox[j],
-                                        NULL, fp->x34_scale.y, ip->scl,
-                                        0.0f))
+                    if (lbColl_80007ECC(hit_tmp, &ip->xACC_itemHurtbox[j],
+                                        NULL, fp->x34_scale.y, ip->scl, 0.0f))
                     {
                         float dist;
                         HSD_GObj* ent;
-                        ftColl_80076808(fp, hit, 0, ip, false);
-                        dist = ip->pos.x - fp->cur_pos.x;
+
+                        ftColl_80076808(fp, hit_tmp, 0, ip, 0);
+                        dist = ip->pos.x;
+                        dist = dist - fp->cur_pos.x;
                         if (dist < 0.0f) {
                             dist = -dist;
                         }
