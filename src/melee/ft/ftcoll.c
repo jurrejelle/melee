@@ -2926,20 +2926,19 @@ void ftColl_CreateAbsorbHit(Fighter_GObj* gobj, AbsorbDesc* absorb)
 void ftColl_8007B320(Fighter_GObj* gobj)
 {
     Fighter* fp = gobj->user_data;
-    void* x30 = fp->ft_data->x30;
+    struct ftData_x30* x30 = fp->ft_data->x30;
     ftDynamics* dyn = fp->ft_data->x2C;
     u32 i;
     PAD_STACK(8);
 
-    if (((int*) x30)[0] > 0xF) {
+    if (x30->count > 0xF) {
         OSReport("too many hurt capsules\n");
         HSD_ASSERT(0x8C9, 0);
     }
 
-    fp->hurt_capsules_len = ((int*) x30)[0];
-    for (i = 0; i < (u32) ((int*) x30)[0]; i++) {
-        ftHurtboxInit* init =
-            &((ftHurtboxInit*) (((void**) x30)[1]))[i];
+    fp->hurt_capsules_len = x30->count;
+    for (i = 0; i < (u32) x30->count; i++) {
+        ftHurtboxInit* init = &x30->inits[i];
         fp->hurt_capsules[i].capsule.bone_idx = init->bone_idx;
         fp->hurt_capsules[i].height = init->height;
         fp->hurt_capsules[i].is_grabbable = init->is_grabbable;
@@ -2958,7 +2957,7 @@ void ftColl_8007B320(Fighter_GObj* gobj)
 
     fp->x166C = dyn->x4;
     for (i = 0; i < (u32) dyn->x4; i++) {
-        struct ftData_x38* init = &((struct ftData_x38*) dyn->x8)[i];
+        struct ftData_x38* init = &dyn->x8[i];
         fp->x1670[i].x24 = init->x0;
         fp->x1670[i].jobj = fp->parts[init->x0].joint;
         fp->x1670[i].v1 = init->x4;
@@ -2969,12 +2968,11 @@ void ftColl_8007B320(Fighter_GObj* gobj)
 void ftColl_8007B4E0(Fighter_GObj* gobj)
 {
     Fighter* fp = GET_FIGHTER(gobj);
-    void* x30 = fp->ft_data->x30;
+    struct ftData_x30* x30 = fp->ft_data->x30;
     int i;
 
     for (i = 0; i < (s32) fp->hurt_capsules_len; i++) {
-        ftHurtboxInit* init =
-            &((ftHurtboxInit*) (((void**) x30)[1]))[i];
+        ftHurtboxInit* init = &x30->inits[i];
         fp->hurt_capsules[i].capsule.bone_idx = init->bone_idx;
         fp->hurt_capsules[i].height = init->height;
         fp->hurt_capsules[i].is_grabbable = init->is_grabbable;
