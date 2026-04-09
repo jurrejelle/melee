@@ -12,7 +12,9 @@
 #include <melee/cm/camera.h>
 #include <melee/ft/ftlib.h>
 #include <melee/gm/gm_1601.h>
+#include <melee/gm/gm_16AE.h>
 #include <melee/gr/stage.h>
+#include <melee/pl/player.h>
 #include <melee/it/it_26B1.h>
 #include <melee/lb/lbarchive.h>
 #include <melee/lb/lblanguage.h>
@@ -1984,6 +1986,52 @@ void lbAudioAx_80027648(void)
 }
 
 /// #lbAudioAx_8002785C
+
+s32 lbAudioAx_8002785C(void)
+{
+    u64 result = 0;
+    int i;
+    InternalStageId stage;
+
+    if (gm_8016B184()) {
+        result = lbAudioAx_80026E84(Player_GetPlayerCharacter(0));
+        for (i = 0; i < 3; i++) {
+            if ((s8) gm_80169370(i) != (s8) CHKIND_MAX) {
+                s8 opp = (s8) gm_80169370(i);
+                result |= lbAudioAx_80026E84(opp);
+                if (opp == 4) {
+                    result |= 0x200004000ULL;
+                }
+            }
+        }
+    } else {
+        for (i = 0; i < 4; i++) {
+            if (Player_GetPlayerSlotType(i) != Gm_PKind_NA) {
+                result |= lbAudioAx_80026E84(Player_GetPlayerCharacter(i));
+            }
+        }
+    }
+
+    stage = Stage_80225194();
+    if (stage == 0xD9 || stage == 0xE5) {
+        result |= 0x200004000ULL;
+    }
+    if ((u32)(stage - 0x46) <= 1U) {
+        result |= 0xC00ULL;
+    }
+
+    lbl_804D38D8 = (s32) s32_arr_803BB6B0[Stage_8022519C(stage)][1];
+    result |= lbAudioAx_80026EBC(stage);
+
+    if (result != 0) {
+        lbAudioAx_80026F2C(0xC);
+        lbAudioAx_8002702C(0xC, result);
+        lbAudioAx_80027168();
+        while (fn_80027488() == 1) {
+            HSD_SynthSFXWaitForLoadCompletion(lb_800195D0);
+        }
+    }
+}
 
 /// #lbAudioAx_80027AB0
 
