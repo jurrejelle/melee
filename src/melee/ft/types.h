@@ -1332,7 +1332,7 @@ struct Fighter {
         /* +10 */ HSD_JObj* jobj;
         /* +14 */ float x14;
         /* +18 */ Vec3 x18;
-        /* +24 */ u8 pad[0x28 - 0x24];
+        /* +24 */ int x24;
     } x1670[1]; ///< @todo figure out proper size
     /* fp+1674 */ u8 filler_x1674[0x1828 - 0x1670 - 0x28];
     /* fp+1828 */ enum_t x1828;
