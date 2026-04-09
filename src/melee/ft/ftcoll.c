@@ -72,8 +72,8 @@ static DmgLogEntry dmg_log0[20];
 struct DmgLogEntry dmg_log1[20];
 
 /// .sbss
-static size_t dmg_log0_idx;
-static size_t dmg_log1_idx;
+static int dmg_log0_idx;
+static int dmg_log1_idx;
 static s8 ftColl_804D6560[8];
 
 /// .sdata2
@@ -590,6 +590,7 @@ bool ftColl_80076ED8(Fighter* fp0, HitCapsule* hit0, Fighter* fp1,
                      HitCapsule* hit1)
 {
     float dmg = inlineB3(fp0, hit0, fp1);
+    PAD_STACK(32);
     if (inlineB1(hit0)) {
         if (dmg_log0_idx == 0 && !fp1->dmg.x189C_unk_num_frames) {
             HitCapsuleState state = checkTipLog(fp1, hit0);
@@ -681,7 +682,7 @@ bool ftColl_80076ED8(Fighter* fp0, HitCapsule* hit0, Fighter* fp1,
                         HSD_GObj* gobj = fp->gobj;
                         FighterKind kind = fp->kind;
                         if (dmg_log0_idx < 20U) {
-                            DmgLogEntry* damageLog2 = &dmg_log1[dmg_log1_idx];
+                            DmgLogEntry* damageLog2 = &dmg_log0[dmg_log0_idx];
                             damageLog2->x0 = 1;
                             damageLog2->kind = kind;
                             damageLog2->gobj = gobj;

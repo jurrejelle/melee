@@ -1891,7 +1891,7 @@ typedef struct DmgLogEntry {
         FighterHurtCapsule* hurt1;
     };
     /* +14 */ Vec3 pos;
-    /* +20 */ int x20;
+    /* +20 */ float x20;
     /* +24 */ size_t size_of_xC;
 } DmgLogEntry;
 STATIC_ASSERT(sizeof(struct DmgLogEntry) == 0x28);
