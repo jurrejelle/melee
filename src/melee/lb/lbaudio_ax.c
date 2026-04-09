@@ -2526,15 +2526,14 @@ s32 lbAudioAx_8002785C(void)
 void lbAudioAx_80027AB0(s32 arg0)
 {
     lbAudioAx_PoolAlloc* st = &lbl_80433710;
-    char* bb = lbl_803BB300;
     s32 lang;
 
     if (lbLang_IsSavedLanguageUS()) {
-        strcpy(bb + 0x40, bb + 0x1790);
+        strcpy(lbl_803BB340, "/audio/us/");
         lbl_804D38D0 = 10;
         lang = 1;
     } else {
-        strcpy(bb + 0x40, bb + 0x179C);
+        strcpy(lbl_803BB340, "/audio/");
         lbl_804D38D0 = 7;
         lang = 0;
     }
@@ -2546,8 +2545,8 @@ void lbAudioAx_80027AB0(s32 arg0)
 
         lbl_804D3878 = lang;
         AXDriver_8038DCFC();
-        strcpy(&bb[lbl_804D38D0] + 0x40, bb + 0x17A8);
-        AXDriver_8038DA70(bb + 0x40, lb_800195D0);
+        strcpy(&lbl_803BB340[lbl_804D38D0], "smash2.sem");
+        AXDriver_8038DA70(lbl_803BB340, lb_800195D0);
 
         if (arg0 != 0x83D61) {
             lbAudioAx_800237A8(arg0, 0x7F, 0x40);
@@ -2572,22 +2571,25 @@ void lbAudioAx_80027AB0(s32 arg0)
         HSD_SynthSFXUnloadBank(2);
 
         if (st->x274[0x33] < 1) {
-            strcpy(&bb[lbl_804D38D0] + 0x40, *(char**)(bb + 0xAC8));
-            st->x354[0x33] = HSD_SynthSFXLoad(bb + 0x40, 1, 0, 0);
+            strcpy(&lbl_803BB340[lbl_804D38D0],
+                   *(char**) (lbl_803BB300 + 0xAC8));
+            st->x354[0x33] = HSD_SynthSFXLoad(lbl_803BB340, 1, 0, 0);
             HSD_SynthSFXWaitForLoadCompletion(lb_800195D0);
             st->x274[0x33] = 2;
         }
 
         if (st->x274[1] < 1) {
-            strcpy(&bb[lbl_804D38D0] + 0x40, *(char**)(bb + 0xA00));
-            st->x354[1] = HSD_SynthSFXLoad(bb + 0x40, 1, 0, 0);
+            strcpy(&lbl_803BB340[lbl_804D38D0],
+                   *(char**) (lbl_803BB300 + 0xA00));
+            st->x354[1] = HSD_SynthSFXLoad(lbl_803BB340, 1, 0, 0);
             HSD_SynthSFXWaitForLoadCompletion(lb_800195D0);
             st->x274[1] = 2;
         }
 
         if (st->x274[0x36] < 1) {
-            strcpy(&bb[lbl_804D38D0] + 0x40, *(char**)(bb + 0xAD4));
-            st->x354[0x36] = HSD_SynthSFXLoad(bb + 0x40, 1, 0, 0);
+            strcpy(&lbl_803BB340[lbl_804D38D0],
+                   *(char**) (lbl_803BB300 + 0xAD4));
+            st->x354[0x36] = HSD_SynthSFXLoad(lbl_803BB340, 1, 0, 0);
             HSD_SynthSFXWaitForLoadCompletion(lb_800195D0);
             st->x274[0x36] = 2;
         }
