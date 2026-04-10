@@ -18,6 +18,7 @@
 #include "ftLink/ftLk_AttackAir.h"
 #include "ftMasterHand/ftMh_Wait1_2.h"
 #include "it/items/itpeachparasol.h"
+#include "it/it_26B1.h"
 #include "pl/plattack.h"
 #include "pl/pltrick.h"
 
@@ -95,6 +96,53 @@ void ft_80089460(Fighter* fp)
 }
 
 /// #ft_800895E0
+
+void ft_800895E0(Fighter* fp, int arg1)
+{
+    union Struct2070 val;
+    union Struct2070 sp18;
+    union Struct2070 sp14;
+    Item_GObj* temp;
+    union Struct2070 spC;
+
+    spC.x2070_int = arg1;
+    val = spC;
+    if (val.x2073 == 0 || val.x2073 != fp->x2070.x2073) {
+        fp->x2074.x2088 = plAttack_80037B08();
+    }
+    if (fp->kind == FTKIND_LUIGI && val.x2073 == 0x71) {
+        sp18.x2070_int = 0x240063;
+        val = sp18;
+    }
+    if (val.x2073 == 0x62) {
+        temp = fp->item_gobj;
+        if (temp != NULL && it_8026B6C8(temp) != 0) {
+            sp14.x2070_int = 0x44003D;
+            val = sp14;
+        }
+    }
+    fp->x2070.x2070_int = val.x2070_int;
+    ft_80089768(&fp->x2074.x2074_vec);
+    *(s32*) &fp->x2074.x2074_vec.x = (s32) fp->dmg.x1830_percent;
+    if (fp->is_metal) {
+        fp->x2074.x2084_b1 = 1;
+    }
+    if (fp->x197C != NULL) {
+        fp->x2074.x2084_b2 = 1;
+    }
+    if (fp->x221D_b6) {
+        fp->x2074.x2084_b3 = 1;
+    }
+    if (fp->x2226_b4) {
+        fp->x2074.x2084_b4 = 1;
+    }
+    if (fp->x2220_b5) {
+        fp->x2074.x2084_b5 = 1;
+    }
+    if (fp->x2220_b6) {
+        fp->x2074.x2084_b6 = 1;
+    }
+}
 
 void ft_80089768(Vec2* ptr)
 {
