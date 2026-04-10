@@ -53,6 +53,51 @@ typedef struct {
 
 /// #ft_800892D4
 
+void ft_800892D4(Fighter* arg0)
+{
+    union Struct2070 spC;
+
+    spC.x2070_int = 0;
+    arg0->dmg.x18d4 = *(UnkPlBonusBits*) &spC;
+    arg0->x2070.x2070_int = *(s32*) &arg0->dmg.x18d4;
+    *(s32*) &arg0->x2074.x2074_vec.x = 0;
+    *(s32*) &arg0->x2074.x2074_vec.y = 0;
+    *(f32*) &arg0->x2074.x207C.x = 0.0f;
+    arg0->x2074.x207C.y = 6;
+    arg0->x2074.x2084_b0 = 0;
+    arg0->x2074.x2085_b3 = 0;
+    arg0->x2074.x2084_b1 = 0;
+    arg0->x2074.x2084_b2 = 0;
+    arg0->x2074.x2084_b3 = 0;
+    arg0->x2074.x2084_b4 = 0;
+    arg0->x2074.x2084_b5 = 0;
+    arg0->x2074.x2084_b6 = 0;
+    arg0->x2074.x2084_b7 = 0;
+    arg0->x2074.x2085_b0 = 0;
+    arg0->x2074.x2085_b1 = 0;
+    arg0->x2074.x2085_b2 = 0;
+    arg0->x2074.x2085_b4 = 0;
+    arg0->dmg.x18d8.x0 = 0;
+    arg0->dmg.x18d8.x4 = 0;
+    arg0->dmg.x18d8.kb_applied1 = 0.0f;
+    arg0->dmg.x18d8.xC = 6;
+    arg0->dmg.x18d8.x10_b0 = 0;
+    arg0->dmg.x18d8.x11_b3 = 0;
+    arg0->dmg.x18d8.x10_b1 = 0;
+    arg0->dmg.x18d8.x10_b2 = 0;
+    arg0->dmg.x18d8.x10_b3 = 0;
+    arg0->dmg.x18d8.x10_b4 = 0;
+    arg0->dmg.x18d8.x10_b5 = 0;
+    arg0->dmg.x18d8.x10_b6 = 0;
+    arg0->dmg.x18d8.x10_b7 = 0;
+    arg0->dmg.x18d8.x11_b0 = 0;
+    arg0->dmg.x18d8.x11_b1 = 0;
+    arg0->dmg.x18d8.x11_b2 = 0;
+    arg0->dmg.x18d8.x11_b4 = 0;
+    arg0->dmg.x18ec_instancehitby = 0;
+    arg0->x2074.x2088 = 0;
+}
+
 /// #ft_80089460
 
 void ft_80089460(Fighter* fp)
