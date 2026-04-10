@@ -41,9 +41,17 @@ void ftMaterial_800BF260(void)
 
 void ftMaterial_800BF2B8(HSD_MObj* mobj, u32 rendermode)
 {
+    Fighter* fp;
+    HSD_TObj* tobj;
     HSD_TExp texp;
     HSD_PEDesc pe;
-    Fighter* fp = GET_FIGHTER(HSD_GObj_804D7814);
+    u32 mobj_rendermode;
+    HSD_TObj** cur_tobj;
+    HSD_TExp* texp1;
+    HSD_PEDesc* pe_p;
+    u32 unused;
+
+    fp = GET_FIGHTER(HSD_GObj_804D7814);
 
     if (fp->x2226_b5) {
         lbRefract_80022998(mobj, rendermode,
@@ -62,16 +70,16 @@ void ftMaterial_800BF2B8(HSD_MObj* mobj, u32 rendermode)
     HSD_StateInitTev();
 
     {
-        u32 mobj_rendermode = mobj->rendermode;
+        mobj_rendermode = mobj->rendermode;
         HSD_SetMaterialColor(mobj->mat->ambient, mobj->mat->diffuse,
                              mobj->mat->specular, mobj->mat->alpha);
         if (mobj_rendermode & RENDER_SPECULAR) {
             HSD_SetMaterialShininess(mobj->mat->shininess);
         }
         {
-            HSD_TObj** cur_tobj = NULL;
+            cur_tobj = NULL;
             {
-                HSD_TObj* tobj = mobj->tobj;
+                tobj = mobj->tobj;
                 if (mobj_rendermode & RENDER_SHADOW && tobj_shadows != NULL) {
                     cur_tobj = &tobj;
                     while (*cur_tobj != NULL) {
@@ -93,14 +101,12 @@ void ftMaterial_800BF2B8(HSD_MObj* mobj, u32 rendermode)
                 mobj_rendermode |= RENDER_NO_ZUPDATE | RENDER_XLU;
             }
             {
-                HSD_TExp* texp1 =
-                    ftMaterial_800BF534(fp, mobj, &texp, rendermode);
+                texp1 = ftMaterial_800BF534(fp, mobj, &texp, rendermode);
                 ftMaterial_800BF6BC(fp, mobj, texp1);
                 if (fp->x2223_b2 && !fp->x2223_b3) {
                     mobj_rendermode |= RENDER_NO_ZUPDATE;
                 }
                 {
-                    HSD_PEDesc* pe_p;
                     if (fp->x2223_b3 && fp->x61D == 0xFF) {
                         pe.flags = (1 << 3) | (1 << 4) | (1 << 5);
                         pe.dst_alpha = 0;
