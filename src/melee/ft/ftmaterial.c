@@ -176,7 +176,174 @@ HSD_TExp* ftMaterial_800BF534(Fighter* fp, HSD_MObj* mobj, HSD_TExp* texp,
 
 void ftMaterial_800BF6BC(Fighter* fp, HSD_MObj* mobj, HSD_TExp* texp)
 {
-    NOT_IMPLEMENTED;
+    GXColor sp168;
+    HSD_TECnst sp_cnst1;
+    HSD_TExp* sp100;
+    HSD_TECnst sp_cnst2;
+    HSD_TevDesc sp_tevdesc;
+    GXColor sp18;
+
+    s32 chk1;
+    s32 var_r0;
+    s32 reg1;
+    s32 reg2;
+    s32 var_r3;
+    ColorOverlay* overlay;
+    s32 var_r5;
+    char* base = (char*) &ftMObj;
+
+    if (!fp->x2223_b3) {
+        overlay = ftCo_800C0658(fp);
+        chk1 = 0;
+        var_r5 = fp->x61A_controller_index;
+        if (fp->x2228_b0 && fp->x2224_b0) {
+            if (fp->is_metal) {
+                var_r5 = 4;
+            } else if (fp->x2227_b3) {
+                var_r5 = 5;
+            }
+        }
+        if (fp->x2223_b2) {
+            chk1 = 1;
+            sp168 = fp->x610_color_rgba[1];
+        } else if (var_r5 != 0) {
+            if (overlay->x7C_color_enable) {
+                u32 temp_alpha;
+                s32 inv_alpha;
+                GXColor* color_hex = &overlay->x2C_hex;
+                GXColor* fp_color = &fp->x610_color_rgba[0];
+                u8 temp_r8;
+                s32 temp_r8_2;
+                s32 temp_r7;
+                s32 temp_r4;
+
+                temp_alpha =
+                    ((0xFF - fp_color->a) * (0xFF - color_hex->a)) / 255;
+                if ((s32) temp_alpha == 0xFF) {
+                    sp168 = overlay->x2C_hex;
+                } else {
+                    inv_alpha = 0xFF - temp_alpha;
+                    temp_r8 = fp_color->r;
+                    temp_r8_2 =
+                        temp_r8 +
+                        ((color_hex->a * (color_hex->r - temp_r8)) / 255);
+                    temp_r7 = temp_r8_2 * 0xFF;
+                    temp_r4 = temp_r7 / inv_alpha;
+                    sp168.r = (u8) temp_r4;
+                    if (sp168.r != 0) {
+                        sp168.a = temp_r7 / sp168.r;
+                    } else {
+                        sp168.a =
+                            ((inv_alpha - temp_r8_2) * 0xFF) / 255;
+                    }
+                    {
+                        u8 temp_r8_3 = fp_color->g;
+                        sp168.g =
+                            ((temp_r8_3 +
+                              ((color_hex->a *
+                                (color_hex->g - temp_r8_3)) /
+                               255)) *
+                             0xFF) /
+                            inv_alpha;
+                    }
+                    {
+                        u8 temp_r6 = fp_color->b;
+                        sp168.b =
+                            ((temp_r6 +
+                              ((color_hex->a *
+                                (color_hex->b - temp_r6)) /
+                               255)) *
+                             0xFF) /
+                            inv_alpha;
+                    }
+                }
+                chk1 = 1;
+            } else {
+                chk1 = 1;
+                sp168 = ((GXColor*) &p_ftCommonData->x6D8)[var_r5];
+            }
+        } else if (overlay->x7C_color_enable) {
+            chk1 = 1;
+            sp168 = overlay->x2C_hex;
+        }
+        if (chk1 != 0) {
+            sp_cnst1 = *(HSD_TECnst*) (base + 0xC4);
+            reg1 = lbGetFreeColorRegister(0, mobj, texp);
+            if (reg1 == -1) {
+                OSReport(base + 0xF4);
+                __assert(base + 0x118, 352, (char*) &ftCo_804D3C08);
+            }
+            sp_cnst1.reg = (u8) reg1;
+            sp_cnst1.val = &sp168;
+            HSD_TExpSetReg((HSD_TExp*) &sp_cnst1);
+            sp_cnst1.next = texp;
+            if (reg1 < 4) {
+                var_r0 = 1;
+            } else {
+                var_r0 = 0;
+            }
+            if (var_r0 != 0) {
+                var_r3 = 4;
+            } else {
+                var_r3 = 0;
+            }
+            reg2 = lbGetFreeColorRegister(var_r3, mobj,
+                                          (HSD_TExp*) &sp_cnst1);
+            if (reg2 == -1) {
+                OSReport(base + 0x128);
+                __assert(base + 0x118, 366, (char*) &ftCo_804D3C08);
+            }
+            if ((u8) fp->x61D != 0xFF) {
+                sp_cnst2 = *(HSD_TECnst*) (base + 0xC4);
+                sp_cnst2.reg = (u8) reg2;
+                sp_cnst2.comp = 5;
+                sp_cnst2.idx = 3;
+                sp_cnst2.val = &fp->x61D;
+                sp_cnst1.next = (HSD_TExp*) &sp_cnst2;
+            } else {
+                sp_cnst1.next = NULL;
+            }
+            sp_cnst1.reg = (u8) reg2;
+            sp18.r = sp168.a;
+            sp18.g = sp168.a;
+            sp18.b = sp168.a;
+            sp_cnst1.val = &sp18;
+            HSD_TExpSetReg((HSD_TExp*) &sp_cnst1);
+            sp_tevdesc = *(HSD_TevDesc*) (base + 0x50);
+            sp_tevdesc.stage = HSD_StateAssignTev();
+            sp_tevdesc.u.tevconf.clr_b = lb_8000CC8C(reg1);
+            sp_tevdesc.u.tevconf.clr_c = lb_8000CC8C(reg2);
+            if (reg1 < 4) {
+                var_r0 = 1;
+            } else {
+                var_r0 = 0;
+            }
+            if (var_r0 != 0) {
+                sp_tevdesc.u.tevconf.kcsel = lb_8000CCA4(reg1);
+            } else {
+                if (reg2 < 4) {
+                    var_r0 = 1;
+                } else {
+                    var_r0 = 0;
+                }
+                if (var_r0 != 0) {
+                    sp_tevdesc.u.tevconf.kcsel = lb_8000CCA4(reg2);
+                }
+            }
+            if ((u8) fp->x61D != 0xFF) {
+                sp_tevdesc.u.tevconf.alpha_d = lb_8000CD90(reg2);
+                if (reg2 < 4) {
+                    var_r0 = 1;
+                } else {
+                    var_r0 = 0;
+                }
+                if (var_r0 != 0) {
+                    sp_tevdesc.u.tevconf.kasel = lb_8000CDA8(reg2);
+                }
+            }
+            HSD_SetupTevStage(&sp_tevdesc);
+        }
+    }
 }
 
 void ftMaterial_800BFB4C(Fighter_GObj* gobj, GXColor* diffuse)
