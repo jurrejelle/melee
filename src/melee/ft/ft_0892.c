@@ -26,12 +26,6 @@
 #include <baselib/gobj.h>
 #include <baselib/jobj.h>
 
-/// #ft_800892D4
-
-/// #ft_80089460
-
-/// #ft_800895E0
-
 /// Local struct with bitfields - reversed order for MWCC big-endian
 typedef struct {
     s32 x0;
@@ -55,6 +49,52 @@ typedef struct {
     u8 x11_b1 : 1;
     u8 x11_b0 : 1;
 } UnkStruct89768;
+
+/// #ft_800892D4
+
+/// #ft_80089460
+
+void ft_80089460(Fighter* fp)
+{
+    *(s32*) &fp->x2074.x2074_vec.x = 0;
+    *(s32*) &fp->x2074.x2074_vec.y = 0;
+    *(f32*) &fp->x2074.x207C.x = 0.0f;
+    fp->x2074.x207C.y = 6;
+    fp->x2074.x2084_b0 = 0;
+    fp->x2074.x2085_b3 = 0;
+    fp->x2074.x2084_b1 = 0;
+    fp->x2074.x2084_b2 = 0;
+    fp->x2074.x2084_b3 = 0;
+    fp->x2074.x2084_b4 = 0;
+    fp->x2074.x2084_b5 = 0;
+    fp->x2074.x2084_b6 = 0;
+    fp->x2074.x2084_b7 = 0;
+    fp->x2074.x2085_b0 = 0;
+    fp->x2074.x2085_b1 = 0;
+    fp->x2074.x2085_b2 = 0;
+    fp->x2074.x2085_b4 = 0;
+    *(s32*) &fp->x2074.x2074_vec.x = (s32) fp->dmg.x1830_percent;
+    if (fp->is_metal) {
+        fp->x2074.x2084_b1 = 1;
+    }
+    if (fp->x197C != NULL) {
+        fp->x2074.x2084_b2 = 1;
+    }
+    if (fp->x221D_b6) {
+        fp->x2074.x2084_b3 = 1;
+    }
+    if (fp->x2226_b4) {
+        fp->x2074.x2084_b4 = 1;
+    }
+    if (fp->x2220_b5) {
+        fp->x2074.x2084_b5 = 1;
+    }
+    if (fp->x2220_b6) {
+        fp->x2074.x2084_b6 = 1;
+    }
+}
+
+/// #ft_800895E0
 
 void ft_80089768(Vec2* ptr)
 {
