@@ -8,13 +8,16 @@
 
 #include "ft/ft_0C31.h"
 #include "ft/ft_0D31.h"
+#include "ft/ftdevice.h"
 #include "ft/types.h"
 #include "ftCommon/ftCo_09F4.h"
 #include "gm/gm_unsplit.h"
+#include "lb/lb_00B0.h"
 #include "lb/lbrefract.h"
 #include "pl/player.h"
 
 #include <baselib/class.h>
+#include <baselib/debug.h>
 #include <baselib/gobj.h>
 #include <baselib/jobj.h>
 #include <baselib/mobj.h>
@@ -131,7 +134,44 @@ void ftMaterial_800BF2B8(HSD_MObj* mobj, u32 rendermode)
 HSD_TExp* ftMaterial_800BF534(Fighter* fp, HSD_MObj* mobj, HSD_TExp* texp,
                               u32 rendermode)
 {
-    NOT_IMPLEMENTED;
+    HSD_TevDesc sp_tevdesc;
+    s32 reg;
+    bool chk;
+    char* base = (char*) &ftMObj;
+    ColorOverlay* overlay = ftCo_800C0658(fp);
+
+    if (overlay->x7C_flag2 && overlay->x7C_light_enable) {
+        if (!(rendermode & RENDER_XLU) && !fp->x2223_b2) {
+            texp->cnst = *(HSD_TECnst*) (base + 0xC4);
+            reg = lbGetFreeColorRegister(0, mobj, NULL);
+            if (reg == -1) {
+                OSReport(base + 0xF4);
+                __assert(base + 0x118, 240, (char*) &ftCo_804D3C08);
+            }
+            texp->cnst.reg = (u8) reg;
+            texp->cnst.val = &overlay->x50_light_color;
+            HSD_TExpSetReg(texp);
+
+            sp_tevdesc = *(HSD_TevDesc*) (base + 0x50);
+            sp_tevdesc.stage = HSD_StateAssignTev();
+            sp_tevdesc.color = 2;
+            sp_tevdesc.u.tevconf.clr_a = GX_CC_ZERO;
+            sp_tevdesc.u.tevconf.clr_b = lb_8000CC8C(reg);
+            sp_tevdesc.u.tevconf.clr_c = GX_CC_RASA;
+            chk = false;
+            sp_tevdesc.u.tevconf.clr_d = GX_CC_CPREV;
+            if (reg < 4) {
+                chk = true;
+            }
+            if (chk) {
+                sp_tevdesc.u.tevconf.kcsel = lb_8000CCA4(reg);
+            }
+            HSD_SetupTevStage(&sp_tevdesc);
+            return texp;
+        }
+        ftCo_8009F75C(fp, false);
+    }
+    return NULL;
 }
 
 void ftMaterial_800BF6BC(Fighter* fp, HSD_MObj* mobj, HSD_TExp* texp)
