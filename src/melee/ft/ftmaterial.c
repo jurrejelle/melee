@@ -101,7 +101,7 @@ void ftMaterial_800BF2B8(HSD_MObj* mobj, u32 rendermode)
                 }
                 {
                     HSD_PEDesc* pe_p;
-                    if (fp->x2223_b4 && fp->x61D == 0xFF) {
+                    if (fp->x2223_b3 && fp->x61D == 0xFF) {
                         pe.flags = (1 << 3) | (1 << 4) | (1 << 5);
                         pe.dst_alpha = 0;
                         pe.type = 0;
