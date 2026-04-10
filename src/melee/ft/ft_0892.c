@@ -21,7 +21,10 @@
 #include "pl/plattack.h"
 #include "pl/pltrick.h"
 
+#include "mp/mplib.h"
+
 #include <baselib/gobj.h>
+#include <baselib/jobj.h>
 
 /// #ft_800892D4
 
@@ -154,6 +157,65 @@ s32 ft_80089914(HSD_GObj* gobj, int msid)
     return true;
 }
 /// #fn_8008998C
+
+#undef __FILE__
+#define __FILE__ "jobj.h"
+
+s32 fn_8008998C(Fighter* fp, void* arg1, Vec3* normal)
+{
+    u8 _[12];
+    Vec3 jobj_pos;
+    u8 __[4];
+    Vec3 sp20;
+    f32 floor_y;
+    u32 floor_flags;
+    u8 ___[4];
+    f32 delta_y;
+    f32 pos_x;
+    f32 delta_x;
+    f32 slope;
+
+    Vec3* pos = (Vec3*) ((u8*) arg1 + 0x3C);
+    HSD_JObjGetTranslation2((HSD_JObj*) fp->gobj->hsd_obj, &jobj_pos);
+
+    normal->z = 0.0f;
+    normal->y = 0.0f;
+    normal->x = 0.0f;
+
+    if (mpLib_8004DD90_Floor(fp->coll_data.floor.index, pos, &floor_y,
+                             &floor_flags, normal) != -1)
+    {
+        delta_y = (pos->y + floor_y) - jobj_pos.y;
+    } else {
+        mpFloorGetLeft(fp->coll_data.floor.index, &sp20);
+        if (pos->x > sp20.x) {
+            mpFloorGetRight(fp->coll_data.floor.index, &sp20);
+        }
+        delta_y = sp20.y - jobj_pos.y;
+    }
+
+    if (ABS(delta_y) < 0.0001f) {
+        return 0;
+    }
+
+    pos_x = pos->x;
+    if (pos_x != jobj_pos.x) {
+        delta_x = pos_x - jobj_pos.x;
+        slope = delta_y / delta_x;
+        if (slope > 0.45f) {
+            delta_y = 0.45f * delta_x;
+        } else if (slope < -0.45f) {
+            delta_y = -0.45f * delta_x;
+        }
+    } else {
+        delta_y = 0.0f;
+    }
+
+    pos->y += delta_y;
+    return 1;
+}
+
+#undef __FILE__
 
 /// #ft_80089B08
 
