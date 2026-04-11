@@ -4,6 +4,8 @@
 
 #include <placeholder.h>
 
+#include "baselib/debug.h"
+
 #include <dolphin/gx.h>
 #include <dolphin/mtx.h>
 #include <baselib/cobj.h>
@@ -424,12 +426,15 @@ void ftCo_800C2FD8(Fighter_GObj* gobj)
             fp->x2100 = -1;
             return;
         }
-        if (itGetKind(fp->item_gobj) == It_Kind_Sword) {
+        switch (itGetKind(fp->item_gobj)) {
+        case It_Kind_Sword: {
             it_802852B8(fp->item_gobj, &fp->x20F8, &fp->x20FC);
             var_r29 = 1;
-        } else {
-            OSReport("no afterimage item!\n");
-            __assert("ftafterimage.c", 0x16D, "0");
+            break;
+        }
+        default: {
+            HSD_ASSERTREPORT(0x16D, 0, "no afterimage item!\n");
+        }
         }
         jobj = it_80285314(fp->item_gobj);
     } else {
