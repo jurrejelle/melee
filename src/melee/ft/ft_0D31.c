@@ -1133,7 +1133,6 @@ void ftCo_Rebirth_Coll(HSD_GObj* gobj)
 }
 void fn_800D54A4(Fighter_GObj* gobj)
 {
-<<<<<<< HEAD
     Vec3 sp;
     u8 _[8];
     Fighter* fp = gobj->user_data;
@@ -1154,26 +1153,6 @@ void fn_800D54A4(Fighter_GObj* gobj)
     sp.z = fp->cur_pos.z;
 
     HSD_JObjSetTranslate(fp->x20A0_accessory, &sp);
-=======
-    Vec3 translate;
-    float result;
-    Fighter* fp = gobj->user_data;
-    HSD_GObj* other_gobj = Player_GetEntityAtIndex(fp->player_id, 1);
-    if (other_gobj != NULL) {
-        Fighter* other_fp = other_gobj->user_data;
-        if (!other_fp->x221F_b3) {
-            if (other_fp->cur_pos.y > fp->cur_pos.y) {
-                fp->cur_pos.y = other_fp->cur_pos.y;
-            }
-        }
-    }
-    result = ftCommon_800804EC(fp);
-    translate.x = fp->cur_pos.x - fp->facing_dir * result;
-    translate.y = fp->cur_pos.y;
-    translate.z = fp->cur_pos.z;
-    HSD_JObjSetTranslate(fp->x20A0_accessory, &translate);
-    PAD_STACK(8);
->>>>>>> master
 }
 
 void fn_800D55B4(Fighter_GObj* gobj)
