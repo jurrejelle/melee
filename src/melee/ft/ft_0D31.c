@@ -24,6 +24,7 @@
 #include "lb/lbvector.h"
 
 #include <melee/cm/camera.h>
+#include <melee/ef/efasync.h>
 #include <melee/ef/efsync.h>
 #include <melee/ft/chara/ftCommon/ftCo_Attack1.h>
 #include <melee/ft/chara/ftCommon/ftCo_AttackHi3.h>
@@ -654,7 +655,61 @@ void ftCo_800D41C4(Fighter_GObj* gobj)
     fp->mv.co.unk_deadup.x68 = 1;
 }
 
-/// #ftCo_DeadUpStar_Anim
+void ftCo_DeadUpStar_Anim(Fighter_GObj* gobj)
+{
+    Fighter* fp = GET_FIGHTER(gobj);
+    s32* data = (s32*) &p_ftCommonData->x504;
+
+    if (fp->mv.co.unk_deadup.x44 == 1) {
+        if (fp->mv.co.unk_deadup.x68 != 0) {
+            f32 rot_speed = *(f32*)(data + 6);
+            HSD_JObj* jobj =
+                fp->parts[ftParts_GetBoneIndex(fp, FtPart_XRotN)].joint;
+            HSD_JObjAddRotationX(jobj, rot_speed);
+        }
+    }
+
+    if (fp->mv.co.unk_deadup.x40 != 0) {
+        fp->mv.co.unk_deadup.x40 -= 1;
+    }
+
+    if (fp->mv.co.unk_deadup.x40 == 0) {
+        switch (fp->mv.co.unk_deadup.x44) {
+        case 0:
+            fp->self_vel.y =
+                (*(f32*)(data + 4) * Stage_GetCamBoundsTopOffset() -
+                 fp->cur_pos.y) /
+                (f32) data[1];
+            fp->self_vel.z = *(f32*)(data + 3) / (f32) data[1];
+            fp->mv.co.unk_deadup.x40 = data[1];
+            fp->mv.co.unk_deadup.x44 = 1;
+            return;
+        case 1:
+            ftCommon_8007E2FC(gobj);
+            if (fp->mv.co.unk_deadup.x68 != 0) {
+                ftCommon_8007DB24(gobj);
+            }
+            {
+                Fighter* fp2 = GET_FIGHTER(gobj);
+                efAsync_Spawn(gobj, &fp2->x60C, 2, 0x42D, NULL,
+                              &fp->cur_pos);
+            }
+            ftCo_800D4E50(fp, &fp->cur_pos, 0, 1.5707964f);
+            fp->x221F_b1 = 1;
+            fp->invisible = true;
+            ft_80088C5C(gobj);
+            ft_PlaySFX(fp, 0x83, 0x7F, 0x40);
+            ft_8008805C(fp, 0x83);
+            ftCo_800D34E0(gobj);
+            fp->mv.co.unk_deadup.x40 = data[2];
+            fp->mv.co.unk_deadup.x44 = 2;
+            return;
+        case 2:
+            ftMaterial_800BFD9C(gobj);
+            break;
+        }
+    }
+}
 
 void ftCo_DeadUpStar_Cam(Fighter_GObj* gobj)
 {
