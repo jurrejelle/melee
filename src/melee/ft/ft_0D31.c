@@ -656,6 +656,9 @@ void ftCo_800D41C4(Fighter_GObj* gobj)
         ftCo_800D40B8_inline(gobj);
         ftCommon_8007EFC0(fp2, true);
         new_var = fp2;
+        new_var++;
+        new_var--;
+
         ft_800881D8(new_var, fp2->ft_data->x4C_sfx->xC, 127, 64);
         pl_8003DF44(fp2->player_id, fp2->x221F_b4);
     }
