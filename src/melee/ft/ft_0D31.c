@@ -440,9 +440,9 @@ void ftCo_DeadUpFall_Phys(Fighter_GObj* gobj)
             }
         }
         lbVector_Add(&fp->mv.co.unk_deadup.x50, &fp->mv.co.unk_deadup.x5C);
-        fp->mv.co.unk_deadup.x5C.x = 0;
-        fp->mv.co.unk_deadup.x5C.y = 0;
         fp->mv.co.unk_deadup.x5C.z = 0;
+        fp->mv.co.unk_deadup.x5C.y = 0;
+        fp->mv.co.unk_deadup.x5C.x = 0;
         break;
     }
 }
