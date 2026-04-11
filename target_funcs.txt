@@ -1,0 +1,4 @@
+File: src/melee/ft/ftafterimage.c
+Funcs:
+- [x] ftCo_800C2FD8
+- [ ] ftCo_800C2600
