@@ -11,7 +11,7 @@ Funcs:
 - [x] ftCo_800D4580
 - [x] ftCo_800D3680
 - [x] ftCo_800D3950
-- [ ] ftCo_800D3BC8
+- [x] ftCo_800D3BC8
 - [ ] ftCo_800D3E40
 - [ ] ftCo_DeadUpStar_Anim
 - [ ] ftCo_DeadUpFall_Anim
