@@ -366,7 +366,8 @@ s32 fn_8008998C(Fighter* fp, IKState* ik, Vec3* normal)
     pos_x = pos->x;
     if (pos_x != jobj_pos.x) {
         delta_x = pos_x - jobj_pos.x;
-        slope = delta_y / delta_x;
+        slope = delta_x;
+        slope = delta_y / slope;
         if (slope > 0.45f) {
             delta_y = 0.45f * delta_x;
         } else if (slope < -0.45f) {
