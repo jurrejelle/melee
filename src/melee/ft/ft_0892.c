@@ -49,7 +49,7 @@ typedef struct ftData_x58_t {
     /* 0x18 */ f32 x18;
 } ftData_x58_t;
 
-typedef struct {
+typedef struct IKState {
     /* 0x00 */ HSD_JObj* jobj0;
     /* 0x04 */ HSD_JObj* jobj1;
     /* 0x08 */ HSD_JObj* jobj2;
@@ -177,7 +177,6 @@ void ft_80089460(Fighter* fp)
     }
 }
 
-/// #ft_800895E0
 
 void ft_800895E0(Fighter* fp, int arg1)
 {
@@ -326,12 +325,8 @@ s32 ft_80089914(HSD_GObj* gobj, int msid)
 
     return true;
 }
-/// #fn_8008998C
 
-#undef __FILE__
-#define __FILE__ "jobj.h"
-
-s32 fn_8008998C(Fighter* fp, void* arg1, Vec3* normal)
+s32 fn_8008998C(Fighter* fp, IKState* ik, Vec3* normal)
 {
     u8 _[12];
     Vec3 jobj_pos;
@@ -345,7 +340,7 @@ s32 fn_8008998C(Fighter* fp, void* arg1, Vec3* normal)
     f32 delta_x;
     f32 slope;
 
-    Vec3* pos = (Vec3*) ((u8*) arg1 + 0x3C);
+    Vec3* pos = &ik->pos4;
     HSD_JObjGetTranslation2((HSD_JObj*) fp->gobj->hsd_obj, &jobj_pos);
 
     normal->z = 0.0f;
@@ -384,8 +379,6 @@ s32 fn_8008998C(Fighter* fp, void* arg1, Vec3* normal)
     pos->y += delta_y;
     return 1;
 }
-
-#undef __FILE__
 
 void ft_80089B08(Fighter_GObj* gobj)
 {
