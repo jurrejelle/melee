@@ -658,7 +658,53 @@ void ftCo_RebirthWait_Anim(Fighter_GObj* gobj)
     }
 }
 
-/// #ftCo_RebirthWait_IASA
+void ftCo_RebirthWait_IASA(Fighter_GObj* gobj)
+{
+    u8 _[8];
+    s32 var_r30 = 0;
+    Fighter* fp = gobj->user_data;
+
+    if (!fp->x221F_b4) {
+        HSD_GObj* companion = Player_GetEntityAtIndex(fp->player_id, 1);
+        if (companion != NULL &&
+            !((Fighter*) companion->user_data)->x221F_b3 &&
+            ftLib_800873CC(companion) == 0)
+        {
+            var_r30 = 1;
+        }
+    } else {
+        if (ftLib_800873CC(
+                Player_GetEntityAtIndex(fp->player_id, 0)) != 0)
+        {
+            return;
+        }
+        var_r30 = 1;
+    }
+
+    if (ftCo_SpecialAir_CheckInput(gobj) ||
+        ftCo_800D7100(gobj) ||
+        ftCo_800C3B10(gobj) ||
+        ftCo_80099A58(gobj) ||
+        ftCo_AttackAir_CheckItemThrowInput(gobj) ||
+        ftCo_800D705C(gobj) ||
+        ftCo_800CB870(gobj))
+    {
+        /* priority input detected */
+    } else if (ftCo_80091A2C(gobj) ||
+               ftCo_800DE9B8(gobj) ||
+               fn_800D5F84(gobj) ||
+               ftCo_800C97A8(gobj) ||
+               ftWalkCommon_800DFC70(gobj) ||
+               var_r30)
+    {
+        ftCo_Fall_Enter(gobj);
+    } else {
+        return;
+    }
+
+    ftColl_8007B7A4(gobj, p_ftCommonData->x5D8);
+    pl_80040374(fp->player_id, fp->x221F_b4);
+}
 
 void ftCo_RebirthWait_Phys(Fighter_GObj* gobj)
 {
