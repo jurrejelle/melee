@@ -672,13 +672,15 @@ void ftCo_DeadUpStar_Anim(Fighter_GObj* gobj)
     Fighter* fp = GET_FIGHTER(gobj);
     s32* data = (s32*) &p_ftCommonData->x504;
 
-    if (fp->mv.co.unk_deadup.x44 == 1) {
-        if (fp->mv.co.unk_deadup.x68 != 0) {
-            f32 rot_speed = *(f32*)(data + 6);
-            HSD_JObj* jobj =
-                fp->parts[ftParts_GetBoneIndex(fp, FtPart_XRotN)].joint;
-            HSD_JObjAddRotationX(jobj, rot_speed);
-        }
+    switch(fp->mv.co.unk_deadup.x44) {
+        case 1:
+            if (fp->mv.co.unk_deadup.x68 != 0) {
+                f32 rot_speed = *(f32*)(data + 6);
+                HSD_JObj* jobj =
+                    fp->parts[ftParts_GetBoneIndex(fp, FtPart_XRotN)].joint;
+                HSD_JObjAddRotationX(jobj, rot_speed);
+            }
+            break;
     }
 
     if (fp->mv.co.unk_deadup.x40 != 0) {
