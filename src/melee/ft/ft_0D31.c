@@ -506,6 +506,90 @@ void ftCo_DeadDown_Cam(Fighter_GObj* gobj) {}
 
 /// #ftCo_800D3E40
 
+#pragma push
+#pragma dont_inline on
+
+void ftCo_800D3E40(Fighter_GObj* gobj)
+{
+    Fighter* temp_r27;
+    Fighter* temp_r27_2;
+    Fighter* temp_r28;
+    Fighter* temp_r28_3;
+    Fighter* temp_r31;
+    FtSFX* temp_r28_2;
+    f32 temp_f1;
+    f32 temp_f31;
+    Vec3 sp30;
+    s32 sp2C;
+    s32 sp28;
+    f32 sp24;
+    u8 _[24];
+
+    temp_r27 = gobj->user_data;
+    temp_r31 = temp_r27;
+    ftCo_800D331C(gobj);
+    temp_r27->mv.co.unk_800D3680.x40 = p_ftCommonData->x500;
+    Fighter_ChangeMotionState(gobj, 3, 0U, 0.0F, 1.0F, 0.0F, NULL);
+    temp_r28 = gobj->user_data;
+    if (temp_r28->x221D_b6) {
+        ft_800880D8(temp_r28);
+        temp_r28->x2004 = 0;
+    }
+    temp_r28->x2219_b1 = 1;
+    temp_r28->x221E_b1 = 1;
+    temp_r28->x221E_b2 = 1;
+    pl_8003DF44(temp_r27->player_id, temp_r27->x221F_b4);
+
+    temp_r27_2 = gobj->user_data;
+    temp_r28_2 = temp_r27_2->ft_data->x4C_sfx;
+    temp_r27_2->invisible = true;
+    temp_r27_2->x221F_b1 = 1;
+    Camera_80030E44(4, &temp_r27_2->cur_pos);
+    ftCo_800D35FC(temp_r27_2);
+    ftCo_800D34E0(gobj);
+    ft_80088C5C(gobj);
+    ftCo_800D38B8(temp_r27_2, temp_r28_2->x4);
+    ftCo_800D38B8(temp_r27_2, temp_r28_2->x8);
+
+    ft_PlaySFX(temp_r31, 0x61, 0x7F, 0x40);
+    ft_8008805C(temp_r31, 0x61);
+    sp30 = temp_r31->cur_pos;
+    temp_f31 = Stage_GetBlastZoneRightOffset();
+    temp_f1 = Stage_GetBlastZoneLeftOffset();
+    if (sp30.x > temp_f31) {
+        sp30.x = temp_f31;
+    }
+    if (sp30.x < temp_f1) {
+        sp30.x = temp_f1;
+    }
+    sp24 = 3.1415927f;
+
+    {
+        int color1;
+        int color2;
+        s32 var_r3;
+        temp_r28_3 = gobj->user_data;
+        {
+            int offset = Player_GetUnk45(temp_r28_3->player_id) << 2;
+            u8* base1 = Fighter_804D650C + offset;
+            u8* base2 = Fighter_804D6508 + offset;
+            color1 = (base1[0] << 16) | (base1[1] << 8) | base1[2];
+            color2 = (base2[0] << 16) | (base2[1] << 8) | base2[2];
+        }
+        if (gm_801693BC(temp_r28_3->player_id)) {
+            var_r3 = 0x42C;
+        } else {
+            var_r3 = 0x42B;
+        }
+        efSync_Spawn(var_r3, gobj, &sp30, &sp24, &p_ftCommonData->x4F4,
+                     color1, color2);
+    }
+    sp30.y = Stage_GetBlastZoneTopOffset();
+    ftCo_800D4E50(temp_r31, &sp30, 1, 4.712389f);
+}
+
+#pragma pop
+
 void ftCo_DeadUp_Anim(Fighter_GObj* gobj)
 {
     Fighter* fp = GET_FIGHTER(gobj);
