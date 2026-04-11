@@ -1815,7 +1815,7 @@ void Player_SetUnk45(s32 slot, int unk45)
     player->unk45 = unk45;
 }
 
-u8 Player_GetUnk45(s32 slot)
+u32 Player_GetUnk45(s32 slot)
 {
     StaticPlayer* player;
     Player_CheckSlot(slot);
