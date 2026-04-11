@@ -11,6 +11,7 @@
 #include "ft/ft_0892.h"
 #include "ft/ft_0C88.h"
 #include "ft/ftanim.h"
+#include "ft/ftcolanim.h"
 #include "ft/ftcoll.h"
 #include "ft/ftcommon.h"
 #include "ft/ftwaitanim.h"
@@ -416,6 +417,52 @@ void ftCo_DeadUpStar_Cam(Fighter_GObj* gobj)
 
 /// #ftCo_800D4580
 
+extern Quaternion lbl_803B7500;
+
+void ftCo_800D4580(Fighter_GObj* gobj, int arg1)
+{
+    u8 _[24];
+    Fighter* fp = gobj->user_data;
+    int* datattrs = &p_ftCommonData->x520;
+
+    ftCo_800D331C(gobj);
+
+    fp->mv.co.unk_deadup.x40 = datattrs[1];
+    fp->mv.co.unk_deadup.x44 = 0;
+    fp->mv.co.unk_deadup.x50 = *(Vec3*) &datattrs[6];
+    fp->mv.co.common.x24 = 0.0f;
+    fp->mv.co.common.x20 = 0.0f;
+    fp->mv.co.common.x1C = 0.0f;
+
+    Fighter_ChangeMotionState(gobj, arg1, Ft_MF_None, 0.0f, 1.0f, 0.0f,
+                              NULL);
+    fp->x2220_b7 = true;
+
+    {
+        HSD_JObj* jobj = GET_JOBJ(gobj);
+        Quaternion q = lbl_803B7500;
+        if (((Fighter*) gobj->user_data)->x34_scale.z == 1.0f) {
+            HSD_JObjSetRotation(jobj, &q);
+        }
+    }
+
+    {
+        Fighter* fp2 = gobj->user_data;
+        if (fp2->x221D_b6) {
+            ft_800880D8(fp2);
+            fp2->x2004 = 0;
+        }
+        fp2->x2219_b1 = true;
+        fp2->x221E_b1 = true;
+        fp2->x221E_b2 = true;
+    }
+
+    ft_80088C5C(gobj);
+    ftCommon_8007EFC0(fp, true);
+    ftCo_800BFFD0(fp, 0x2B, 0);
+    pl_8003DF44(fp->player_id, fp->x221F_b4);
+}
+
 void ftCo_800D4780(Fighter_GObj* gobj)
 {
     Fighter* fp = GET_FIGHTER(gobj);
@@ -432,8 +479,6 @@ void ftCo_800D47B8(Fighter_GObj* gobj)
     ftCommon_8007EBAC(fp, 1, 0);
     fp->mv.co.unk_deadup.x68 = 1;
 }
-
-extern Quaternion lbl_803B7500;
 
 s32 ftCo_800D481C(Fighter_GObj* gobj, s32 arg1)
 {
