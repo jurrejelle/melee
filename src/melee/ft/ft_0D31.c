@@ -433,7 +433,53 @@ void ftCo_800D47B8(Fighter_GObj* gobj)
     fp->mv.co.unk_deadup.x68 = 1;
 }
 
-/// #ftCo_800D481C
+extern Quaternion lbl_803B7500;
+
+s32 ftCo_800D481C(Fighter_GObj* gobj, s32 arg1)
+{
+    Fighter* fp;
+    HSD_JObj* jobj;
+    u8 _[44];
+    Quaternion q;
+
+    fp = gobj->user_data;
+
+    Fighter_ChangeMotionState(gobj, arg1,
+                              Ft_MF_SkipRumble | Ft_MF_SkipColAnim, 0.0f,
+                              1.0f, 0.0f, NULL);
+
+    fp->x2220_b7 = true;
+
+    jobj = GET_JOBJ(gobj);
+    q = lbl_803B7500;
+
+    if (((Fighter*) gobj->user_data)->x34_scale.z == 1.0f) {
+        HSD_JObjSetRotation(jobj, &q);
+    }
+
+    fp->x2219_b1 = 1;
+    fp->x221E_b1 = 1;
+    fp->x221E_b2 = 1;
+    ftCommon_8007EBAC(fp, 5, p_ftCommonData->x4F8);
+
+    {
+        HSD_GObj* cur;
+        for (cur = HSD_GObj_Entities->fighters; cur != NULL;
+             cur = cur->next)
+        {
+            Fighter* other = cur->user_data;
+            if (other != fp && !other->x221F_b3) {
+                ftCommon_8007EBAC(other, 6, p_ftCommonData->x4FC);
+            }
+        }
+    }
+
+    Camera_80030E44(4, &fp->cur_pos);
+    ft_800889F4(fp, (FtSFXArr*) fp->ft_data->x4C_sfx->x20);
+    ftCo_800D4E50(fp, &fp->cur_pos, 0, 1.5707964f);
+    fp->accessory4_cb = fn_800D4DD4;
+    return (s32) fn_800D4DD4;
+}
 
 /// #ftCo_DeadUpFall_Anim
 
