@@ -49,21 +49,6 @@ typedef struct ftData_x58_t {
     /* 0x18 */ f32 x18;
 } ftData_x58_t;
 
-typedef struct IKState {
-    /* 0x00 */ HSD_JObj* jobj0;
-    /* 0x04 */ HSD_JObj* jobj1;
-    /* 0x08 */ HSD_JObj* jobj2;
-    /* 0x0C */ Vec3 pos0;
-    /* 0x18 */ Vec3 pos1;
-    /* 0x24 */ Vec3 pos2;
-    /* 0x30 */ Vec3 pos3;
-    /* 0x3C */ Vec3 pos4;
-    /* 0x48 */ f32 len0;
-    /* 0x4C */ f32 len1;
-    /* 0x50 */ f32 angle_max;
-    /* 0x54 */ f32 angle_limit;
-} IKState;
-
 /// Local struct with bitfields - reversed order for MWCC big-endian
 typedef struct {
     s32 x0;
