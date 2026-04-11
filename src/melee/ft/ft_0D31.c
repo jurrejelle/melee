@@ -14,7 +14,9 @@
 #include "ft/ftcolanim.h"
 #include "ft/ftcoll.h"
 #include "ft/ftcommon.h"
+#include "ft/ftparts.h"
 #include "ft/ftwaitanim.h"
+#include "ft/ftwalkcommon.h"
 #include "ft/inlines.h"
 #include "ft/types.h"
 
@@ -26,7 +28,11 @@
 #include <melee/cm/camera.h>
 #include <melee/ef/efasync.h>
 #include <melee/ef/efsync.h>
+#include <melee/ft/chara/ftCommon/ftCo_AirCatch.h>
+#include <melee/ft/chara/ftCommon/ftCo_AppealS.h>
 #include <melee/ft/chara/ftCommon/ftCo_Attack1.h>
+#include <melee/ft/chara/ftCommon/ftCo_Attack100.h>
+#include <melee/ft/chara/ftCommon/ftCo_AttackAir.h>
 #include <melee/ft/chara/ftCommon/ftCo_AttackHi3.h>
 #include <melee/ft/chara/ftCommon/ftCo_AttackHi4.h>
 #include <melee/ft/chara/ftCommon/ftCo_AttackLw3.h>
@@ -35,11 +41,16 @@
 #include <melee/ft/chara/ftCommon/ftCo_AttackS4.h>
 #include <melee/ft/chara/ftCommon/ftCo_DamageIce.h>
 #include <melee/ft/chara/ftCommon/ftCo_Escape.h>
+#include <melee/ft/chara/ftCommon/ftCo_EscapeAir.h>
 #include <melee/ft/chara/ftCommon/ftCo_Fall.h>
 #include <melee/ft/chara/ftCommon/ftCo_FallSpecial.h>
 #include <melee/ft/chara/ftCommon/ftCo_Guard.h>
+#include <melee/ft/chara/ftCommon/ftCo_JumpAerial.h>
 #include <melee/ft/chara/ftCommon/ftCo_Lift.h>
+#include <melee/ft/chara/ftCommon/ftCo_SpecialAir.h>
 #include <melee/ft/chara/ftCommon/ftCo_SpecialS.h>
+#include <melee/ft/chara/ftCommon/ftCo_Squat.h>
+#include <melee/ft/chara/ftCommon/ftCo_Turn.h>
 #include <melee/ft/ft_0877.h>
 #include <melee/ft/ft_0881.h>
 #include <melee/ft/ft_0CDD.h>
