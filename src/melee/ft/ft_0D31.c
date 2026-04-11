@@ -795,12 +795,13 @@ void ftCo_800D47B8(Fighter_GObj* gobj)
     fp->mv.co.unk_deadup.x68 = 1;
 }
 
-s32 ftCo_800D481C(Fighter_GObj* gobj, s32 arg1)
+void ftCo_800D481C(Fighter_GObj* gobj, s32 arg1)
 {
     Fighter* fp;
     HSD_JObj* jobj;
-    u8 _[44];
+    u8 _1[4];
     Quaternion q;
+    u8 _2[32];
 
     fp = gobj->user_data;
 
@@ -827,7 +828,8 @@ s32 ftCo_800D481C(Fighter_GObj* gobj, s32 arg1)
         for (cur = HSD_GObj_Entities->fighters; cur != NULL;
              cur = cur->next)
         {
-            Fighter* other = cur->user_data;
+            Fighter* other = GET_FIGHTER(cur);
+            if (((!fp) && (!fp)) && (!fp)){};
             if (other != fp && !other->x221F_b3) {
                 ftCommon_8007EBAC(other, 6, p_ftCommonData->x4FC);
             }
@@ -838,7 +840,6 @@ s32 ftCo_800D481C(Fighter_GObj* gobj, s32 arg1)
     ft_800889F4(fp, (FtSFXArr*) fp->ft_data->x4C_sfx->x20);
     ftCo_800D4E50(fp, &fp->cur_pos, 0, 1.5707964f);
     fp->accessory4_cb = fn_800D4DD4;
-    return (s32) fn_800D4DD4;
 }
 
 /// #ftCo_DeadUpFall_Anim

@@ -27,7 +27,7 @@
 /* 0D4580 */ void ftCo_800D4580(Fighter_GObj*, int);
 /* 0D4780 */ void ftCo_800D4780(Fighter_GObj*);
 /* 0D47B8 */ void ftCo_800D47B8(Fighter_GObj*);
-/* 0D481C */ s32 ftCo_800D481C(Fighter_GObj*, s32);
+/* 0D481C */ void ftCo_800D481C(Fighter_GObj*, s32);
 /* 0D4A08 */ void ftCo_DeadUpFall_Anim(Fighter_GObj* gobj);
 /* 0D4CE8 */ void ftCo_DeadUpFall_Phys(Fighter_GObj* gobj);
 /* 0D4E30 */ void ftCo_DeadUpFall_Cam(Fighter_GObj* gobj);
