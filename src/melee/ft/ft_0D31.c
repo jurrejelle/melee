@@ -642,22 +642,22 @@ void ftCo_800D40B8(Fighter_GObj* gobj)
 
 void ftCo_800D41C4(Fighter_GObj* gobj)
 {
-    u8 _[16];
-    Fighter* fp = gobj->user_data;
-    fp->x2227_b6 = true;
+    u8 _[8];
+    Fighter* fp = GET_FIGHTER(gobj);
+    fp->x2227_b6 = 1;
     {
         int* temp_r31 = &p_ftCommonData->x504;
-        Fighter* fp2 = gobj->user_data;
+        Fighter* fp2 = GET_FIGHTER(gobj);
         ftCo_800D331C(gobj);
         fp2->mv.co.unk_deadup.x40 = *temp_r31;
-        fp2->mv.co.unk_deadup.x44 = 0.0F;
-        Fighter_ChangeMotionState(gobj, ftCo_MS_DeadUpStarIce, 0, 0.0F,
-                                  1.0F, 0.0F, NULL);
-        ftCo_800D40B8_inline(gobj);
-        ftCommon_8007EFC0(fp2, true);
-        ft_800881D8(fp2, fp2->ft_data->x4C_sfx->xC, 127, 64);
-        pl_8003DF44(fp2->player_id, fp2->x221F_b4);
+        fp2->mv.co.unk_deadup.x44 = 0;
     }
+    Fighter_ChangeMotionState(gobj, ftCo_MS_DeadUpStarIce, 0, 0.0F, 1.0F,
+                              0.0F, NULL);
+    ftCo_800D40B8_inline(gobj);
+    ftCommon_8007EFC0(fp, true);
+    ft_800881D8(fp, fp->ft_data->x4C_sfx->xC, 127, 64);
+    pl_8003DF44(fp->player_id, fp->x221F_b4);
     ftCo_80090AC0(fp);
     ftCommon_8007EBAC(fp, 1, 0);
     fp->mv.co.unk_deadup.x68 = 1;
@@ -1088,35 +1088,40 @@ void ftCo_Rebirth_IASA(Fighter_GObj* gobj) {}
 
 void ftCo_Rebirth_Phys(Fighter_GObj* gobj)
 {
-    Vec3 sp30;
-    Vec3 sp24;
-    Vec3 sp18;
-    u8 _[12];
+    Fighter* new_var;
+    Vec3 cur_pos;
+    Vec3 player_pos;
+    Vec3 stage_pos;
     Fighter* fp = gobj->user_data;
-
-    if (!fp->x221F_b4) {
-        if ((s8) fp->smash_attrs.x2135 != -1) {
-            Stage_80224E38(&sp18, (s8) fp->smash_attrs.x2135);
-            Player_GetSomePos(fp->player_id, &sp24);
-            fp->mv.co.common.x4 =
-                fp->facing_dir * ftCommon_800804EC(fp) +
-                (sp18.x + sp24.x);
-            *(f32*) &fp->mv.co.common.x8 = sp18.y + sp24.y;
-            *(f32*) &fp->mv.co.common.xC = 0.0f;
+    new_var = fp;
+    if (!new_var->x221F_b4) {
+        if (new_var->smash_attrs.x2135 != -1) {
+            Stage_80224E38(&stage_pos, new_var->smash_attrs.x2135);
+            Player_GetSomePos(new_var->player_id, &player_pos);
+            new_var->mv.co.common.x4 =
+                stage_pos.x + player_pos.x +
+                new_var->facing_dir * ftCommon_800804EC(new_var);
+            *(f32*) &new_var->mv.co.common.x8 =
+                stage_pos.y + player_pos.y;
+            *(f32*) &new_var->mv.co.common.xC = 0.0f;
         }
-        ftCommon_8007F8B4(fp, &sp30);
+        ftCommon_8007F8B4(new_var, &cur_pos);
         {
-            f32 inv_timer = 1.0f / (f32) fp->mv.co.common.x0;
-            fp->self_vel.x = inv_timer * (fp->mv.co.common.x4 - sp30.x);
-            fp->self_vel.y =
-                inv_timer * (*(f32*) &fp->mv.co.common.x8 - sp30.y);
+            float inv = 1.0f / (float) new_var->mv.co.common.x0;
+            new_var->self_vel.x =
+                (new_var->mv.co.common.x4 - cur_pos.x) * inv;
+            new_var->self_vel.y =
+                (*(f32*) &new_var->mv.co.common.x8 - cur_pos.y) *
+                inv;
         }
     } else {
-        Fighter* other_fp =
-            Player_GetEntityAtIndex(fp->player_id, 0)->user_data;
-        fp->self_vel.x = other_fp->self_vel.x;
-        fp->self_vel.y = other_fp->self_vel.y;
+        HSD_GObj* other_gobj =
+            Player_GetEntityAtIndex(new_var->player_id, 0);
+        Fighter* other_fp = other_gobj->user_data;
+        new_var->self_vel.x = other_fp->self_vel.x;
+        new_var->self_vel.y = other_fp->self_vel.y;
     }
+    PAD_STACK(12);
 }
 
 void ftCo_Rebirth_Coll(HSD_GObj* gobj)
@@ -1128,6 +1133,7 @@ void ftCo_Rebirth_Coll(HSD_GObj* gobj)
 }
 void fn_800D54A4(Fighter_GObj* gobj)
 {
+<<<<<<< HEAD
     Vec3 sp;
     u8 _[8];
     Fighter* fp = gobj->user_data;
@@ -1148,6 +1154,26 @@ void fn_800D54A4(Fighter_GObj* gobj)
     sp.z = fp->cur_pos.z;
 
     HSD_JObjSetTranslate(fp->x20A0_accessory, &sp);
+=======
+    Vec3 translate;
+    float result;
+    Fighter* fp = gobj->user_data;
+    HSD_GObj* other_gobj = Player_GetEntityAtIndex(fp->player_id, 1);
+    if (other_gobj != NULL) {
+        Fighter* other_fp = other_gobj->user_data;
+        if (!other_fp->x221F_b3) {
+            if (other_fp->cur_pos.y > fp->cur_pos.y) {
+                fp->cur_pos.y = other_fp->cur_pos.y;
+            }
+        }
+    }
+    result = ftCommon_800804EC(fp);
+    translate.x = fp->cur_pos.x - fp->facing_dir * result;
+    translate.y = fp->cur_pos.y;
+    translate.z = fp->cur_pos.z;
+    HSD_JObjSetTranslate(fp->x20A0_accessory, &translate);
+    PAD_STACK(8);
+>>>>>>> master
 }
 
 void fn_800D55B4(Fighter_GObj* gobj)
