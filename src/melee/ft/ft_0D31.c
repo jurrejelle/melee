@@ -999,7 +999,72 @@ void ftCo_800D4F24(Fighter_GObj* gobj, int index)
     ftCo_800D4F24_inline(gobj);
 }
 
-/// #ftCo_800D4FF4
+void ftCo_800D4FF4(Fighter_GObj* gobj)
+{
+    Vec3 sp44;
+    Vec3 scale_vec;
+    Vec3 pos_vec;
+    Vec3 sp20;
+    Vec3 sp14;
+    u8 _[4];
+    Fighter* fp = GET_FIGHTER(gobj);
+
+    Fighter_UnkProcessDeath_80068354(gobj);
+    fp->smash_attrs.x2135 = Player_80032F30(fp->player_id);
+
+    if ((s8) fp->smash_attrs.x2135 == -1) {
+        Player_GetSpawnPlatformPos(fp->player_id, &sp44);
+        fp->mv.co.turn.facing_after =
+            fp->facing_dir * ftCommon_800804EC(fp) + sp44.x;
+        fp->mv.co.turn.x8 = sp44.y;
+        fp->mv.co.walk.middle_anim_frame = 0.0f;
+    } else {
+        Stage_80224E38(&sp14, (s8) fp->smash_attrs.x2135);
+        Player_GetSomePos(fp->player_id, &sp20);
+        fp->mv.co.turn.facing_after =
+            fp->facing_dir * ftCommon_800804EC(fp) +
+            (sp14.x + sp20.x);
+        fp->mv.co.turn.x8 = sp14.y + sp20.y;
+        fp->mv.co.walk.middle_anim_frame = 0.0f;
+    }
+
+    ftCommon_8007D5D4(fp);
+    fp->mv.co.unk_deadup.x40 = (int) p_ftCommonData->x5D0;
+    Fighter_ChangeMotionState(gobj, 0xC, 0x1002, 0.0f, 1.0f, -1.0f, NULL);
+
+    fp->x221E_b2 = 1;
+    fp->x2219_b1 = 1;
+    fp->x221E_b1 = 1;
+    fp->x2222_b7 = 1;
+    fp->x221D_b5 = 1;
+    ftCo_800BFFD0(fp, 0xA, 0);
+
+    if (!fp->x221F_b4) {
+        ftCommon_SetAccessory(fp, ((void**) Fighter_804D6534)[0]);
+        {
+            f32 s =
+                fp->x34_scale.y * fp->co_attrs.respawn_platform_scale;
+            scale_vec.z = s;
+            scale_vec.y = s;
+            scale_vec.x = s;
+        }
+        HSD_JObjSetScale(fp->x20A0_accessory, &scale_vec);
+
+        ftCommon_8007E690(fp, ((void**) Fighter_804D6534)[1]);
+
+        pos_vec.x =
+            -(fp->facing_dir * ftCommon_800804EC(fp) - fp->cur_pos.x);
+        pos_vec.y = fp->cur_pos.y;
+        pos_vec.z = fp->cur_pos.z;
+        HSD_JObjSetTranslate(fp->x20A0_accessory, &pos_vec);
+
+        fp->accessory1_cb = fn_800D54A4;
+    } else {
+        fp->accessory1_cb = fn_800D55B4;
+    }
+
+    ftCommon_8007EFC0(fp, 1);
+}
 
 void ftCo_Rebirth_Anim(Fighter_GObj* gobj)
 {
