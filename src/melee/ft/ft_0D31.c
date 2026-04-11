@@ -214,8 +214,6 @@ void ftCo_800D35FC(Fighter* fp)
 
 void ftCo_800D3680(Fighter_GObj* gobj)
 {
-    Vec3 sp2C;
-    f32 sp24;
     Fighter* temp_r27;
     Fighter* temp_r27_2;
     Fighter* temp_r28;
@@ -224,16 +222,10 @@ void ftCo_800D3680(Fighter_GObj* gobj)
     FtSFX* temp_r28_2;
     f32 temp_f1;
     f32 temp_f31;
-    s32 temp_r29;
-    s32 temp_r6;
-    s32 var_r3;
-    u8* temp_r8;
-    u8 temp_r3;
-    u8 temp_r4;
-    u8 temp_r5;
-    u8 temp_r7;
-    u8 temp_r8_2;
-    u8* temp_r9;
+    Vec3 sp2C;
+    s32 sp28;
+    f32 sp24;
+    u8 _[24];
 
     temp_r27 = gobj->user_data;
     temp_r31 = temp_r27;
@@ -248,7 +240,7 @@ void ftCo_800D3680(Fighter_GObj* gobj)
     temp_r28->x2219_b1 = 1;
     temp_r28->x221E_b1 = 1;
     temp_r28->x221E_b2 = 1;
-    pl_8003DF44(temp_r27->player_id, temp_r27->x221F_b2);
+    pl_8003DF44(temp_r27->player_id, temp_r27->x221F_b4);
 
     temp_r27_2 = gobj->user_data;
     temp_r28_2 = temp_r27_2->ft_data->x4C_sfx;
@@ -273,24 +265,27 @@ void ftCo_800D3680(Fighter_GObj* gobj)
         sp2C.y = temp_f1;
     }
     sp24 = -1.5707964f;
-    temp_r28_3 = gobj->user_data;
-    temp_r3 = Player_GetUnk45(temp_r28_3->player_id);
-    temp_r8 = &Fighter_804D650C[temp_r3];
-    temp_r9 = &Fighter_804D6508[temp_r3];
-    temp_r7 = temp_r8[0];
-    temp_r4 = temp_r9[0];
-    temp_r6 = ((temp_r8[1] << 8) & ~0xFF0000) | ((temp_r7 << 0x10) & 0xFF0000);
-    temp_r8_2 = temp_r8[2];
-    temp_r5 = temp_r9[2];
-    temp_r29 = temp_r5 | (((temp_r9[1] << 8) & ~0xFF0000) |
-                          ((temp_r4 << 0x10) & 0xFF0000));
-    if (gm_801693BC(temp_r28_3->player_id)) {
-        var_r3 = 0x42C;
-    } else {
-        var_r3 = 0x42B;
+
+    {
+        int color1;
+        int color2;
+        s32 var_r3;
+        temp_r28_3 = gobj->user_data;
+        {
+            int offset = Player_GetUnk45(temp_r28_3->player_id) << 2;
+            u8* base1 = Fighter_804D650C + offset;
+            u8* base2 = Fighter_804D6508 + offset;
+            color1 = (base1[0] << 16) | (base1[1] << 8) | base1[2];
+            color2 = (base2[0] << 16) | (base2[1] << 8) | base2[2];
+        }
+        if (gm_801693BC(temp_r28_3->player_id)) {
+            var_r3 = 0x42C;
+        } else {
+            var_r3 = 0x42B;
+        }
+        efSync_Spawn(var_r3, gobj, &sp2C, &sp24, &p_ftCommonData->x4F4,
+                     color1, color2);
     }
-    efSync_Spawn(var_r3, gobj, &sp2C, &sp24, &p_ftCommonData->x4F4,
-                 temp_r8_2 | temp_r6, temp_r29);
     sp2C.x = Stage_GetBlastZoneLeftOffset();
     ftCo_800D4E50(temp_r31, &sp2C, 1, 0.0F);
 }
