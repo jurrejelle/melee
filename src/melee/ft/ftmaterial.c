@@ -149,7 +149,8 @@ HSD_TExp* ftMaterial_800BF534(Fighter* fp, HSD_MObj* mobj, HSD_TExp* texp,
     if (overlay->x7C_flag2 && overlay->x7C_light_enable) {
         if (!(rendermode & RENDER_XLU) && !fp->x2223_b2) {
             texp->cnst = *(HSD_TECnst*) (base + 0xC4);
-            reg = lbGetFreeColorRegister(0, mobj, NULL);
+            chk = lbGetFreeColorRegister(0, mobj, NULL);
+            reg = chk;
             if (reg == -1) {
                 OSReport(base + 0xF4);
                 __assert(base + 0x118, 240, (char*) &ftCo_804D3C08);
