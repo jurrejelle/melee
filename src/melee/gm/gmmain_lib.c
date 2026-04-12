@@ -950,7 +950,26 @@ void gmMainLib_8015EF30(struct gmMainLib_8015EF30_s* arg0)
 
 /// #gmMainLib_8015EF84
 
-/// #gmMainLib_8015F150
+void gmMainLib_8015F150(void)
+{
+    s32 i;
+    PAD_STACK(8);
+
+    i = 0;
+    do {
+        int j;
+        struct FighterData* data =
+            &gmMainLib_804D3EE0->thing.x1F2C[(u8) i];
+        for (j = 0; j < 0x19; j++) {
+            data->fighter_kos[j] = 0;
+        }
+        gmMainLib_8015EF30(
+            (struct gmMainLib_8015EF30_s*) &gmMainLib_804D3EE0->thing
+                                                .x1F2C[(u8) i]
+                                                .sd_count);
+        i++;
+    } while (i < 0x19);
+}
 
 /// #gmMainLib_8015F260
 
