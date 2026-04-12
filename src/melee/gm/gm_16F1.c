@@ -209,6 +209,59 @@ int fn_8016F870(void* arg0, u16 arg1, u8 mask, u8 player_id)
 
 /// #fn_8016F9A8
 
+int fn_8016F9A8(void* arg0, u16 arg1, u8 mask, u8 player_id)
+{
+    struct lbl_803D5A4C_t* curr;
+    int count = 0;
+    int i;
+    u8 flags;
+
+    if (arg1 >= 0x101U) {
+        return -1;
+    }
+
+    for (i = arg1; (u32) i < 0x101; i++) {
+        if ((s16) lbl_803D5A4C[i].kind < 0xD7) {
+            curr = lbl_803D5A4C;
+            while (curr->kind != i) {
+                if (curr->kind == 0x29A) {
+                    flags = 0;
+                    goto check1;
+                }
+                curr++;
+            }
+            flags = curr->x4;
+
+        check1:
+            if ((u8) mask & flags) {
+                if (pl_80039418(player_id, i) != 0) {
+                    count++;
+                }
+            }
+        } else {
+            curr = lbl_803D5A4C;
+            while (curr->kind != i) {
+                if (curr->kind == 0x29A) {
+                    flags = 0;
+                    goto check2;
+                }
+                curr++;
+            }
+            flags = curr->x4;
+
+        check2:
+            if ((u8) mask & flags) {
+                if ((unsigned) fn_801701C0(arg0, player_id, i) != 0) {
+                    count++;
+                }
+            }
+        }
+    }
+
+    return count;
+    PAD_STACK(16);
+}
+
 void fn_80171AD4(void)
 {
     memzero(&lbl_8046DBC8, sizeof(lbl_8046DBC8));
