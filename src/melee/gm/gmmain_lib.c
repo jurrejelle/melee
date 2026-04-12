@@ -12,7 +12,10 @@
 #include <melee/lb/lbcardnew.h>
 #include <melee/lb/lblanguage.h>
 #include <melee/lb/lbtime.h>
+#include <melee/if/textlib.h>
+#include <melee/mn/mnname.h>
 #include <melee/ty/toy.h>
+#include <melee/ty/tylist.h>
 
 GameRules gmMainLib_803D4A48 = {
     0,
@@ -1111,6 +1114,104 @@ void gmMainLib_8015F588(bool arg0)
 }
 
 /// #gmMainLib_8015F600
+
+static u8 gmMainLib_804D3EE4;
+
+void gmMainLib_8015F600(int arg0, int arg1)
+{
+    s32 i;
+
+    if (arg0 == 1) {
+        s32 j = 0;
+        do {
+            struct FighterData* fdata =
+                gmMainLib_804D3EE0->thing.x1F2C;
+            for (i = 0; i < 25; i++) {
+                fdata[(u8) j].fighter_kos[i] = 0;
+            }
+            gmMainLib_8015EF30(
+                (struct gmMainLib_8015EF30_s*)
+                    &gmMainLib_804D3EE0->thing.x1F2C[(u8) j]
+                         .sd_count);
+            j++;
+        } while (j < 25);
+
+        memzero(&gmMainLib_804D3EE0->thing.x1CD0, 0x25C);
+        un_80311960();
+
+        if (arg1 == 0) {
+            un_803124BC();
+            Trophy_SetUnlockState(
+                (s32)(s16) un_80305058(2, 0x63, 0, 100.0f), 1);
+        }
+
+        gmMainLib_804D3EE0->thing.x1CB0 =
+            *(struct gmm_x1CB0*) gmMainLib_803D4A60;
+
+        {
+            s32 lang;
+            switch (lbLang_GetLanguageSetting()) {
+            case 0:
+                lang = 0;
+                break;
+            case 1:
+                lang = 1;
+                break;
+            }
+            lbLang_SetSavedLanguage(lang);
+        }
+
+        memzero(&gmMainLib_804D3EE0->thing, 0x448);
+        gm_801623FC(0x32);
+        gm_IncrementPowerCount();
+
+        if (arg1 == 0 && un_803048C0(0xA5) > 0 &&
+            gm_80164430(0x14U) == 0)
+        {
+            gm_80164504(0x14U);
+        }
+    } else {
+        s32 bank_offset = (arg0 - 2) * 19;
+        s32 j;
+
+        j = 0;
+        do {
+            s32 idx = j + bank_offset;
+            struct NameTagData* data =
+                &gmMainLib_804D3EE0->thing
+                     .x2FF8[(u8) idx / 19]
+                     .inner[(u8) idx % 19];
+
+            for (i = 0; i < 120; i++) {
+                data->vs_kos[i] = 0;
+            }
+            gmMainLib_8015EF30(
+                (struct gmMainLib_8015EF30_s*) &data->sd_count);
+
+            for (i = 0; i < 25; i++) {
+                data->play_time_by_fighter[i] = 0;
+            }
+            data->x1A2 = 5;
+
+            {
+                char* src = mnName_8023749C((s32)(u8) idx);
+                if (src != NULL) {
+                    s32 k = 0;
+                    while ((s8) gmMainLib_804D3EE4 != (s8)(u8) *src) {
+                        data->namedata[k] = (u8) *src;
+                        k++;
+                        src++;
+                    }
+                    data->namedata[k] = gmMainLib_804D3EE4;
+                } else {
+                    data->namedata[0] = (u8) gmMainLib_804D3EE4;
+                }
+            }
+            data->x1A1 = 1;
+            j++;
+        } while (j < 19);
+    }
+}
 
 void gmMainLib_8015FA34(s32 arg0)
 {

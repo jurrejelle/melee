@@ -1,0 +1,10 @@
+File: src/melee/gm/gmmain_lib.c
+Funcs:
+- [x] gmMainLib_8015D984
+- [x] gmMainLib_8015F150
+- [x] gmMainLib_8015FA34
+- [x] InitializePersistentNameData
+- [x] gmMainLib_8015F260
+- [x] gmMainLib_8015EA80
+- [x] gmMainLib_8015F600
+- [ ] gmMainLib_8015DBF4
