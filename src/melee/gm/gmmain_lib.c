@@ -948,7 +948,24 @@ void gmMainLib_8015EF30(struct gmMainLib_8015EF30_s* arg0)
     arg0->x38 = 0;
 }
 
-/// #gmMainLib_8015EF84
+void InitializePersistentNameData(s32 arg0)
+{
+    struct NameTagData* data =
+        &gmMainLib_804D3EE0->thing.x2FF8[(u8) arg0 / 19]
+             .inner[(u8) arg0 % 19];
+    s32 i;
+
+    PAD_STACK(24);
+
+    for (i = 0; i < 120; i++) {
+        data->vs_kos[i] = 0;
+    }
+    gmMainLib_8015EF30((struct gmMainLib_8015EF30_s*) &data->sd_count);
+    for (i = 0; i < 25; i++) {
+        data->play_time_by_fighter[i] = 0;
+    }
+    data->x1A2 = 5;
+}
 
 void gmMainLib_8015F150(void)
 {
