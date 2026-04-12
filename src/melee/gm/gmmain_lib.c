@@ -668,7 +668,6 @@ u32* gmMainLib_8015D970(ssize_t idx)
 }
 
 /// https://decomp.me/scratch/CJy8X
-/// register swap
 bool gmMainLib_8015D984(u32 arg0)
 {
     PAD_STACK(16);
