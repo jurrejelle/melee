@@ -726,6 +726,41 @@ int fn_80171BA4(void* arg0)
 
 /// #fn_80171DC4
 
+void fn_80171DC4(HSD_GObj* arg0)
+{
+    int i;
+    struct lbl_8046B6A0_24C_t* rules = gm_8016B774();
+
+    fn_80171BA4(rules);
+
+    if (lbl_8046DBC8.x0 == 0 && lbl_804D65B0 > 0) {
+        lbl_8046DBC8.x0 = 1;
+        lbl_8046DBC8.x1 = 1;
+        for (i = 0; i < 6; i++) {
+            if (rules->x58[i].x0 != 3) {
+                if (lbl_804D65A8[i] == 0) {
+                    lbl_8046DBC8.x2[i].x0 = 1;
+                } else if ((s32) lbl_804D65A8[i] == lbl_804D65B0) {
+                    lbl_8046DBC8.x2[i].x1 = 1;
+                }
+            }
+        }
+    } else {
+        for (i = 0; i < 6; i++) {
+            if (rules->x58[i].x0 != 3) {
+                if (lbl_8046DBC8.x2[i].x0 == 1 && lbl_804D65A8[i] != 0) {
+                    lbl_8046DBC8.x2[i].x0 = 0;
+                }
+                if (lbl_8046DBC8.x2[i].x1 == 1 &&
+                    (lbl_804D65A8[i] == 0 || (s32) lbl_804D65A8[i] != lbl_804D65B0))
+                {
+                    lbl_8046DBC8.x2[i].x1 = 0;
+                }
+            }
+        }
+    }
+}
+
 bool gm_801720B4(void)
 {
     if (gm_8016B3D8()) {
