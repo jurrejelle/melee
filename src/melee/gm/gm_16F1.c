@@ -148,6 +148,87 @@ void fn_8016F344(struct lbl_8046B6A0_24C_t* arg0)
 
 /// #fn_8016F39C
 
+int fn_8016F39C(HSD_Text** arg0, void* arg1, u8 arg2, u16 arg3, u8 arg4,
+                u8 arg5)
+{
+    struct lbl_803D5A4C_t* curr;
+    int count = 0;
+    int idx;
+    int matched;
+    u8 flags;
+    u16 item_id;
+
+    if (arg3 >= 0x101U) {
+        return -1;
+    }
+
+    idx = arg3;
+    while ((u32) idx < 0x101U) {
+        matched = 0;
+        if ((s16) lbl_803D5A4C[idx].kind < 0xD7) {
+            curr = lbl_803D5A4C;
+            while (curr->kind != idx) {
+                if (curr->kind == 0x29A) {
+                    flags = 0;
+                    goto check1;
+                }
+                curr++;
+            }
+            flags = curr->x4;
+
+        check1:
+            if (arg4 & flags) {
+                if (pl_80039418(arg5, idx) != 0) {
+                    matched = 1;
+                }
+            }
+        } else {
+            curr = lbl_803D5A4C;
+            while (curr->kind != idx) {
+                if (curr->kind == 0x29A) {
+                    flags = 0;
+                    goto check2;
+                }
+                curr++;
+            }
+            flags = curr->x4;
+
+        check2:
+            if (arg4 & flags) {
+                if ((unsigned) fn_801701C0(arg1, arg5, idx) != 0) {
+                    matched = 1;
+                }
+            }
+        }
+
+        if (matched != 0) {
+            curr = lbl_803D5A4C;
+            while (curr->kind != idx) {
+                if (curr->kind == 0x29A) {
+                    item_id = 0;
+                    goto assign;
+                }
+                curr++;
+            }
+            if ((u16) curr->x2 == 0xDE && lbLang_IsSettingUS() != 0) {
+                item_id = 0x102;
+            } else {
+                item_id = curr->x2;
+            }
+
+        assign:
+            HSD_SisLib_803A6368(arg0[count], item_id);
+            count++;
+            if (count == (int) arg2) {
+                break;
+            }
+        }
+        idx++;
+    }
+    return count;
+    PAD_STACK(16);
+}
+
 /// #fn_8016F548
 
 /// #fn_8016F740
