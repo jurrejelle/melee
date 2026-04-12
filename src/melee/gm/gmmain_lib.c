@@ -988,7 +988,29 @@ void gmMainLib_8015F150(void)
     } while (i < 0x19);
 }
 
-/// #gmMainLib_8015F260
+void gmMainLib_8015F260(void)
+{
+    s32 i;
+
+    PAD_STACK(16);
+
+    for (i = 0; i < 120; i++) {
+        struct NameTagData* data =
+            &gmMainLib_804D3EE0->thing.x2FF8[(u8) i / 19]
+                 .inner[(u8) i % 19];
+        s32 j;
+
+        for (j = 0; j < 120; j++) {
+            data->vs_kos[j] = 0;
+        }
+        gmMainLib_8015EF30(
+            (struct gmMainLib_8015EF30_s*) &data->sd_count);
+        for (j = 0; j < 25; j++) {
+            data->play_time_by_fighter[j] = 0;
+        }
+        data->x1A2 = 5;
+    }
+}
 
 void gmMainLib_8015F464(void)
 {
