@@ -7,4 +7,4 @@ Funcs:
 - [x] gmMainLib_8015F260
 - [x] gmMainLib_8015EA80
 - [x] gmMainLib_8015F600
-- [ ] gmMainLib_8015DBF4
+- [x] gmMainLib_8015DBF4

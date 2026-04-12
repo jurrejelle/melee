@@ -765,7 +765,80 @@ void gmMainLib_8015DB80(void)
     }
 }
 
-/// #gmMainLib_8015DBF4
+s32 gmMainLib_8015DBF4(s32 arg0)
+{
+    extern VsModeData gm_80497618;
+    s32 j;
+    u8 val;
+
+#define ADJ_NAMETAG_78(field) do {                          \
+    val = (field);                                          \
+    if (val == (u8) arg0) {                                 \
+        (field) = 0x78;                                     \
+    } else if (val > (u8) arg0 && val != 0x78) {            \
+        (field) = val - 1;                                  \
+    }                                                       \
+} while (0)
+
+#define ADJ_VMD(vmd) do {                                   \
+    for (j = 0; j < 6; j++) {                               \
+        ADJ_NAMETAG_78((vmd)->data.players[j].xA);          \
+    }                                                       \
+} while (0)
+
+    ADJ_NAMETAG_78(gmMainLib_804D3EE0->unk_51C.x4);
+    ADJ_NAMETAG_78(gmMainLib_804D3EE0->unk_522.x4);
+    ADJ_NAMETAG_78(gmMainLib_804D3EE0->unk_528.x4);
+    ADJ_NAMETAG_78(gmMainLib_804D3EE0->unk_530.x4);
+    ADJ_NAMETAG_78(gmMainLib_804D3EE0->unk_530.unk_584.unk_586);
+
+    ADJ_VMD(&gm_80497618);
+
+    ADJ_VMD(&gmMainLib_804D3EE0->unk_1490);
+    ADJ_VMD(&gmMainLib_804D3EE0->unk_D10);
+    ADJ_VMD(&gmMainLib_804D3EE0->unk_590);
+    ADJ_VMD(&gmMainLib_804D3EE0->unk_6D0);
+    ADJ_VMD(&gmMainLib_804D3EE0->unk_810);
+    ADJ_VMD(&gmMainLib_804D3EE0->unk_950);
+    ADJ_VMD(&gmMainLib_804D3EE0->unk_A90);
+    ADJ_VMD(&gmMainLib_804D3EE0->unk_BD0);
+    ADJ_VMD(&gmMainLib_804D3EE0->unk_E50);
+    ADJ_VMD(&gmMainLib_804D3EE0->unk_F90);
+    ADJ_VMD(&gmMainLib_804D3EE0->unk_10D0);
+    ADJ_VMD(&gmMainLib_804D3EE0->unk_1210);
+    ADJ_VMD(&gmMainLib_804D3EE0->unk_1350);
+    ADJ_VMD(&gmMainLib_804D3EE0->unk_1490);
+
+    {
+        GameRules* gr = &gmMainLib_804D3EE0->x1850;
+
+        val = gr->unk_x10;
+        if (val == (u8) arg0) {
+            gr->unk_x10 = 0;
+        } else if (val > (u8) arg0 && val != 0x78) {
+            gr->unk_x10 = val - 1;
+        }
+
+        val = gr->x11;
+        if (val == (u8) arg0) {
+            gr->x11 = 0;
+        } else if (val > (u8) arg0 && val != 0x78) {
+            gr->x11 = val - 1;
+        }
+
+        val = gr->x13;
+        if (val == (u8) arg0) {
+            gr->x13 = 0;
+        } else if (val > (u8) arg0 && val != 0x78) {
+            gr->x13 = val - 1;
+        }
+    }
+
+#undef ADJ_VMD
+#undef ADJ_NAMETAG_78
+
+    return arg0;
+}
 
 void gmMainLib_8015EA80(void)
 {
