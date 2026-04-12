@@ -626,6 +626,104 @@ void fn_80171B64(struct lbl_804D65A8_t* arg0)
 
 /// #fn_80171BA4
 
+int fn_80171BA4(void* arg0)
+{
+    int scores[6];
+    int player;
+    int ko_count;
+    int falls;
+    u32 suicides;
+    int team;
+    int j;
+    int result;
+    u8* var_r30;
+    int* var_r28;
+    int* var_r29;
+
+    memzero(scores, sizeof(scores));
+    memzero(lbl_804D65A8, 6);
+    lbl_804D65B0 = Gm_PKind_Human;
+
+    var_r28 = scores;
+    player = 0;
+    do {
+        if (Player_GetPlayerSlotType(player) != Gm_PKind_NA) {
+            ko_count = 0;
+            falls = Player_GetFalls(player);
+            suicides = Player_GetSuicideCount(player);
+            if (*((u8*) arg0 + 6) == 1) {
+                team = Player_GetTeam(player);
+                j = 0;
+                do {
+                    if (Player_GetPlayerSlotType(j) != Gm_PKind_NA) {
+                        if (team != Player_GetTeam(j)) {
+                            if (player != j) {
+                                ko_count +=
+                                    Player_GetKOsByPlayerIndex(player, j);
+                            }
+                        } else {
+                            suicides +=
+                                Player_GetKOsByPlayerIndex(player, j);
+                            falls +=
+                                Player_GetKOsByPlayerIndex(player, j);
+                        }
+                    }
+                    j++;
+                } while (j < 6);
+            } else {
+                j = 0;
+                do {
+                    if (Player_GetPlayerSlotType(j) != Gm_PKind_NA) {
+                        if (player != j) {
+                            ko_count +=
+                                Player_GetKOsByPlayerIndex(player, j);
+                        } else {
+                            suicides +=
+                                Player_GetKOsByPlayerIndex(player, j);
+                            falls +=
+                                Player_GetKOsByPlayerIndex(player, j);
+                        }
+                    }
+                    j++;
+                } while (j < 6);
+            }
+            *var_r28 =
+                (ko_count - (falls - (int) suicides)) +
+                ((int) suicides * (s8) *((u8*) arg0 + 0xC));
+        }
+        player++;
+        var_r28 += 1;
+    } while (player < 6);
+
+    var_r29 = scores;
+    player = 0;
+    var_r30 = lbl_804D65A8;
+    do {
+        result = Player_GetPlayerSlotType(player);
+        if (result != Gm_PKind_NA) {
+            j = 0;
+            var_r28 = scores;
+            do {
+                if (Player_GetPlayerSlotType(j) != Gm_PKind_NA &&
+                    player != j && *var_r29 < *var_r28)
+                {
+                    *var_r30 += 1;
+                }
+                j++;
+                var_r28 += 1;
+            } while (j < 6);
+            result = (int) *var_r30;
+            if (lbl_804D65B0 < result) {
+                lbl_804D65B0 = result;
+            }
+        }
+        player++;
+        var_r29 += 1;
+        var_r30 += 1;
+    } while (player < 6);
+    return result;
+}
+
 /// #fn_80171DC4
 
 bool gm_801720B4(void)
