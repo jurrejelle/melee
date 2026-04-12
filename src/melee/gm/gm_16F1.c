@@ -231,6 +231,96 @@ int fn_8016F39C(HSD_Text** arg0, void* arg1, u8 arg2, u16 arg3, u8 arg4,
 
 /// #fn_8016F548
 
+int fn_8016F548(void* arg0, u16 arg1, u8 mask, u8 player_id)
+{
+    struct lbl_803D5A4C_t* curr;
+    int i;
+    u8 flags;
+
+    if (arg1 >= 0x101U) {
+        return -1;
+    }
+
+    for (i = arg1; (u32) i < 0x101U; i++) {
+        if ((s16) lbl_803D5A4C[i].kind < 0xD7) {
+            curr = lbl_803D5A4C;
+            while (curr->kind != i) {
+                if (curr->kind == 0x29A) {
+                    flags = 0;
+                    goto check1;
+                }
+                curr++;
+            }
+            flags = curr->x4;
+
+        check1:
+            if ((u8) mask & flags) {
+                if (pl_80039418(player_id, i) != 0) {
+                    return i;
+                }
+            }
+        } else {
+            curr = lbl_803D5A4C;
+            while (curr->kind != i) {
+                if (curr->kind == 0x29A) {
+                    flags = 0;
+                    goto check2;
+                }
+                curr++;
+            }
+            flags = curr->x4;
+
+        check2:
+            if ((u8) mask & flags) {
+                if ((unsigned) fn_801701C0(arg0, player_id, i) != 0) {
+                    return i;
+                }
+            }
+        }
+    }
+
+    for (i = 0x100; i >= 0; i--) {
+        if ((s16) lbl_803D5A4C[i].kind < 0xD7) {
+            curr = lbl_803D5A4C;
+            while (curr->kind != i) {
+                if (curr->kind == 0x29A) {
+                    flags = 0;
+                    goto check3;
+                }
+                curr++;
+            }
+            flags = curr->x4;
+
+        check3:
+            if ((u8) mask & flags) {
+                if (pl_80039418(player_id, i) != 0) {
+                    return i;
+                }
+            }
+        } else {
+            curr = lbl_803D5A4C;
+            while (curr->kind != i) {
+                if (curr->kind == 0x29A) {
+                    flags = 0;
+                    goto check4;
+                }
+                curr++;
+            }
+            flags = curr->x4;
+
+        check4:
+            if ((u8) mask & flags) {
+                if ((unsigned) fn_801701C0(arg0, player_id, i) != 0) {
+                    return i;
+                }
+            }
+        }
+    }
+
+    return -1;
+    PAD_STACK(24);
+}
+
 /// #fn_8016F740
 
 int fn_8016F740(void* arg0, u16 arg1, u8 mask, u8 player_id)

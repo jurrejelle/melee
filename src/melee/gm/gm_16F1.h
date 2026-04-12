@@ -22,7 +22,7 @@ struct lbl_804D65A8_t;
 /* 16F2F8 */ int gm_8016F2F8(int, unsigned char);
 /* 16F344 */ void fn_8016F344(struct lbl_8046B6A0_24C_t*);
 /* 16F39C */ int fn_8016F39C(HSD_Text**, void*, u8, u16, u8, u8);
-/* 16F548 */ UNK_RET fn_8016F548(UNK_PARAMS);
+/* 16F548 */ int fn_8016F548(void*, u16, u8, u8);
 /* 16F740 */ int fn_8016F740(void*, u16, u8, u8);
 /* 16F870 */ int fn_8016F870(void*, u16, u8, u8);
 /* 16F9A8 */ int fn_8016F9A8(void*, u16, u8, u8);
