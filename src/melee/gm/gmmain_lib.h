@@ -118,7 +118,7 @@
 /* 15DB6C */ u8 gmMainLib_8015DB6C(u8);
 /* 15DB80 */ void gmMainLib_8015DB80(void);
 /* 15DBF4 */ UNK_RET gmMainLib_8015DBF4(s32);
-/* 15EA80 */ UNK_RET gmMainLib_8015EA80(UNK_PARAMS);
+/* 15EA80 */ void gmMainLib_8015EA80(void);
 /* 15ECB0 */ int gmMainLib_8015ECB0(void);
 /* 15ECBC */ void gmMainLib_8015ECBC(void);
 /* 15ED30 */ int gmMainLib_8015ED30(void);

@@ -764,7 +764,31 @@ void gmMainLib_8015DB80(void)
 
 /// #gmMainLib_8015DBF4
 
-/// #gmMainLib_8015EA80
+void gmMainLib_8015EA80(void)
+{
+    s32 i;
+
+    for (i = 0; i < 6; i++) {
+        s8* ptr = gmMainLib_8015CE44(i, 0x78);
+        if (ptr != NULL) {
+            *ptr = 5;
+        }
+    }
+    {
+        VsModeData* base = &gmMainLib_804D3EE0->unk_590;
+        s32 j;
+        for (i = 0; i < 6; i++) {
+            for (j = 0; j < 6; j++) {
+                base[i].data.players[j].handicap = 9;
+            }
+        }
+        for (i = 7; i < 13; i++) {
+            for (j = 0; j < 6; j++) {
+                base[i].data.players[j].handicap = 9;
+            }
+        }
+    }
+}
 
 int gmMainLib_8015ECB0(void)
 {
