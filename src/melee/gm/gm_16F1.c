@@ -6,11 +6,14 @@
 
 #include "if/textlib.h"
 
+#include <melee/gm/gm_16AE.h>
 #include <melee/gm/gmmain_lib.h>
 #include <melee/lb/lb_00B0.h>
 #include <melee/lb/lblanguage.h>
 #include <melee/lb/lbtime.h>
 #include <melee/pl/plbonus.h>
+#include <melee/pl/plbonuslib.h>
+#include <melee/pl/types.h>
 #include <melee/ty/toy.h>
 
 struct lbl_804D65A8_t {
@@ -674,6 +677,781 @@ int fn_801701B8(void)
 }
 
 /// #fn_801701C0
+int fn_801701C0(void* arg0, int arg1, int arg2)
+{
+    struct lbl_8046B6A0_24C_t* rules = arg0;
+    struct lbl_803B7A60_t* zeroes = &lbl_803B7A60;
+    u8* flags = rules->pad3F0;
+    struct lbl_8046B6A0_24C_58_t* x58 = rules->x58;
+    s32 scores[6];
+    u8 rankings[7];
+
+    {
+        u8 is_teams = (u8) lbl_804D65A0;
+        *(s32*)&rankings[0] = lbl_804DA2F0;
+        *(u16*)&rankings[4] = lbl_804DA2F4;
+        rankings[6] = lbl_804DA2F6;
+        if (is_teams != 0) {
+            return 0;
+        }
+    }
+    if (rules == NULL || x58 == NULL) {
+        return 0;
+    }
+
+    if (rules->x5 == 3) {
+        fn_80171B64((struct lbl_804D65A8_t*) rankings);
+    } else {
+        s32* score_ptr = scores;
+
+        if (x58[0].x0 != 3) {
+            u16 xA = x58[0].xA;
+            scores[0] = (x58[0].x20 - (x58[0].x24 - xA)) +
+                         ((s8) rules->xC * xA);
+        }
+        {
+            int k;
+            struct lbl_8046B6A0_24C_58_t* p = &x58[1];
+            s32* sp = score_ptr + 1;
+            for (k = 1; k < 6; k++) {
+                if (p->x0 != 3) {
+                    u16 xA = p->xA;
+                    *sp = (p->x20 - (p->x24 - xA)) +
+                           ((s8) rules->xC * xA);
+                }
+                p++;
+                sp++;
+            }
+        }
+
+        {
+            struct lbl_8046B6A0_24C_58_t* x58_p = x58;
+            s32* sc_p = score_ptr;
+            u8* rk_p = rankings;
+            int idx;
+            for (idx = 0; idx < 6; idx++) {
+                if (x58_p->x0 != 3) {
+                    s32 my_score = *sc_p;
+
+                    if (x58[0].x0 != 3 && idx != 0 &&
+                        my_score < scores[0])
+                    {
+                        *rk_p = *rk_p + 1;
+                    }
+
+                    {
+                        struct lbl_8046B6A0_24C_58_t* q = &x58[1];
+                        s32* sq = score_ptr + 1;
+                        int j;
+                        for (j = 1; j < 6; j++) {
+                            if (q->x0 != 3 && idx != j &&
+                                my_score < *sq)
+                            {
+                                *rk_p = *rk_p + 1;
+                            }
+                            q++;
+                            sq++;
+                        }
+                    }
+
+                    if (rankings[6] < *rk_p) {
+                        rankings[6] = *rk_p;
+                    }
+                }
+
+                x58_p++;
+                sc_p++;
+                rk_p++;
+            }
+        }
+    }
+
+    switch (arg2) {
+    case 0xD7:
+        if ((unsigned) fn_801701C0(arg0, arg1, 0xD9) != 0) {
+            return 0;
+        }
+        {
+            struct lbl_8046B6A0_24C_58_t* p = x58;
+            int i;
+            for (i = 0; i < 4; i++) {
+                if (p->x0 != 3 && arg1 != i && rankings[i] == 0) {
+                    return 0;
+                }
+                p++;
+            }
+        }
+        if (rankings[arg1] == 0) {
+            return 1;
+        }
+        return 0;
+
+    case 0xD8:
+        if ((unsigned) fn_801701C0(arg0, arg1, 0xDA) != 0) {
+            return 0;
+        }
+        {
+            struct lbl_8046B6A0_24C_58_t* p = x58;
+            int i;
+            for (i = 0; i < 4; i++) {
+                if (p->x0 != 3 && arg1 != i && rankings[i] == rankings[6]) {
+                    return 0;
+                }
+                p++;
+            }
+        }
+        if (rankings[arg1] == rankings[6]) {
+            return 1;
+        }
+        return 0;
+
+    case 0xD9:
+    {
+        int k = 0;
+        do {
+            if (x58[k].x0 != 3 && k != arg1 && fn_80171B00(k) != 0) {
+                return 0;
+            }
+            k++;
+        } while (k < 4);
+        if (fn_80171B00(arg1) != 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    case 0xDA:
+    {
+        int k = 0;
+        do {
+            if (x58[k].x0 != 3 && k != arg1 && fn_80171B2C(k) != 0) {
+                return 0;
+            }
+            k++;
+        } while (k < 4);
+        if (fn_80171B2C(arg1) != 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    case 0xDB:
+    {
+        s32 vals[4];
+        int i, j;
+        if (x58[arg1].x20 < 3) {
+            return 0;
+        }
+        vals[0] = zeroes->x0[0];
+        vals[1] = zeroes->x0[1];
+        vals[2] = zeroes->x0[2];
+        vals[3] = zeroes->x0[3];
+        {
+            struct lbl_8046B6A0_24C_58_t* p = x58;
+            s32* vp = vals;
+            for (i = 0; i < 4; i++) {
+                if (p->x0 != 3) {
+                    *vp = p->x20;
+                }
+                p++;
+                vp++;
+            }
+        }
+        for (j = 3; j >= 1; j--) {
+            s32* p = vals;
+            for (i = j; i > 0; i--) {
+                if (p[0] < p[1]) {
+                    s32 tmp = p[0];
+                    p[0] = p[1];
+                    p[1] = tmp;
+                }
+                p++;
+            }
+        }
+        if (vals[0] == x58[arg1].x20 &&
+            vals[0] >= vals[1] * 2)
+        {
+            return 1;
+        }
+        return 0;
+    }
+
+    case 0xDC:
+    {
+        if ((unsigned) fn_801701C0(arg0, arg1, 0xDB) == 0) {
+            s32 player_kills = x58[arg1].x20;
+            {
+                struct lbl_8046B6A0_24C_58_t* p = x58;
+                int i;
+                for (i = 0; i < 4; i++) {
+                    if (p->x0 != 3 && arg1 != i &&
+                        (u32) p->x20 >= (u32) player_kills)
+                    {
+                        return 0;
+                    }
+                    p++;
+                }
+            }
+            if (x58[arg1].x20 != 0) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    case 0xDD:
+    {
+        s32 vals[4];
+        int i, j;
+        if (x58[arg1].x40 < 3) {
+            return 0;
+        }
+        vals[0] = zeroes->x10[0];
+        vals[1] = zeroes->x10[1];
+        vals[2] = zeroes->x10[2];
+        vals[3] = zeroes->x10[3];
+        {
+            struct lbl_8046B6A0_24C_58_t* p = x58;
+            s32* vp = vals;
+            for (i = 0; i < 4; i++) {
+                if (p->x0 != 3) {
+                    *vp = p->x40;
+                }
+                p++;
+                vp++;
+            }
+        }
+        for (j = 3; j >= 1; j--) {
+            s32* p = vals;
+            for (i = j; i > 0; i--) {
+                if (p[0] < p[1]) {
+                    s32 tmp = p[0];
+                    p[0] = p[1];
+                    p[1] = tmp;
+                }
+                p++;
+            }
+        }
+        if (vals[0] == x58[arg1].x40 &&
+            vals[0] >= vals[1] * 2)
+        {
+            return 1;
+        }
+        return 0;
+    }
+
+    case 0xDE:
+    {
+        if ((unsigned) fn_801701C0(arg0, arg1, 0xDD) == 0) {
+            s32 player_deaths = x58[arg1].x40;
+            {
+                struct lbl_8046B6A0_24C_58_t* p = x58;
+                int i;
+                for (i = 0; i < 4; i++) {
+                    if (p->x0 != 3 && arg1 != i &&
+                        (u32) p->x40 >= (u32) player_deaths)
+                    {
+                        return 0;
+                    }
+                    p++;
+                }
+            }
+            if (x58[arg1].x40 != 0) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    case 0xDF:
+    {
+        s32 vals[4];
+        int i, j;
+        s32 player_net = x58[arg1].x24 - x58[arg1].xA;
+        if ((u32) player_net < 3) {
+            return 0;
+        }
+        vals[0] = zeroes->x20[0];
+        vals[1] = zeroes->x20[1];
+        vals[2] = zeroes->x20[2];
+        vals[3] = zeroes->x20[3];
+        {
+            struct lbl_8046B6A0_24C_58_t* p = x58;
+            s32* vp = vals;
+            for (i = 0; i < 4; i++) {
+                if (p->x0 != 3) {
+                    *vp = p->x24 - p->xA;
+                }
+                p++;
+                vp++;
+            }
+        }
+        for (j = 3; j >= 1; j--) {
+            s32* p = vals;
+            for (i = j; i > 0; i--) {
+                if (p[0] < p[1]) {
+                    s32 tmp = p[0];
+                    p[0] = p[1];
+                    p[1] = tmp;
+                }
+                p++;
+            }
+        }
+        if (vals[0] == (s32)(x58[arg1].x24 - x58[arg1].xA) &&
+            vals[0] >= vals[1] * 2)
+        {
+            return 1;
+        }
+        return 0;
+    }
+
+    case 0xE0:
+    {
+        if ((unsigned) fn_801701C0(arg0, arg1, 0xDF) == 0) {
+            s32 player_net = x58[arg1].x24 - x58[arg1].xA;
+            {
+                struct lbl_8046B6A0_24C_58_t* p = x58;
+                int i;
+                for (i = 0; i < 4; i++) {
+                    if (p->x0 != 3 && arg1 != i &&
+                        (u32)(p->x24 - p->xA) >= (u32) player_net)
+                    {
+                        return 0;
+                    }
+                    p++;
+                }
+            }
+            if ((x58[arg1].x24 - x58[arg1].xA) != 0) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    case 0xE1:
+    {
+        s32 vals[4];
+        int i, j;
+        if (x58[arg1].xA < 3) {
+            return 0;
+        }
+        vals[0] = zeroes->x30[0];
+        vals[1] = zeroes->x30[1];
+        vals[2] = zeroes->x30[2];
+        vals[3] = zeroes->x30[3];
+        {
+            struct lbl_8046B6A0_24C_58_t* p = x58;
+            s32* vp = vals;
+            for (i = 0; i < 4; i++) {
+                if (p->x0 != 3) {
+                    *vp = p->xA;
+                }
+                p++;
+                vp++;
+            }
+        }
+        for (j = 3; j >= 1; j--) {
+            s32* p = vals;
+            for (i = j; i > 0; i--) {
+                if (p[0] < p[1]) {
+                    s32 tmp = p[0];
+                    p[0] = p[1];
+                    p[1] = tmp;
+                }
+                p++;
+            }
+        }
+        if ((u32) vals[0] == (u32) x58[arg1].xA &&
+            vals[0] >= vals[1] * 2)
+        {
+            return 1;
+        }
+        return 0;
+    }
+
+    case 0xE2:
+    {
+        if ((unsigned) fn_801701C0(arg0, arg1, 0xE1) == 0) {
+            u16 player_sds = x58[arg1].xA;
+            {
+                struct lbl_8046B6A0_24C_58_t* p = x58;
+                int i;
+                for (i = 0; i < 4; i++) {
+                    if (p->x0 != 3 && arg1 != i &&
+                        p->xA >= player_sds)
+                    {
+                        return 0;
+                    }
+                    p++;
+                }
+            }
+            if (x58[arg1].xA != 0) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    case 0xE3:
+        if (x58[arg1].x20 != 0) {
+            return 1;
+        }
+        return 0;
+
+    case 0xE4:
+    {
+        if ((x58[arg1].x24 - x58[arg1].xA) != 0) {
+            return 1;
+        }
+        return 0;
+    }
+
+    case 0xE5:
+        if (x58[arg1].xA != 0) {
+            return 1;
+        }
+        return 0;
+
+    case 0xE6:
+        if ((flags[1] >> 1) & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xE7:
+        if ((flags[1] >> 2) & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xE8:
+        if (flags[1] & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xE9:
+        if ((flags[2] >> 7) & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xEA:
+        if ((flags[2] >> 6) & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xEB:
+    {
+        u8 f0 = flags[0];
+        if (((f0 >> 1) & 1) && ((f0 >> 5) & 1)) {
+            return 1;
+        }
+        return 0;
+    }
+
+    case 0xEC:
+        if ((flags[0] >> 7) & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xED:
+        if ((flags[0] >> 6) & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xEE:
+        if ((flags[0] >> 5) & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xEF:
+    {
+        u8 f0 = flags[0];
+        if (((f0 >> 4) & 1) || ((f0 >> 3) & 1) || ((f0 >> 2) & 1)) {
+            return 1;
+        }
+        return 0;
+    }
+
+    case 0xF6:
+        if (((flags[2] >> 5) & 1) && ((flags[0] >> 7) & 1)) {
+            return 1;
+        }
+        return 0;
+
+    case 0xF7:
+        if ((flags[2] >> 3) & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xF8:
+        if ((flags[2] >> 4) & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xF0:
+        if (flags[0] & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xF1:
+        if ((flags[1] >> 7) & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xF2:
+        if ((flags[1] >> 6) & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xF3:
+        if ((flags[1] >> 5) & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xF4:
+        if ((flags[1] >> 4) & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xF5:
+        if ((flags[1] >> 3) & 1) {
+            return 1;
+        }
+        return 0;
+
+    case 0xF9:
+    {
+        f32 vals[4];
+        int i, j;
+        {
+            typedef struct { s32 a, b, c, d; } copy_t;
+            *(copy_t*)vals = *(copy_t*)zeroes->x40;
+        }
+        for (i = 0; i < 4; i++) {
+            if (x58[i].x0 != 3) {
+                vals[i] = pl_800407C8(i);
+            }
+        }
+        for (j = 3; j >= 1; j--) {
+            f32* p = vals;
+            for (i = j; i > 0; i--) {
+                if (p[0] < p[1]) {
+                    f32 tmp = p[0];
+                    p[0] = p[1];
+                    p[1] = tmp;
+                }
+                p++;
+            }
+        }
+        if (vals[0] == pl_800407C8(arg1) && vals[0] > 2.0f * vals[1]) {
+            return 1;
+        }
+        return 0;
+    }
+
+    case 0xFA:
+        if ((unsigned) fn_8016F160(arg1, 0x60) != 0 && rankings[arg1] != rankings[6]) {
+            return 1;
+        }
+        return 0;
+
+    case 0xFB:
+    {
+        f32 min_dmg = 0.0f;
+        int i;
+        for (i = 0; i < 4; i++) {
+            if (x58[i].x0 != 3 && min_dmg > pl_80040870(i)) {
+                min_dmg = pl_80040870(i);
+            }
+        }
+        if (min_dmg < 0.0f && min_dmg == pl_80040870(arg1)) {
+            return 1;
+        }
+        return 0;
+    }
+
+    case 0xFC:
+    {
+        {
+            struct lbl_8046B6A0_24C_58_t* p = x58;
+            int i;
+            for (i = 0; i < 4; i++) {
+                if (p->x0 != 3 && arg1 != i && (p->x3 & 1)) {
+                    return 0;
+                }
+                p++;
+            }
+        }
+        if (rules->x5 == 3) {
+            {
+                struct lbl_8046B6A0_24C_58_t* p = x58;
+                int i;
+                for (i = 0; i < 4; i++) {
+                    if (p->x0 != 3 && arg1 != i && rankings[i] == 0) {
+                        return 0;
+                    }
+                    p++;
+                }
+            }
+            if (!(x58[arg1].x3 & 1) && rankings[arg1] == 0 &&
+                x58[arg1].x20 == 0)
+            {
+                return 1;
+            }
+        } else {
+            int mode;
+            if (fn_80171A88() == 0) {
+                mode = 0;
+            } else {
+                mode = 6;
+            }
+            if (mode == 0) {
+                {
+                    struct lbl_8046B6A0_24C_58_t* p = x58;
+                    int i;
+                    for (i = 0; i < 4; i++) {
+                        if (p->x0 != 3 && arg1 != i && p->x5 == 0) {
+                            return 0;
+                        }
+                        p++;
+                    }
+                }
+                if (!(x58[arg1].x3 & 1) && x58[arg1].x5 == 0 &&
+                    x58[arg1].x20 == 0)
+                {
+                    return 1;
+                }
+            } else {
+                if (!(x58[arg1].x3 & 1) && x58[arg1].x20 == 0) {
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+
+    case 0xFD:
+        if ((unsigned) pl_800408DC(arg1) != 0 &&
+            rules->x7 == (u8) pl_800408DC(arg1))
+        {
+            return 1;
+        }
+        return 0;
+
+    case 0xFE:
+    {
+        u32 vals[4];
+        int i, j;
+        unsigned int threshold;
+        if ((unsigned) pl_800408B8(arg1) == 0) {
+            return 0;
+        }
+        threshold = pl_80038914()->x13C;
+        if ((unsigned) pl_800408B8(arg1) < threshold) {
+            int mode;
+            if (fn_80171A88() == 0) {
+                mode = 0;
+            } else {
+                mode = 6;
+            }
+            if (mode == 0) {
+                vals[0] = zeroes->x50[0];
+                vals[1] = zeroes->x50[1];
+                vals[2] = zeroes->x50[2];
+                vals[3] = zeroes->x50[3];
+                for (i = 0; i < 4; i++) {
+                    if (x58[i].x0 != 3 && pl_800408B8(i) != 0) {
+                        vals[i] = pl_800408B8(i);
+                    }
+                }
+                for (j = 3; j >= 1; j--) {
+                    u32* p = vals;
+                    for (i = j; i > 0; i--) {
+                        if (p[0] > p[1]) {
+                            u32 tmp = p[0];
+                            p[0] = p[1];
+                            p[1] = tmp;
+                        }
+                        p++;
+                    }
+                }
+                if (vals[0] == pl_800408B8(arg1) &&
+                    vals[0] <= vals[1] / 2)
+                {
+                    return 1;
+                }
+            } else {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    case 0xFF:
+    {
+        u32 vals[4];
+        int i, j;
+        unsigned int threshold;
+        threshold = pl_80038914()->x140;
+        if (pl_80040894(arg1) > threshold) {
+            int mode;
+            if (fn_80171A88() == 0) {
+                mode = 0;
+            } else {
+                mode = 6;
+            }
+            if (mode == 0) {
+                vals[0] = zeroes->x60[0];
+                vals[1] = zeroes->x60[1];
+                vals[2] = zeroes->x60[2];
+                vals[3] = zeroes->x60[3];
+                for (i = 0; i < 4; i++) {
+                    if (x58[i].x0 != 3) {
+                        vals[i] = pl_80040894(i);
+                    }
+                }
+                for (j = 3; j >= 1; j--) {
+                    u32* p = vals;
+                    for (i = j; i > 0; i--) {
+                        if (p[0] < p[1]) {
+                            u32 tmp = p[0];
+                            p[0] = p[1];
+                            p[1] = tmp;
+                        }
+                        p++;
+                    }
+                }
+                if (vals[0] == pl_80040894(arg1) &&
+                    vals[0] >= vals[1] * 2)
+                {
+                    return 1;
+                }
+            } else {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    default:
+        return 0;
+    }
+
+    PAD_STACK(4);
+}
 
 int fn_80171A88(void)
 {

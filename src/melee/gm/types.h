@@ -404,6 +404,7 @@ struct lbl_8046B6A0_24C_t {
     u8 x4;
     u8 x5; ///< match mode
     u8 is_teams;
+    u8 x7;
     u32 x8;
     u8 xC;
     u8 xD;
@@ -432,7 +433,9 @@ struct lbl_8046B6A0_24C_t {
         u32 x24;
         u32 x28;
         u32 x2C;
-        u8 pad60[0xA8 - 0x30];
+        u8 pad30[0x40 - 0x30];
+        u32 x40;
+        u8 pad44[0xA8 - 0x44];
     } x58[6];
     u8 pad3F0[0x44C - 0x3F0 - 0x58];
     struct lbl_8046B6A0_24C_44C_t {
