@@ -159,7 +159,7 @@
 /* 15F500 */ void gmMainLib_8015F500(void);
 /* 15F588 */ void gmMainLib_8015F588(bool);
 /* 15F600 */ void gmMainLib_8015F600(int, int);
-/* 15FA34 */ void gmMainLib_8015FA34(int);
+/* 15FA34 */ void gmMainLib_8015FA34(s32);
 /* 15FB68 */ void gmMainLib_8015FB68(void);
 /* 15FBA4 */ void gmMainLib_8015FBA4(void);
 /* 15FC74 */ int gmMainLib_8015FC74(void);

@@ -1049,10 +1049,12 @@ void gmMainLib_8015F588(bool arg0)
 
 /// #gmMainLib_8015F600
 
-void gmMainLib_8015FA34(int arg0)
+void gmMainLib_8015FA34(s32 arg0)
 {
     GXRenderModeObj* var_r3;
-    int i;
+    s32 i;
+
+    PAD_STACK(40);
 
     for (i = 1; i < 9; i++) {
         if ((arg0 != 0 && arg0 != 2) || lb_8001B6E0(i) != 0) {
@@ -1062,14 +1064,13 @@ void gmMainLib_8015FA34(int arg0)
         }
     }
     if (g_debugLevel > 2 && db_804D6B20 != 0) {
-        gmMainLib_804D3EE0->thing.x186C = -1;
+        gmMainLib_804D3EE0->thing.x186C = 0xFF;
         gm_80164F18();
         gm_8016468C();
         gm_8017297C();
         gm_801741FC();
     }
-    lbAudioAx_80028690(); ///< @todo the call to gmMainLib_8015CC40 shouldn't
-                          ///< be inlined
+    lbAudioAx_80028690();
     gmMainLib_8015F500();
 }
 
