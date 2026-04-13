@@ -78,6 +78,7 @@
 #include <stddef.h>
 #include <trigf.h>
 #include <baselib/gobj.h>
+#include <baselib/jobj.h>
 #include <baselib/random.h>
 #include <MSL/math.h>
 
@@ -3286,7 +3287,29 @@ void ftKb_SpecialN_800EEEC4(HSD_GObj* gobj, FighterKind kind)
 
 /// #ftKb_SpecialN_800EEEC4
 
-/// #ftKb_UnkMtxFunc0
+void ftKb_UnkMtxFunc0(Fighter_GObj* gobj, int arg1, Mtx mtx)
+{
+    Fighter* fp = gobj->user_data;
+
+    if (fp->fv.kb.hat.jobj == NULL) {
+        return;
+    }
+    if (!fp->x2225_b2) {
+        return;
+    }
+
+    {
+        MtxPtr bone_mtx = HSD_JObjGetMtxPtr(fp->parts[6].joint);
+        HSD_JObj* jobj = fp->fv.kb.hat.jobj;
+        HSD_JObjCopyMtx(fp->fv.kb.hat.jobj, bone_mtx);
+        jobj->flags |=
+            JOBJ_USER_DEF_MTX | JOBJ_MTX_INDEP_PARENT | JOBJ_MTX_INDEP_SRT;
+        HSD_JObjSetMtxDirty(jobj);
+        HSD_JObjDispAll(fp->fv.kb.hat.jobj, mtx,
+                        HSD_GObj_80390EB8(arg1), 0);
+    }
+    PAD_STACK(8);
+}
 
 HSD_JObj* ftKb_Init_UnkMotionStates6(Fighter_GObj* gobj)
 {
@@ -4043,7 +4066,41 @@ void ftKb_SpecialN_800F1420(Fighter_GObj* gobj, u32* arg1)
     }
 }
 
-/// #ftKb_SpecialN_800F14B4
+#pragma push
+#pragma dont_inline on
+void ftKb_SpecialN_800F14B4(Fighter_GObj* gobj)
+{
+    u8 sp14[0x88];
+    Fighter* fp = fp = gobj->user_data;
+    KirbyHatStruct* new_var;
+    FtPartsVisLookup* temp;
+    PAD_STACK(8);
+    if (fp->fv.kb.hat.x14.data != NULL) {
+        return;
+    }
+    new_var = ft_80459B88.hats[FTKIND_PICHU];
+    ftKb_SpecialN_800EF040(gobj, 0x18, new_var);
+    fp->fv.kb.hat.x14.data = HSD_ObjAlloc(&fighter_x2040_alloc_data);
+    fp->fv.kb.hat.x1C.data = HSD_ObjAlloc(&fighter_x2040_alloc_data);
+    ftKb_SpecialN_800EF0E4(gobj, 0x18, sp14);
+    ftKb_SpecialN_800EF35C(gobj, 0x18, sp14);
+    ftKb_SpecialN_800EF438(gobj, new_var);
+    ftParts_8007487C((FtPartsDesc*) new_var, &fp->fv.kb.hat.x24,
+                     fp->x619_costume_id, &fp->fv.kb.hat.x14,
+                     &fp->fv.kb.hat.x1C);
+    ftAnim_80070200(fp, (ftData_x8_x8*) &new_var->desc.vis_table,
+                    &fp->fv.kb.x44, &fp->fv.kb.hat.x14);
+    temp = (FtPartsVisLookup*) new_var->hat_dynamics[3];
+    fp->fv.kb.hat.x24.xC[4] = temp;
+    fp->x5AC.xC[4] = temp;
+    ftParts_80074D7C(&fp->fv.kb.hat.x24, 4, &fp->fv.kb.hat.x14);
+    ftKb_SpecialN_800F1420(gobj,
+                           (u32*) ((u8*) new_var->hat_dynamics[4] + 4));
+    *(u32*) &fp->x610_color_rgba[1] =
+        *(u32*) ((u8*) new_var->hat_dynamics[4] + 8);
+    Fighter_UpdateModelScale(gobj);
+}
+#pragma pop
 
 void ftKb_SpecialN_800F15D8(Fighter_GObj* gobj)
 {
