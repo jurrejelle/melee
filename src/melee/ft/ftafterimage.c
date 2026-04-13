@@ -71,8 +71,7 @@ void ftCo_800C2600(Fighter_GObj* gobj, u32 arg1)
         if (kind == It_Kind_Sword) {
             params = it_80285300(fp->item_gobj);
         } else {
-            OSReport("no afterimage item!\n");
-            __assert("ftafterimage.c", 0x7C, "0");
+            HSD_ASSERTREPORT(0x7C, NULL, "no afterimage item!\n");
         }
     } else {
         switch (fp->kind) {
