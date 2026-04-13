@@ -18,11 +18,10 @@
 void it_802CA49C(Item_GObj* gobj)
 {
     Item* ip = GET_ITEM(gobj);
-    Article* ap = ip->xC4_article_data;
-    itPokemonAttributes* sa = ap->x4_specialAttributes;
+    itPokemonAttributes* sa = ip->xC4_article_data->x4_specialAttributes;
     PAD_STACK(16);
 
-    it_80279C48(gobj, ap);
+    it_80279C48(gobj);
     ip->xDD4_itemVar.pokemon.timer = -1;
     ip->xDBC_itcmd_var4.flags.x0 = false;
     ip->xDD4_itemVar.pokemon.x64 = 0;
@@ -282,7 +281,22 @@ bool it_802CAE60(Item_GObj* gobj)
     return false;
 }
 
-/// #it_802CAE94
+extern const f64 it_804DD358;
+extern const f64 it_804DD360;
+
+void it_802CAE94(Item_GObj* gobj)
+{
+    HSD_JObj* jobj = HSD_GObjGetHSDObj(gobj);
+
+    if (jobj->scale.x < it_804DD358) {
+        Vec3 scale;
+        HSD_JObjGetScale(jobj, &scale);
+        scale.x += it_804DD360;
+        scale.y += it_804DD360;
+        scale.z += it_804DD360;
+        HSD_JObjSetScale(jobj, &scale);
+    }
+}
 
 bool it_802CAFB4(Item_GObj* gobj)
 {
