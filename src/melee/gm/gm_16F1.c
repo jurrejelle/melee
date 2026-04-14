@@ -15,6 +15,7 @@
 #include <melee/pl/plbonuslib.h>
 #include <melee/pl/types.h>
 #include <melee/ty/toy.h>
+#include <melee/pl/player.h>
 
 struct lbl_804D65A8_t {
     /* 0x00 */ u8 x0;
