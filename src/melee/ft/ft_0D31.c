@@ -842,26 +842,24 @@ void ftCo_800D481C(Fighter_GObj* gobj, s32 arg1)
     fp->accessory4_cb = fn_800D4DD4;
 }
 
-/// #ftCo_DeadUpFall_Anim
-
 void ftCo_DeadUpFall_Anim(Fighter_GObj* gobj)
 {
     Fighter* fp = GET_FIGHTER(gobj);
     s32* data = (s32*) &p_ftCommonData->x520;
     u8 _[8];
 
-    if (fp->mv.co.unk_deadup.x44 != 1) {
-    } else {
-        fp->mv.co.walk.middle_anim_frame +=
-            fp->mv.co.walk.slow_anim_frame;
-        if (fp->mv.co.unk_deadup.x68 != 0) {
-            f32 rot_speed = *(f32*)(data + 16);
-            HSD_JObj* jobj =
-                fp->parts[ftParts_GetBoneIndex(fp, FtPart_XRotN)].joint;
-            HSD_JObjAddRotationX(jobj, rot_speed);
-        }
+        switch(fp->mv.co.unk_deadup.x44) {
+        case 1:
+            fp->mv.co.walk.middle_anim_frame +=
+                fp->mv.co.walk.slow_anim_frame;
+            if (fp->mv.co.unk_deadup.x68 != 0) {
+                f32 rot_speed = *(f32*)(data + 16);
+                HSD_JObj* jobj =
+                    fp->parts[ftParts_GetBoneIndex(fp, FtPart_XRotN)].joint;
+                HSD_JObjAddRotationX(jobj, rot_speed);
+            }
+            break;
     }
-
     if (fp->mv.co.unk_deadup.x40 != 0) {
         fp->mv.co.unk_deadup.x40 -= 1;
     }
