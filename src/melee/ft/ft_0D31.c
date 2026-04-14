@@ -738,11 +738,13 @@ void ftCo_800D4580(Fighter_GObj* gobj, int arg1)
     Quaternion q;
     u8 _[20];
     Fighter* fp;
+    Fighter_GObj* new_var;
     int* datattrs;
     HSD_JObj* jobj;
     Fighter* fp2;
 
-    fp = gobj->user_data;
+    new_var = gobj;
+    fp = new_var->user_data;
     datattrs = &p_ftCommonData->x520;
 
     ftCo_800D331C(gobj);
@@ -758,13 +760,13 @@ void ftCo_800D4580(Fighter_GObj* gobj, int arg1)
                               NULL);
     fp->x2220_b7 = true;
 
-    jobj = GET_JOBJ(gobj);
+    jobj = GET_JOBJ(new_var);
     q = lbl_803B7500;
-    if (((Fighter*) gobj->user_data)->x34_scale.z == 1.0f) {
+    if ((fp2 = (Fighter*) new_var->user_data)->x34_scale.z == 1.0f) {
         HSD_JObjSetRotation(jobj, &q);
     }
 
-    fp2 = gobj->user_data;
+    fp2 = new_var->user_data;
     if (fp2->x221D_b6) {
         ft_800880D8(fp2);
         fp2->x2004 = 0;
@@ -773,7 +775,7 @@ void ftCo_800D4580(Fighter_GObj* gobj, int arg1)
     fp2->x221E_b1 = true;
     fp2->x221E_b2 = true;
 
-    ft_80088C5C(gobj);
+    ft_80088C5C(new_var);
     ftCommon_8007EFC0(fp, true);
     ftCo_800BFFD0(fp, 0x2B, 0);
     pl_8003DF44(fp->player_id, fp->x221F_b4);
