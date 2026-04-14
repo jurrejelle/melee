@@ -1284,7 +1284,8 @@ void efLib_Cb_ftMr_SpecialLw(EF_Effect* effect)
     } else {
         HSD_JObjSetFlagsAll(eff_child_nxt_jobj, 0x10U);
     }
-    if ((fighter->cmd_vars[3] != 0U) && ((s32) fighter->mv.co.common.x4.z != 0))
+    if ((fighter->cmd_vars[3] != 0U) &&
+        (*(s32*) &fighter->mv.co.common.x4.z != 0))
     {
         f32 rotate_z = -atan2f(fighter->coll_data.floor.normal.x,
                                fighter->coll_data.floor.normal.y);
@@ -1314,7 +1315,8 @@ void efLib_Cb_ftLg_SpecialLw(EF_Effect* effect)
         HSD_JObjSetFlagsAll(eff_child_nxt_jobj, 0x10U);
     }
 
-    if ((fighter->cmd_vars[3] != 0U) && ((s32) fighter->mv.co.common.x4.z != 0))
+    if ((fighter->cmd_vars[3] != 0U) &&
+        (*(s32*) &fighter->mv.co.common.x4.z != 0))
     {
         f32 rotate_z = -atan2f(fighter->coll_data.floor.normal.x,
                                fighter->coll_data.floor.normal.y);
