@@ -70,6 +70,8 @@
 #include <melee/pl/plbonuslib.h>
 #include <melee/pl/plstale.h>
 
+static const u8 ftCo_804D8FC0[] = { 0x43, 0x30, 00, 00, 0x80, 00, 00, 00 };
+
 /* 0D4DD4 */ static void fn_800D4DD4(Fighter_GObj* gobj);
 
 bool ftCo_800D3158(Fighter_GObj* gobj)
