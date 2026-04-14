@@ -950,6 +950,14 @@ struct Fighter_DemoStrings {
             u8 x2084_b5 : 1;
             u8 x2084_b6 : 1;
             u8 x2084_b7 : 1;
+            u8 x2085_b0 : 1;
+            u8 x2085_b1 : 1;
+            u8 x2085_b2 : 1;
+            u8 x2085_b3 : 1;
+            u8 x2085_b4 : 1;
+            u8 x2085_b5 : 1;
+            u8 x2085_b6 : 1;
+            u8 x2085_b7 : 1;
         };
     };
     /* fp+2088 */ u16 x2088;
@@ -1878,6 +1886,21 @@ struct ft_80459B88_t {
     /* +4 */ KirbyHatStruct* hats[FTKIND_MAX];
 };
 STATIC_ASSERT(sizeof(struct ft_80459B88_t) == 0x88);
+
+struct IKState {
+    /* 0x00 */ HSD_JObj* jobj0;
+    /* 0x04 */ HSD_JObj* jobj1;
+    /* 0x08 */ HSD_JObj* jobj2;
+    /* 0x0C */ Vec3 pos0;
+    /* 0x18 */ Vec3 pos1;
+    /* 0x24 */ Vec3 pos2;
+    /* 0x30 */ Vec3 pos3;
+    /* 0x3C */ Vec3 pos4;
+    /* 0x48 */ f32 len0;
+    /* 0x4C */ f32 len1;
+    /* 0x50 */ f32 angle_max;
+    /* 0x54 */ f32 angle_limit;
+};
 
 typedef struct DmgLogEntry {
     /*  +0 */ enum EntityKind x0;
