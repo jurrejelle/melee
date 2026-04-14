@@ -1254,33 +1254,37 @@ void ftCo_RebirthWait_IASA(Fighter_GObj* gobj)
 
 void ftCo_RebirthWait_Phys(Fighter_GObj* gobj)
 {
+    Fighter* new_var;
     Vec3 sp30;
     Vec3 sp24;
     Vec3 sp18;
     u8 _[12];
     Fighter* fp = gobj->user_data;
+    new_var = fp;
 
-    if (!fp->x221F_b4) {
-        if (fp->smash_attrs.x2135 != -1) {
-            Stage_80224E38(&sp18, fp->smash_attrs.x2135);
-            Player_GetSomePos(fp->player_id, &sp24);
-            fp->mv.co.common.x4.x =
-                fp->facing_dir * ftCommon_800804EC(fp) + (sp18.x + sp24.x);
-            fp->mv.co.common.x4.y = sp18.y + sp24.y;
-            fp->mv.co.common.x4.z = 0.0f;
+    if (!new_var->x221F_b4) {
+        if (new_var->smash_attrs.x2135 != -1) {
+            Stage_80224E38(&sp18, new_var->smash_attrs.x2135);
+            Player_GetSomePos(new_var->player_id, &sp24);
+            new_var->mv.co.common.x4.x =
+                new_var->facing_dir * ftCommon_800804EC(new_var) +
+                (sp18.x + sp24.x);
+            new_var->mv.co.common.x4.y = sp18.y + sp24.y;
+            new_var->mv.co.common.x4.z = 0.0f;
         }
-        ftCommon_8007F8B4(fp, &sp30);
+        ftCommon_8007F8B4(new_var, &sp30);
         {
-            f32 inv_timer = 1.0f / (f32) fp->mv.co.common.x0;
-            fp->self_vel.x = inv_timer * (fp->mv.co.common.x4.x - sp30.x);
-            fp->self_vel.y =
-                inv_timer * (*(f32*) &fp->mv.co.common.x4.y - sp30.y);
+            f32 inv_timer = 1.0f / (f32) new_var->mv.co.common.x0;
+            new_var->self_vel.x =
+                inv_timer * (new_var->mv.co.common.x4.x - sp30.x);
+            new_var->self_vel.y =
+                inv_timer * (new_var->mv.co.common.x4.y - sp30.y);
         }
     } else {
         Fighter* other_fp =
-            Player_GetEntityAtIndex(fp->player_id, 0)->user_data;
-        fp->self_vel.x = other_fp->self_vel.x;
-        fp->self_vel.y = other_fp->self_vel.y;
+            Player_GetEntityAtIndex(new_var->player_id, 0)->user_data;
+        new_var->self_vel.x = other_fp->self_vel.x;
+        new_var->self_vel.y = other_fp->self_vel.y;
     }
 }
 
