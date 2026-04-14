@@ -1103,21 +1103,19 @@ void ftCo_Rebirth_Phys(Fighter_GObj* gobj)
         if (new_var->smash_attrs.x2135 != -1) {
             Stage_80224E38(&stage_pos, new_var->smash_attrs.x2135);
             Player_GetSomePos(new_var->player_id, &player_pos);
-            new_var->mv.co.common.x4 =
+            new_var->mv.co.common.x4.x =
                 stage_pos.x + player_pos.x +
                 new_var->facing_dir * ftCommon_800804EC(new_var);
-            *(f32*) &new_var->mv.co.common.x8 =
-                stage_pos.y + player_pos.y;
-            *(f32*) &new_var->mv.co.common.xC = 0.0f;
+            new_var->mv.co.common.x4.y = stage_pos.y + player_pos.y;
+            new_var->mv.co.common.x4.z = 0.0f;
         }
         ftCommon_8007F8B4(new_var, &cur_pos);
         {
             float inv = 1.0f / (float) new_var->mv.co.common.x0;
             new_var->self_vel.x =
-                (new_var->mv.co.common.x4 - cur_pos.x) * inv;
+                (new_var->mv.co.common.x4.x - cur_pos.x) * inv;
             new_var->self_vel.y =
-                (*(f32*) &new_var->mv.co.common.x8 - cur_pos.y) *
-                inv;
+                (new_var->mv.co.common.x4.y - cur_pos.y) * inv;
         }
     } else {
         HSD_GObj* other_gobj =
@@ -1263,21 +1261,20 @@ void ftCo_RebirthWait_Phys(Fighter_GObj* gobj)
     Fighter* fp = gobj->user_data;
 
     if (!fp->x221F_b4) {
-        if ((s8) fp->smash_attrs.x2135 != -1) {
-            Stage_80224E38(&sp18, (s8) fp->smash_attrs.x2135);
+        if (fp->smash_attrs.x2135 != -1) {
+            Stage_80224E38(&sp18, fp->smash_attrs.x2135);
             Player_GetSomePos(fp->player_id, &sp24);
-            fp->mv.co.common.x4 =
-                fp->facing_dir * ftCommon_800804EC(fp) +
-                (sp18.x + sp24.x);
-            *(f32*) &fp->mv.co.common.x8 = sp18.y + sp24.y;
-            *(f32*) &fp->mv.co.common.xC = 0.0f;
+            fp->mv.co.common.x4.x =
+                fp->facing_dir * ftCommon_800804EC(fp) + (sp18.x + sp24.x);
+            fp->mv.co.common.x4.y = sp18.y + sp24.y;
+            fp->mv.co.common.x4.z = 0.0f;
         }
         ftCommon_8007F8B4(fp, &sp30);
         {
             f32 inv_timer = 1.0f / (f32) fp->mv.co.common.x0;
-            fp->self_vel.x = inv_timer * (fp->mv.co.common.x4 - sp30.x);
+            fp->self_vel.x = inv_timer * (fp->mv.co.common.x4.x - sp30.x);
             fp->self_vel.y =
-                inv_timer * (*(f32*) &fp->mv.co.common.x8 - sp30.y);
+                inv_timer * (*(f32*) &fp->mv.co.common.x4.y - sp30.y);
         }
     } else {
         Fighter* other_fp =
@@ -1303,8 +1300,8 @@ void ftCo_Rebirth_Cam(Fighter_GObj* gobj)
     Fighter* fp = GET_FIGHTER(gobj);
     CmSubject* camera_box = fp->x890_cameraBox;
     ftCamera_80076018(fp->ft_data->x3C, &spC, fp->x34_scale.y);
-    camera_box->x10.x = fp->mv.co.common.x4;
-    camera_box->x10.y = *(f32*) &fp->mv.co.common.x8 + spC.x0.x;
+    camera_box->x10.x = fp->mv.co.common.x4.x;
+    camera_box->x10.y = fp->mv.co.common.x4.y + spC.x0.x;
     camera_box->x10.z = 0.0f;
     ftLib_800866DC(gobj, &camera_box->x1C);
 }
