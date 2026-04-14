@@ -730,15 +730,20 @@ void ftCo_DeadUpStar_Cam(Fighter_GObj* gobj)
     ftCamera_80076320(gobj);
 }
 
-/// #ftCo_800D4580
-
 extern Quaternion lbl_803B7500;
 
 void ftCo_800D4580(Fighter_GObj* gobj, int arg1)
 {
-    u8 _[24];
-    Fighter* fp = gobj->user_data;
-    int* datattrs = &p_ftCommonData->x520;
+    u8 _2[4];
+    Quaternion q;
+    u8 _[20];
+    Fighter* fp;
+    int* datattrs;
+    HSD_JObj* jobj;
+    Fighter* fp2;
+
+    fp = gobj->user_data;
+    datattrs = &p_ftCommonData->x520;
 
     ftCo_800D331C(gobj);
 
@@ -753,24 +758,20 @@ void ftCo_800D4580(Fighter_GObj* gobj, int arg1)
                               NULL);
     fp->x2220_b7 = true;
 
-    {
-        HSD_JObj* jobj = GET_JOBJ(gobj);
-        Quaternion q = lbl_803B7500;
-        if (((Fighter*) gobj->user_data)->x34_scale.z == 1.0f) {
-            HSD_JObjSetRotation(jobj, &q);
-        }
+    jobj = GET_JOBJ(gobj);
+    q = lbl_803B7500;
+    if (((Fighter*) gobj->user_data)->x34_scale.z == 1.0f) {
+        HSD_JObjSetRotation(jobj, &q);
     }
 
-    {
-        Fighter* fp2 = gobj->user_data;
-        if (fp2->x221D_b6) {
-            ft_800880D8(fp2);
-            fp2->x2004 = 0;
-        }
-        fp2->x2219_b1 = true;
-        fp2->x221E_b1 = true;
-        fp2->x221E_b2 = true;
+    fp2 = gobj->user_data;
+    if (fp2->x221D_b6) {
+        ft_800880D8(fp2);
+        fp2->x2004 = 0;
     }
+    fp2->x2219_b1 = true;
+    fp2->x221E_b1 = true;
+    fp2->x221E_b2 = true;
 
     ft_80088C5C(gobj);
     ftCommon_8007EFC0(fp, true);
