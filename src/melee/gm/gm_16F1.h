@@ -39,7 +39,7 @@ struct lbl_804D65A8_t;
 /* 171B2C */ bool fn_80171B2C(int);
 /* 171B64 */ void fn_80171B64(struct lbl_804D65A8_t*);
 /* 171BA4 */ int fn_80171BA4(void*);
-/* 171DC4 */ void fn_80171DC4();
+/* 171DC4 */ void fn_80171DC4(void);
 /* 1720B4 */ int gm_801720B4(void);
 /* 1720F8 */ int gm_801720F8(void);
 /* 172140 */ int gm_80172140(UNK_PARAMS);
