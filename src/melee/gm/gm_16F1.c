@@ -168,36 +168,14 @@ int fn_8016F39C(HSD_Text** arg0, void* arg1, u8 arg2, u16 arg3, u8 arg4,
     while ((u32) idx < 0x101U) {
         matched = 0;
         if ((s16) lbl_803D5A4C[idx].kind < 0xD7) {
-            curr = lbl_803D5A4C;
-            while (curr->kind != idx) {
-                if (curr->kind == 0x29A) {
-                    break;
-                }
-                curr++;
-            }
-            if (curr->kind == idx) {
-                flags = curr->x4;
-            } else {
-                flags = 0;
-            }
+            flags = fn_8016F180(idx);
             if (arg4 & flags) {
                 if (pl_80039418(arg5, idx) != 0) {
                     matched = 1;
                 }
             }
         } else {
-            curr = lbl_803D5A4C;
-            while (curr->kind != idx) {
-                if (curr->kind == 0x29A) {
-                    break;
-                }
-                curr++;
-            }
-            if (curr->kind == idx) {
-                flags = curr->x4;
-            } else {
-                flags = 0;
-            }
+            flags = fn_8016F180(idx);
             if (arg4 & flags) {
                 if ((unsigned) fn_801701C0(arg1, arg5, idx) != 0) {
                     matched = 1;
@@ -236,9 +214,7 @@ int fn_8016F39C(HSD_Text** arg0, void* arg1, u8 arg2, u16 arg3, u8 arg4,
 
 int fn_8016F548(void* arg0, u16 arg1, u8 mask, u8 player_id)
 {
-    struct lbl_803D5A4C_t* curr;
     int i;
-    u8 flags;
 
     if (arg1 >= 0x101U) {
         return -1;
@@ -246,37 +222,13 @@ int fn_8016F548(void* arg0, u16 arg1, u8 mask, u8 player_id)
 
     for (i = arg1; (u32) i < 0x101U; i++) {
         if ((s16) lbl_803D5A4C[i].kind < 0xD7) {
-            curr = lbl_803D5A4C;
-            while (curr->kind != i) {
-                if (curr->kind == 0x29A) {
-                    break;
-                }
-                curr++;
-            }
-            if (curr->kind == i) {
-                flags = curr->x4;
-            } else {
-                flags = 0;
-            }
-            if ((u8) mask & flags) {
+            if ((u8) mask & (u8) fn_8016F180(i)) {
                 if (pl_80039418(player_id, i) != 0) {
                     return i;
                 }
             }
         } else {
-            curr = lbl_803D5A4C;
-            while (curr->kind != i) {
-                if (curr->kind == 0x29A) {
-                    break;
-                }
-                curr++;
-            }
-            if (curr->kind == i) {
-                flags = curr->x4;
-            } else {
-                flags = 0;
-            }
-            if ((u8) mask & flags) {
+            if ((u8) mask & (u8) fn_8016F180(i)) {
                 if ((unsigned) fn_801701C0(arg0, player_id, i) != 0) {
                     return i;
                 }
@@ -286,37 +238,13 @@ int fn_8016F548(void* arg0, u16 arg1, u8 mask, u8 player_id)
 
     for (i = 0x100; i >= 0; i--) {
         if ((s16) lbl_803D5A4C[i].kind < 0xD7) {
-            curr = lbl_803D5A4C;
-            while (curr->kind != i) {
-                if (curr->kind == 0x29A) {
-                    break;
-                }
-                curr++;
-            }
-            if (curr->kind == i) {
-                flags = curr->x4;
-            } else {
-                flags = 0;
-            }
-            if ((u8) mask & flags) {
+            if ((u8) mask & (u8) fn_8016F180(i)) {
                 if (pl_80039418(player_id, i) != 0) {
                     return i;
                 }
             }
         } else {
-            curr = lbl_803D5A4C;
-            while (curr->kind != i) {
-                if (curr->kind == 0x29A) {
-                    break;
-                }
-                curr++;
-            }
-            if (curr->kind == i) {
-                flags = curr->x4;
-            } else {
-                flags = 0;
-            }
-            if ((u8) mask & flags) {
+            if ((u8) mask & (u8) fn_8016F180(i)) {
                 if ((unsigned) fn_801701C0(arg0, player_id, i) != 0) {
                     return i;
                 }
@@ -343,36 +271,14 @@ int fn_8016F740(void* arg0, u16 arg1, u8 mask, u8 player_id)
     i = temp;
     for (; (u32) i < 0x101U; i++) {
         if ((s16) lbl_803D5A4C[i].kind < 0xD7) {
-            curr = lbl_803D5A4C;
-            while (curr->kind != i) {
-                if (curr->kind == 0x29A) {
-                    break;
-                }
-                curr++;
-            }
-            if (curr->kind == i) {
-                flags = curr->x4;
-            } else {
-                flags = 0;
-            }
+            flags = fn_8016F180(i);
             if ((u8) mask & flags) {
                 if (pl_80039418(player_id, i) != 0) {
                     return i;
                 }
             }
         } else {
-            curr = lbl_803D5A4C;
-            while (curr->kind != i) {
-                if (curr->kind == 0x29A) {
-                    break;
-                }
-                curr++;
-            }
-            if (curr->kind == i) {
-                flags = curr->x4;
-            } else {
-                flags = 0;
-            }
+            flags = fn_8016F180(i);
             if ((u8) mask & flags) {
                 if ((unsigned) fn_801701C0(arg0, player_id, i) != 0) {
                     return i;
@@ -382,7 +288,7 @@ int fn_8016F740(void* arg0, u16 arg1, u8 mask, u8 player_id)
     }
 
     return -1;
-    PAD_STACK(16);
+    PAD_STACK(8);
 }
 
 int fn_8016F870(void* arg0, u16 arg1, u8 mask, u8 player_id)
@@ -400,34 +306,14 @@ int fn_8016F870(void* arg0, u16 arg1, u8 mask, u8 player_id)
         kind = lbl_803D5A4C[i].kind;
 
         if (kind < 0xD7) {
-            curr = lbl_803D5A4C;
-            while (curr->kind != i) {
-                if (curr->kind == 0x29A) {
-                    flags = 0;
-                    goto check1;
-                }
-                curr++;
-            }
-            flags = curr->x4;
-
-        check1:
+            flags = fn_8016F180(i);
             if ((u8) mask & flags) {
                 if (pl_80039418(player_id, i) != 0) {
                     return i;
                 }
             }
         } else {
-            curr = lbl_803D5A4C;
-            while (curr->kind != i) {
-                if (curr->kind == 0x29A) {
-                    flags = 0;
-                    goto check2;
-                }
-                curr++;
-            }
-            flags = curr->x4;
-
-        check2:
+            flags = fn_8016F180(i);
             if ((u8) mask & flags) {
                 if ((unsigned) fn_801701C0(arg0, player_id, i) != 0) {
                     return i;
@@ -442,7 +328,6 @@ int fn_8016F870(void* arg0, u16 arg1, u8 mask, u8 player_id)
 
 int fn_8016F9A8(void* arg0, u16 arg1, u8 mask, u8 player_id)
 {
-    struct lbl_803D5A4C_t* curr;
     int count = 0;
     int i;
     u8 flags;
@@ -453,36 +338,14 @@ int fn_8016F9A8(void* arg0, u16 arg1, u8 mask, u8 player_id)
 
     for (i = arg1; (u32) i < 0x101; i++) {
         if ((s16) lbl_803D5A4C[i].kind < 0xD7) {
-            curr = lbl_803D5A4C;
-            while (curr->kind != i) {
-                if (curr->kind == 0x29A) {
-                    break;
-                }
-                curr++;
-            }
-            if (curr->kind == i) {
-                flags = curr->x4;
-            } else {
-                flags = 0;
-            }
+            flags = fn_8016F180(i);
             if ((u8) mask & flags) {
                 if (pl_80039418(player_id, i) != 0) {
                     count++;
                 }
             }
         } else {
-            curr = lbl_803D5A4C;
-            while (curr->kind != i) {
-                if (curr->kind == 0x29A) {
-                    break;
-                }
-                curr++;
-            }
-            if (curr->kind == i) {
-                flags = curr->x4;
-            } else {
-                flags = 0;
-            }
+            flags = fn_8016F180(i);
             if ((u8) mask & flags) {
                 if ((unsigned) fn_801701C0(arg0, player_id, i) != 0) {
                     count++;
@@ -492,7 +355,7 @@ int fn_8016F9A8(void* arg0, u16 arg1, u8 mask, u8 player_id)
     }
 
     return count;
-    PAD_STACK(16);
+    PAD_STACK(8);
 }
 
 int fn_8016FAD4(struct lbl_8046B6A0_24C_t* rules, u32 kind, int flags,
@@ -586,20 +449,6 @@ void fn_80171AD4(void)
     memzero(&lbl_8046DBC8, sizeof(lbl_8046DBC8));
 }
 
-inline u8 fn_8016FFD4_inline(int i)
-{
-    struct lbl_803D5A4C_t* curr;
-    curr = lbl_803D5A4C;
-
-    while (curr->kind != i) {
-        if (curr->kind == 0x29A) {
-            return 0;
-        }
-        curr++;
-    }
-    return curr->x4;
-}
-
 int fn_8016FFD4(struct lbl_8046B6A0_24C_t* arg0, int arg1, u8 arg2)
 {
     int i;
@@ -608,12 +457,12 @@ int fn_8016FFD4(struct lbl_8046B6A0_24C_t* arg0, int arg1, u8 arg2)
 
     for (i = 0; (u32) i < 0x101U; i++) {
         if ((s16) lbl_803D5A4C[i].kind < 0xD7) {
-            flags = fn_8016FFD4_inline(i);
+            flags = fn_8016F180(i);
             if ((u8) arg1 & flags && pl_80039418((u8) arg2, i) != 0) {
                 count += fn_8016FAD4(arg0, i, arg1, arg2);
             }
         } else {
-            flags = fn_8016FFD4_inline(i);
+            flags = fn_8016F180(i);
 
             if ((u8) arg1 & flags) {
                 if ((unsigned) fn_801701C0(arg0, (u8) arg2, i) != 0) {
@@ -632,16 +481,7 @@ int fn_80170110(void* arg0, int idx, int mask, u8 player_id)
     int kind = lbl_803D5A4C[idx].kind;
     u8 flags;
 
-    while (curr->kind != kind) {
-        if (curr->kind == 0x29A) {
-            flags = 0;
-            goto check;
-        }
-        curr++;
-    }
-    flags = curr->x4;
-
-check:
+    flags = (fn_8016F180(kind));
     if ((u8) mask & flags) {
         if (kind < 0xD7) {
             return pl_80039418(player_id, kind);
@@ -1579,14 +1419,14 @@ int fn_80171BA4(void* arg0)
     return result;
 }
 
-void fn_80171DC4(HSD_GObj* arg0)
+void fn_80171DC4()
 {
     int i;
     struct lbl_8046B6A0_24C_t* rules = gm_8016B774();
 
     fn_80171BA4(rules);
 
-    if (lbl_8046DBC8.x0 == 0 && lbl_804D65B0 > 0) {
+    if ((lbl_8046DBC8.x0 == 0) && (0 < lbl_804D65B0)) {
         lbl_8046DBC8.x0 = 1;
         lbl_8046DBC8.x1 = 1;
         for (i = 0; i < 6; i++) {
