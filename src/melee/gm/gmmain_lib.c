@@ -1286,12 +1286,14 @@ void gmMainLib_8015F600(int arg0, int arg1)
     }
 }
 
+#pragma push
+#pragma inline_depth(3)
 void gmMainLib_8015FA34(s32 arg0)
 {
     GXRenderModeObj* var_r3;
     s32 i;
 
-    PAD_STACK(40);
+    PAD_STACK(50);
 
     for (i = 1; i < 9; i++) {
         if ((arg0 != 0 && arg0 != 2) || lb_8001B6E0(i) != 0) {
@@ -1310,7 +1312,7 @@ void gmMainLib_8015FA34(s32 arg0)
     lbAudioAx_80028690();
     gmMainLib_8015F500();
 }
-
+#pragma pop
 void gmMainLib_8015FB68(void)
 {
     gmMainLib_804D3EE0->thing.x186C = 0;
