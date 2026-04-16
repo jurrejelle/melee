@@ -37,7 +37,10 @@ typedef struct itClimbersIce_ItemVars {
 } itClimbersIce_ItemVars;
 
 typedef struct itClimbersStringAttributes {
-    /* +00 */ u8 pad_00[0x18];
+    /* +00 */ u8 pad_00[0x8];
+    /* +08 */ f32 x8;
+    /* +0C */ u8 pad_0C[0x8];
+    /* +14 */ f32 x14;
     /* +18 */ s32 x18;
     /* +1C */ s32 x1C;
     /* +20 */ s32 x20;
@@ -578,7 +581,7 @@ typedef struct itPeachTurnip_ItemVars {
 
 typedef struct itPikachutJoltGround_ItemVars {
     /* +0 +DD4 */ f32 xDD4;
-    /* +4 +DD8 */ char pad_0[0x4];
+    /* +4 +DD8 */ HSD_GObj* xDD8;
     /* +8 +DDC */ Item_GObj* xDDC;
     /* +C +DE0 */ s32 xDE0;
     /* +10 +DE4 */ s32 xDE4;
@@ -610,7 +613,7 @@ typedef struct itPikachuthunder_ItemVars {
 } itPikachuthunder_ItemVars;
 
 typedef struct itPikachutJoltGroundAttributes {
-    /* +0 */ char pad_0[0x4];
+    /* +0 */ f32 x0;
     /* +4 */ f32 x4;
     /* +8 */ f32 x8;
     /* +C */ f32 xC;
@@ -846,12 +849,18 @@ typedef struct itHinoarashi_ItemVars {
     /* xE34 */ UnkFlagStruct x60;
     /* xE35 */ u8 x61[0x64 - 0x61];
     /* xE38 */ f32 x64;
+    /* xE3C */ f32 x68;
+    /* xE40 */ Vec3 x6C;
+    /* xE4C */ f32 x78;
 } itHinoarashi_ItemVars;
 
 typedef struct itHinoarashiAttributes {
     /* +0 */ f32 x0;
     /* +4 */ f32 x4;
     /* +8 */ f32 x8;
+    /* +C */ u8 _pad[0x10 - 0xC];
+    /* +10 */ f32 x10;
+    /* +14 */ f32 x14;
 } itHinoarashiAttributes;
 
 typedef struct itTools_ItemVars {
@@ -875,5 +884,15 @@ typedef struct itToolsAttributes {
     /* +C */ f32 xC;
     /* +10 */ itToolsAttrEntry entries[1];
 } itToolsAttributes;
+
+typedef struct itNessYoyo_ItemVars {
+    /* +0  ip+DD4 */ s32 x0;
+    /* +4  ip+DD8 */ f32 x4;
+    /* +8  ip+DDC */ ItemLink* x8;
+    /* +C  ip+DE0 */ ItemLink* xC;
+    /* +10 ip+DE4 */ HSD_GObj* x10;
+    /* +14 ip+DE8 */ char pad_14[0x4];
+    /* +18 ip+DEC */ HSD_JObj* x18;
+} itNessYoyo_ItemVars;
 
 #endif
