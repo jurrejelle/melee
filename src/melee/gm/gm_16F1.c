@@ -101,7 +101,7 @@ Gm_DecType gmDecisionGetType(int kind)
     return curr->x5;
 }
 
-short fn_8016F1F0(int idx)
+s32 fn_8016F1F0(int idx)
 {
     return lbl_803D5A4C[idx].kind;
 }
@@ -495,7 +495,7 @@ int fn_8016F9A8(void* arg0, u16 arg1, u8 mask, u8 player_id)
     PAD_STACK(16);
 }
 
-int fn_8016FAD4(struct lbl_8046B6A0_24C_t* rules, u16 kind, int flags,
+int fn_8016FAD4(struct lbl_8046B6A0_24C_t* rules, u32 kind, int flags,
                 u8 player)
 {
     struct lbl_803D5A4C_t* entry = lbl_803D5A4C;
