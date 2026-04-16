@@ -323,7 +323,6 @@ int fn_8016F870(void* arg0, u16 arg1, u8 mask, u8 player_id)
     }
 
     return -1;
-    PAD_STACK(8);
 }
 
 int fn_8016F9A8(void* arg0, u16 arg1, u8 mask, u8 player_id)
