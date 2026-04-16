@@ -586,45 +586,35 @@ void fn_80171AD4(void)
     memzero(&lbl_8046DBC8, sizeof(lbl_8046DBC8));
 }
 
-int fn_8016FFD4(struct lbl_8046B6A0_24C_t* arg0, int arg1, u8 arg2)
+inline u8 fn_8016FFD4_inline(int i)
 {
     struct lbl_803D5A4C_t* curr;
+    curr = lbl_803D5A4C;
+
+    while (curr->kind != i) {
+        if (curr->kind == 0x29A) {
+            return 0;
+        }
+        curr++;
+    }
+    return curr->x4;
+}
+
+int fn_8016FFD4(struct lbl_8046B6A0_24C_t* arg0, int arg1, u8 arg2)
+{
     int i;
     int count = 0;
     u8 flags;
 
     for (i = 0; (u32) i < 0x101U; i++) {
         if ((s16) lbl_803D5A4C[i].kind < 0xD7) {
-            curr = lbl_803D5A4C;
-            while (curr->kind != i) {
-                if (curr->kind == 0x29A) {
-                    break;
-                }
-                curr++;
-            }
-            if (curr->kind == i) {
-                flags = curr->x4;
-            } else {
-                flags = 0;
-            }
-            if ((u8) arg1 & flags) {
-                if (pl_80039418((u8) arg2, i) != 0) {
-                    count += fn_8016FAD4(arg0, i, arg1, arg2);
-                }
+            flags = fn_8016FFD4_inline(i);
+            if ((u8) arg1 & flags && pl_80039418((u8) arg2, i) != 0) {
+                count += fn_8016FAD4(arg0, i, arg1, arg2);
             }
         } else {
-            curr = lbl_803D5A4C;
-            while (curr->kind != i) {
-                if (curr->kind == 0x29A) {
-                    break;
-                }
-                curr++;
-            }
-            if (curr->kind == i) {
-                flags = curr->x4;
-            } else {
-                flags = 0;
-            }
+            flags = fn_8016FFD4_inline(i);
+
             if ((u8) arg1 & flags) {
                 if ((unsigned) fn_801701C0(arg0, (u8) arg2, i) != 0) {
                     count += fn_8016FAD4(arg0, i, arg1, arg2);
