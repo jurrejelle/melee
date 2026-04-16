@@ -1097,10 +1097,12 @@ void gmMainLib_8015F260(void)
     PAD_STACK(16);
 
     for (i = 0; i < 120; i++) {
-        struct NameTagData* data =
-            &gmMainLib_804D3EE0->thing.x2FF8[(u8) i / 19]
-                 .inner[(u8) i % 19];
-        s32 j;
+        struct NameTagData* data;
+        struct NameTagDataBank* bank;
+
+        int j;
+        bank = gmMainLib_804D3EE0->thing.x2FF8;
+        data = &bank[(u8) i / 19].inner[(u8) i % 19];
 
         for (j = 0; j < 120; j++) {
             data->vs_kos[j] = 0;
