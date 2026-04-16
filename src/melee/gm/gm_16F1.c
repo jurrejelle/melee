@@ -586,7 +586,7 @@ void fn_80171AD4(void)
     memzero(&lbl_8046DBC8, sizeof(lbl_8046DBC8));
 }
 
-int fn_8016FFD4(struct lbl_8046B6A0_24C_t* arg0, int arg1, int arg2)
+int fn_8016FFD4(struct lbl_8046B6A0_24C_t* arg0, int arg1, u8 arg2)
 {
     struct lbl_803D5A4C_t* curr;
     int i;
