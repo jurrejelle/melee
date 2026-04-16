@@ -1133,18 +1133,21 @@ void fn_8017F1B8(void)
 {
     int i;
     int mask;
+    int output;
 
     for (i = 0; i < 256; i++) {
         if (fn_8016F1F0(i) < 0xD7) {
             mask = fn_8017F008();
-            if (mask & (u8) fn_8016F180(i)) {
+            output = (u8) fn_8016F180(i);
+            if (output & mask) {
                 if ((u32) fn_8016F160(0, i) != 0) {
                     fn_8016F140(i);
                 }
             }
         } else {
             mask = fn_8017F008();
-            if (mask & (u8) fn_8016F180(i)) {
+            output = (u8) fn_8016F180(i);
+            if (output & mask) {
                 if ((u32) fn_801701C0(gm_8016B774(), 0, i) != 0) {
                     fn_8016F140(i);
                 }
