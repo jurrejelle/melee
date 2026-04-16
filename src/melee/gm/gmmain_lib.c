@@ -1,4 +1,7 @@
 #include "gmmain_lib.static.h"
+
+#include "placeholder.h"
+
 #include <platform.h>
 
 #include <dolphin/os/OSReset.h>
@@ -7,12 +10,12 @@
 #include <melee/db/db.h>
 #include <melee/gm/gm_unsplit.h>
 #include <melee/gm/types.h>
+#include <melee/if/textlib.h>
 #include <melee/lb/lb_00B0.h>
 #include <melee/lb/lbaudio_ax.h>
 #include <melee/lb/lbcardnew.h>
 #include <melee/lb/lblanguage.h>
 #include <melee/lb/lbtime.h>
-#include <melee/if/textlib.h>
 #include <melee/mn/mnname.h>
 #include <melee/ty/toy.h>
 #include <melee/ty/tylist.h>
@@ -1050,13 +1053,14 @@ void gmMainLib_8015EF30(struct gmMainLib_8015EF30_s* arg0)
 
 void InitializePersistentNameData(s32 arg0)
 {
-    struct NameTagData* data =
-        &gmMainLib_804D3EE0->thing.x2FF8[(u8) arg0 / 19]
-             .inner[(u8) arg0 % 19];
-    s32 i;
+    struct NameTagData* data;
+    struct NameTagDataBank* bank;
+    int i;
 
-    PAD_STACK(24);
+    PAD_STACK(16);
 
+    bank = gmMainLib_804D3EE0->thing.x2FF8;
+    data = &bank[(u8) arg0 / 19].inner[(u8) arg0 % 19];
     for (i = 0; i < 120; i++) {
         data->vs_kos[i] = 0;
     }
@@ -1072,8 +1076,7 @@ void gmMainLib_8015F150(void)
     s32 i;
     PAD_STACK(8);
 
-    i = 0;
-    do {
+    for (i = 0; i < 0x19; i++) {
         int j;
         struct FighterData* data =
             &gmMainLib_804D3EE0->thing.x1F2C[(u8) i];
@@ -1084,8 +1087,7 @@ void gmMainLib_8015F150(void)
             (struct gmMainLib_8015EF30_s*) &gmMainLib_804D3EE0->thing
                                                 .x1F2C[(u8) i]
                                                 .sd_count);
-        i++;
-    } while (i < 0x19);
+    }
 }
 
 void gmMainLib_8015F260(void)
