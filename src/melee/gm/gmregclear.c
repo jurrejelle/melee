@@ -36,6 +36,7 @@
 #include <melee/lb/lbbgflash.h>
 #include <melee/lb/lbcardgame.h>
 #include <melee/lb/lbcardnew.h>
+#include <melee/lb/lblanguage.h>
 #include <melee/lb/lbtime.h>
 #include <melee/mp/mpcoll.h>
 #include <melee/pl/player.h>
@@ -108,6 +109,7 @@ STATIC_ASSERT(sizeof(AllstarStageEntry) == 0x1A);
 
 extern AdventureStageEntry lbl_803D7AC0[110];
 extern AllstarStageEntry lbl_803D85F0[55];
+extern u8 lbl_803D8B88[];
 
 typedef struct RegClearEv {
     /* 0x00 */ char pad_0[0x1C];
@@ -1319,6 +1321,49 @@ int fn_8017F294(void)
 }
 
 /// #fn_8017F2A4
+s32 fn_8017F2A4(HSD_Text** arg0, f32 farg0, f32 farg1)
+{
+    HSD_Text* text;
+    HSD_Text** ptr;
+    u8* data;
+    f32 x_end;
+    f32 y;
+    s32 temp;
+    s32 i;
+
+    data = lbl_803D8B88;
+    temp = HSD_SisLib_803A611C(3, NULL, 9U, 0xDU, 0U, 0x14U, 0U, 0x13U);
+    if (lbLang_IsSavedLanguageUS()) {
+        HSD_SisLib_803A62A0(3, (char*) &data[0x70], (char*) &data[0x7C]);
+    } else {
+        HSD_SisLib_803A62A0(3, (char*) &data[0x90], (char*) &data[0x7C]);
+    }
+    *arg0 = HSD_SisLib_803A6754(3, temp);
+    ptr = arg0;
+    i = 0;
+    (*arg0)->default_kerning = 1;
+    text = *arg0;
+    text->x34.x = 0.56f;
+    text->x34.y = 0.6f;
+    (*arg0)->default_alignment = 2;
+    x_end = 281.0f + farg0;
+    do {
+        y = (0.6f * (32.0f * (f32) i)) + farg1;
+        ptr[1] = HSD_SisLib_803A5ACC(3, 0, farg0, y, 0.0f, 2.0f, 2.0f);
+        text = ptr[1];
+        text->x34.x = 0.56f;
+        text->x34.y = 0.6f;
+        ptr[1]->default_kerning = 1;
+        HSD_SisLib_803A6B98(*arg0, x_end, -12.0f + y,
+                            (char*) &data[0x9C]);
+        i += 1;
+        ptr++;
+    } while (i < 7);
+    return HSD_SisLib_803A6B98(*arg0, x_end,
+                               9.0f + (134.40001f + farg1),
+                               (char*) &data[0xA8]);
+    PAD_STACK(8);
+}
 
 s32 fn_8017F47C(HSD_Text** arg0, int arg1)
 {
