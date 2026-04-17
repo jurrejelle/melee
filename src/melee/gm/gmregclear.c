@@ -1434,6 +1434,44 @@ void gm_80182554(int arg0, int arg1)
 
 /// #gm_80182DF0
 
+static UnkMultimanData lbl_804D65E0;
+
+UnkMultimanData* gm_80182DF0(int c_kind, int arg1)
+{
+    UnkMultimanData* result = &lbl_804D65E0;
+    u8* base = lbl_803D8D08;
+
+    switch (arg1) {
+    case 33:
+        result->x0_0 = (base + 0x6C)[c_kind];
+        result->x2 = ((u16*)(base + 0x88))[c_kind];
+        result->x4 = ((s32*)base)[c_kind];
+        break;
+    case 34:
+        result->x0_0 = (base + 0x12C)[c_kind];
+        result->x2 = ((u16*)(base + 0x148))[c_kind];
+        result->x4 = ((s32*)(base + 0xC0))[c_kind];
+        break;
+    case 35:
+        result->x0_0 = (base + 0x1EC)[c_kind];
+        result->x2 = ((u16*)(base + 0x208))[c_kind];
+        break;
+    case 36:
+        result->x0_0 = (base + 0x2AC)[c_kind];
+        result->x2 = ((u16*)(base + 0x2C8))[c_kind];
+        break;
+    case 37:
+        result->x0_0 = (base + 0x36C)[c_kind];
+        result->x2 = ((u16*)(base + 0x388))[c_kind];
+        break;
+    case 38:
+        result->x0_0 = (base + 0x42C)[c_kind];
+        result->x2 = ((u16*)(base + 0x448))[c_kind];
+        break;
+    }
+    return result;
+}
+
 extern u8 lbl_804D65E8;
 
 void fn_80182F40(HSD_GObj* unused)
