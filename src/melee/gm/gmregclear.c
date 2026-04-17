@@ -165,12 +165,15 @@ struct {
     /* 0x00C */ PlayerInitData xC;
     /* 0x030 */ u8 pad_30[0x24];
     /* 0x054 */ RegClearSpawnEntry x54[52];
-    // offsets relative to .bss
-    u8 x6BC;
-    u16 x6BE;
-    int x6C0;
-    int x6C4;
-    int x6C8;
+    /* 0x394 */ u8 pad_394[0x328];
+    /* 0x6BC */ u8 x6BC;
+    /* 0x6BD */ u8 pad_6BD;
+    /* 0x6BE */ u16 x6BE;
+    /* 0x6C0 */ int x6C0;
+    /* 0x6C4 */ int x6C4;
+    /* 0x6C8 */ int x6C8;
+    /* 0x6CC */ s8 x6CC;
+    /* 0x6CD */ u8 x6CD;
 } lbl_80472ED8;
 
 void fn_8017C0C8(void)
@@ -2170,6 +2173,82 @@ void gm_80182554(int arg0, int arg1)
 /// #gm_80182578
 
 /// #fn_80182B5C
+
+typedef struct {
+    /* 0x00 */ u32 scores[34];
+    /* 0x88 */ u16 times[28];
+} RecordBlock; /* 0xC0 */
+
+void fn_80182B5C(void)
+{
+    RecordBlock* blocks = (RecordBlock*) lbl_803D8D08;
+    int mode = lbl_80472ED8.x6C4;
+    int idx = lbl_80472ED8.x6C8;
+    int var_r6;
+    u32 var_r30;
+
+    switch (mode) {
+    case 33: var_r6 = blocks[0].times[idx]; break;
+    case 34: var_r6 = blocks[1].times[idx]; break;
+    case 35: var_r6 = blocks[2].times[idx]; break;
+    case 36: var_r6 = blocks[3].times[idx]; break;
+    case 37: var_r6 = blocks[4].times[idx]; break;
+    case 38: var_r6 = blocks[5].times[idx]; break;
+    default: var_r6 = 0; break;
+    }
+
+    switch (mode) {
+    case 33: var_r30 = blocks[0].scores[idx]; break;
+    case 34: var_r30 = blocks[1].scores[idx]; break;
+    case 35: var_r30 = blocks[2].scores[idx]; break;
+    case 36: var_r30 = blocks[3].scores[idx]; break;
+    case 37: var_r30 = blocks[4].scores[idx]; break;
+    case 38: var_r30 = blocks[5].scores[idx]; break;
+    default: var_r30 = 0; break;
+    }
+
+    if (mode < 0x25) {
+        if (mode < 0x23) {
+            if (mode >= 0x21) {
+                if (mode == 0x21) {
+                    gmMainLib_8015D6BC(gm_80164024((u8) idx));
+                } else {
+                    gmMainLib_8015D710(gm_80164024((u8) idx));
+                }
+                if (lbl_80472ED8.x6BC != 0) {
+                    if ((u32) lbl_80472ED8.x6C0 < var_r30) {
+                        gm_8016B350(0x9C40);
+                        gm_8016B364(0x144);
+                        gm_80167858((s32) lbl_80472ED8.x6CC,
+                                    (s32) lbl_80472ED8.x6CD, 0xD, 0x5A);
+                        return;
+                    }
+                } else {
+                    gm_8016B364(0x148);
+                    gm_8016B378(0x28);
+                    return;
+                }
+            }
+        } else {
+            if (lbl_80472ED8.x6BC != 0 &&
+                (s32) lbl_80472ED8.x6BE > var_r6)
+            {
+                gm_8016B350(0x9C40);
+                gm_8016B364(0x144);
+                gm_80167858((s32) lbl_80472ED8.x6CC,
+                            (s32) lbl_80472ED8.x6CD, 0xD, 0x5A);
+            }
+        }
+    } else if (mode < 0x27) {
+        if ((s32) lbl_80472ED8.x6BE > var_r6) {
+            gm_8016B350(0x9C40);
+            gm_8016B364(0x144);
+            gm_80167858((s32) lbl_80472ED8.x6CC,
+                        (s32) lbl_80472ED8.x6CD, 0xD, 0x5A);
+        }
+    }
+    PAD_STACK(24);
+}
 
 /// #gm_80182DF0
 
