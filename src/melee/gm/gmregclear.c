@@ -85,8 +85,9 @@ struct lbl_80472E48_t {
     /* 0x10 */ u8 x10;
     /* 0x11 */ char pad_11[3];
     /* 0x14 */ s32 x14[0x1B];
-}; /* size = 0x80 */
-STATIC_ASSERT(sizeof(struct lbl_80472E48_t) == 0x80);
+    /* 0x80 */ s32 x80[4];
+}; /* size = 0x90 */
+STATIC_ASSERT(sizeof(struct lbl_80472E48_t) == 0x90);
 
 /// Adventure mode stage data table entry (size 0x1A)
 /// Table has 110 entries: 22 stages × 5 difficulty levels
@@ -137,7 +138,6 @@ static UnkAdventureData lbl_80472C30;
 static UnkAllstarData lbl_80472CB0;
 static struct lbl_80472D28_t lbl_80472D28;
 static struct lbl_80472E48_t lbl_80472E48;
-static int lbl_80472EC8[4];
 
 typedef struct RegClearSpawnEntry {
     /* 0x00 */ s32 x0;
@@ -1796,7 +1796,7 @@ int fn_80180AC0(void)
 }
 s32 gm_80180AE4(void)
 {
-    return lbl_80472EC8[0] * 0xA;
+    return lbl_80472E48.x80[0] * 0xA;
 }
 
 Fighter_GObj* gm_80180AF4(void)
@@ -1876,11 +1876,11 @@ void fn_80181598(void)
             (lbl_80472E48.xC >= 0xF0 ||
              (HSD_PadCopyStatus[lbl_80472E48.x10].trigger & 0x100)))
         {
-            if (lbl_80472EC8[0] >
+            if (lbl_80472E48.x80[0] >
                 lbl_80472E48.x14[gm_80164024((u8) lbl_80472E48.unk_4)])
             {
                 lbl_80472E48.x14[gm_80164024((u8) lbl_80472E48.unk_4)] =
-                    lbl_80472EC8[0];
+                    lbl_80472E48.x80[0];
             }
             gm_8016B328();
         }
@@ -1889,9 +1889,66 @@ void fn_80181598(void)
 
 /// #fn_80181708
 
-static SceneDesc* lbl_804D65CC;
-static SceneDesc* lbl_804D65D0;
+static DynamicModelDesc** lbl_804D65CC;
+static DynamicModelDesc** lbl_804D65D0;
+static s32 lbl_804D65D4;
 extern HSD_Archive* lbl_804D65C8;
+
+void fn_80181708(void)
+{
+    typedef struct {
+        u8 b76 : 2, b54 : 2, b32 : 2, b10 : 2;
+    } x0_2bits;
+    HSD_GObj* gobj;
+    HSD_JObj* jobj;
+
+    lbl_80472E48.x80[0] = 0;
+    lbl_80472E48.x80[1] = 0;
+    lbl_80472E48.x80[2] = 0;
+    lbl_80472E48.x80[3] = 0;
+    ((x0_2bits*) &lbl_80472E48.x0)->b76 = 0;
+    ((x0_2bits*) &lbl_80472E48.x0)->b54 = 0;
+    ((x0_2bits*) &lbl_80472E48.x0)->b32 = 0;
+    ((x0_2bits*) &lbl_80472E48.x0)->b10 = 0;
+    lbl_80472E48.xC = 0;
+    lbl_80472E48.x10 = (s8) Player_GetPlayerId(0);
+    lbl_804D65D4 = 0;
+    lbl_804D65D8 = 0;
+
+    HSD_GObj_SetupProc(
+        GObj_Create(0xEU, 0x11U, 0U),
+        (void (*)(HSD_GObj*)) fn_80181598, 0x15U);
+
+    gobj = GObj_Create(0xEU, 0xFU, 0U);
+    jobj = HSD_JObjLoadJoint((*lbl_804D65CC)->joint);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xBU, 0U);
+    HSD_GObj_SetupProc(gobj, fn_80180C14, 0x15U);
+    gm_8016895C(jobj, *lbl_804D65CC, 0);
+    HSD_JObjReqAnimAll(jobj, 0.0f);
+    HSD_JObjAnimAll(jobj);
+    HSD_JObjSetFlagsAll(jobj, 0x10U);
+
+    gobj = GObj_Create(0xEU, 0xFU, 0U);
+    jobj = HSD_JObjLoadJoint((*lbl_804D65D0)->joint);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xBU, 0U);
+    HSD_GObj_SetupProc(gobj, fn_80180C60, 0x15U);
+    gm_8016895C(jobj, *lbl_804D65D0, 0);
+    HSD_JObjReqAnimAll(jobj, 10.0f);
+    HSD_JObjAnimAll(jobj);
+    HSD_JObjClearFlagsAll(jobj, 0x10U);
+
+    HSD_JObjSetFlagsAll(
+        HSD_JObjGetNext(HSD_JObjGetChild(HSD_JObjGetChild(jobj))),
+        0x10U);
+    HSD_JObjClearFlagsAll(
+        HSD_JObjGetNext(HSD_JObjGetNext(HSD_JObjGetChild(
+            HSD_JObjGetChild(jobj)))),
+        0x10U);
+
+    gm_80168F88();
+}
 
 void gm_80181998(void)
 {

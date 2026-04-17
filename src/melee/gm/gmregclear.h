@@ -95,9 +95,9 @@
 /* 180B18 */ void gm_80180B18(void);
 /* 180BA0 */ void gm_80180BA0(void);
 /* 180C14 */ void fn_80180C14(HSD_GObj* gobj);
-/* 180C60 */ UNK_RET fn_80180C60(UNK_PARAMS);
+/* 180C60 */ void fn_80180C60(HSD_GObj* gobj);
 /* 181598 */ void fn_80181598(void);
-/* 181708 */ UNK_RET fn_80181708(UNK_PARAMS);
+/* 181708 */ void fn_80181708(void);
 /* 181998 */ void gm_80181998(void);
 /* 181A00 */ void gm_80181A00(s32 arg0, s32 arg1);
 /* 181A14 */ int gm_80181A14(void);
