@@ -1,8 +1,8 @@
 File: src/melee/gm/gmregclear.c
 Funcs:
 - [x] gm_80181998
-- [ ] fn_8017FE54
-- [ ] fn_8017DD7C
+- [x] fn_8017FE54
+- [x] fn_8017DD7C
 - [ ] gm_80182DF0
 - [ ] fn_80181598
 - [ ] fn_8017FA1C

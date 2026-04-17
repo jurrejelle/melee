@@ -651,6 +651,7 @@ u8 fn_8017DD7C(PlayerInitData* arg0, Unk1PData_x24* arg1)
 {
     s32 index = 1;
     int i;
+    PAD_STACK(8);
     for (i = 0; i < 3; i++) {
         if (arg1[i].ckind != CHKIND_NONE) {
             gm_8016795C(&arg0[index]);
