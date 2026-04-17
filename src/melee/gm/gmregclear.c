@@ -142,6 +142,15 @@ typedef struct RegClearSpawnEntry {
     /* 0x0C */ f32 xC;
 } RegClearSpawnEntry;
 
+typedef struct RegClearCharEntry {
+    /* 0x00 */ u8 x0;
+    /* 0x01 */ u8 x1;
+    /* 0x02 */ u8 x2;
+    /* 0x03 */ u8 x3;
+    /* 0x04 */ f32 x4;
+    /* 0x08 */ f32 x8;
+} RegClearCharEntry;
+
 struct {
     /* 0x000 */ s32 x0;
     /* 0x004 */ u8 pad_4[4];
@@ -735,6 +744,68 @@ u8 gm_8017DB78(gm_8017DB6C_arg0_t* arg0, int index)
 }
 
 /// #gm_8017DB88
+s32 gm_8017DB88(void* arg0, u8 arg1, s32 arg2, s32 arg3,
+                u8* arg4, u8 arg5, u8 (*arg6)(s32, s32, u8),
+                u8 (*arg7)(s32, s32, u8), u8 (*arg8)(s32, s32, u8),
+                f32 (*arg9)(s32, s32), f32 (*arg10)(s32, s32))
+{
+    RegClearCharEntry* out;
+    u8 chars[4];
+    u8* p;
+    s32 count;
+    s32 i;
+    u8 val;
+    f32 fval;
+
+    count = fn_8017DE54(arg1, arg4);
+    chars[1] = 0x21;
+    out = arg0;
+    chars[2] = 0x21;
+    p = chars;
+    i = 0;
+    chars[3] = 0x21;
+    chars[0] = arg5;
+    for (; i < count; i++) {
+        p[1] = fn_8017D9C0(chars, arg4);
+        out->x0 = p[1];
+        if (arg8 != NULL) {
+            val = arg8(arg3, arg2, (u8) i);
+        } else {
+            val = 0;
+        }
+        out->x1 = val;
+        if (arg6 != NULL) {
+            val = arg6(arg3, arg2, (u8) i);
+        } else {
+            val = 0;
+        }
+        out->x2 = val;
+        if (arg7 != NULL) {
+            val = arg7(arg3, arg2, (u8) i);
+        } else {
+            val = 0;
+        }
+        out->x3 = val;
+        if (arg9 != NULL) {
+            fval = arg9(arg3, arg2);
+        } else {
+            fval = 0.0f;
+        }
+        out->x4 = fval;
+        if (arg10 != NULL) {
+            fval = arg10(arg3, arg2);
+        } else {
+            fval = 0.0f;
+        }
+        out->x8 = fval;
+        p++;
+        out++;
+    }
+    for (; i < 3; i++) {
+        ((RegClearCharEntry*) arg0)[i].x0 = 0x21;
+    }
+    return count;
+}
 
 u8 fn_8017DD7C(PlayerInitData* arg0, Unk1PData_x24* arg1)
 {

@@ -28,7 +28,7 @@
 /* 17DB58 */ void gm_8017DB58(struct Unk1PData_x24* arg0);
 /* 17DB6C */ u8 gm_8017DB6C(gm_8017DB6C_arg0_t* arg0, int index);
 /* 17DB78 */ u8 gm_8017DB78(gm_8017DB6C_arg0_t* arg0, int index);
-/* 17DB88 */ UNK_RET gm_8017DB88(UNK_PARAMS);
+/* 17DB88 */ s32 gm_8017DB88(void* arg0, u8 arg1, s32 arg2, s32 arg3, u8* arg4, u8 arg5, u8 (*arg6)(s32, s32, u8), u8 (*arg7)(s32, s32, u8), u8 (*arg8)(s32, s32, u8), f32 (*arg9)(s32, s32), f32 (*arg10)(s32, s32));
 /* 17DD7C */ u8 fn_8017DD7C(PlayerInitData* arg0, Unk1PData_x24* arg1);
 /* 17DE54 */ s32 fn_8017DE54(u8, u8*);
 /* 17DEC8 */ Unk1PData* fn_8017DEC8(int);
