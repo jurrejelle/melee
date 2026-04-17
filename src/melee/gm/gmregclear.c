@@ -166,7 +166,12 @@ struct {
     /* 0x00C */ PlayerInitData xC;
     /* 0x030 */ u8 pad_30[0x24];
     /* 0x054 */ RegClearSpawnEntry x54[101];
-    /* 0x6A4 */ u8 pad_6A4[0x18];
+    /* 0x6A4 */ RegClearSpawnEntry* x6A4;
+    /* 0x6A8 */ RegClearSpawnEntry* x6A8;
+    /* 0x6AC */ RegClearSpawnEntry* x6AC;
+    /* 0x6B0 */ RegClearSpawnEntry* x6B0;
+    /* 0x6B4 */ RegClearSpawnEntry* x6B4;
+    /* 0x6B8 */ RegClearSpawnEntry* x6B8;
     /* 0x6BC */ u8 x6BC;
     /* 0x6BD */ u8 pad_6BD;
     /* 0x6BE */ u16 x6BE;
@@ -2342,6 +2347,142 @@ void fn_80181E18(void)
 }
 
 /// #gm_80182174
+void gm_80182174(void)
+{
+    u8* data = lbl_803D8D08;
+    s32 mode;
+    s32 i;
+    RegClearSpawnEntry* src;
+    RegClearSpawnEntry* dst;
+
+    mode = gm_801A4310();
+
+    lbArchive_80016DBC(
+        (const char*) &data[0x480], &lbl_80472ED8.x6A4,
+        (const char*) &data[0x490], &lbl_80472ED8.x6A8,
+        (const char*) &data[0x4AC], &lbl_80472ED8.x6AC,
+        (const char*) &data[0x4C8], &lbl_80472ED8.x6B0,
+        (const char*) &data[0x4E4], &lbl_80472ED8.x6B4,
+        (const char*) &data[0x500], &lbl_80472ED8.x6B8,
+        (const char*) &data[0x51C], 0);
+
+    lbl_80472ED8.x0 = 0;
+    lbl_80472ED8.x4 = 0;
+    lbl_80472ED8.x8 = 0;
+
+    gm_8016795C(&lbl_80472ED8.xC);
+
+    lbl_80472ED8.xC.c_kind = 0x1B;
+    lbl_80472ED8.xC.slot_type = 1;
+    lbl_80472ED8.xC.stocks = 1;
+    lbl_80472ED8.xC.xD_b4 = 1;
+
+    switch (mode) {
+    case 0x21:
+        src = lbl_80472ED8.x6A4;
+        dst = lbl_80472ED8.x54;
+        for (i = 0; i < 101; i++) {
+            dst->x0 = src->x0;
+            dst->x4 = src->x4;
+            dst->x5 = src->x5;
+            dst->x8 = src->x8;
+            dst->xC = src->xC;
+            dst->x6 = src->x6;
+            dst->x7 = src->x7;
+            if (src->x0 == 0x3E7) break;
+            src++;
+            dst++;
+        }
+        break;
+    case 0x22:
+        src = lbl_80472ED8.x6A8;
+        dst = lbl_80472ED8.x54;
+        for (i = 0; i < 101; i++) {
+            dst->x0 = src->x0;
+            dst->x4 = src->x4;
+            dst->x5 = src->x5;
+            dst->x8 = src->x8;
+            dst->xC = src->xC;
+            dst->x6 = src->x6;
+            dst->x7 = src->x7;
+            if (src->x0 == 0x3E7) break;
+            src++;
+            dst++;
+        }
+        break;
+    case 0x23:
+        src = lbl_80472ED8.x6AC;
+        dst = lbl_80472ED8.x54;
+        for (i = 0; i < 101; i++) {
+            dst->x0 = src->x0;
+            dst->x4 = src->x4;
+            dst->x5 = src->x5;
+            dst->x8 = src->x8;
+            dst->xC = src->xC;
+            dst->x6 = src->x6;
+            dst->x7 = src->x7;
+            if (src->x0 == 0x3E7) break;
+            src++;
+            dst++;
+        }
+        break;
+    case 0x24:
+        src = lbl_80472ED8.x6B0;
+        dst = lbl_80472ED8.x54;
+        for (i = 0; i < 101; i++) {
+            dst->x0 = src->x0;
+            dst->x4 = src->x4;
+            dst->x5 = src->x5;
+            dst->x8 = src->x8;
+            dst->xC = src->xC;
+            dst->x6 = src->x6;
+            dst->x7 = src->x7;
+            if (src->x0 == 0x3E7) break;
+            src++;
+            dst++;
+        }
+        break;
+    case 0x25:
+        src = lbl_80472ED8.x6B4;
+        dst = lbl_80472ED8.x54;
+        for (i = 0; i < 101; i++) {
+            dst->x0 = src->x0;
+            dst->x4 = src->x4;
+            dst->x5 = src->x5;
+            dst->x8 = src->x8;
+            dst->xC = src->xC;
+            dst->x6 = src->x6;
+            dst->x7 = src->x7;
+            if (src->x0 == 0x3E7) break;
+            src++;
+            dst++;
+        }
+        break;
+    case 0x26:
+        src = lbl_80472ED8.x6B8;
+        dst = lbl_80472ED8.x54;
+        for (i = 0; i < 101; i++) {
+            dst->x0 = src->x0;
+            dst->x4 = src->x4;
+            dst->x5 = src->x5;
+            dst->x8 = src->x8;
+            dst->xC = src->xC;
+            dst->x6 = src->x6;
+            dst->x7 = src->x7;
+            if (src->x0 == 0x3E7) break;
+            src++;
+            dst++;
+        }
+        break;
+    }
+
+    lbl_80472ED8.x6CC = Player_GetPlayerId(0);
+    lbl_80472ED8.x6CD = Player_GetNametagSlotID(0);
+    HSD_GObj_SetupProc(GObj_Create(0xFU, 0x11U, 0U),
+                       (HSD_GObjEvent) fn_80181E18, 0x15U);
+    gm_80168F88();
+    PAD_STACK(8);
+}
 
 bool gm_80182510(void)
 {
