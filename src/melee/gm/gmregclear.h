@@ -96,7 +96,7 @@
 /* 180BA0 */ void gm_80180BA0(void);
 /* 180C14 */ void fn_80180C14(HSD_GObj* gobj);
 /* 180C60 */ UNK_RET fn_80180C60(UNK_PARAMS);
-/* 181598 */ UNK_RET fn_80181598(UNK_PARAMS);
+/* 181598 */ void fn_80181598(void);
 /* 181708 */ UNK_RET fn_80181708(UNK_PARAMS);
 /* 181998 */ void gm_80181998(void);
 /* 181A00 */ void gm_80181A00(s32 arg0, s32 arg1);

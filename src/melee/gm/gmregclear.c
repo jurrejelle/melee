@@ -28,6 +28,7 @@
 #include <melee/lb/lb_00F9.h>
 #include <melee/lb/lbarchive.h>
 #include <melee/lb/lbaudio_ax.h>
+#include <sysdolphin/baselib/controller.h>
 #include <melee/lb/lbbgflash.h>
 #include <melee/lb/lbcardgame.h>
 #include <melee/lb/lbcardnew.h>
@@ -64,10 +65,13 @@ struct lbl_80472D28_t {
 };
 
 struct lbl_80472E48_t {
-    /* 0x00 */ char pad_0[4];
+    /* 0x00 */ u8 x0;
+    /* 0x01 */ char pad_1[3];
     /* 0x04 */ s32 unk_4; /* inferred */
     /* 0x08 */ s32 unk_8; /* inferred */
-    /* 0x0C */ char pad_C[0x8];
+    /* 0x0C */ u32 xC;
+    /* 0x10 */ u8 x10;
+    /* 0x11 */ char pad_11[3];
     /* 0x14 */ s32 x14[0x1B];
 }; /* size = 0x80 */
 STATIC_ASSERT(sizeof(struct lbl_80472E48_t) == 0x80);
@@ -1241,7 +1245,7 @@ void fn_80180C14(HSD_GObj* gobj)
 {
     HSD_JObj* jobj = gobj->hsd_obj;
 
-    if ((lbl_80472E48.pad_0[0] & 3) != 0) {
+    if ((lbl_80472E48.x0 & 3) != 0) {
         HSD_JObjClearFlagsAll(jobj, 0x10);
         HSD_JObjAnimAll(jobj);
     }
@@ -1249,7 +1253,55 @@ void fn_80180C14(HSD_GObj* gobj)
 
 /// #fn_80180C60
 
-/// #fn_80181598
+extern s32 lbl_804D65D8;
+
+void fn_80181598(void)
+{
+    u32 mode;
+
+    PAD_STACK(0x20);
+
+    if (gm_801A4624() != 0) {
+        return;
+    }
+
+    mode = lbl_80472E48.x0 & 3;
+
+    if (mode != 0) {
+        if (mode == 1) {
+            lbAudioAx_800237A8(0xC0, 0x7F, 0x40);
+            lbAudioAx_800237A8(0x148, 0x7F, 0x40);
+            mode = 2;
+            lbl_80472E48.x0 = (lbl_80472E48.x0 & ~3) | mode;
+        }
+        lbl_804D65D8 += 1;
+        if (lbl_804D65D8 >= 0xF0 ||
+            (lbl_804D65D8 > 0x3C &&
+             (HSD_PadCopyStatus[lbl_80472E48.x10].trigger & 0x100)))
+        {
+            gm_8016B328();
+            return;
+        }
+    }
+
+    if (((lbl_80472E48.x0 >> 2) & 3) != 0 &&
+        ((mode = lbl_80472E48.x0 & 3, mode == 0) || mode == 3))
+    {
+        lbl_80472E48.xC += 1;
+        if (lbl_80472E48.xC > 0x3C &&
+            (lbl_80472E48.xC >= 0xF0 ||
+             (HSD_PadCopyStatus[lbl_80472E48.x10].trigger & 0x100)))
+        {
+            if (lbl_80472EC8[0] >
+                lbl_80472E48.x14[gm_80164024((u8) lbl_80472E48.unk_4)])
+            {
+                lbl_80472E48.x14[gm_80164024((u8) lbl_80472E48.unk_4)] =
+                    lbl_80472EC8[0];
+            }
+            gm_8016B328();
+        }
+    }
+}
 
 /// #fn_80181708
 
