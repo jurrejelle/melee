@@ -5,7 +5,11 @@
 
 #include <math_ppc.h>
 #include <dolphin/gx.h>
+#include <sysdolphin/baselib/gobj.h>
+#include <sysdolphin/baselib/gobjgxlink.h>
+#include <sysdolphin/baselib/gobjobject.h>
 #include <sysdolphin/baselib/gobjproc.h>
+#include <sysdolphin/baselib/mobj.h>
 #include <sysdolphin/baselib/random.h>
 #include <sysdolphin/baselib/tobj.h>
 #include <sysdolphin/baselib/util.h>
@@ -17,6 +21,7 @@
 #include <melee/ft/ftbosslib.h>
 #include <melee/ft/ftlib.h>
 #include <melee/gm/gmadventure.h>
+#include <melee/gm/gm_1601.h>
 #include <melee/gm/gmregcommon.h>
 #include <melee/gm/gmmain_lib.h>
 #include <melee/gm/types.h>
@@ -29,7 +34,9 @@
 #include <melee/lb/lb_00F9.h>
 #include <melee/lb/lbarchive.h>
 #include <melee/lb/lbaudio_ax.h>
+#include <sysdolphin/baselib/aobj.h>
 #include <sysdolphin/baselib/controller.h>
+#include <sysdolphin/baselib/dobj.h>
 #include <sysdolphin/baselib/jobj.h>
 #include <sysdolphin/baselib/sislib.h>
 #include <melee/if/ifnametag.h>
@@ -62,7 +69,7 @@ struct lbl_80472D28_t {
     /* +110 */ u32 x110;
     /* +114 */ char pad_114[2];
     /* +116 */ u8 x116;
-    /* +117 */ char pad_117[1];
+    /* +117 */ u8 x117;
     /* +118 */ u8 x118;
     /* +119 */ char pad_119[1];
     /* +11A */ u8 x11A;
@@ -1498,16 +1505,31 @@ s32 fn_8017F47C(HSD_Text** arg0, int arg1)
 /// #fn_8017FA1C
 
 typedef struct fn_8017FA1C_arg {
-    /* 0x00 */ char pad_0[0xC];
-    /* 0x0C */ HSD_JObj* xC;
-    /* 0x10 */ char pad_10[0x70];
-    /* 0x80 */ HSD_Text* x80;
-    /* 0x84 */ char pad_84[0x78];
-    /* 0xFC */ s32 xFC;
+    /* 0x000 */ HSD_GObj* x0;
+    /* 0x004 */ HSD_JObj* x4;
+    /* 0x008 */ HSD_JObj* x8;
+    /* 0x00C */ HSD_JObj* xC;
+    /* 0x010 */ HSD_JObj* x10;
+    /* 0x014 */ HSD_JObj* x14;
+    /* 0x018 */ HSD_JObj* x18;
+    /* 0x01C */ HSD_JObj* x1C;
+    /* 0x020 */ HSD_JObj* x20;
+    /* 0x024 */ HSD_JObj* x24;
+    /* 0x028 */ char pad_28[0x24];
+    /* 0x04C */ DynamicModelDesc x4C;
+    /* 0x05C */ char pad_5C[0x24];
+    /* 0x080 */ HSD_Text* x80;
+    /* 0x084 */ char pad_84[0x78];
+    /* 0x0FC */ s32 xFC;
     /* 0x100 */ s32 x100;
     /* 0x104 */ s32 x104;
-    /* 0x108 */ char pad_108[0xD];
+    /* 0x108 */ char pad_108[0xC];
+    /* 0x114 */ u8 x114;
     /* 0x115 */ u8 x115;
+    /* 0x116 */ char pad_116[2];
+    /* 0x118 */ u8 x118;
+    /* 0x119 */ char pad_119;
+    /* 0x11A */ u8 x11A;
 } fn_8017FA1C_arg;
 
 extern s32 lbl_804D65C0;
@@ -1605,6 +1627,70 @@ void fn_8017FE54(HSD_GObj* gobj)
 /// #fn_8017FF1C
 
 /// #fn_801803FC
+s32 fn_801803FC(void* arg0)
+{
+    fn_8017FA1C_arg* p = arg0;
+    HSD_JObj* sp10;
+    u8* data = lbl_803D8B88;
+    struct lbl_80472D28_t* state = &lbl_80472D28;
+    DynamicModelDesc* mdl = &p->x4C;
+    HSD_GObj* gobj;
+    HSD_JObj* jobj;
+    HSD_JObj* temp;
+    f32 frame;
+    s32 i;
+
+    gobj = GObj_Create(0xEU, 0xEU, 0U);
+    p->x0 = gobj;
+    if (gobj == NULL) {
+        HSD_JObjAnimAll((HSD_JObj*) gobj->hsd_obj);
+        OSReport((char*) &data[0xB8]);
+        OSPanic((char*) &data[0xE8], 0x42C, "");
+    }
+    jobj = HSD_JObjLoadJoint(mdl->joint);
+    if (jobj == NULL) {
+        OSReport((char*) &data[0xF8]);
+        OSPanic((char*) &data[0xE8], 0x432, "");
+    }
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xBU, 0U);
+    HSD_GObj_SetupProc(gobj, (HSD_GObjEvent) fn_8017FF1C, 0x11U);
+    fn_801689E4(jobj, mdl, 0);
+    HSD_JObjReqAnimAll(jobj, 0.0f);
+    HSD_JObjAnimAll(jobj);
+    lb_8001204C(jobj, &p->x4, (u16*) data, 0xA);
+    if (state->x117 == 0) {
+        HSD_JObjSetFlagsAll(p->x14, 0x10U);
+        HSD_JObjSetFlagsAll(p->x20, 0x10U);
+        HSD_JObjSetFlagsAll(p->x24, 0x10U);
+    }
+    if (p->x11A != 0) {
+        for (i = 0; i < 0xA; i++) {
+            lb_80011E24(jobj, &sp10, i + 7, -1);
+            HSD_JObjSetFlagsAll(sp10, 0x10U);
+        }
+        HSD_JObjSetFlagsAll(p->x10, 0x10U);
+    } else {
+        HSD_JObjSetFlagsAll(p->x1C, 0x10U);
+        if (p->x118 != 0) {
+            HSD_JObjSetFlagsAll(p->x18, 0x10U);
+        }
+    }
+    temp = p->x4;
+    if (p->x114 != 0) {
+        frame = 1.0f;
+    } else {
+        frame = 0.0f;
+    }
+    HSD_AObjSetCurrentFrame(temp->u.dobj->mobj->tobj->aobj, frame);
+    HSD_AObjSetRate(temp->u.dobj->mobj->tobj->aobj, 0.0f);
+    if (p->x118 == 0) {
+        fn_8017F608(arg0);
+    }
+    fn_8017FBA4(arg0);
+    return fn_8017FA1C(arg0);
+    PAD_STACK(4);
+}
 
 /// #fn_80180630
 
