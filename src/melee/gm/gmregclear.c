@@ -29,6 +29,7 @@
 #include <melee/gr/grpushon.h>
 #include <melee/gr/stage.h>
 #include <melee/if/ifstatus.h>
+#include <melee/if/ifstock.h>
 #include <melee/it/item.h>
 #include <melee/lb/lb_00B0.h>
 #include <melee/lb/lb_00F9.h>
@@ -160,12 +161,12 @@ typedef struct RegClearCharEntry {
 
 struct {
     /* 0x000 */ s32 x0;
-    /* 0x004 */ u8 pad_4[4];
+    /* 0x004 */ s32 x4;
     /* 0x008 */ s32 x8;
     /* 0x00C */ PlayerInitData xC;
     /* 0x030 */ u8 pad_30[0x24];
-    /* 0x054 */ RegClearSpawnEntry x54[52];
-    /* 0x394 */ u8 pad_394[0x328];
+    /* 0x054 */ RegClearSpawnEntry x54[101];
+    /* 0x6A4 */ u8 pad_6A4[0x18];
     /* 0x6BC */ u8 x6BC;
     /* 0x6BD */ u8 pad_6BD;
     /* 0x6BE */ u16 x6BE;
@@ -2160,6 +2161,7 @@ void gm_80181B64(int c_kind, int arg1, s32 arg2)
     }
 }
 
+#pragma dont_inline on
 int fn_80181BFC(int* arg0)
 {
     int i;
@@ -2176,6 +2178,7 @@ int fn_80181BFC(int* arg0)
     }
     return count;
 }
+#pragma dont_inline reset
 
 /// #fn_80181C80
 s32 fn_80181C80(s32 arg0)
@@ -2226,6 +2229,117 @@ s32 fn_80181C80(s32 arg0)
 }
 
 /// #fn_80181E18
+void fn_80181E18(void)
+{
+    s32 mode;
+    s32 var_r29;
+    s32 next;
+    s32 temp;
+    s32 count;
+    s32 i;
+
+    mode = gm_801A4310();
+
+    if (lbl_80472ED8.x8 <= 0x5A) {
+        lbl_80472ED8.x8 += 1;
+    }
+
+    if (mode < 0x25) {
+        if (mode < 0x23) {
+            if (mode < 0x21) {
+
+            } else {
+                Player_GetFalls(0);
+            }
+        } else if (gm_8016AEEC() == 0 && gm_8016AEFC() == 0x3B) {
+            lbl_80472ED8.x6BC = 1;
+            gm_8016B33C(7);
+            gm_8016B328();
+        }
+    } else if (mode < 0x27) {
+        if (Player_GetFalls(0) != 0) {
+            gm_8016B33C(5);
+            gm_8016B328();
+        }
+    }
+
+    for (var_r29 = 0; var_r29 < 101; var_r29++) {
+        if (lbl_80472ED8.x54[var_r29].x0 == -2) {
+            continue;
+        }
+
+        if (lbl_80472ED8.x6C4 < 0x23) {
+            if (lbl_80472ED8.x6C4 < 0x21) {
+
+            } else {
+                lbl_80472ED8.x6C0 = gm_8016AEDC();
+            }
+        }
+
+        temp = var_r29 - fn_80181BFC(NULL);
+        if (temp < 0) {
+            temp = 0;
+        }
+        lbl_80472ED8.x6BE = (s16) (temp + lbl_80472ED8.x4);
+
+        switch (mode) {
+        case 0x21:
+            temp = var_r29 - fn_80181BFC(NULL);
+            if (temp < 0) temp = 0;
+            ifStock_802FA2D0(0xA - (temp + lbl_80472ED8.x4));
+            break;
+        case 0x22:
+            temp = var_r29 - fn_80181BFC(NULL);
+            if (temp < 0) temp = 0;
+            ifStock_802FA2D0(0x64 - (temp + lbl_80472ED8.x4));
+            break;
+        default:
+            temp = var_r29 - fn_80181BFC(NULL);
+            if (temp < 0) temp = 0;
+            ifStock_802FA2D0(temp + lbl_80472ED8.x4);
+            break;
+        }
+
+        next = lbl_80472ED8.x54[var_r29].x0;
+
+        if (next == -1) {
+            fn_80181C80(var_r29);
+            return;
+        }
+
+        if (next == 0x3E7) {
+            count = 0;
+            for (i = 1; i < 6; i++) {
+                if (Player_GetFalls(i) == 0 &&
+                    Player_GetPlayerSlotType(i) != Gm_PKind_NA)
+                {
+                    count += 1;
+                }
+            }
+            if (count == 0) {
+                lbl_80472ED8.x6BC = 1;
+                gm_8016B33C(7);
+                gm_8016B328();
+            }
+        } else {
+            if (next < var_r29) {
+                s32 k;
+                for (k = next; k < var_r29; k++) {
+                    lbl_80472ED8.x54[k].x0 = -1;
+                    lbl_80472ED8.x4 += 1;
+                }
+            }
+            fn_80181C80(lbl_80472ED8.x54[var_r29].x0);
+            temp = var_r29 - fn_80181BFC(NULL);
+            if (temp < 0) {
+                temp = 0;
+            }
+            ifStock_802FA2D0(temp + lbl_80472ED8.x4);
+        }
+        break;
+    }
+    PAD_STACK(16);
+}
 
 /// #gm_80182174
 
