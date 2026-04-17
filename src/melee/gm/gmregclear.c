@@ -1146,7 +1146,73 @@ bool fn_8017EDDC(void)
     return false;
 }
 
-/// #fn_8017EE40
+typedef struct {
+    u8 b7 : 1, b6 : 1, b5 : 1, b4 : 1, b3 : 1, b2 : 1, b1 : 1, b0 : 1;
+} u8_bits;
+
+#pragma dont_inline on
+void fn_8017EE40(int arg0_int)
+{
+    MatchEnd* arg0 = (MatchEnd*) arg0_int;
+    struct StartMeleeRules* rules;
+    gmm_x0_528_t* main_data;
+    u32 total_time;
+    int i;
+
+    rules = gm_8016AE50();
+
+    if (fn_8017E318() > 0) {
+        ((u8_bits*)&arg0->_x448[2])->b3 = 1;
+    }
+
+    if (rules->x4_5) {
+        main_data = gmMainLib_8015CDC8();
+        total_time = lbl_80472CB0.x0.xC.x20 + gm_8016AEDC();
+        ((u8_bits*)&arg0->_x448[0])->b7 = 1;
+
+        if ((u8) lbl_80472CB0.x0.cpu_level == 4) {
+            ((u8_bits*)&arg0->_x448[0])->b4 = 1;
+        }
+
+        if (total_time < 0x3840U) {
+            ((u8_bits*)&arg0->_x448[2])->b6 = 1;
+        } else if (total_time < 0x5460U) {
+            ((u8_bits*)&arg0->_x448[2])->b7 = 1;
+        }
+
+        if ((u32) lbl_80472CB0.x0.xC.x1C == 0U &&
+            (u32) arg0->player_standings[0].x44 == 0U)
+        {
+            ((u8_bits*)&arg0->_x448[1])->b1 = 1;
+        }
+
+        if ((u8) lbl_80472CB0.x0.xC.xE != 0) {
+            ((u8_bits*)&arg0->_x448[2])->b5 = 1;
+        }
+
+        if ((u8) lbl_80472CB0.x0.xC.xF != 0) {
+            ((u8_bits*)&arg0->_x448[2])->b4 = 1;
+        }
+
+        if ((u8) lbl_80472CB0.x0.xC.xD != 0) {
+            ((u8_bits*)&arg0->_x448[1])->b0 = 1;
+        } else if ((s8) arg0->player_standings[0].stocks ==
+                   (s32) main_data->stocks)
+        {
+            ((u8_bits*)&arg0->_x448[1])->b2 = 1;
+        }
+    }
+
+    for (i = 0; i < 6; i++) {
+        if (Player_GetPlayerSlotType(i) == Gm_PKind_Cpu &&
+            Player_GetPlayerCharacter(i) == CKIND_CREZYH)
+        {
+            ((u8_bits*)&arg0->_x448[0])->b0 = 1;
+            return;
+        }
+    }
+}
+#pragma dont_inline reset
 
 int fn_8017F008(void)
 {
