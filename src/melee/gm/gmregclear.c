@@ -1148,7 +1148,104 @@ void gm_8017E7FC(u8 arg0)
     }
 }
 
+typedef struct {
+    u8 b7 : 1, b6 : 1, b5 : 1, b4 : 1, b3 : 1, b2 : 1, b1 : 1, b0 : 1;
+} u8_bits;
+
 /// #fn_8017E8A4
+#pragma dont_inline on
+void fn_8017E8A4(int arg0_int)
+{
+    MatchEnd* arg0 = (MatchEnd*) arg0_int;
+    lbl_8046B6A0_t* gm = gm_8016AE38();
+    struct gm_803DE650_t* stage = gm_8017E4C4(gm_801A42C4());
+    UnkAdventureData* adv = &lbl_80472C30;
+    u8* flags = arg0->_x448;
+    gmm_x0_528_t* main_data;
+    u32 total_time;
+    int i;
+
+    if (fn_8017E318() > 0) {
+        ((u8_bits*)&flags[2])->b3 = 1;
+    }
+
+    if (gm->x24C8.x4_5) {
+        main_data = gmMainLib_8015CDD4();
+        total_time = adv->x0.xC.x20 + gm_8016AEDC();
+        ((u8_bits*)&flags[0])->b6 = 1;
+
+        if ((u8) adv->x0.cpu_level == 4) {
+            ((u8_bits*)&flags[0])->b3 = 1;
+        }
+
+        if (total_time < 0xC4E0U) {
+            ((u8_bits*)&flags[2])->b6 = 1;
+        } else if (total_time < 0x13560U) {
+            ((u8_bits*)&flags[2])->b7 = 1;
+        }
+
+        if ((u32) adv->x0.xC.x1C == 0U &&
+            (u32) arg0->player_standings[0].x44 == 0U)
+        {
+            ((u8_bits*)&flags[1])->b1 = 1;
+        }
+
+        if ((u8) adv->x0.xC.xE != 0) {
+            ((u8_bits*)&flags[2])->b5 = 1;
+        }
+
+        if ((u8) adv->x0.xC.xF != 0) {
+            ((u8_bits*)&flags[2])->b4 = 1;
+        }
+
+        if ((u8) adv->x0.xC.xD != 0) {
+            ((u8_bits*)&flags[1])->b0 = 1;
+        } else if ((s8) arg0->player_standings[0].stocks ==
+                   (s32) main_data->stocks)
+        {
+            ((u8_bits*)&arg0->_x448[1])->b2 = 1;
+        }
+    }
+
+    if (stage->x0 == 3) {
+        for (i = 0; i < 6; i++) {
+            if (Player_GetPlayerSlotType(i) == Gm_PKind_Cpu &&
+                Player_GetPlayerCharacter(i) == CKIND_LUIGI)
+            {
+                ((u8_bits*)&flags[1])->b7 = 1;
+                return;
+            }
+        }
+    }
+
+    if (stage->x0 == 0x11) {
+        if (gm->unk_C >= 5) {
+            ((u8_bits*)&flags[1])->b6 = 1;
+            return;
+        }
+    }
+
+    if (stage->x0 == 0x25) {
+        ((u8_bits*)&flags[1])->b5 = 1;
+        return;
+    } else if (stage->x0 == 0x53) {
+        for (i = 0; i < 6; i++) {
+            if (Player_GetPlayerSlotType(i) == Gm_PKind_Cpu &&
+                Player_GetPlayerCharacter(i) == CKIND_LUIGI)
+            {
+                ((u8_bits*)&flags[1])->b4 = 1;
+                return;
+            }
+        }
+    }
+
+    if (stage->x0 == 0x5C) {
+        ((u8_bits*)&flags[1])->b3 = 1;
+    }
+
+    PAD_STACK(8);
+}
+#pragma dont_inline reset
 
 UnkAllstarData* gm_8017EB30(void)
 {
@@ -1225,10 +1322,6 @@ bool fn_8017EDDC(void)
     }
     return false;
 }
-
-typedef struct {
-    u8 b7 : 1, b6 : 1, b5 : 1, b4 : 1, b3 : 1, b2 : 1, b1 : 1, b0 : 1;
-} u8_bits;
 
 #pragma dont_inline on
 void fn_8017EE40(int arg0_int)
