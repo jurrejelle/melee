@@ -1173,7 +1173,62 @@ int fn_8017F294(void)
 
 /// #fn_8017F2A4
 
-/// #fn_8017F47C
+s32 fn_8017F47C(HSD_Text** arg0, int arg1)
+{
+    s32* p;
+    s32 prev_idx;
+    int entry;
+    s32 i;
+    u8 mask;
+    s32 idx;
+    s32 val;
+
+    entry = arg1;
+    prev_idx = -999;
+    mask = fn_8017F008();
+    fn_8016F39C(arg0 + 1, gm_8016B774(), 7, arg1, mask, 0);
+
+    i = 0;
+    p = (s32*) arg0;
+
+    do {
+        mask = fn_8017F008();
+        idx = fn_8016F548(gm_8016B774(), entry, mask, 0);
+        mask = fn_8017F008();
+        val = fn_8016FAD4(gm_8016B774(), (u32) idx, (s32) mask, 0);
+
+        if (prev_idx == idx || idx < 0) {
+            break;
+        }
+
+        if (p[8] != val) {
+            if (val < 0) {
+                HSD_SisLib_803A70A0(*arg0, i, "%s%d", "\x81\x7c", -val);
+            } else {
+                HSD_SisLib_803A70A0(*arg0, i, "%d", val);
+            }
+            p[8] = val;
+        }
+
+        prev_idx = idx;
+        entry = idx + 1;
+        p++;
+        i++;
+    } while (i < 7);
+
+    mask = fn_8017F008();
+    val = fn_8016FFD4(gm_8016B774(), (s32) mask, 0);
+
+    if (val < 0) {
+        HSD_SisLib_803A70A0(*arg0, 7, "%s%d", "\x81\x7c", -val);
+    } else {
+        HSD_SisLib_803A70A0(*arg0, 7, "%d", val);
+    }
+
+    mask = fn_8017F008();
+    return fn_8016F548(gm_8016B774(), arg1, mask, 0);
+    PAD_STACK(0x18);
+}
 
 /// #fn_8017F608
 

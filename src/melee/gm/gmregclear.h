@@ -81,7 +81,7 @@
 /* 17F14C */ s32 fn_8017F14C(void* arg0);
 /* 17F1B8 */ void fn_8017F1B8(void);
 /* 17F2A4 */ UNK_RET fn_8017F2A4(UNK_PARAMS);
-/* 17F47C */ UNK_RET fn_8017F47C(UNK_PARAMS);
+/* 17F47C */ s32 fn_8017F47C(HSD_Text** arg0, int arg1);
 /* 17F608 */ UNK_RET fn_8017F608(UNK_PARAMS);
 /* 17FA1C */ s32 fn_8017FA1C(void* arg0);
 /* 17FBA4 */ UNK_RET fn_8017FBA4(UNK_PARAMS);
