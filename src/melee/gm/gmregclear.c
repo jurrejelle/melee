@@ -1613,9 +1613,18 @@ typedef struct fn_8017FA1C_arg {
     /* 0x024 */ HSD_JObj* x24;
     /* 0x028 */ char pad_28[0x24];
     /* 0x04C */ DynamicModelDesc x4C;
-    /* 0x05C */ char pad_5C[0x24];
+    /* 0x05C */ char pad_5C[0x20];
+    /* 0x07C */ HSD_Text* x7C;
     /* 0x080 */ HSD_Text* x80;
-    /* 0x084 */ char pad_84[0x78];
+    /* 0x084 */ char pad_84[0x48];
+    /* 0x0CC */ s32 xCC;
+    /* 0x0D0 */ s32 xD0;
+    /* 0x0D4 */ char pad_D4[0x08];
+    /* 0x0DC */ s32 xDC;
+    /* 0x0E0 */ char pad_E0[0x10];
+    /* 0x0F0 */ s32 xF0;
+    /* 0x0F4 */ s32 xF4;
+    /* 0x0F8 */ s32 xF8;
     /* 0x0FC */ s32 xFC;
     /* 0x100 */ s32 x100;
     /* 0x104 */ s32 x104;
@@ -1701,6 +1710,79 @@ s32 fn_8017FA1C(void* arg0)
 }
 
 /// #fn_8017FBA4
+
+void fn_8017FBA4(void* arg0)
+{
+    fn_8017FA1C_arg* p = arg0;
+    Vec3 sp24;
+    f32 sx, sy;
+    int str;
+
+    if (HSD_JObjGetFlags(p->x8) & 0x10) {
+        if (p->x7C != NULL) {
+            HSD_SisLib_803A5CC4(p->x7C);
+        }
+        p->x7C = NULL;
+        p->xF4 = p->xF0 - 1;
+        return;
+    }
+
+    if (p->xF0 != p->xF4) {
+        if (p->x7C != NULL) {
+            HSD_SisLib_803A5CC4(p->x7C);
+        }
+        p->x7C = HSD_SisLib_803A6754(0, 0);
+        HSD_SisLib_803A7548(p->x7C,
+            HSD_SisLib_803A6B98(p->x7C, 0.0f, 0.0f, "%d", p->xF0),
+            0.1f, 0.065f);
+        p->xF4 = p->xF0;
+    }
+
+    sx = HSD_JObjGetScaleX(p->x8->parent);
+    sy = HSD_JObjGetScaleY(p->x8->parent);
+
+    if (p->x7C != NULL) {
+        HSD_SisLib_803A5CC4(p->x7C);
+    }
+    p->x7C = HSD_SisLib_803A6754(0, 0);
+    p->x7C->default_alignment = 2;
+    p->xF8 = p->xF8 + 1;
+
+    if (p->xF8 < 0xC) {
+        HSD_SisLib_803A7548(p->x7C,
+            HSD_SisLib_803A6B98(p->x7C, 0.0f, 0.0f, "%s %d",
+                                "\x81{", p->xCC),
+            0.1f * sx, 0.065f * sy);
+    } else if (p->xF8 < 0x20) {
+        HSD_SisLib_803A7548(p->x7C,
+            HSD_SisLib_803A6B98(p->x7C, 0.0f, 0.0f, "%s %d",
+                                "\x81{", p->xDC + p->xD0),
+            0.1f * sx, 0.065f * sy);
+    } else {
+        if (p->xF0 >= 0) {
+            str = HSD_SisLib_803A6B98(p->x7C, 0.0f, 0.0f, "%s %d",
+                                      "\x81{", p->xF0);
+        } else {
+            str = HSD_SisLib_803A6B98(p->x7C, 0.0f, 0.0f, "%d",
+                                      p->xF0, p->xF0);
+        }
+        HSD_SisLib_803A7548(p->x7C, str, 0.1f * sx, 0.065f * sy);
+    }
+
+    if (p->x7C != NULL) {
+        f32 px, py, pz;
+        HSD_Text* text;
+        lb_8000B1CC(p->x8, NULL, &sp24);
+        py = -sp24.y - 31.0f;
+        px = 8.5f + sp24.x;
+        pz = sp24.z;
+        text = p->x7C;
+        text->pos_x = px;
+        text->pos_y = py;
+        text->pos_z = pz;
+    }
+    PAD_STACK(4);
+}
 
 void fn_8017FE54(HSD_GObj* gobj)
 {
