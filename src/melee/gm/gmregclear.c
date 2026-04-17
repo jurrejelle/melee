@@ -29,6 +29,8 @@
 #include <melee/lb/lbarchive.h>
 #include <melee/lb/lbaudio_ax.h>
 #include <sysdolphin/baselib/controller.h>
+#include <sysdolphin/baselib/jobj.h>
+#include <sysdolphin/baselib/sislib.h>
 #include <melee/lb/lbbgflash.h>
 #include <melee/lb/lbcardgame.h>
 #include <melee/lb/lbcardnew.h>
@@ -1176,6 +1178,91 @@ int fn_8017F294(void)
 /// #fn_8017F608
 
 /// #fn_8017FA1C
+
+typedef struct fn_8017FA1C_arg {
+    /* 0x00 */ char pad_0[0xC];
+    /* 0x0C */ HSD_JObj* xC;
+    /* 0x10 */ char pad_10[0x70];
+    /* 0x80 */ HSD_Text* x80;
+    /* 0x84 */ char pad_84[0x78];
+    /* 0xFC */ s32 xFC;
+    /* 0x100 */ s32 x100;
+    /* 0x104 */ s32 x104;
+    /* 0x108 */ char pad_108[0xD];
+    /* 0x115 */ u8 x115;
+} fn_8017FA1C_arg;
+
+extern s32 lbl_804D65C0;
+
+s32 fn_8017FA1C(void* arg0)
+{
+    fn_8017FA1C_arg* p = arg0;
+    Vec3 sp14;
+    s32 step;
+    s32 target_val;
+    s32 diff;
+    s32 abs_step;
+    f32 px, py, pz;
+
+    PAD_STACK(4);
+
+    if (HSD_JObjGetFlags(p->xC) & 0x10) {
+        if (p->x80 != NULL) {
+            HSD_SisLib_803A5CC4(p->x80);
+        }
+        p->x80 = NULL;
+        p->x100 = p->xFC - 1;
+        return 0;
+    }
+
+    step = lbl_804D65C0;
+    target_val = p->x104;
+    diff = target_val - p->xFC;
+
+    if (step < 0) {
+        abs_step = -step;
+    } else {
+        abs_step = step;
+    }
+
+    if (diff < 0) {
+        diff = -diff;
+    }
+
+    if (diff <= abs_step) {
+        p->xFC = target_val;
+        p->x115 = 1;
+    } else {
+        p->xFC = p->xFC + step;
+        p->x115 = 0;
+    }
+
+    if (p->xFC != p->x100) {
+        int str;
+        if (p->x80 != NULL) {
+            HSD_SisLib_803A5CC4(p->x80);
+        }
+        p->x80 = HSD_SisLib_803A6754(0, 0);
+        p->x80->default_alignment = 2;
+        str = HSD_SisLib_803A6B98(p->x80, 0.0f, 0.0f, "%d", p->xFC);
+        HSD_SisLib_803A7548(p->x80, str, 0.1f, 0.08f);
+        p->x100 = p->xFC;
+    }
+
+    if (p->x80 != NULL) {
+        HSD_Text* text;
+        lb_8000B1CC(p->xC, NULL, &sp14);
+        py = -sp14.y - 30.6f;
+        px = 16.0f + sp14.x;
+        pz = sp14.z;
+        text = p->x80;
+        text->pos_x = px;
+        text->pos_y = py;
+        text->pos_z = pz;
+    }
+
+    return 1;
+}
 
 /// #fn_8017FBA4
 
