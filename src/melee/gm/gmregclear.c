@@ -28,6 +28,7 @@
 #include <melee/gr/ground.h>
 #include <melee/gr/grpushon.h>
 #include <melee/gr/stage.h>
+#include <melee/if/ifcoget.h>
 #include <melee/if/ifstatus.h>
 #include <melee/if/ifstock.h>
 #include <melee/it/item.h>
@@ -62,19 +63,47 @@ lbl_804706D8_t lbl_804706D8[12];
 struct lbl_80472D28_t {
     /*   +0 */ char pad_0[0x2C];
     /* +2C */ HSD_GObj* x2C;
-    /* +30 */ char pad_30[0xD4];
+    /* +30 */ HSD_ImageDesc x30;
+    /* +48 */ HSD_Archive* x48;
+    /* +4C */ DynamicModelDesc x4C;
+    /* +5C */ void* x5C;
+    /* +60 */ void* x60;
+    /* +64 */ char pad_64[0x20];
+    /* +84 */ HSD_Text* x84;
+    /* +88 */ char pad_88[0x40];
+    /* +C8 */ u8 xC8;
+    /* +C9 */ u8 pad_C9[3];
+    /* +CC */ s32 xCC;
+    /* +D0 */ s32 xD0;
+    /* +D4 */ s32 xD4;
+    /* +D8 */ s32 xD8;
+    /* +DC */ s32 xDC;
+    /* +E0 */ s32 xE0;
+    /* +E4 */ s32 xE4;
+    /* +E8 */ s32 xE8;
+    /* +EC */ s32 xEC;
+    /* +F0 */ s32 xF0;
+    /* +F4 */ s32 xF4;
+    /* +F8 */ s32 xF8;
+    /* +FC */ s32 xFC;
+    /* +100 */ s32 x100;
     /* +104 */ int x104;
     /* +108 */ s16 x108;
     /* +10A */ s16 x10A;
     /* +10C */ f32 x10C;
     /* +110 */ u32 x110;
-    /* +114 */ char pad_114[2];
+    /* +114 */ u8 x114;
+    /* +115 */ u8 x115;
     /* +116 */ u8 x116;
     /* +117 */ u8 x117;
     /* +118 */ u8 x118;
-    /* +119 */ char pad_119[1];
+    /* +119 */ u8 x119;
     /* +11A */ u8 x11A;
     /* +11B */ u8 x11B;
+    /* +11C */ u8 x11C;
+    /* +11D */ u8 pad_11D;
+    /* +11E */ u8 x11E;
+    /* +11F */ u8 x11F;
 };
 
 struct lbl_80472E48_t {
@@ -1450,6 +1479,7 @@ typedef struct fn_8017F14C_arg {
     /* 0x98 */ s32 x98;
 } fn_8017F14C_arg;
 
+#pragma dont_inline on
 s32 fn_8017F14C(void* arg0)
 {
     fn_8017F14C_arg* p = arg0;
@@ -1464,8 +1494,9 @@ s32 fn_8017F14C(void* arg0)
     }
     return 0;
 }
+#pragma dont_inline off
 
-void fn_8017F1B8(void)
+s32 fn_8017F1B8(void)
 {
     int i;
     int mask;
@@ -1492,7 +1523,7 @@ void fn_8017F1B8(void)
     }
 
     mask = (u8) fn_8017F008();
-    fn_8016FFD4(gm_8016B774(), mask, 0);
+    return fn_8016FFD4(gm_8016B774(), mask, 0);
 }
 
 int fn_8017F294(void)
@@ -2013,6 +2044,168 @@ s32 fn_801803FC(void* arg0)
 }
 
 /// #fn_80180630
+void fn_80180630(int arg0, int arg1, int arg2, bool arg3,
+                 lbl_8046B6A0_24C_t* arg4)
+{
+    struct lbl_80472D28_t* state = &lbl_80472D28;
+    u8* data = lbl_803D8B88;
+    s32 sp64;
+    s32 sp60;
+    s32 sp5C;
+    s32 sp58;
+    void* sp38;
+    HSD_Archive* archive;
+    HSD_GObj* light_gobj;
+    HSD_GObj* cam_gobj;
+    lbl_8046B6A0_t* temp;
+    s32 total;
+    s32 var_r4;
+    s32 var_r27;
+    s32 var_r3;
+    u16 var_r28;
+    u8 mask;
+    u8 var_r0;
+
+    var_r27 = 0;
+    var_r28 = arg4->x58[0].xE;
+    memzero(state, 0x120);
+    state->xD4 = -1;
+    state->xD8 = 0;
+    state->xE0 = -1;
+    state->xE4 = 0;
+    state->xEC = -1;
+    state->xF4 = -1;
+    state->x100 = -1;
+    state->x11E = 1;
+    state->x11F = 1;
+    state->x108 = 0x64;
+    state->x10A = 0x64;
+    state->x114 = (u8) arg3;
+
+    switch (arg2) {
+    case 1:
+        Ground_801C1DE4(&sp60, &sp64);
+        state->x11A = 1;
+        state->x11C = (u8) (sp64 - sp60);
+        state->x108 = 0xC8;
+        if (sp60 == 0) {
+            state->x11B = 1;
+        }
+        break;
+    case 3:
+        temp = gm_8016AE38();
+        state->x118 = 1;
+        if ((u8) temp->match_result == 6) {
+            grPushOn_80219204(Ground_801C1DD4(), (int*) &sp5C, (int*) &sp58);
+            var_r27 = sp5C;
+            var_r28 = (u16) sp58;
+            state->x108 = 0x1F4;
+        }
+        break;
+    case 2:
+        state->x119 = 1;
+        break;
+    }
+
+    fn_8016F344(gm_8016B774());
+
+    if (state->x11A == 0 && state->x118 == 0 &&
+        state->x119 == 0 &&
+        (mask = fn_8017F008(),
+         fn_8016F9A8(gm_8016B774(), 0, mask, 0) != 0))
+    {
+        var_r0 = 1;
+    } else {
+        var_r0 = 0;
+    }
+    state->x117 = var_r0;
+
+    if (state->x117 != 0) {
+        state->xC8 = 0;
+    } else {
+        state->xC8 = 1;
+    }
+
+    if (state->x118 == 0) {
+        state->xD0 = fn_8017F09C();
+        state->xDC = fn_8017F14C(arg4);
+    }
+
+    if (state->x117 != 0) {
+        state->xE8 = fn_8017F1B8();
+    }
+
+    state->xF0 =
+        state->xDC + (state->xD0 + var_r27 + state->xE8);
+    state->xFC = arg0 + arg1;
+    state->xCC = arg1;
+
+    total = arg0 + (state->xCC + state->xF0);
+    var_r4 = total;
+    if (total > 999999999) {
+        var_r4 = 999999999;
+    } else if (var_r4 < 0) {
+        var_r4 = 0;
+    }
+    state->x104 = var_r4;
+    lbl_804D65C0 = (var_r4 - (arg0 + arg1)) / 10;
+
+    archive = lbArchive_80016DBC((char*) &data[0x14], &sp38,
+                                 (char*) &data[0x20], 0);
+    state->x48 = archive;
+    if (sp38 == NULL) {
+        OSReport((char*) &data[0x3C], (char*) &data[0x14], archive);
+    }
+    fn_80168A6C(sp38, &state->x4C, 0);
+
+    light_gobj = GObj_Create(0xBU, 3U, 0U);
+    HSD_GObjObject_80390A70(light_gobj, (u8) HSD_GObj_804D784A,
+                            lb_80011AC4(state->x5C));
+    GObj_SetupGXLink(light_gobj, HSD_GObj_LObjCallback, 0xAU, 0U);
+
+    cam_gobj = GObj_Create(0xEU, 0xEU, 0U);
+    HSD_GObjObject_80390A70(cam_gobj, HSD_GObj_804D784B,
+                            HSD_CObjLoadDesc(state->x60));
+    GObj_SetupGXLinkMax(cam_gobj, HSD_GObj_803910D8, 8U);
+    ((u32*) &cam_gobj->gxlink_prios)[1] = 0x4C00;
+    ((u32*) &cam_gobj->gxlink_prios)[0] = 0;
+
+    HSD_SisLib_803A611C(0, cam_gobj, 9U, 0xDU, 0U, 0xEU, 0U, 0x13U);
+    if (lbLang_IsSavedLanguageUS() != 0) {
+        HSD_SisLib_803A62A0(0, (char*) &data[0x128], (char*) &data[0x134]);
+    } else {
+        HSD_SisLib_803A62A0(0, (char*) &data[0x144], (char*) &data[0x134]);
+    }
+
+    fn_801803FC(state);
+    fn_80168F7C();
+
+    if (HSD_Randi(2) != 0) {
+        var_r3 = 0xA;
+    } else {
+        var_r3 = 0xB;
+    }
+    lbAudioAx_80023F28(var_r3);
+
+    Camera_8002F7AC(0);
+    lb_800121FC(&state->x30, 0x280, 0x1E0, GX_TF_RGB5A3, 0);
+    state->x2C = lb_800138EC((s32) &state->x30, NULL, 2U, 0x32,
+                             0.0f, 0.0f, 1.0f, 1.0f);
+    lb_800138D8(state->x2C, 1);
+    lb_800138CC(state->x2C, fn_8017FE54);
+
+    if (gm_8016AE50()->x1_1 && var_r28 != 0) {
+        if (state->x118 == 0) {
+            un_802FF128(0x5A, 0x1AE, (s32) var_r28, 5);
+        } else {
+            un_802FF128(0x86, 0xC8, (s32) var_r28, 5);
+        }
+    }
+
+    arg4->x58[0].xE = var_r28;
+    fn_8017F2A4(&state->x84, 264.0f, 211.0f);
+    PAD_STACK(0x30);
+}
 
 int fn_80180AC0(void)
 {

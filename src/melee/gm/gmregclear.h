@@ -79,7 +79,7 @@
 /* 17F008 */ int fn_8017F008(void);
 /* 17F09C */ s32 fn_8017F09C(void);
 /* 17F14C */ s32 fn_8017F14C(void* arg0);
-/* 17F1B8 */ void fn_8017F1B8(void);
+/* 17F1B8 */ s32 fn_8017F1B8(void);
 /* 17F2A4 */ s32 fn_8017F2A4(HSD_Text** arg0, f32 farg0, f32 farg1);
 /* 17F47C */ s32 fn_8017F47C(HSD_Text** arg0, int arg1);
 /* 17F608 */ void fn_8017F608(void* arg0);

@@ -428,7 +428,9 @@ struct lbl_8046B6A0_24C_t {
         u8 x7;
         u8 pad8[2];
         u16 xA;
-        u8 padC[0x20 - 0xC];
+        u8 padC[2];
+        u16 xE;
+        u8 pad10[0x20 - 0x10];
         u32 x20;
         u32 x24;
         u32 x28;
