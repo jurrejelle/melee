@@ -17,6 +17,7 @@
 #include <melee/ft/ftbosslib.h>
 #include <melee/ft/ftlib.h>
 #include <melee/gm/gmadventure.h>
+#include <melee/gm/gmregcommon.h>
 #include <melee/gm/gmmain_lib.h>
 #include <melee/gm/types.h>
 #include <melee/gr/ground.h>
@@ -631,7 +632,71 @@ bool gm_8017D7AC(MatchExitInfo* arg0, Unk1PData* arg1, u8 arg2)
     return 1;
 }
 
-/// #fn_8017D9C0
+s32 fn_8017D9C0(u8* arg0, u8* arg1)
+{
+    s32 len;
+    s32 i;
+    u8* p;
+    u8 temp;
+    u8* dst;
+    u8 ch;
+    s32 var_r0;
+    s32 var_r0_2;
+    u8* base;
+
+    base = lbl_803D79F0;
+    p = base;
+    len = 0;
+    while ((s32) *p != 0x21) {
+        p++;
+        len++;
+    }
+
+    p = base;
+    for (i = 0; i < len; i++) {
+        temp = *p;
+        dst = &base[HSD_Randi(len)];
+        *p = *dst;
+        p++;
+        *dst = temp;
+    }
+
+    p = base;
+    for (i = 0; i < len; i++) {
+        if (gm_80164840(*p) != 0) {
+            ch = *p;
+            if ((s8) ch == (s8) arg0[0]) {
+                var_r0 = -1;
+            } else if ((s8) ch == (s8) arg0[1]) {
+                var_r0 = -1;
+            } else if ((s8) ch == (s8) arg0[2]) {
+                var_r0 = -1;
+            } else if ((s8) ch == (s8) arg0[3]) {
+                var_r0 = -1;
+            } else {
+                var_r0 = 4;
+            }
+            if (var_r0 != -1) {
+                if ((s8) ch == (s8) arg1[0]) {
+                    var_r0_2 = -1;
+                } else if ((s8) ch == (s8) arg1[1]) {
+                    var_r0_2 = -1;
+                } else if ((s8) ch == (s8) arg1[2]) {
+                    var_r0_2 = -1;
+                } else {
+                    var_r0_2 = 3;
+                }
+                if (var_r0_2 != -1) {
+                    return (s32) base[i];
+                }
+            }
+        }
+        p++;
+    }
+
+    return 0x21;
+    PAD_STACK(8);
+}
 
 void gm_8017DB58(struct Unk1PData_x24* arg0)
 {

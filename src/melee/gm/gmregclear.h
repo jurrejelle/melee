@@ -24,7 +24,7 @@
 /* 17CE34 */ UNK_RET gm_8017CE34(StartMeleeData*, UnkAdventureData*, s8*, u8,
                                  u8, u8, int, int, int count, int);
 /* 17D7AC */ bool gm_8017D7AC(MatchExitInfo*, Unk1PData*, u8);
-/* 17D9C0 */ UNK_RET fn_8017D9C0(UNK_PARAMS);
+/* 17D9C0 */ s32 fn_8017D9C0(u8* arg0, u8* arg1);
 /* 17DB58 */ void gm_8017DB58(struct Unk1PData_x24* arg0);
 /* 17DB6C */ u8 gm_8017DB6C(gm_8017DB6C_arg0_t* arg0, int index);
 /* 17DB78 */ u8 gm_8017DB78(gm_8017DB6C_arg0_t* arg0, int index);
