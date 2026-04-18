@@ -5,6 +5,7 @@
 
 #include "platform.h"
 
+#include "baselib/forward.h"
 #include "it/forward.h"
 #include "lb/forward.h"
 
@@ -37,15 +38,17 @@ typedef struct itClimbersIce_ItemVars {
 } itClimbersIce_ItemVars;
 
 typedef struct itClimbersStringAttributes {
-    /* +00 */ u8 pad_00[0x8];
+    /* +00 */ s32 x0_count;
+    /* +04 */ s32 x4;
     /* +08 */ f32 x8;
-    /* +0C */ u8 pad_0C[0x8];
+    /* +0C */ f32 xC;
+    /* +10 */ u8 pad_10[0x4];
     /* +14 */ f32 x14;
     /* +18 */ s32 x18;
     /* +1C */ s32 x1C;
     /* +20 */ s32 x20;
-    /* +24 */ void* x24_joint;
-    /* +28 */ void* x28_joint;
+    /* +24 */ HSD_Joint* x24_joint;
+    /* +28 */ HSD_Joint* x28_joint;
 } itClimbersStringAttributes;
 
 typedef struct itClimbersIceAttributes {
@@ -771,25 +774,52 @@ typedef struct itSeakNeedleThrown_ItemVars {
 } itSeakNeedleThrown_ItemVars;
 
 typedef struct itSeakChain_ItemVars {
-    /* +0 ip+DD4 */ ItemLink* x0;
-    /* +0 ip+DD8 */ ItemLink* x4;
-    /* +8 ip+DDC */ Fighter_GObj* parent_gobj;
+    /* +0  ip+DD4 */ ItemLink* x0;
+    /* +4  ip+DD8 */ ItemLink* x4;
+    /* +8  ip+DDC */ Fighter_GObj* parent_gobj;
+    /* +C  ip+DE0 */ u8 pad_C[0x4];
+    /* +10 ip+DE4 */ s32 x10;
+    /* +14 ip+DE8 */ s32 x14;
+    /* +18 ip+DEC */ s32 x18;
+    /* +1C ip+DF0 */ Vec3 history[0xF];
 } itSeakChain_ItemVars;
 
 typedef struct itSeakChain_Attrs {
-    /*  +0 */ int x0;
-    /*  +4 */ float x4;
-    /*  +8 */ char pad_8[0x54 - 0x8];
-    /* +54 */ float x54;
-    /* +58 */ float x58;
+    /*  +0 */ s32 x0;
+    /*  +4 */ f32 x4;
+    /*  +8 */ u8 pad_8[0x8];
+    /* +10 */ f32 x10;
+    /* +14 */ f32 x14;
+    /* +18 */ f32 x18;
+    /* +1C */ f32 x1C;
+    /* +20 */ f32 x20;
+    /* +24 */ f32 x24;
+    /* +28 */ f32 x28;
+    /* +2C */ f32 x2C;
+    /* +30 */ f32 x30;
+    /* +34 */ f32 x34;
+    /* +38 */ f32 x38;
+    /* +3C */ f32 x3C;
+    /* +40 */ f32 x40;
+    /* +44 */ f32 x44;
+    /* +48 */ f32 x48;
+    /* +4C */ u8 pad_4C[0x8];
+    /* +54 */ f32 x54;
+    /* +58 */ f32 x58;
+    /* +5C */ f32 x5C;
+    /* +60 */ f32 x60;
+    /* +64 */ HSD_Joint* x64_joint;
+    /* +68 */ HSD_Joint* x68_joint;
 } itSeakChain_Attrs;
-STATIC_ASSERT(sizeof(struct itSeakChain_Attrs) == 0x5C);
+STATIC_ASSERT(sizeof(struct itSeakChain_Attrs) == 0x6C);
 
 typedef struct itClimbersString_ItemVars {
     /* +0  ip+DD4 */ f32 x0;
     /* +4  ip+DD8 */ ItemLink* x4;
     /* +8  ip+DDC */ ItemLink* x8;
     /* +C  ip+DE0 */ HSD_GObj* xC;
+    /* +10 ip+DE4 */ u8 pad_10[0x4];
+    /* +14 ip+DE8 */ HSD_JObj* x14;
 } itClimbersString_ItemVars;
 
 typedef struct itZako_ItemVars {
