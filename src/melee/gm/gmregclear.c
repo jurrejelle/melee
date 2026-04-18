@@ -22,6 +22,7 @@
 #include <melee/ft/ftlib.h>
 #include <melee/gm/gmadventure.h>
 #include <melee/gm/gm_1601.h>
+#include <melee/gm/gm_1A36.h>
 #include <melee/gm/gmregcommon.h>
 #include <melee/gm/gmmain_lib.h>
 #include <melee/gm/types.h>
@@ -61,7 +62,10 @@ typedef struct lbl_804706D8_t {
 lbl_804706D8_t lbl_804706D8[12];
 
 struct lbl_80472D28_t {
-    /*   +0 */ char pad_0[0x2C];
+    /*   +0 */ char pad_0[0x20];
+    /* +20 */ HSD_JObj* x20;
+    /* +24 */ HSD_JObj* x24;
+    /* +28 */ char pad_28[4];
     /* +2C */ HSD_GObj* x2C;
     /* +30 */ HSD_ImageDesc x30;
     /* +48 */ HSD_Archive* x48;
@@ -70,7 +74,10 @@ struct lbl_80472D28_t {
     /* +60 */ void* x60;
     /* +64 */ char pad_64[0x20];
     /* +84 */ HSD_Text* x84;
-    /* +88 */ char pad_88[0x40];
+    /* +88 */ char pad_88[0x38];
+    /* +C0 */ u16 xC0;
+    /* +C2 */ u16 pad_C2;
+    /* +C4 */ u32 xC4;
     /* +C8 */ u8 xC8;
     /* +C9 */ u8 pad_C9[3];
     /* +CC */ s32 xCC;
@@ -101,7 +108,7 @@ struct lbl_80472D28_t {
     /* +11A */ u8 x11A;
     /* +11B */ u8 x11B;
     /* +11C */ u8 x11C;
-    /* +11D */ u8 pad_11D;
+    /* +11D */ u8 x11D;
     /* +11E */ u8 x11E;
     /* +11F */ u8 x11F;
 };
@@ -1976,6 +1983,156 @@ void fn_8017FE54(HSD_GObj* gobj)
 }
 
 /// #fn_8017FF1C
+void fn_8017FF1C(HSD_GObj* gobj)
+{
+    struct lbl_80472D28_t* state = &lbl_80472D28;
+    HSD_JObj* jobj;
+    s32 result;
+    s32 i;
+    u8 mask;
+    HSD_JObj* sp28;
+
+    jobj = gobj->hsd_obj;
+    HSD_JObjAnimAll(jobj);
+
+    if (state->x118 == 0) {
+        fn_8017F608(state);
+    }
+
+    result = fn_8017FA1C(state);
+    fn_8017FBA4(state);
+
+    if (state->x117 != 0 && state->x110 > 0x29U) {
+        state->xC0 =
+            fn_8017F47C(&state->x84, (s32) state->xC0);
+
+        mask = fn_8017F008();
+        if (fn_8016F9A8(gm_8016B774(), state->xC0, mask, 0) > 7) {
+            state->x11F = 0;
+        } else {
+            state->x11F = 1;
+        }
+
+        mask = fn_8017F008();
+        if (fn_8016F870(gm_8016B774(), state->xC0, mask, 0) < 0) {
+            state->x11E = 1;
+        } else {
+            state->x11E = 0;
+        }
+
+        if (state->x110 % 30 == 0 && state->xC8 == 0) {
+            mask = fn_8017F008();
+            if (fn_8016F9A8(gm_8016B774(), state->xC0, mask, 0) > 7) {
+                state->xC0 = (u16) (state->xC0 + 1);
+            } else {
+                state->xC8 = 1;
+                state->xC4 = state->x110;
+            }
+        }
+
+        {
+            u64 buttons = gm_801A36A0(Player_GetPlayerId(0));
+            u64 repeat = gm_801A36C0(Player_GetPlayerId(0));
+            if ((repeat | buttons) & 0x20004 |
+                (repeat | buttons) & 0)
+            {
+                mask = fn_8017F008();
+                if (fn_8016F740(gm_8016B774(), state->xC0, mask,
+                                0) > 0)
+                {
+                    mask = fn_8017F008();
+                    if (fn_8016F9A8(gm_8016B774(), state->xC0, mask,
+                                    0) > 7)
+                    {
+                        mask = fn_8017F008();
+                        state->xC0 = fn_8016F740(gm_8016B774(),
+                                                 state->xC0, mask, 0);
+                        state->xC8 = 1;
+                        state->xC4 = state->x110;
+                    }
+                }
+            } else {
+                buttons = gm_801A36A0(Player_GetPlayerId(0));
+                repeat = gm_801A36C0(Player_GetPlayerId(0));
+                if ((repeat | buttons) & 0x10008 |
+                    (repeat | buttons) & 0)
+                {
+                    mask = fn_8017F008();
+                    if (fn_8016F870(gm_8016B774(), state->xC0, mask,
+                                    0) >= 0)
+                    {
+                        mask = fn_8017F008();
+                        state->xC0 = fn_8016F870(gm_8016B774(),
+                                                 state->xC0, mask, 0);
+                        state->xC8 = 1;
+                        state->xC4 = state->x110;
+                    }
+                }
+            }
+        }
+    }
+
+    if (state->x11A != 0 && state->x110 > 0x14U &&
+        state->x11D < state->x11C &&
+        (s32) (0.5f * (f32) (state->x110 - 0x14)) > (s32) state->x11D)
+    {
+        lb_80011E24(jobj, &sp28, state->x11D + 7, -1);
+        HSD_JObjClearFlagsAll(sp28, 0x10);
+        state->x11D = (u8) (state->x11D + 1);
+    }
+
+    if (state->x115 == 0 && result != 0) {
+        fn_80168F2C(0);
+    }
+
+    for (i = 0; i < 6; i++) {
+        if (Player_GetPlayerSlotType(i) == Gm_PKind_Human &&
+            (HSD_PadMasterStatus[(u8) Player_GetPlayerId(i)].trigger &
+             0x100))
+        {
+            state->xFC = state->x104;
+            state->x115 = 1;
+            break;
+        }
+    }
+
+    if (state->x110 > 0x3EU) {
+        for (i = 0; i < 6; i++) {
+            if (Player_GetPlayerSlotType(i) == Gm_PKind_Human &&
+                (HSD_PadMasterStatus[(u8) Player_GetPlayerId(i)].trigger &
+                 0x1000))
+            {
+                state->xFC = state->x104;
+                state->x116 = 1;
+                lbAudioAx_80024030(1);
+                break;
+            }
+        }
+    }
+
+    if (state->x11E != 0) {
+        HSD_JObjSetFlagsAll(state->x20, 0x10);
+    } else {
+        HSD_JObjClearFlagsAll(state->x20, 0x10);
+    }
+
+    if (state->x11F != 0) {
+        HSD_JObjSetFlagsAll(state->x24, 0x10);
+    } else {
+        HSD_JObjClearFlagsAll(state->x24, 0x10);
+    }
+
+    if (state->x10C < 1.0f) {
+        state->x10C += 0.05f;
+    } else {
+        state->x10C = 1.0f;
+    }
+
+    if (state->x110 + 0x10000 != 0xFFFF) {
+        state->x110 = state->x110 + 1;
+    }
+    PAD_STACK(0x1C);
+}
 
 /// #fn_801803FC
 s32 fn_801803FC(void* arg0)
