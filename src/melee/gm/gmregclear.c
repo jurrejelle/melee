@@ -2345,15 +2345,15 @@ void fn_8017FE54(HSD_GObj* gobj)
 
 void fn_8017FF1C(HSD_GObj* gobj)
 {
-    struct lbl_80472D28_t* state = &lbl_80472D28;
     HSD_JObj* jobj;
+    struct lbl_80472D28_t* state = &lbl_80472D28;
     s32 result;
     s32 i;
     u8 mask;
     HSD_JObj* sp28;
 
     jobj = gobj->hsd_obj;
-    HSD_JObjAnimAll(jobj);
+    HSD_JObjAnimAll(gobj->hsd_obj);
 
     if (state->x118 == 0) {
         fn_8017F608(state);
