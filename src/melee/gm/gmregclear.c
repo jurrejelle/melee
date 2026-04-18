@@ -3,14 +3,21 @@
 #include "gm_unsplit.h"
 #include "platform.h"
 
+#include "baselib/forward.h"
+
 #include <math_ppc.h>
 #include <dolphin/gx.h>
+#include <sysdolphin/baselib/aobj.h>
+#include <sysdolphin/baselib/controller.h>
+#include <sysdolphin/baselib/dobj.h>
 #include <sysdolphin/baselib/gobj.h>
 #include <sysdolphin/baselib/gobjgxlink.h>
 #include <sysdolphin/baselib/gobjobject.h>
 #include <sysdolphin/baselib/gobjproc.h>
+#include <sysdolphin/baselib/jobj.h>
 #include <sysdolphin/baselib/mobj.h>
 #include <sysdolphin/baselib/random.h>
+#include <sysdolphin/baselib/sislib.h>
 #include <sysdolphin/baselib/tobj.h>
 #include <sysdolphin/baselib/util.h>
 #include <melee/cm/camera.h>
@@ -20,17 +27,18 @@
 #include <melee/ft/ft_0877.h>
 #include <melee/ft/ftbosslib.h>
 #include <melee/ft/ftlib.h>
-#include <melee/gm/gmadventure.h>
 #include <melee/gm/gm_1601.h>
 #include <melee/gm/gm_1A36.h>
 #include <melee/gm/gm_1B03.h>
-#include <melee/gm/gmregcommon.h>
+#include <melee/gm/gmadventure.h>
 #include <melee/gm/gmmain_lib.h>
+#include <melee/gm/gmregcommon.h>
 #include <melee/gm/types.h>
 #include <melee/gr/ground.h>
 #include <melee/gr/grpushon.h>
 #include <melee/gr/stage.h>
 #include <melee/if/ifcoget.h>
+#include <melee/if/ifnametag.h>
 #include <melee/if/ifstatus.h>
 #include <melee/if/ifstock.h>
 #include <melee/if/iftime.h>
@@ -39,12 +47,6 @@
 #include <melee/lb/lb_00F9.h>
 #include <melee/lb/lbarchive.h>
 #include <melee/lb/lbaudio_ax.h>
-#include <sysdolphin/baselib/aobj.h>
-#include <sysdolphin/baselib/controller.h>
-#include <sysdolphin/baselib/dobj.h>
-#include <sysdolphin/baselib/jobj.h>
-#include <sysdolphin/baselib/sislib.h>
-#include <melee/if/ifnametag.h>
 #include <melee/lb/lbbgflash.h>
 #include <melee/lb/lbcardgame.h>
 #include <melee/lb/lbcardnew.h>
@@ -159,7 +161,7 @@ STATIC_ASSERT(sizeof(AllstarStageEntry) == 0x1A);
 
 extern AdventureStageEntry lbl_803D7AC0[110];
 extern AllstarStageEntry lbl_803D85F0[55];
-extern u8 lbl_803D8B88[];
+u16 lbl_803D8B88[] = { 0x18, 0x16, 0x12, 0x3, 0x5, 0x4, 0x6, 0x1a, 0x19, 0x7 };
 
 typedef struct RegClearEv {
     /* 0x00 */ char pad_0[0x1C];
@@ -1915,7 +1917,6 @@ s32 fn_8017F2A4(HSD_Text** arg0, f32 farg0, f32 farg1)
     s32 temp;
     s32 i;
 
-    data = lbl_803D8B88;
     temp = HSD_SisLib_803A611C(3, NULL, 9U, 0xDU, 0U, 0x14U, 0U, 0x13U);
     if (lbLang_IsSavedLanguageUS()) {
         HSD_SisLib_803A62A0(3, "SdDec.usd", "SIS_DecisionData");
@@ -2493,7 +2494,6 @@ s32 fn_801803FC(void* arg0)
 {
     fn_8017FA1C_arg* p = arg0;
     HSD_JObj* sp10;
-    u8* data = lbl_803D8B88;
     struct lbl_80472D28_t* state = &lbl_80472D28;
     DynamicModelDesc* mdl = &p->x4C;
     HSD_GObj* gobj;
@@ -2506,13 +2506,13 @@ s32 fn_801803FC(void* arg0)
     p->x0 = gobj;
     if (gobj == NULL) {
         HSD_JObjAnimAll((HSD_JObj*) gobj->hsd_obj);
-        OSReport((char*) &data[0xB8]);
-        OSPanic((char*) &data[0xE8], 0x42C, "");
+        OSReport("Error : gobj don\'t get (gmRegClearAddModel)\n");
+        OSPanic(__FILE__, 0x42C, "");
     }
     jobj = HSD_JObjLoadJoint(mdl->joint);
     if (jobj == NULL) {
-        OSReport((char*) &data[0xF8]);
-        OSPanic((char*) &data[0xE8], 0x432, "");
+        OSReport("Error : jobj don\'t get (gmRegClearAddModel)\n");
+        OSPanic(__FILE__, 0x432, "");
     }
     HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
     GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xBU, 0U);
@@ -2520,7 +2520,9 @@ s32 fn_801803FC(void* arg0)
     fn_801689E4(jobj, mdl, 0);
     HSD_JObjReqAnimAll(jobj, 0.0f);
     HSD_JObjAnimAll(jobj);
-    lb_8001204C(jobj, &p->x4, (u16*) data, 0xA);
+    {
+        lb_8001204C(jobj, &p->x4, lbl_803D8B88, 0xA);
+    }
     if (state->x117 == 0) {
         HSD_JObjSetFlagsAll(p->x14, 0x10U);
         HSD_JObjSetFlagsAll(p->x20, 0x10U);
@@ -2558,7 +2560,7 @@ void fn_80180630(int arg0, int arg1, int arg2, bool arg3,
                  lbl_8046B6A0_24C_t* arg4)
 {
     struct lbl_80472D28_t* state = &lbl_80472D28;
-    u8* data = lbl_803D8B88;
+    u8* data = (u8*) lbl_803D8B88;
     s32 sp64;
     s32 sp60;
     s32 sp5C;
