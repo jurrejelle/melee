@@ -3692,45 +3692,45 @@ void fn_80182B5C(void)
     default: var_r30 = 0; break;
     }
 
-    if (mode < 0x25) {
-        if (mode < 0x23) {
-            if (mode >= 0x21) {
-                if (mode == 0x21) {
-                    gmMainLib_8015D6BC(gm_80164024((u8) idx));
-                } else {
-                    gmMainLib_8015D710(gm_80164024((u8) idx));
-                }
-                if (lbl_80472ED8.x6BC != 0) {
-                    if ((u32) lbl_80472ED8.x6C0 < var_r30) {
-                        gm_8016B350(0x9C40);
-                        gm_8016B364(0x144);
-                        gm_80167858((s32) lbl_80472ED8.x6CC,
-                                    (s32) lbl_80472ED8.x6CD, 0xD, 0x5A);
-                        return;
-                    }
-                } else {
-                    gm_8016B364(0x148);
-                    gm_8016B378(0x28);
-                    return;
-                }
-            }
-        } else {
-            if (lbl_80472ED8.x6BC != 0 &&
-                (s32) lbl_80472ED8.x6BE > var_r6)
-            {
+    switch (mode) {
+    case 33:
+        gmMainLib_8015D6BC(gm_80164024((u8) idx));
+        goto func;
+    case 34:
+        gmMainLib_8015D710(gm_80164024((u8) idx));
+    func:
+        if (lbl_80472ED8.x6BC != 0) {
+            if ((u32) lbl_80472ED8.x6C0 < var_r30) {
                 gm_8016B350(0x9C40);
                 gm_8016B364(0x144);
-                gm_80167858((s32) lbl_80472ED8.x6CC,
-                            (s32) lbl_80472ED8.x6CD, 0xD, 0x5A);
+                gm_80167858((s32) lbl_80472ED8.x6CC, (s32) lbl_80472ED8.x6CD,
+                            0xD, 0x5A);
+                return;
             }
+        } else {
+            gm_8016B364(0x148);
+            gm_8016B378(0x28);
+            return;
         }
-    } else if (mode < 0x27) {
+        break;
+    case 35:
+    case 36:
+        if (lbl_80472ED8.x6BC != 0 && (s32) lbl_80472ED8.x6BE > var_r6) {
+            gm_8016B350(0x9C40);
+            gm_8016B364(0x144);
+            gm_80167858((s32) lbl_80472ED8.x6CC, (s32) lbl_80472ED8.x6CD, 0xD,
+                        0x5A);
+        }
+        break;
+    case 37:
+    case 38:
         if ((s32) lbl_80472ED8.x6BE > var_r6) {
             gm_8016B350(0x9C40);
             gm_8016B364(0x144);
             gm_80167858((s32) lbl_80472ED8.x6CC,
                         (s32) lbl_80472ED8.x6CD, 0xD, 0x5A);
         }
+        break;
     }
     PAD_STACK(24);
 }
