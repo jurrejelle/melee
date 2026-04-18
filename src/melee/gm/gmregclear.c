@@ -3016,6 +3016,7 @@ extern HSD_Archive* lbl_804D65C8;
 
 void fn_80181708(void)
 {
+    HSD_GObj* new_var;
     typedef struct {
         u8 b76 : 2, b54 : 2, b32 : 2, b10 : 2;
     } x0_2bits;
@@ -3030,7 +3031,6 @@ void fn_80181708(void)
     ((x0_2bits*) &lbl_80472E48.x0)->b54 = 0;
     ((x0_2bits*) &lbl_80472E48.x0)->b32 = 0;
     ((x0_2bits*) &lbl_80472E48.x0)->b10 = 0;
-    jobj = jobj;
     lbl_80472E48.xC = 0;
     lbl_80472E48.x10 = (s8) Player_GetPlayerId(0);
     lbl_804D65D4 = 0;
@@ -3050,11 +3050,11 @@ void fn_80181708(void)
     HSD_JObjAnimAll(jobj);
     HSD_JObjSetFlagsAll(jobj, 0x10U);
 
-    gobj = GObj_Create(0xEU, 0xFU, 0U);
+    gobj = (new_var = GObj_Create(0xEU, 0xFU, 0U));
     jobj = HSD_JObjLoadJoint((*lbl_804D65D0)->joint);
-    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
-    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xBU, 0U);
-    HSD_GObj_SetupProc(gobj, fn_80180C60, 0x15U);
+    HSD_GObjObject_80390A70(new_var, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(new_var, HSD_GObj_JObjCallback, 0xBU, 0U);
+    HSD_GObj_SetupProc(new_var, fn_80180C60, 0x15U);
     gm_8016895C(jobj, *lbl_804D65D0, 0);
     HSD_JObjReqAnimAll(jobj, 10.0f);
     HSD_JObjAnimAll(jobj);
