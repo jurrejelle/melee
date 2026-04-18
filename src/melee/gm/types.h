@@ -718,11 +718,11 @@ struct Unk1PData {
 
 struct UnkAdventureData {
     /* 00 */ Unk1PData x0;
-    /* 48 */ UNK_T x48;
+    /* 48 */ u8 (*x48)(u8, u8);
     /* 4C */ u8 (*x4C)(u8, u8, u8);
-    /* 50 */ UNK_T x50;
+    /* 50 */ u8 (*x50)(u8, u8, u8);
     /* 54 */ u8 (*x54)(u8, u8, u8);
-    /* 58 */ UNK_T x58;
+    /* 58 */ u8 (*x58)(u8, u8, u8);
     /* 5C */ UNK_T x5C;
     /* 60 */ UNK_T x60;
     /* 64 */ float (*x64)(u8, u8);

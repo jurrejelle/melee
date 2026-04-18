@@ -23,6 +23,7 @@
 #include <melee/gm/gmadventure.h>
 #include <melee/gm/gm_1601.h>
 #include <melee/gm/gm_1A36.h>
+#include <melee/gm/gm_1B03.h>
 #include <melee/gm/gmregcommon.h>
 #include <melee/gm/gmmain_lib.h>
 #include <melee/gm/types.h>
@@ -645,7 +646,372 @@ u8 gm_8017CD94(UnkAdventureData* arg0, int arg1, int arg2, int arg3)
     return 0;
 }
 
-/// #gm_8017CE34
+s32 gm_8017CE34(StartMeleeData* arg0, UnkAdventureData* arg1, s8* arg2,
+                u8 arg3, u8 arg4, u8 arg5, s32 arg6, InternalStageId arg7,
+                s32 count, s32 arg9)
+{
+    u8 colors[3];
+    s32 var_r20;
+    u8 var_r22;
+    u8 var_r21;
+    s32 var_r28;
+    s32 var_r4;
+    u8 var_r6;
+    s32 var_r4_2;
+    u8 var_r3;
+    s32 var_r25;
+    s32 var_r25_3;
+    s32 var_r23_2;
+    s8* temp_r24;
+    u8 temp_r0_2;
+    f32 temp_f29;
+    f32 temp_f28;
+    u8* var_r26;
+    s32 sp8;
+
+    PAD_STACK(24);
+
+    var_r20 = 0;
+    var_r22 = 0;
+    var_r21 = 0;
+    arg1->x0.xC.xC = 1;
+    fn_8017E21C();
+    fn_8016F030(arg0);
+    arg0->rules.x30 = 1.0f;
+    arg0->rules.x4_4 = 1;
+
+    switch (arg9) {
+    case 0:
+        arg0->rules.xA = 0;
+        break;
+    case 1:
+        arg0->rules.xA = 3;
+        break;
+    case 2:
+        arg0->rules.xA = 2;
+        break;
+    }
+
+    arg0->rules.x1_1 = 1;
+    arg0->rules.x4_2 = 1;
+    arg0->rules.x4_3 = 1;
+    arg0->rules.x2_5 = 0;
+    arg0->rules.x0_3 = arg1->x0.xB;
+
+    if (arg6 != 0) {
+        arg0->rules.x10 = (u32) arg6;
+        arg0->rules.x0_6 = 1;
+    } else {
+        arg0->rules.x0_6 = 0;
+    }
+
+    arg0->rules.x18 = (u32) arg1->x0.xC.x18;
+    arg0->rules.xE = (u16) arg7;
+    arg0->rules.xB = arg1->x48((u8) count, arg1->x0.cpu_level);
+
+    var_r4 = 0;
+    arg0->rules.x20 = (u64) -1;
+
+    if ((s32) (u8) arg2[0] != 0x21) {
+        var_r4 = 1;
+    }
+    {
+        s8* p = &arg2[1];
+        if ((s32) *p != 0x21) {
+            var_r4 += 1;
+        }
+        if ((s32) p[1] != 0x21) {
+            var_r4 += 1;
+        }
+    }
+    if (var_r4 == 0) {
+        arg0->rules.x5_1 = 1;
+    }
+    if (arg1->x0.x8 & 1) {
+        arg0->rules.x2_7 = 1;
+    }
+    if (arg1->x0.x8 & 0x20) {
+        arg0->rules.x4_5 = 1;
+    }
+    if (arg1->x0.x8 & 0x80) {
+        arg1->x0.xC.xC = 5;
+        switch ((s32) arg1->x0.x9) {
+        case 1:
+            arg0->rules.x3C = gm_80165290;
+            arg0->rules.x9 = 1;
+            arg0->rules.x3_1 = 0;
+            arg0->players[0].xC_b1 = 0;
+            break;
+        case 2:
+            arg0->rules.x9 = 3;
+            arg0->rules.x44 = fn_8017C7EC;
+            break;
+        case 3:
+            arg0->rules.x9 = 2;
+            arg0->rules.x7 = 9;
+            arg0->rules.x4_4 = 0;
+            arg0->rules.x50 = (void (*)(u8)) fn_8017C7A0;
+            arg0->rules.xD = 0x30;
+            break;
+        }
+    }
+
+    if ((arg1->x0.x8 & 0x80) != 0) {
+        var_r6 = 1;
+    } else {
+        var_r6 = arg1->x0.stocks;
+    }
+
+    var_r4_2 = (u8) arg1->x0.ckind;
+    if ((var_r4_2 == 0x12) && ((u8) arg1->x0.xC.x12 != 0)) {
+        var_r4_2 = 0x13;
+    } else if (((arg1->x0.x8 & 0x80) != 0) && ((u8) arg1->x0.x9 == 1) &&
+               ((s8) var_r4_2 == 0xE)) {
+        var_r4_2 = 0x20;
+    }
+
+    gm_801B0620(arg0->players, var_r4_2, arg1->x0.color, var_r6,
+                arg1->x0.slot);
+    arg0->players[0].xA = arg1->x0.x4;
+    arg0->players[0].spawn_dir = (s8) arg1->x0.xA;
+
+    {
+        u8 var_r5;
+        if (arg1->x58 != NULL) {
+            var_r5 = arg1->x58((u8) count, arg1->x0.cpu_level, 0);
+        } else {
+            var_r5 = 0;
+        }
+
+        {
+            var_r28 =
+                fn_8017DD7C(arg0->players, arg1->x0.xC.x24, var_r5) + 1;
+            arg0->rules.is_teams = 1;
+        }
+    }
+
+    temp_f29 = arg1->x64((u8) count, arg1->x0.cpu_level);
+    temp_f28 = arg1->x68((u8) count, arg1->x0.cpu_level);
+
+    var_r26 = colors;
+    {
+        u8* var_r24 = var_r26;
+        s8* var_r18 = arg2;
+        var_r25 = 0;
+        do {
+            u8 temp_r23 = gm_80169238((u8) *var_r18);
+            u8 var_r0;
+            if (arg1->x54 != NULL) {
+                u8 temp_r3_3;
+                temp_r3_3 = arg1->x54((u8) count, arg1->x0.cpu_level,
+                                      (u8) var_r25);
+                if (temp_r23 != 0) {
+                    var_r0 = temp_r3_3 % temp_r23;
+                } else {
+                    var_r0 = 0;
+                }
+            } else {
+                var_r0 = 0;
+            }
+            var_r25 += 1;
+            *var_r24 = var_r0;
+            var_r24 += 1;
+            var_r18 += 1;
+        } while (var_r25 < 3);
+    }
+
+    {
+        s32 temp_r3_4 = arg1->x0.x8 & 8;
+        if ((temp_r3_4 != 0) && ((u8) arg1->x0.xC.x11 == 0)) {
+            s32 var_r4_3;
+            s32 var_r23;
+            s32 var_r24_2;
+            s32 var_r25_2;
+            u8 temp_r4;
+            u32 temp_r3_5;
+
+            var_r4_3 = 0;
+            if ((s32) (u8) arg2[0] != 0x21) {
+                var_r4_3 = 1;
+            }
+            {
+                s8* p = &arg2[1];
+                if ((s32) *p != 0x21) {
+                    var_r4_3 += 1;
+                }
+                if ((s32) p[1] != 0x21) {
+                    var_r4_3 += 1;
+                }
+            }
+            arg1->x0.xC.xC = 3;
+            var_r23 = var_r4_3;
+            var_r24_2 = 0;
+            var_r25_2 = 0;
+            sp8 = 0;
+            if (arg1->x4C != NULL) {
+                var_r22 = arg1->x4C((u8) count, arg1->x0.cpu_level, 0U);
+            }
+
+            temp_r4 = (u8) arg2[0];
+            if ((s8) temp_r4 != 4) {
+                if ((u8) (temp_r4 - 0x1B) <= 1U) {
+                    arg0->rules.x0_3 = 6;
+                    var_r23 = 5;
+                    colors[0] = 0;
+                    var_r24_2 = 1;
+                    var_r25_2 = 1;
+                } else if (((s8) temp_r4 == 0xD) &&
+                           (((s32) arg2[1] != 0xD) ||
+                            ((s32) arg2[2] != 0xD))) {
+                    var_r25_2 = 2;
+                }
+            }
+
+            temp_r3_5 = Ground_801C5AD0(Stage_8022519C(arg7));
+
+            gm_8016A22C((s8) (u8) arg2[0], (s8) arg2[1], (s8) arg2[2],
+                        colors[0], colors[1], (s32) colors[2],
+                        var_r24_2, var_r25_2,
+                        sp8, (u8) arg1->x0.ckind, arg1->x0.color,
+                        (s32) var_r22, (s32) arg3, var_r23,
+                        (s32) temp_r3_5, (s32) arg5, (s32) arg4,
+                        temp_f29, temp_f28);
+            gm_8016A21C(&arg0->rules);
+            arg1->x0.xC.x11 = 0;
+            if (arg1->x0.x8 & 4) {
+                fn_8016A450();
+            }
+            if ((u8) var_r25_2 == 1) {
+                fn_8016A46C();
+                arg0->players[0].xC_b5 = 1;
+            }
+        } else if (temp_r3_4 != 0) {
+            gm_8016A21C(&arg0->rules);
+            arg1->x0.xC.x11 = 0;
+        }
+    }
+
+    gmRegSetupEnemyColorTable((s8) (u8) arg1->x0.ckind, arg1->x0.color,
+                              arg2, colors);
+
+    var_r25_3 = var_r28 * 0x24;
+    var_r23_2 = 0;
+    for (;;) {
+        temp_r24 = &arg2[var_r23_2];
+        if ((s32) (u8) temp_r24[0] != 0x21) {
+            if (arg1->x0.x8 & 8) {
+                if (arg1->x4C != NULL) {
+                    var_r22 = arg1->x4C((u8) count, arg1->x0.cpu_level, 0U);
+                }
+                if (arg1->x50 != NULL) {
+                    var_r21 =
+                        arg1->x50((u8) count, arg1->x0.cpu_level, 0U);
+                }
+            } else {
+                if (arg1->x4C != NULL) {
+                    var_r22 = arg1->x4C((u8) count, arg1->x0.cpu_level,
+                                        var_r23_2);
+                }
+                if (arg1->x50 != NULL) {
+                    var_r21 = arg1->x50((u8) count, arg1->x0.cpu_level,
+                                        var_r23_2);
+                }
+            }
+            {
+                PlayerInitData* p =
+                    (PlayerInitData*) ((u8*) arg0 + var_r25_3 + 0x60);
+                gm_8016795C(p);
+                p->slot_type = 1;
+                p->c_kind = (s8) (u8) temp_r24[0];
+                p->stocks = 1;
+                p->cpu_level = var_r22;
+                p->xE = var_r21;
+                p->x18 = temp_f29;
+                p->x1C = temp_f28;
+                p->color = *var_r26;
+                if (arg1->x0.x8 & 2) {
+                    p->x20 = 2.0f;
+                    p->xB = 2;
+                } else {
+                    p->x20 = 1.0f;
+                    p->xB = 0;
+                }
+                if (arg1->x0.x8 & 4) {
+                    p->xC_b2 = 1;
+                    p->xE = 0x1B;
+                }
+                if ((s32) p->c_kind == 0x1D) {
+                    p->xC_b1 = 0;
+                }
+                temp_r0_2 = (u8) p->c_kind;
+                if (((s8) temp_r0_2 == 0x1A) || ((s8) temp_r0_2 == 0x1E)) {
+                    p->xC_b7 = 1;
+                    p->hp = 0x12C;
+                    p->xD_b2 = 1;
+                    p->xD_b0 = 1;
+                    p->xD_b2 = 1;
+                    p->spawn_dir = -1;
+                    if ((s32) p->c_kind == 0x1E) {
+                        p->slot_type = 3;
+                    }
+                    var_r20 += 1;
+                }
+                if ((u8) arg0->rules.is_teams == 1) {
+                    p->team = 4;
+                }
+            }
+            var_r28 += 1;
+            var_r25_3 += 0x24;
+            if (var_r28 >= 6) {
+                break;
+            }
+        } else {
+            if (((s32) var_r23_2 == 0) && ((s32) temp_r24[1] == 0x1A)) {
+                ((PlayerInitData*) ((u8*) arg0 + var_r25_3 + 0x60))
+                    ->slot_type = 3;
+                var_r28 += 1;
+                var_r25_3 += 0x24;
+            }
+        }
+        var_r23_2 += 1;
+        var_r26 += 1;
+        if ((s32) var_r23_2 >= 3) {
+            break;
+        }
+    }
+
+    {
+        s32 i;
+        for (i = var_r28; i < 6; i++) {
+            arg0->players[i].slot_type = 3;
+        }
+    }
+
+    var_r3 = arg1->x0.x8;
+    if (var_r3 & 0x40) {
+        arg1->x0.xC.xC = 7;
+    } else if (var_r3 & 1) {
+        if ((var_r3 & 8) && (arg3 > 1U)) {
+            arg1->x0.xC.xC = 4;
+        } else {
+            arg1->x0.xC.xC = 2;
+        }
+    }
+    if (var_r20 != 0) {
+        arg0->rules.x1_2 = 1;
+        arg0->rules.x1_3 = 1;
+        arg0->rules.x1_4 = 1;
+        arg0->rules.x0_3 = 3;
+        arg0->rules.x2_4 = 1;
+        arg0->rules.x7 = 0;
+        arg0->rules.x44 = (void (*)(void)) fn_8017C71C;
+        arg1->x0.xC.xC = 6;
+    }
+    if (arg7 == 0x49) {
+        arg1->x0.xC.xC = 8;
+    }
+    return (s32) var_r3;
+}
 
 bool gm_8017D7AC(MatchExitInfo* arg0, Unk1PData* arg1, u8 arg2)
 {
@@ -863,7 +1229,7 @@ s32 gm_8017DB88(void* arg0, u8 arg1, s32 arg2, s32 arg3,
     return count;
 }
 
-u8 fn_8017DD7C(PlayerInitData* arg0, Unk1PData_x24* arg1)
+s32 fn_8017DD7C(PlayerInitData* arg0, Unk1PData_x24* arg1, u8 arg2)
 {
     s32 index = 1;
     int i;
