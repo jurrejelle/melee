@@ -2069,7 +2069,8 @@ void fn_8017F608(void* arg0)
         HSD_SisLib_803A6368(p->x6C, 2);
     }
     if (p->x70 == NULL) {
-        p->x70 = HSD_SisLib_803A5ACC(0, 0, 0.0f, 0.0f, 0.0f, 6.0f, 300.0f);
+        text = HSD_SisLib_803A5ACC(0, 0, 0.0f, 0.0f, 0.0f, 6.0f, 300.0f);
+        p->x70 = text;
         if (p->x11A != 0) {
             HSD_SisLib_803A6368(p->x70, 4);
         } else {
