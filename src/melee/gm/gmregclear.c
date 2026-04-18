@@ -32,6 +32,7 @@
 #include <melee/if/ifcoget.h>
 #include <melee/if/ifstatus.h>
 #include <melee/if/ifstock.h>
+#include <melee/if/iftime.h>
 #include <melee/it/item.h>
 #include <melee/lb/lb_00B0.h>
 #include <melee/lb/lb_00F9.h>
@@ -122,7 +123,10 @@ struct lbl_80472E48_t {
     /* 0x10 */ u8 x10;
     /* 0x11 */ char pad_11[3];
     /* 0x14 */ s32 x14[0x1B];
-    /* 0x80 */ s32 x80[4];
+    /* 0x80 */ s32 x80;
+    /* 0x84 */ s32 x84;
+    /* 0x88 */ s32 x88;
+    /* 0x8C */ s32 x8C;
 }; /* size = 0x90 */
 STATIC_ASSERT(sizeof(struct lbl_80472E48_t) == 0x90);
 
@@ -2373,7 +2377,7 @@ int fn_80180AC0(void)
 }
 s32 gm_80180AE4(void)
 {
-    return lbl_80472E48.x80[0] * 0xA;
+    return lbl_80472E48.x80 * 0xA;
 }
 
 Fighter_GObj* gm_80180AF4(void)
@@ -2414,6 +2418,198 @@ void fn_80180C14(HSD_GObj* gobj)
 
 /// #fn_80180C60
 
+static s32 lbl_804D65D4;
+
+void fn_80180C60(HSD_GObj* gobj)
+{
+    typedef struct {
+        u8 b76 : 2, b54 : 2, b32 : 2, b10 : 2;
+    } x0_2bits;
+    HSD_JObj* jobj = gobj->hsd_obj;
+    s32 dist;
+    s32 disp;
+    s32 d;
+    u32 b76;
+
+    dist = (s32) (0.1f * Ground_801C57F0());
+    if (dist < 0) {
+        dist = 0;
+    }
+
+    lbl_80472E48.x80 = dist;
+    b76 = ((u8) lbl_80472E48.x0 >> 6) & 3;
+
+    if (b76 != 0 && (((u8) lbl_80472E48.x0 >> 4) & 3)) {
+        ifTime_HideTimers();
+        if (lbl_80472E48.x80 == lbl_80472E48.x84) {
+            lbl_80472E48.x8C = lbl_80472E48.x8C + 1;
+        } else {
+            lbl_80472E48.x8C = 0;
+        }
+        if (lbl_80472E48.x8C > 0x3C) {
+            ((x0_2bits*) &lbl_80472E48.x0)->b32 = 1;
+            if (dist == 0 && !(lbl_80472E48.x0 & 3)) {
+                ((x0_2bits*) &lbl_80472E48.x0)->b10 = 1;
+            }
+        }
+    } else {
+        if (b76 != 0) {
+            ifTime_HideTimers();
+            if (lbl_80472E48.x80 == lbl_80472E48.x84) {
+                lbl_80472E48.x8C = lbl_80472E48.x8C + 1;
+            } else {
+                lbl_80472E48.x8C = 0;
+            }
+            if (lbl_80472E48.x8C > 0x78) {
+                ((x0_2bits*) &lbl_80472E48.x0)->b32 = 1;
+                if (!(lbl_80472E48.x0 & 3)) {
+                    ((x0_2bits*) &lbl_80472E48.x0)->b10 = 1;
+                }
+            }
+        } else if (gm_8016AEEC() == 0 && gm_8016AEFC() == 0x3B) {
+            ((x0_2bits*) &lbl_80472E48.x0)->b76 = 1;
+            ifTime_HideTimers();
+            Player_80031790(0);
+        }
+        if (Ground_801C1DC0() != 0) {
+            if (!(((u8) lbl_80472E48.x0 >> 6) & 3)) {
+                ((x0_2bits*) &lbl_80472E48.x0)->b76 = 1;
+                ifTime_HideTimers();
+                Player_80031790(0);
+            }
+            if (!(((u8) lbl_80472E48.x0 >> 4) & 3)) {
+                ((x0_2bits*) &lbl_80472E48.x0)->b54 = 1;
+                Player_80031790(0);
+            }
+            lbl_80472E48.x8C = 0;
+        }
+    }
+
+    if (!(((u8) lbl_80472E48.x0 >> 2) & 3)) {
+        HSD_JObjReqAnimAll(jobj, 0.0f);
+    } else if (lbl_80472E48.x0 & 3) {
+        HSD_JObjSetFlagsAll(jobj, 0x10U);
+    } else if (dist > lbl_80472E48.x14[gm_80164024((u8) lbl_80472E48.unk_4)]) {
+        if (lbl_804D65D4 == 0) {
+            lbAudioAx_800237A8(0x9C40, 0x7F, 0x40);
+            lbAudioAx_800237A8(0x144, 0x7F, 0x40);
+            gm_80167858((s32) (s8) lbl_80472E48.x10,
+                        (s32) Player_GetNametagSlotID(0), 0xD, 0x5A);
+            lbl_804D65D4 = 1;
+        }
+        HSD_JObjClearFlagsAll(
+            HSD_JObjGetNext(
+                HSD_JObjGetChild(
+                    HSD_JObjGetChild(jobj))),
+            0x10U);
+    }
+
+    if (lbLang_IsSavedLanguageUS() != 0) {
+        disp = (s32) ((f64) (f32) dist / 0.304788);
+    } else {
+        disp = dist;
+    }
+    if (disp > 0x1869F) {
+        disp = 0x1869F;
+    }
+
+    /* ones digit */
+    HSD_JObjReqAnimAll(
+        HSD_JObjGetNext(
+            HSD_JObjGetNext(
+                HSD_JObjGetChild(
+                    HSD_JObjGetChild(jobj)))),
+        (f32) (disp % 10));
+
+    /* tens digit */
+    HSD_JObjReqAnimAll(
+        HSD_JObjGetNext(
+            HSD_JObjGetNext(
+                HSD_JObjGetNext(
+                    HSD_JObjGetChild(
+                        HSD_JObjGetChild(jobj))))),
+        (f32) ((disp / 10) % 10));
+
+    /* hundreds digit */
+    d = disp / 100;
+    if (d != 0) {
+        HSD_JObjReqAnimAll(
+            HSD_JObjGetNext(
+                HSD_JObjGetNext(
+                    HSD_JObjGetNext(
+                        HSD_JObjGetNext(
+                            HSD_JObjGetChild(
+                                HSD_JObjGetChild(jobj)))))),
+            (f32) (d % 10));
+    } else {
+        HSD_JObjReqAnimAll(
+            HSD_JObjGetNext(
+                HSD_JObjGetNext(
+                    HSD_JObjGetNext(
+                        HSD_JObjGetNext(
+                            HSD_JObjGetChild(
+                                HSD_JObjGetChild(jobj)))))),
+            10.0f);
+    }
+
+    /* thousands digit */
+    d = disp / 1000;
+    if (d != 0) {
+        HSD_JObjReqAnimAll(
+            HSD_JObjGetNext(
+                HSD_JObjGetNext(
+                    HSD_JObjGetNext(
+                        HSD_JObjGetNext(
+                            HSD_JObjGetNext(
+                                HSD_JObjGetChild(
+                                    HSD_JObjGetChild(jobj))))))),
+            (f32) (d % 10));
+    } else {
+        HSD_JObjReqAnimAll(
+            HSD_JObjGetNext(
+                HSD_JObjGetNext(
+                    HSD_JObjGetNext(
+                        HSD_JObjGetNext(
+                            HSD_JObjGetNext(
+                                HSD_JObjGetChild(
+                                    HSD_JObjGetChild(jobj))))))),
+            10.0f);
+    }
+
+    /* ten-thousands digit */
+    d = disp / 10000;
+    if (d != 0) {
+        HSD_JObjReqAnimAll(
+            HSD_JObjGetNext(
+                HSD_JObjGetNext(
+                    HSD_JObjGetNext(
+                        HSD_JObjGetNext(
+                            HSD_JObjGetNext(
+                                HSD_JObjGetNext(
+                                    HSD_JObjGetChild(
+                                        HSD_JObjGetChild(jobj)))))))),
+            (f32) (d % 10));
+    } else {
+        HSD_JObjReqAnimAll(
+            HSD_JObjGetNext(
+                HSD_JObjGetNext(
+                    HSD_JObjGetNext(
+                        HSD_JObjGetNext(
+                            HSD_JObjGetNext(
+                                HSD_JObjGetNext(
+                                    HSD_JObjGetChild(
+                                        HSD_JObjGetChild(jobj)))))))),
+            10.0f);
+    }
+
+    HSD_JObjAnimAll(jobj);
+    lbl_80472E48.x84 = lbl_80472E48.x80;
+    if (lbl_80472E48.x80 > lbl_80472E48.x88 + 0xA) {
+        lbl_80472E48.x88 = lbl_80472E48.x80;
+        lbAudioAx_80023870(0xBB, 0x7F, 0x40, 0x8A);
+    }
+}
+
 extern s32 lbl_804D65D8;
 
 void fn_80181598(void)
@@ -2453,11 +2649,11 @@ void fn_80181598(void)
             (lbl_80472E48.xC >= 0xF0 ||
              (HSD_PadCopyStatus[lbl_80472E48.x10].trigger & 0x100)))
         {
-            if (lbl_80472E48.x80[0] >
+            if (lbl_80472E48.x80 >
                 lbl_80472E48.x14[gm_80164024((u8) lbl_80472E48.unk_4)])
             {
                 lbl_80472E48.x14[gm_80164024((u8) lbl_80472E48.unk_4)] =
-                    lbl_80472E48.x80[0];
+                    lbl_80472E48.x80;
             }
             gm_8016B328();
         }
@@ -2468,7 +2664,6 @@ void fn_80181598(void)
 
 static DynamicModelDesc** lbl_804D65CC;
 static DynamicModelDesc** lbl_804D65D0;
-static s32 lbl_804D65D4;
 extern HSD_Archive* lbl_804D65C8;
 
 void fn_80181708(void)
@@ -2479,10 +2674,10 @@ void fn_80181708(void)
     HSD_GObj* gobj;
     HSD_JObj* jobj;
 
-    lbl_80472E48.x80[0] = 0;
-    lbl_80472E48.x80[1] = 0;
-    lbl_80472E48.x80[2] = 0;
-    lbl_80472E48.x80[3] = 0;
+    lbl_80472E48.x80 = 0;
+    lbl_80472E48.x84 = 0;
+    lbl_80472E48.x88 = 0;
+    lbl_80472E48.x8C = 0;
     ((x0_2bits*) &lbl_80472E48.x0)->b76 = 0;
     ((x0_2bits*) &lbl_80472E48.x0)->b54 = 0;
     ((x0_2bits*) &lbl_80472E48.x0)->b32 = 0;
