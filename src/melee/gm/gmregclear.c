@@ -180,7 +180,7 @@ static UnkAdventureData lbl_80472C30;
 static UnkAllstarData lbl_80472CB0;
 static struct lbl_80472D28_t lbl_80472D28;
 static struct lbl_80472E48_t lbl_80472E48;
-
+static int lbl_80472EC8[4];
 typedef struct RegClearSpawnEntry {
     /* 0x00 */ s32 x0;
     /* 0x04 */ u8 x4;
@@ -2713,8 +2713,8 @@ void fn_80180630(int arg0, int arg1, int arg2, bool arg3,
 
     Camera_8002F7AC(0);
     lb_800121FC(&state->x30, 0x280, 0x1E0, GX_TF_RGB5A3, 0);
-    state->x2C = lb_800138EC((s32) &state->x30, NULL, 2U, 0x32,
-                             0.0f, 0.0f, 1.0f, 1.0f);
+    state->x2C = cam_gobj;
+    lb_800138EC((s32) &state->x30, NULL, 2U, 0x32, 0.0f, 0.0f, 1.0f, 1.0f);
     lb_800138D8(state->x2C, 1);
     lb_800138CC(state->x2C, fn_8017FE54);
 
@@ -2740,7 +2740,7 @@ int fn_80180AC0(void)
 }
 s32 gm_80180AE4(void)
 {
-    return lbl_80472E48.x80 * 0xA;
+    return lbl_80472EC8[0] * 0xA;
 }
 
 Fighter_GObj* gm_80180AF4(void)
