@@ -2993,14 +2993,141 @@ void gm_80182554(int arg0, int arg1)
     lbl_80472ED8.x6BE = 0;
 }
 
-/// #gm_80182578
-
-/// #fn_80182B5C
-
 typedef struct {
-    /* 0x00 */ u32 scores[34];
+    /* 0x00 */ u32 scores[27];
+    /* 0x6C */ u8 icons[28];
     /* 0x88 */ u16 times[28];
 } RecordBlock; /* 0xC0 */
+
+/// #gm_80182578
+
+s32 gm_80182578(void)
+{
+    RecordBlock* blocks = (RecordBlock*) lbl_803D8D08;
+    int idx = lbl_80472ED8.x6C8;
+    s32 mode = lbl_80472ED8.x6C4;
+    int time_val;
+    u32 score_val;
+
+    switch (mode) {
+    case 33: time_val = blocks[0].times[idx]; break;
+    case 34: time_val = blocks[1].times[idx]; break;
+    case 35: time_val = blocks[2].times[idx]; break;
+    case 36: time_val = blocks[3].times[idx]; break;
+    case 37: time_val = blocks[4].times[idx]; break;
+    case 38: time_val = blocks[5].times[idx]; break;
+    default: time_val = 0; break;
+    }
+
+    switch (mode) {
+    case 33: score_val = blocks[0].scores[idx]; break;
+    case 34: score_val = blocks[1].scores[idx]; break;
+    case 35: score_val = blocks[2].scores[idx]; break;
+    case 36: score_val = blocks[3].scores[idx]; break;
+    case 37: score_val = blocks[4].scores[idx]; break;
+    case 38: score_val = blocks[5].scores[idx]; break;
+    default: score_val = 0; break;
+    }
+
+    if (mode < 0x25) {
+        if (mode < 0x23) {
+            if (mode < 0x21) {
+                return mode;
+            }
+            if (mode == 0x21) {
+                mode = gmMainLib_8015D6BC(gm_80164024((u8) idx));
+            } else {
+                mode = gmMainLib_8015D710(gm_80164024((u8) idx));
+            }
+            if ((u8) lbl_80472ED8.x6BC != 0) {
+                u32 score_store = (u32) lbl_80472ED8.x6C0;
+                if (score_store < score_val) {
+                    int m = lbl_80472ED8.x6C4;
+                    int i = lbl_80472ED8.x6C8;
+                    switch (m) {
+                    case 33: blocks[0].icons[i] = (u8) lbl_80472ED8.x6BC; break;
+                    case 34: blocks[1].icons[i] = (u8) lbl_80472ED8.x6BC; break;
+                    case 35: blocks[2].icons[i] = (u8) lbl_80472ED8.x6BC; break;
+                    case 36: blocks[3].icons[i] = (u8) lbl_80472ED8.x6BC; break;
+                    case 37: blocks[4].icons[i] = (u8) lbl_80472ED8.x6BC; break;
+                    case 38: blocks[5].icons[i] = (u8) lbl_80472ED8.x6BC; break;
+                    }
+                    switch (m) {
+                    case 33: blocks[0].scores[i] = score_store; break;
+                    case 34: blocks[1].scores[i] = score_store; break;
+                    case 35: blocks[2].scores[i] = score_store; break;
+                    case 36: blocks[3].scores[i] = score_store; break;
+                    case 37: blocks[4].scores[i] = score_store; break;
+                    case 38: blocks[5].scores[i] = score_store; break;
+                    }
+                    {
+                        u16 time_store = lbl_80472ED8.x6BE;
+                        switch (m) {
+                        case 33: blocks[0].times[i] = time_store; break;
+                        case 34: blocks[1].times[i] = time_store; break;
+                        case 35: blocks[2].times[i] = time_store; break;
+                        case 36: blocks[3].times[i] = time_store; break;
+                        case 37: blocks[4].times[i] = time_store; break;
+                        case 38: blocks[5].times[i] = time_store; break;
+                        }
+                    }
+                }
+                return mode;
+            }
+            if ((s32) lbl_80472ED8.x6BE > (s32) time_val && mode == 0) {
+                int m = lbl_80472ED8.x6C4;
+                int i = lbl_80472ED8.x6C8;
+                switch (m) {
+                case 33: blocks[0].times[i] = (u16) lbl_80472ED8.x6BE; break;
+                case 34: blocks[1].times[i] = (u16) lbl_80472ED8.x6BE; break;
+                case 35: blocks[2].times[i] = (u16) lbl_80472ED8.x6BE; break;
+                case 36: blocks[3].times[i] = (u16) lbl_80472ED8.x6BE; break;
+                case 37: blocks[4].times[i] = (u16) lbl_80472ED8.x6BE; break;
+                case 38: blocks[5].times[i] = (u16) lbl_80472ED8.x6BE; break;
+                }
+            }
+            return mode;
+        }
+        if ((u8) lbl_80472ED8.x6BC != 0) {
+            u16 time_store = lbl_80472ED8.x6BE;
+            if ((s32) time_store > (s32) time_val) {
+                switch (mode) {
+                case 33: blocks[0].icons[idx] = (u8) lbl_80472ED8.x6BC; break;
+                case 34: blocks[1].icons[idx] = (u8) lbl_80472ED8.x6BC; break;
+                case 35: blocks[2].icons[idx] = (u8) lbl_80472ED8.x6BC; break;
+                case 36: blocks[3].icons[idx] = (u8) lbl_80472ED8.x6BC; break;
+                case 37: blocks[4].icons[idx] = (u8) lbl_80472ED8.x6BC; break;
+                case 38: blocks[5].icons[idx] = (u8) lbl_80472ED8.x6BC; break;
+                }
+                switch (mode) {
+                case 33: blocks[0].times[idx] = time_store; break;
+                case 34: blocks[1].times[idx] = time_store; break;
+                case 35: blocks[2].times[idx] = time_store; break;
+                case 36: blocks[3].times[idx] = time_store; break;
+                case 37: blocks[4].times[idx] = time_store; break;
+                case 38: blocks[5].times[idx] = time_store; break;
+                }
+            }
+        }
+        return mode;
+    } else if (mode < 0x27) {
+        if ((s32) lbl_80472ED8.x6BE > (s32) time_val) {
+            switch (mode) {
+            case 33: blocks[0].times[idx] = (u16) lbl_80472ED8.x6BE; break;
+            case 34: blocks[1].times[idx] = (u16) lbl_80472ED8.x6BE; break;
+            case 35: blocks[2].times[idx] = (u16) lbl_80472ED8.x6BE; break;
+            case 36: blocks[3].times[idx] = (u16) lbl_80472ED8.x6BE; break;
+            case 37: blocks[4].times[idx] = (u16) lbl_80472ED8.x6BE; break;
+            case 38: blocks[5].times[idx] = (u16) lbl_80472ED8.x6BE; break;
+            }
+        }
+        return mode;
+    }
+    return mode;
+    PAD_STACK(0x48);
+}
+
+/// #fn_80182B5C
 
 void fn_80182B5C(void)
 {
