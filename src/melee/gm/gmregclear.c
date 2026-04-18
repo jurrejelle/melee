@@ -2184,8 +2184,6 @@ void fn_8017F608(void* arg0)
     PAD_STACK(0x24);
 }
 
-/// #fn_8017FA1C
-
 extern s32 lbl_804D65C0;
 
 s32 fn_8017FA1C(void* arg0)
@@ -2208,9 +2206,11 @@ s32 fn_8017FA1C(void* arg0)
         p->x100 = p->xFC - 1;
         return 0;
     }
-
+    if ((p->xFC && p->xFC) && p->xFC) {
+    }
+    abs_step = p->x104;
     step = lbl_804D65C0;
-    target_val = p->x104;
+    target_val = abs_step;
     diff = target_val - p->xFC;
 
     if (step < 0) {
@@ -2227,7 +2227,7 @@ s32 fn_8017FA1C(void* arg0)
         p->xFC = target_val;
         p->x115 = 1;
     } else {
-        p->xFC = p->xFC + step;
+        p->xFC += step;
         p->x115 = 0;
     }
 
