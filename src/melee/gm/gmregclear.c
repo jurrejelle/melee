@@ -2560,7 +2560,6 @@ void fn_80180630(int arg0, int arg1, int arg2, bool arg3,
                  lbl_8046B6A0_24C_t* arg4)
 {
     struct lbl_80472D28_t* state = &lbl_80472D28;
-    u8* data = (u8*) lbl_803D8B88;
     s32 sp64;
     s32 sp60;
     s32 sp5C;
@@ -2662,11 +2661,12 @@ void fn_80180630(int arg0, int arg1, int arg2, bool arg3,
     state->x104 = var_r4;
     lbl_804D65C0 = (var_r4 - (arg0 + arg1)) / 10;
 
-    archive = lbArchive_80016DBC((char*) &data[0x14], &sp38,
-                                 (char*) &data[0x20], 0);
+    archive =
+        lbArchive_80016DBC("GmRegClr", &sp38, "ScGamRegClear_scene_data", 0);
     state->x48 = archive;
     if (sp38 == NULL) {
-        OSReport((char*) &data[0x3C], (char*) &data[0x14], archive);
+        OSReport("Error : Cannot open archive file (File Name : %s).",
+                 "GmRegClr", archive);
     }
     fn_80168A6C(sp38, &state->x4C, 0);
 
@@ -2684,9 +2684,9 @@ void fn_80180630(int arg0, int arg1, int arg2, bool arg3,
 
     HSD_SisLib_803A611C(0, cam_gobj, 9U, 0xDU, 0U, 0xEU, 0U, 0x13U);
     if (lbLang_IsSavedLanguageUS() != 0) {
-        HSD_SisLib_803A62A0(0, (char*) &data[0x128], (char*) &data[0x134]);
+        HSD_SisLib_803A62A0(0, "SdClr.usd", "SIS_ClearData");
     } else {
-        HSD_SisLib_803A62A0(0, (char*) &data[0x144], (char*) &data[0x134]);
+        HSD_SisLib_803A62A0(0, "SdClr.dat", "SIS_ClearData");
     }
 
     fn_801803FC(state);
