@@ -3018,8 +3018,8 @@ void fn_80181708(void)
     typedef struct {
         u8 b76 : 2, b54 : 2, b32 : 2, b10 : 2;
     } x0_2bits;
-    HSD_GObj* gobj;
     HSD_JObj* jobj;
+    HSD_GObj* gobj;
 
     lbl_80472E48.x80 = 0;
     lbl_80472E48.x84 = 0;
@@ -3029,6 +3029,7 @@ void fn_80181708(void)
     ((x0_2bits*) &lbl_80472E48.x0)->b54 = 0;
     ((x0_2bits*) &lbl_80472E48.x0)->b32 = 0;
     ((x0_2bits*) &lbl_80472E48.x0)->b10 = 0;
+    jobj = jobj;
     lbl_80472E48.xC = 0;
     lbl_80472E48.x10 = (s8) Player_GetPlayerId(0);
     lbl_804D65D4 = 0;
