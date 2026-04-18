@@ -2254,6 +2254,7 @@ s32 fn_8017FA1C(void* arg0)
 void fn_8017FBA4(void* arg0)
 {
     fn_8017FA1C_arg* p = arg0;
+    int tmp;
     Vec3 sp24;
     f32 sx, sy;
     int str;
@@ -2272,9 +2273,8 @@ void fn_8017FBA4(void* arg0)
             HSD_SisLib_803A5CC4(p->x7C);
         }
         p->x7C = HSD_SisLib_803A6754(0, 0);
-        HSD_SisLib_803A7548(p->x7C,
-            HSD_SisLib_803A6B98(p->x7C, 0.0f, 0.0f, "%d", p->xF0),
-            0.1f, 0.065f);
+        tmp = HSD_SisLib_803A6B98(p->x7C, 0.0f, 0.0f, "%d", p->xF0);
+        HSD_SisLib_803A7548(p->x7C, tmp, 0.1f, 0.065f);
         p->xF4 = p->xF0;
     }
 
