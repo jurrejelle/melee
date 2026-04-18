@@ -799,8 +799,7 @@ s32 gm_8017CE34(StartMeleeData* arg0, UnkAdventureData* arg1, s8* arg2,
     {
         u8* var_r24 = var_r26;
         s8* var_r18 = arg2;
-        var_r25 = 0;
-        do {
+        for (var_r25 = 0; var_r25 < 3; var_r25++) {
             u8 temp_r23 = gm_80169238((u8) *var_r18);
             u8 var_r0;
             if (arg1->x54 != NULL) {
@@ -815,11 +814,10 @@ s32 gm_8017CE34(StartMeleeData* arg0, UnkAdventureData* arg1, s8* arg2,
             } else {
                 var_r0 = 0;
             }
-            var_r25 += 1;
             *var_r24 = var_r0;
             var_r24 += 1;
             var_r18 += 1;
-        } while (var_r25 < 3);
+        }
     }
 
     {
@@ -1456,13 +1454,11 @@ u8 gm_8017E48C(MinorScene* scene)
 
 struct gm_803DE650_t* gm_8017E4C4(u8 arg0)
 {
-    struct gm_803DE650_t* var_r4 = gm_803DE650;
-    u8 temp;
-    while (var_r4->x0 != 0xFF) {
-        if (var_r4->x0 == arg0) {
-            return var_r4;
+    struct gm_803DE650_t* ptr;
+    for (ptr = gm_803DE650; ptr->x0 != 0xFF; ptr++) {
+        if (ptr->x0 == arg0) {
+            return ptr;
         }
-        var_r4++;
     }
     return NULL;
 }
@@ -3226,8 +3222,7 @@ s32 fn_80181C80(s32 arg0)
     var_r30 = 0;
     sp10 = lbl_80472ED8.xC;
 
-    var_r29 = 1;
-    do {
+    for (var_r29 = 1; var_r29 < 6; var_r29++) {
         if (Player_GetFalls(var_r29) == 0 &&
             Player_GetPlayerSlotType(var_r29) != Gm_PKind_NA)
         {
@@ -3235,8 +3230,7 @@ s32 fn_80181C80(s32 arg0)
         } else {
             sp38 = var_r29;
         }
-        var_r29++;
-    } while (var_r29 < 6);
+    }
 
     if ((s32) lbl_80472ED8.x54[arg0].x4 > var_r30 &&
         lbl_80472ED8.x8 > 0x5A)
