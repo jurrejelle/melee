@@ -1165,7 +1165,6 @@ u8 gm_8017DB78(gm_8017DB6C_arg0_t* arg0, int index)
     return arg0[index].x1;
 }
 
-/// #gm_8017DB88
 s32 gm_8017DB88(void* arg0, u8 arg1, s32 arg2, s32 arg3,
                 u8* arg4, u8 arg5, u8 (*arg6)(s32, s32, u8),
                 u8 (*arg7)(s32, s32, u8), u8 (*arg8)(s32, s32, u8),
@@ -1566,7 +1565,6 @@ typedef struct {
     u8 b7 : 1, b6 : 1, b5 : 1, b4 : 1, b3 : 1, b2 : 1, b1 : 1, b0 : 1;
 } u8_bits;
 
-/// #fn_8017E8A4
 #pragma dont_inline on
 void fn_8017E8A4(int arg0_int)
 {
@@ -2005,8 +2003,6 @@ s32 fn_8017F47C(HSD_Text** arg0, int arg1)
     PAD_STACK(0x18);
 }
 
-/// #fn_8017F608
-
 typedef struct fn_8017FA1C_arg {
     /* 0x000 */ HSD_GObj* x0;
     /* 0x004 */ HSD_JObj* x4;
@@ -2254,8 +2250,6 @@ s32 fn_8017FA1C(void* arg0)
     return 1;
 }
 
-/// #fn_8017FBA4
-
 void fn_8017FBA4(void* arg0)
 {
     fn_8017FA1C_arg* p = arg0;
@@ -2347,7 +2341,6 @@ void fn_8017FE54(HSD_GObj* gobj)
     }
 }
 
-/// #fn_8017FF1C
 void fn_8017FF1C(HSD_GObj* gobj)
 {
     struct lbl_80472D28_t* state = &lbl_80472D28;
@@ -2496,7 +2489,6 @@ void fn_8017FF1C(HSD_GObj* gobj)
     PAD_STACK(0x1C);
 }
 
-/// #fn_801803FC
 s32 fn_801803FC(void* arg0)
 {
     fn_8017FA1C_arg* p = arg0;
@@ -2562,7 +2554,6 @@ s32 fn_801803FC(void* arg0)
     PAD_STACK(4);
 }
 
-/// #fn_80180630
 void fn_80180630(int arg0, int arg1, int arg2, bool arg3,
                  lbl_8046B6A0_24C_t* arg4)
 {
@@ -2773,8 +2764,6 @@ void fn_80180C14(HSD_GObj* gobj)
         HSD_JObjAnimAll(jobj);
     }
 }
-
-/// #fn_80180C60
 
 static s32 lbl_804D65D4;
 
@@ -3018,8 +3007,6 @@ void fn_80181598(void)
     }
 }
 
-/// #fn_80181708
-
 static DynamicModelDesc** lbl_804D65CC;
 static DynamicModelDesc** lbl_804D65D0;
 extern HSD_Archive* lbl_804D65C8;
@@ -3224,7 +3211,6 @@ int fn_80181BFC(int* arg0)
 }
 #pragma dont_inline reset
 
-/// #fn_80181C80
 s32 fn_80181C80(s32 arg0)
 {
     s32 var_r29;
@@ -3272,7 +3258,6 @@ s32 fn_80181C80(s32 arg0)
     PAD_STACK(8);
 }
 
-/// #fn_80181E18
 void fn_80181E18(void)
 {
     s32 mode;
@@ -3385,7 +3370,6 @@ void fn_80181E18(void)
     PAD_STACK(16);
 }
 
-/// #gm_80182174
 void gm_80182174(void)
 {
     u8* data = lbl_803D8D08;
@@ -3552,8 +3536,6 @@ typedef struct {
     /* 0x88 */ u16 times[28];
 } RecordBlock; /* 0xC0 */
 
-/// #gm_80182578
-
 s32 gm_80182578(void)
 {
     RecordBlock* blocks = (RecordBlock*) lbl_803D8D08;
@@ -3680,8 +3662,6 @@ s32 gm_80182578(void)
     PAD_STACK(0x48);
 }
 
-/// #fn_80182B5C
-
 void fn_80182B5C(void)
 {
     RecordBlock* blocks = (RecordBlock*) lbl_803D8D08;
@@ -3752,8 +3732,6 @@ void fn_80182B5C(void)
     }
     PAD_STACK(24);
 }
-
-/// #gm_80182DF0
 
 static UnkMultimanData lbl_804D65E0;
 
