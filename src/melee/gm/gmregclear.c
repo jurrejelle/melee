@@ -2403,9 +2403,7 @@ void fn_8017FF1C(HSD_GObj* gobj)
         {
             u64 buttons = gm_801A36A0(Player_GetPlayerId(0));
             u64 repeat = gm_801A36C0(Player_GetPlayerId(0));
-            if ((repeat | buttons) & 0x20004 |
-                (repeat | buttons) & 0)
-            {
+            if (((repeat | buttons) & 0x20004) | ((repeat | buttons) & 0)) {
                 mask = fn_8017F008();
                 if (fn_8016F740(gm_8016B774(), state->xC0, mask,
                                 0) > 0)
@@ -2424,8 +2422,7 @@ void fn_8017FF1C(HSD_GObj* gobj)
             } else {
                 buttons = gm_801A36A0(Player_GetPlayerId(0));
                 repeat = gm_801A36C0(Player_GetPlayerId(0));
-                if ((repeat | buttons) & 0x10008 |
-                    (repeat | buttons) & 0)
+                if (((repeat | buttons) & 0x10008) | ((repeat | buttons) & 0))
                 {
                     mask = fn_8017F008();
                     if (fn_8016F870(gm_8016B774(), state->xC0, mask,
