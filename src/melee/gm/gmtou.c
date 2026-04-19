@@ -10,7 +10,9 @@
 
 #include <sysdolphin/baselib/controller.h>
 #include <sysdolphin/baselib/gobj.h>
+#include <sysdolphin/baselib/dobj.h>
 #include <sysdolphin/baselib/jobj.h>
+#include <sysdolphin/baselib/mobj.h>
 #include <sysdolphin/baselib/random.h>
 #include <sysdolphin/baselib/sislib.h>
 #include <melee/gm/gm_18A5.h>
@@ -542,7 +544,176 @@ void fn_8019D074(HSD_GObj* gobj)
     fn_8018FDC4(jobj, var_f1, 666.0f, 666.0f);
 }
 
-/// #fn_8019D1BC
+void fn_8019D1BC(void)
+{
+    TmData* tmd;
+    HSD_GObj* gobj;
+    HSD_JObj* jobj;
+    HSD_JObj* c;
+    s32 i;
+    f32 pos;
+    f32 var_f1;
+    f32 anim;
+    char name_buf[8][0x14];
+    PAD_STACK(160);
+
+    tmd = gm_8018F634();
+
+    for (i = 0; i < (s32) tmd->x30; i++) {
+        gobj = fn_8019035C(0, lbl_804D6694->models[12], 0, 0x1A, 2, 1,
+                           fn_8019C048, (f32) i);
+        jobj = GET_JOBJ(gobj);
+        HSD_JObjSetTranslateY(jobj, -2.5f);
+        fn_8018FBD8(gobj, i);
+
+        c = HSD_JObjGetChild(jobj);
+        HSD_MObjRemoveAnimByFlags(c->u.dobj->mobj, 4);
+        c = HSD_JObjGetChild(jobj);
+        c = HSD_JObjGetNext(c);
+        HSD_MObjRemoveAnimByFlags(c->u.dobj->mobj, 4);
+        c = HSD_JObjGetChild(jobj);
+        c = HSD_JObjGetNext(c);
+        c = HSD_JObjGetNext(c);
+        HSD_MObjRemoveAnimByFlags(c->u.dobj->mobj, 4);
+
+        if (tmd->x30 == 4) {
+            pos = 73.0f + (240.0f * (f32) i + 152.0f);
+        } else if (tmd->x30 == 3) {
+            pos = 73.0f + (240.0f * (f32) i + 270.0f);
+        } else {
+            pos = 73.0f + (480.0f * (f32) i + 270.0f);
+        }
+
+        fn_8018ECA8((s32) tmd->x4B8[i].x6, (s32) tmd->x4B8[i].x0, 5,
+                    0.99f * (pos - 320.0f) - 261.0f, -11.0f, 5);
+        tmd->x524[2]->hidden = 1;
+
+        gobj = fn_8019035C(0, lbl_804D6694->models[10], 0, 0x1A, 2, 1,
+                           fn_8019C3EC, pos);
+        jobj = GET_JOBJ(gobj);
+        HSD_JObjSetTranslateY(jobj, -2.5f);
+        fn_8018FBD8(gobj, i);
+        fn_8019BA08((u8) i, jobj);
+
+        gobj = fn_8019035C(0, lbl_804D6694->models[4], 0, 0x1A, 2, 1,
+                           fn_8019C570, pos);
+        jobj = GET_JOBJ(gobj);
+        fn_8018FBD8(gobj, i);
+
+        if ((s32) tmd->x30 == 4) {
+            var_f1 = (13.0f * (f32) i) + -19.5f;
+        } else if ((s32) tmd->x30 == 3) {
+            var_f1 = 6.5f + ((13.0f * (f32) i) - 19.5f);
+        } else {
+            var_f1 = 6.5f + ((13.0f * (2.0f * (f32) i)) - 19.5f);
+        }
+        fn_8018FDC4(jobj, var_f1 - 2.799999f, 4.3f, 0.001f);
+
+        if (tmd->x4B8[i].x2 != 0) {
+            c = HSD_JObjGetChild(jobj);
+            c = HSD_JObjGetNext(c);
+            fn_8019044C(c, 201.0f);
+        } else {
+            c = HSD_JObjGetChild(jobj);
+            c = HSD_JObjGetNext(c);
+            fn_8019044C(c,
+                        fn_8018F71C(tmd->x4B8[i].x1, tmd->x4B8[i].x3));
+        }
+
+        gobj = fn_8019035C(0, lbl_804D6694->models[9], 0, 0x1A, 2, 1,
+                           fn_8019C744, pos);
+        jobj = GET_JOBJ(gobj);
+        HSD_JObjSetTranslateY(jobj, -2.5f);
+        fn_8018FBD8(gobj, i);
+
+        if (tmd->x4B8[i].x0 == 0) {
+            anim = (f32) i;
+        } else {
+            anim = 4.0f;
+        }
+        fn_8019044C(jobj, anim);
+
+        gobj = fn_8019035C(0, lbl_804D6694->models[8], 0, 0x1A, 2, 1,
+                           fn_8019CA38, 0.0f);
+        jobj = GET_JOBJ(gobj);
+        HSD_JObjSetTranslateY(jobj, -2.5f);
+        fn_8018FBD8(gobj, i);
+
+        gobj = fn_8019035C(0, lbl_804D6694->models[14], 0, 0x1A, 2, 1,
+                           fn_8019CC74, anim);
+        jobj = GET_JOBJ(gobj);
+        HSD_JObjSetTranslateY(jobj, -2.5f);
+        fn_8018FBD8(gobj, i);
+
+        if (tmd->x31 != 0) {
+            gobj = fn_8019035C(0, lbl_804D6694->models[11], 0, 0x1A, 2, 1,
+                               fn_8019D074, anim);
+            jobj = GET_JOBJ(gobj);
+            HSD_JObjSetTranslateY(jobj, -2.0f);
+            fn_8018FBD8(gobj, i);
+            fn_8019044C(jobj, (f32) tmd->x4B8[i].x5);
+        }
+    }
+
+    fn_8019035C(0, lbl_804D6694->models[1], 0, 0x1A, 2, 1, fn_8019CFA4,
+                0.0f);
+    fn_8019035C(0, lbl_804D6694->models[5], 0, 0x1A, 2, 1, fn_8019C6AC,
+                0.0f);
+
+    {
+        HSD_JObj* j16;
+        j16 = GET_JOBJ(fn_8019035C(0, lbl_804D6694->models[0], 0, 0x1A, 2,
+                                   1, NULL, 0.0f));
+        j16 = HSD_JObjGetChild(j16);
+        j16 = HSD_JObjGetNext(j16);
+        j16 = HSD_JObjGetNext(j16);
+        j16 = HSD_JObjGetNext(j16);
+        j16 = HSD_JObjGetNext(j16);
+        j16 = HSD_JObjGetNext(j16);
+        {
+            u8* p = (u8*) lbl_803DA2E0;
+            for (i = 0; i <= 0x28; i++) {
+                fn_8019044C(j16, (f32) (i + 10));
+                *(f32*) (p + 0x20) = HSD_JObjGetTranslationY(j16);
+                p += sizeof(f32);
+            }
+        }
+    }
+
+    fn_8019035C(0, lbl_804D6694->models[6], 0, 0x1A, 2, 1, fn_8019CBFC,
+                0.0f);
+
+    for (i = 0; i < (s32) tmd->x2E; i++) {
+        gobj = fn_8019035C(0, lbl_804D6694->models[3], 0, 0x1A, 2, 1,
+                           fn_8019CDBC, 0.0f);
+        jobj = GET_JOBJ(gobj);
+        fn_8018FDC4(jobj, (5.999997f * (f32) tmd->x37[i].xF) - 21.5f,
+                    17.0f, 0.01f);
+
+        if (tmd->x37[i].x5 != 0) {
+            fn_8019044C(jobj, 201.0f);
+        } else {
+            fn_8019044C(jobj, fn_8018F71C(tmd->x37[i].x3, tmd->x37[i].x7));
+        }
+
+        fn_8018FBD8(gobj, i);
+        fn_8018F00C(name_buf[i], tmd->x37[i].x9);
+
+        tmd->x534[i] = HSD_SisLib_803A6754(0, (s32) lbl_804D663C);
+        tmd->x534[i]->default_kerning = 1;
+        tmd->x534[i]->x4C = 1;
+        {
+            HSD_Text* text = tmd->x534[i];
+            text->font_size.x = 0.1f;
+            text->font_size.y = 0.1f;
+        }
+        tmd->x534[i]->default_alignment = 1;
+        HSD_SisLib_803A6B98(tmd->x534[i],
+                            10.0f * ((5.999997f * (f32) i) - 21.5f),
+                            -172.0f, name_buf[i], 1);
+        HSD_SisLib_803A7548(tmd->x534[i], 0, 0.35f, 0.6f);
+    }
+}
 
 void fn_8019DD60(void)
 {
