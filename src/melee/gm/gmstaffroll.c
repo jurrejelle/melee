@@ -15,6 +15,8 @@
 #include "sc/types.h"
 
 #include <sysdolphin/baselib/cobj.h>
+#include <sysdolphin/baselib/debug.h>
+#include <sysdolphin/baselib/sislib.h>
 #include <sysdolphin/baselib/displayfunc.h>
 #include <sysdolphin/baselib/dobj.h>
 #include <sysdolphin/baselib/fog.h>
@@ -33,12 +35,7 @@ struct gm_804D67F8_t {
 STATIC_ASSERT(sizeof(struct gm_804D67F8_t) == 0x948);
 
 /* 4D67F8 */ static struct {
-    struct {
-        u8 pad0[0x54];
-        HSD_GObj* x54;
-        u8 pad58[0x8c - 0x58];
-        GXColor x8c;
-    }* win[2];
+    HSD_Text* win[2];
     int x8;
 }* gm_804D67F8;
 
@@ -47,14 +44,14 @@ struct gm_804D67FC_t {
 };
 STATIC_ASSERT(sizeof(struct gm_804D67FC_t) == 0x2E68);
 
-/* 4D67FC */ static struct {
+typedef struct {
     int index;
-    struct {
-        u8 pad[0x44];
-        Mtx mtx;
-    }* x4;
-    u8 pad[0x3C - 8];
-}* gm_804D67FC;
+    HSD_JObj* jobj;
+    Mtx mtx;
+    s32 x38;
+} SortBufEntry;
+
+/* 4D67FC */ static SortBufEntry* gm_804D67FC;
 
 struct gm_804D6804_t {
     /* +0 */ float x0;
@@ -62,10 +59,7 @@ struct gm_804D6804_t {
 };
 
 /* 4D6804 */ static struct gm_804D6804_t gm_804D6804;
-/* 4D680C */ static struct {
-    u8 pad[0x54];
-    HSD_GObj* x54;
-}* gm_804D680C;
+/* 4D680C */ static HSD_Text* gm_804D680C;
 
 /* 4D6810 */ static s32 gm_804D6810;
 /* 4D6814 */ static s32 gm_804D6814;
@@ -83,6 +77,20 @@ struct gm_804D6804_t {
 /* 4D6844 */ static DynamicModelDesc** gm_804D6844;
 /* 4D6848 */ static s32 gm_804D6848;
 /* 4D684C */ static s32 gm_804D684C;
+
+typedef struct {
+    /* 0x00 */ s32 x0;
+    /* 0x04 */ int (*check)(s16);
+    /* 0x08 */ s16 check_arg;
+    /* 0x0A */ u8 pad_0A[2];
+    /* 0x0C */ int alt_page;
+    /* 0x10 */ u8 has_check;
+    /* 0x11 */ u8 pad[3];
+} StaffEntryData;
+
+/* 3DBFD8 */ static StaffEntryData gm_803DBFD8[198] = { 0 };
+
+extern GXColor gm_804D42C8;
 
 bool gm_801AA644(void)
 {
@@ -161,20 +169,20 @@ void fn_801AA854(HSD_GObj* gobj, int code)
             }
             for (i = gm_804D6800 - 1; i >= 0; i--) {
                 if (gm_804D67F8[gm_804D67FC[i].index].win[0] == 0) {
-                    __assert("gmstaffroll.c", 0x169,
+                    __assert("gmstaffroll.c", 0x167,
                              "staffInfo[staffInfoSortBuf[i].index].win[0]");
                 }
                 if (gm_804D67F8[gm_804D67FC[i].index].win[1] == 0) {
                     __assert("gmstaffroll.c", 0x16A,
                              "staffInfo[staffInfoSortBuf[i].index].win[1]");
                 }
-                PSMTXConcat(cobj->view_mtx, gm_804D67FC[i].x4->mtx,
+                PSMTXConcat(cobj->view_mtx, gm_804D67FC[i].jobj->mtx,
                             cobj->view_mtx);
                 if (cobj->view_mtx[2][2] >= 0.0F) {
                     HSD_SisLib_803A84BC(
-                        gm_804D67F8[gm_804D67FC[i].index].win[0]->x54, 2);
+                        gm_804D67F8[gm_804D67FC[i].index].win[0]->entity, 2);
                     HSD_SisLib_803A84BC(
-                        gm_804D67F8[gm_804D67FC[i].index].win[1]->x54, 2);
+                        gm_804D67F8[gm_804D67FC[i].index].win[1]->entity, 2);
                 }
                 PSMTXCopy(sp10, cobj->view_mtx);
             }
@@ -184,10 +192,7 @@ void fn_801AA854(HSD_GObj* gobj, int code)
     }
 }
 
-static struct {
-    u8 pad[0x54];
-    HSD_GObj* x54;
-}* gm_80480D58[6];
+static HSD_Text* gm_80480D58[6];
 
 void fn_801AAA28(HSD_GObj* gobj, int code)
 {
@@ -196,11 +201,11 @@ void fn_801AAA28(HSD_GObj* gobj, int code)
     if (HSD_CObjSetCurrent(GET_COBJ(gobj))) {
         for (i = 0; i < 6; i++) {
             if (gm_80480D58[i] != NULL) {
-                HSD_SisLib_803A84BC(gm_80480D58[i]->x54, 2);
+                HSD_SisLib_803A84BC(gm_80480D58[i]->entity, 2);
             }
         }
         if (gm_804D680C != NULL) {
-            HSD_SisLib_803A84BC(gm_804D680C->x54, 2);
+            HSD_SisLib_803A84BC(gm_804D680C->entity, 2);
         }
     }
     HSD_CObjEndCurrent();
@@ -229,6 +234,168 @@ void fn_801AAB18(HSD_GObj* gobj)
 }
 
 /// #fn_801AAB74
+void fn_801AAB74(HSD_GObj* gobj)
+{
+    HSD_JObj* jobj = GET_JOBJ(gobj);
+    HSD_JObj* child;
+    HSD_JObj* leaf;
+    HSD_Text* text;
+    int entry_idx;
+    int staff_idx;
+    int name_page_jp;
+    int name_page_en;
+    int title_page;
+    StaffEntryData* entry_data;
+    int i;
+    SortBufEntry bsort_temp;
+    PAD_STACK(0x20);
+
+    if (gm_804D6818 == 0) {
+        for (i = 0; i < gm_804D681C; i++) {
+            HSD_JObjAnimAll(jobj);
+        }
+    }
+
+    entry_idx = 0;
+    child = jobj->child;
+    staff_idx = 0;
+    gm_804D6800 = 0;
+    entry_data = gm_803DBFD8;
+    {
+        int temp = entry_idx * 15;
+        name_page_jp = temp + 3;
+        name_page_en = temp + 4;
+        title_page = temp + 2;
+    }
+
+    while (child != NULL) {
+        leaf = child->child->child;
+
+        if (!(HSD_JObjGetFlags(leaf) & 0x10) &&
+            gm_804D67F8[staff_idx].win[0] == NULL &&
+            (entry_data->has_check == 0 ||
+             entry_data->check(entry_data->check_arg) != 0 ||
+             entry_idx == 0xC5) &&
+            (entry_idx != 0x5E || lbLang_IsSavedLanguageJP() != 0))
+        {
+            gm_804D67F8[staff_idx].win[0] =
+                HSD_SisLib_803A5ACC(0, 0, 0.0f, -3.3f, 0.0f, 0.0f, 100.0f);
+            gm_804D67F8[staff_idx].win[0]->x4C = 1;
+            gm_804D67F8[staff_idx].win[0]->default_alignment = 1;
+            gm_804D67F8[staff_idx].win[0]->default_kerning = 1;
+
+            if (lbLang_IsSavedLanguageJP() != 0 && entry_idx < 0xB7 &&
+                entry_idx != 0xB0)
+            {
+                text = gm_804D67F8[staff_idx].win[0];
+                text->font_size.x = 0.209f;
+                text->font_size.y = 0.209f;
+            } else {
+                text = gm_804D67F8[staff_idx].win[0];
+                text->font_size.x = 0.13679999f;
+                text->font_size.y = 0.209f;
+            }
+
+            if (entry_data->has_check != 0 &&
+                entry_data->check(entry_data->check_arg) == 0)
+            {
+                if (lbLang_IsSavedLanguageJP() != 0) {
+                    HSD_SisLib_803A6368(gm_804D67F8[staff_idx].win[0],
+                                        entry_data->alt_page);
+                } else {
+                    HSD_SisLib_803A6368(gm_804D67F8[staff_idx].win[0],
+                                        entry_data->alt_page + 1);
+                }
+            } else if ((entry_idx != 0xB7 && entry_idx != 0xC1 &&
+                        entry_idx != 0xC3 &&
+                        lbLang_IsSavedLanguageJP() != 0) ||
+                       ((entry_idx == 0xB7 || entry_idx == 0xC1 ||
+                         entry_idx == 0xC3) &&
+                        lbLang_IsSettingJP() != 0))
+            {
+                HSD_SisLib_803A6368(gm_804D67F8[staff_idx].win[0],
+                                    name_page_jp);
+            } else {
+                HSD_SisLib_803A6368(gm_804D67F8[staff_idx].win[0],
+                                    name_page_en);
+            }
+
+            gm_804D67F8[staff_idx].win[1] =
+                HSD_SisLib_803A5ACC(0, 0, 0.0f, -7.8f, 0.0f, 0.0f, 100.0f);
+            gm_804D67F8[staff_idx].win[1]->x4C = 1;
+            gm_804D67F8[staff_idx].win[1]->default_alignment = 1;
+            gm_804D67F8[staff_idx].win[1]->default_kerning = 1;
+            {
+                text = gm_804D67F8[staff_idx].win[1];
+                text->font_size.x = 0.1f;
+                text->font_size.y = 0.1f;
+            }
+
+            if (entry_data->has_check == 0 ||
+                entry_data->check(entry_data->check_arg) != 0)
+            {
+                HSD_SisLib_803A6368(gm_804D67F8[staff_idx].win[1],
+                                    title_page);
+            }
+
+            if (gm_804D67F8[staff_idx].x8 >= 1) {
+                gm_804D67F8[staff_idx].win[0]->active_color = gm_804D42C8;
+                gm_804D67F8[staff_idx].win[1]->active_color = gm_804D42C8;
+            }
+        } else if (HSD_JObjGetFlags(leaf) & 0x10) {
+            text = gm_804D67F8[staff_idx].win[0];
+            if (text != NULL) {
+                HSD_SisLib_803A5CC4(text);
+                HSD_SisLib_803A5CC4(gm_804D67F8[staff_idx].win[1]);
+                gm_804D67F8[staff_idx].win[0] = NULL;
+            }
+        }
+
+        if (!(HSD_JObjGetFlags(leaf) & 0x10) &&
+            (entry_data->has_check == 0 ||
+             entry_data->check(entry_data->check_arg) != 0 ||
+             entry_idx == 0xC5) &&
+            (entry_idx != 0x5E || lbLang_IsSavedLanguageJP() != 0))
+        {
+            HSD_JObjSetupMatrix(leaf);
+            gm_804D67FC[gm_804D6800].index = entry_idx;
+            gm_804D67FC[gm_804D6800].jobj = leaf;
+            gm_804D6800++;
+        }
+
+        child = child->next;
+        staff_idx++;
+        entry_data++;
+        name_page_jp += 15;
+        name_page_en += 15;
+        title_page += 15;
+        entry_idx++;
+    }
+
+    HSD_CObjSetupViewingMtx(gm_804D6830);
+
+    for (i = 0; i < gm_804D6800; i++) {
+        leaf = gm_804D67FC[i].jobj;
+        HSD_ASSERT(0x478, leaf);
+        HSD_JObjSetupMatrix(leaf);
+        PSMTXConcat(gm_804D6830->view_mtx, leaf->mtx, gm_804D67FC[i].mtx);
+    }
+
+    {
+        int n;
+        int j;
+        for (n = gm_804D6800 - 1; n > 0; n--) {
+            for (j = 0; j < n; j++) {
+                if (gm_804D67FC[j].mtx[2][3] < gm_804D67FC[j + 1].mtx[2][3])
+                {
+                    bsort_temp = gm_804D67FC[j];
+                    gm_804D67FC[j] = gm_804D67FC[j + 1];
+                    gm_804D67FC[j + 1] = bsort_temp;
+                }
+            }
+        }
+    }
+}
 
 /// #fn_801AB200
 
