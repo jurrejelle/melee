@@ -24,7 +24,7 @@
 /// Filename is just a guess, based on some strings in the file
 /// Seems to be Tournament game code
 
-extern TmBoxArrays* lbl_804771B8;
+extern TmBoxArrays lbl_804771B8;
 extern HSD_Archive* lbl_804D6638;
 extern HSD_Archive* lbl_804D6660;
 extern HSD_Archive* lbl_804D6664;
@@ -52,8 +52,8 @@ void gm_8019B8C4_OnEnter(void* arg0)
     lbl_804D6660 = lbArchive_80016DBC("GmTou1p", &lbl_804D666C,
                                       "ScGamTour_scene_data", 0);
     lbl_804D6638 = lbArchive_80016DBC(
-        "TmBox.dat", lbl_804771B8->box2, "tournament_box2_array",
-        lbl_804771B8->box3, "tournament_box3_array", lbl_804771B8->box4,
+        "TmBox.dat", &lbl_804771B8.box2, "tournament_box2_array",
+        &lbl_804771B8.box3, "tournament_box3_array", &lbl_804771B8.box4,
         "tournament_box4_array", 0);
     lbl_804D6664 = lbArchive_80016DBC("GmTou3p", &lbl_804D6670,
                                       "ScGamTour_scene_data", 0);
