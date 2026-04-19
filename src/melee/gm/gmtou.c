@@ -80,7 +80,52 @@ void gm_8019B9C8_OnLeave(void* arg0)
 
 void fn_8019BA04(s32* state) {}
 
-/// #fn_8019BA08
+void fn_8019BA08(u8 idx, HSD_JObj* jobj)
+{
+    TmData* tmd = gm_8018F634();
+    s32 i;
+
+    if (tmd->x4B8[idx].x2 != 0) {
+        jobj = HSD_JObjGetChild(jobj);
+        HSD_JObjSetTranslateZ(jobj, 10000.0f);
+        i = 1;
+        do {
+            jobj = HSD_JObjGetNext(jobj);
+            HSD_JObjSetTranslateZ(jobj, 10000.0f);
+            i++;
+        } while (i <= 12);
+        return;
+    }
+
+    jobj = HSD_JObjGetChild(jobj);
+    HSD_JObjSetTranslateZ(jobj, 10000.0f);
+
+    if (((u8*) lbl_803DA2E0)[tmd->x4B8[idx].x1] == 0) {
+        HSD_JObjSetTranslateZ(jobj, 0.0f);
+        i = 1;
+        do {
+            jobj = HSD_JObjGetNext(jobj);
+            HSD_JObjSetTranslateZ(jobj, 10000.0f);
+            i++;
+        } while (i <= 12);
+        return;
+    }
+
+    i = 1;
+    do {
+        jobj = HSD_JObjGetNext(jobj);
+        HSD_JObjSetTranslateZ(jobj, 10000.0f);
+        if ((s32) ((u8*) lbl_803DA2E0)[tmd->x4B8[idx].x1] == i) {
+            HSD_JObjSetTranslateZ(jobj, 0.0f);
+            for (i = i + 1; i <= 12; i++) {
+                jobj = HSD_JObjGetNext(jobj);
+                HSD_JObjSetTranslateZ(jobj, 10000.0f);
+            }
+            return;
+        }
+        i++;
+    } while (i <= 12);
+}
 
 void fn_8019BF18(HSD_GObj* gobj)
 {
