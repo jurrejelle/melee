@@ -38,6 +38,7 @@ static struct TmAnimTimers lbl_80479A58;
 extern HSD_Archive* lbl_804D6688;
 extern HSD_Archive* lbl_804D668C;
 extern s32 lbl_804D663C;
+extern f32 lbl_803DA2E0[];
 
 static inline TmData* GetTmData(void)
 {
@@ -187,6 +188,51 @@ void fn_8019C6AC(HSD_GObj* gobj)
 }
 
 /// #fn_8019C744
+void fn_8019C744(HSD_GObj* gobj)
+{
+    TmData* tmd;
+    s32 idx;
+    HSD_JObj* jobj;
+    f32 var_f1;
+
+    tmd = gm_8018F634();
+    idx = fn_8018F62C(gobj);
+    jobj = GET_JOBJ(gobj);
+
+    if ((s32) tmd->x30 == 4) {
+        var_f1 = (13.0f * (f32) idx) + -19.5f;
+    } else if ((s32) tmd->x30 == 3) {
+        var_f1 = 6.5f + ((13.0f * (f32) idx) - 19.5f);
+    } else {
+        var_f1 = 6.5f + ((13.0f * (2.0f * (f32) idx)) - 19.5f);
+    }
+    fn_8018FDC4(jobj, 0.3f + var_f1, 10.1f, 666.0f);
+
+    if (lbl_80479A58.x1D[idx].x0 == 4) {
+        if (lbl_80479A58.x10[idx] < 0x28U) {
+            lbl_80479A58.x10[idx]++;
+        }
+        HSD_JObjSetTranslateY(jobj,
+            *(f32*) ((u8*) lbl_803DA2E0 +
+                     lbl_80479A58.x10[idx] * sizeof(f32) + 0x20));
+    } else {
+        lbl_80479A58.x10[idx] = 0;
+    }
+
+    if (((s8) HSD_PadMasterStatus[(u8) idx].err != 0) &&
+        (tmd->x4B8[idx].x0 != 1))
+    {
+        HSD_JObjClearFlagsAll(jobj, JOBJ_HIDDEN);
+        if ((s32) tmd->x30 == 4) {
+            var_f1 = (13.0f * (f32) idx) + -19.5f;
+        } else if ((s32) tmd->x30 == 3) {
+            var_f1 = 6.5f + ((13.0f * (f32) idx) - 19.5f);
+        } else {
+            var_f1 = 6.5f + ((13.0f * (2.0f * (f32) idx)) - 19.5f);
+        }
+        fn_8018FDC4(jobj, 0.3f + var_f1, 10.1f, 666.0f);
+    }
+}
 
 void fn_8019CA38(HSD_GObj* gobj)
 {
