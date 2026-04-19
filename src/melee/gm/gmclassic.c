@@ -6,6 +6,7 @@
 #include <melee/gm/gmregcommon.h>
 #include <melee/gr/ground.h>
 #include <melee/gr/stage.h>
+#include <melee/lb/lbaudio_ax.h>
 #include <melee/lb/lbdvd.h>
 
 extern UNK_T gmClassic_80470708[];
@@ -544,7 +545,241 @@ void gmClassic_OnInit(void)
     temp_r3->x5 = 0;
 }
 
-/// #gmClassic_801B3500
+void gmClassic_801B3500(MinorScene* arg0)
+{
+    u8* sd;
+    gm_803DDEC8Struct* entry;
+    UnkAllstarData* ad;
+    int enemy_count;
+    int ally_count;
+    int i;
+    struct GameCache* gc;
+    int count;
+    u64 audio;
+    s8 ckind;
+    PreloadCacheSceneEntry* ep;
+
+    sd = gm_801A427C(arg0);
+    entry = &gmClassic_803DDEC8[(u8) gm_8017BE84(arg0->idx)];
+    ad = gm_8017EB30();
+    enemy_count = 0;
+    ad->x0.x7 = arg0->idx;
+    sd[0x0A] = entry->x0 + 1;
+    sd[0x08] = ad->x0.slot;
+
+    /* mode determination — store directly in each branch */
+    if (entry->x1 & 0x80) {
+        *(s32*) sd = 3;
+    } else if (entry->x1 & 8) {
+        *(s32*) sd = 4;
+    } else if (entry->x1 & 0x10) {
+        *(s32*) sd = 1;
+    } else if (entry->x1 & 2) {
+        *(s32*) sd = 2;
+    } else {
+        *(s32*) sd = 0;
+    }
+
+    /* sub-mode */
+    if (*(s32*) sd != 3)
+        goto submode_default;
+    switch (entry->x2) {
+    case 1:
+        *(s32*) (sd + 4) = 1;
+        break;
+    case 2:
+        *(s32*) (sd + 4) = 2;
+        break;
+    case 3:
+        *(s32*) (sd + 4) = 3;
+        break;
+    default:
+    submode_default:
+        *(s32*) (sd + 4) = 0;
+        break;
+    }
+
+    /* enemy char loop */
+    for (i = 0; i < 3; i++) {
+        sd[i + 0x10] = ((u8*) entry->xC)[i + 2];
+        sd[i + 0x16] = gm_8017CD94((UnkAdventureData*) ad,
+                                    (s8) ((u8*) entry->xC)[i + 2],
+                                    entry->x0, i);
+        gmRegSetupEnemyColorTable(ad->x0.ckind, ad->x0.color,
+                                  (s8*) entry->xC + 2, sd + 0x16);
+        if (entry->x1 & 4) {
+            sd[i + 0x1C] = 1;
+        } else {
+            sd[i + 0x1C] = 0;
+        }
+        if (sd[i + 0x10] != 0x21) {
+            enemy_count++;
+        }
+    }
+    sd[0x0C] = enemy_count;
+
+    /* player ckind + Zelda check */
+    ally_count = 1;
+    ckind = ad->x0.ckind;
+    if (ckind == 0x12 && ad->x0.xC.x12 != 0) {
+        sd[0x0D] = 0x13;
+    } else {
+        sd[0x0D] = ckind;
+    }
+    sd[0x13] = ad->x0.color;
+
+    /* gm_8017DB88 call (11 args) */
+    gm_8017DB88(ad->x0.xC.x24, entry->x1, ad->x0.cpu_level,
+                (u8) gm_8017BE84(arg0->idx), (u8*) entry->xC + 2,
+                sd[0x0D], ad->x58, ad->_5C, ad->_60, ad->_6C, ad->_70);
+
+    /* ally loop */
+    for (i = 1; i < 3; i++) {
+        sd[i + 0x0D] = gm_8017DB6C((gm_8017DB6C_arg0_t*) ad->x0.xC.x24,
+                                    i - 1);
+        sd[i + 0x13] = gm_8017DB78((gm_8017DB6C_arg0_t*) ad->x0.xC.x24,
+                                    i - 1);
+        if (sd[i + 0x0D] != 0x21) {
+            ally_count++;
+        }
+    }
+    sd[0x0B] = ally_count;
+    sd[0x09] = ad->x0.x4;
+
+    /* preload cache setup */
+    gc = &lbDvd_8001822C()->game_cache;
+    lbDvd_80018C6C();
+    gc->entries[0].char_id = sd[0x0D];
+    gc->entries[0].color = ad->x0.color;
+    count = 1;
+    lbDvd_80018254();
+    lbDvd_80018C2C(0xC7);
+    lbDvd_80017700(4);
+
+    /* enemy preload entries (3 unrolled) — pointer stepping */
+    {
+        s8 echar;
+
+        ep = &gc->entries[count];
+
+        echar = ((s8*) entry->xC)[2];
+        if (echar != 0x21) {
+            ep->char_id = echar;
+            if (entry->x1 & 8) {
+                ep->color = 0xFF;
+            } else {
+                ep->color = sd[0x16];
+            }
+            count++;
+            ep++;
+        }
+
+        echar = ((s8*) entry->xC)[3];
+        if (echar != 0x21) {
+            ep->char_id = echar;
+            if (entry->x1 & 8) {
+                ep->color = 0xFF;
+            } else {
+                ep->color = sd[0x17];
+            }
+            count++;
+            ep++;
+        }
+
+        echar = ((s8*) entry->xC)[4];
+        if (echar != 0x21) {
+            ep->char_id = echar;
+            if (entry->x1 & 8) {
+                ep->color = 0xFF;
+            } else {
+                ep->color = sd[0x18];
+            }
+            count++;
+        }
+    }
+
+    /* ally preload entries (3 unrolled) — pointer stepping */
+    {
+        s8 achar;
+        Unk1PData_x24* ap;
+
+        ep = &gc->entries[count];
+        ap = ad->x0.xC.x24;
+
+        achar = ap->ckind;
+        if (achar != 0x21) {
+            ep->char_id = achar;
+            ep->color = ap->x1;
+            ep++;
+        }
+        ap++;
+
+        achar = ap->ckind;
+        if (achar != 0x21) {
+            ep->char_id = achar;
+            ep->color = ap->x1;
+            ep++;
+        }
+        ap++;
+
+        achar = ap->ckind;
+        if (achar != 0x21) {
+            ep->char_id = achar;
+            ep->color = ap->x1;
+        }
+    }
+
+    lbDvd_80018254();
+
+    /* stage ID for preload */
+    if (entry->x1 == 0x80 && entry->x2 == 1) {
+        gc->stage_id = (u16) gm_801647F8(ad->x0.ckind);
+    } else if (entry->x1 == 4) {
+        gc->stage_id = 0xAF;
+    } else {
+        gc->stage_id = *(u16*) entry->xC;
+    }
+
+    lbDvd_80018254();
+
+    /* audio preload - player */
+    audio = lbAudioAx_80026E84(ad->x0.ckind);
+
+    /* audio preload - allies */
+    for (i = 0; i < 3; i++) {
+        s8 achar = ad->x0.xC.x24[i].ckind;
+        if (achar != 0x21) {
+            audio |= lbAudioAx_80026E84(achar);
+        }
+    }
+
+    /* audio preload - enemies */
+    for (i = 0; i < 3; i++) {
+        s8 echar = ((s8*) entry->xC)[i + 2];
+        if (echar != 0x21) {
+            audio |= lbAudioAx_80026E84(echar);
+            if (((s8*) entry->xC)[i + 2] == 4) {
+                audio |= ((u64) 2 << 32) | 0x4000;
+            }
+        }
+    }
+
+    /* stage audio — no 0xAF case */
+    {
+        InternalStageId stage_id;
+        if (entry->x1 == 0x80 && entry->x2 == 1) {
+            stage_id = (u16) gm_801647F8(ad->x0.ckind);
+        } else {
+            stage_id = *(u16*) entry->xC;
+        }
+        audio |= lbAudioAx_80026EBC(stage_id);
+    }
+
+    /* final audio calls */
+    lbAudioAx_80026F2C(0x1C);
+    lbAudioAx_8002702C(0xC, audio);
+    lbAudioAx_80027168();
+}
 
 void gmClassic_801B3A34(MinorScene* arg0)
 {
