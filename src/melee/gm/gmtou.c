@@ -14,6 +14,7 @@
 #include <sysdolphin/baselib/random.h>
 #include <sysdolphin/baselib/sislib.h>
 #include <melee/gm/gm_18A5.h>
+#include <melee/gm/gmmain_lib.h>
 #include <melee/gm/types.h>
 #include <melee/lb/lbarchive.h>
 #include <melee/lb/lbaudio_ax.h>
@@ -358,7 +359,61 @@ void fn_8019D074(HSD_GObj* gobj)
 
 /// #gm_8019E634
 
-/// #gm_8019ECAC_OnEnter
+void gm_8019ECAC_OnEnter(void* arg0)
+{
+    struct {
+        u32 stage_id;
+        CharacterKind char_id[4];
+        u32 color[4];
+    } local;
+    s32 i;
+    u64 audio_mask;
+    TmData* tmd;
+    PAD_STACK(4);
+
+    tmd = gm_8018F634();
+    lbAudioAx_80026F2C(0x12);
+    lbAudioAx_8002702C(2, 8);
+    lbAudioAx_80027168();
+    lbAudioAx_80027648();
+    gm_8018F634();
+    lbl_804D6688 = lbArchive_80016DBC("GmTou1p", &lbl_804D6690,
+                                      "ScGamTour_scene_data", 0);
+    lbl_804D668C = lbArchive_80016DBC("GmTou4p", &lbl_804D6694,
+                                      "ScGamTour_scene_data", 0);
+    HSD_SisLib_803A62A0(0, fn_8018F5F0(), "SIS_TournamentData");
+    fn_8019DD60();
+    lbAudioAx_80027648();
+    lbAudioAx_80023F28(gmMainLib_8015ECB0());
+
+    for (i = 0; i < 4; i++) {
+        if (tmd->x4B8[i].x0 != 3) {
+            local.char_id[i] = fn_8018F6FC(tmd->x4B8[i].x1);
+            local.color[i] = tmd->x4B8[i].x3;
+        }
+    }
+
+    fn_80196510();
+    if (fn_80196564(tmd)) {
+        local.stage_id = fn_8019655C();
+    } else {
+        local.stage_id = tmd->x28;
+    }
+    fn_80196594(tmd);
+    lbDvd_800174BC();
+
+    audio_mask = 0;
+    for (i = 0; i < 4; i++) {
+        if (tmd->x4B8[i].x0 != 3) {
+            audio_mask |= lbAudioAx_80026E84(local.char_id[i]);
+        }
+    }
+    audio_mask |= lbAudioAx_80026EBC(local.stage_id);
+    lbAudioAx_80026F2C(0x1C);
+    lbAudioAx_8002702C(0xC, audio_mask);
+    lbAudioAx_80027168();
+    lbAudioAx_80023F28(gmMainLib_8015ECB0());
+}
 
 void gm_8019EE54_OnLeave(void* arg0)
 {
