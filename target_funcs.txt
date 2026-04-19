@@ -3,6 +3,6 @@ Funcs:
 - [x] gmClassic_801B3A34
 - [x] gmClassic_801B2BA4
 - [x] gmClassic_801B3B40
-- [ ] gmClassic_801B2D54
+- [x] gmClassic_801B2D54
 - [ ] gmClassic_801B3500
 - [ ] gmClassic_OnLoad

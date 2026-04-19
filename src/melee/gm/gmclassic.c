@@ -12,7 +12,7 @@ extern UNK_T gmClassic_80470708[];
 extern DebugGameOverData gmClassic_80470850;
 extern UNK_T gmClassic_8047086C;
 extern UNK_T gmClassic_80472AF8;
-extern UNK_T gmClassic_80490880;
+extern u8 gmClassic_80490880[];
 extern u8 gm_804908A0[];
 extern UNK_T gmClassic_804D68D0;
 
@@ -421,6 +421,115 @@ loop_check:
 }
 
 /// #gmClassic_801B2D54
+
+static u8 gm_804D4318[8] = { 0x01, 0x48, 0x21, 0x21, 0x21, 0x00, 0x00, 0x00 };
+static u8 gm_804D4320[8] = { 0x00, 0x52, 0x21, 0x21, 0x21, 0x00, 0x00, 0x00 };
+static u8 gm_804D4328[8] = { 0x00, 0x53, 0x21, 0x21, 0x21, 0x00, 0x00, 0x00 };
+
+gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
+{
+    gm_803DDEC8Struct* ptr;
+    u8* data_base = gmClassic_80490880;
+    u8* ms_base = (u8*) gm_803DDC58_MinorScenes;
+
+    /* Pass 1: entries with x1 & 8 */
+    ptr = arg0;
+    while ((u8) ptr->x0 != 0xD) {
+        if (ptr->x1 & 8) {
+            void* result = (void*) gmClassic_801B2BA4(
+                (s8*) (ms_base + 0x520), data_base + 0x80, arg0);
+            if (result != NULL) {
+                ptr->xC = result;
+            } else {
+                for (;;) {
+                }
+            }
+        }
+        ptr++;
+    }
+
+    /* Pass 2: entries with x1 & 2, not x1 & 0x20 */
+    ptr = arg0;
+    while ((u8) ptr->x0 != 0xD) {
+        u8 flags = ptr->x1;
+        if ((flags & 2) && !(flags & 0x20)) {
+            void* result = (void*) gmClassic_801B2BA4(
+                (s8*) (ms_base + 0x4DC), data_base + 0x74, arg0);
+            if (result != NULL) {
+                ptr->xC = result;
+            } else {
+                for (;;) {
+                }
+            }
+        }
+        ptr++;
+    }
+
+    /* Pass 3: entries with x1 & 0x10, not x1 & 0x20 */
+    ptr = arg0;
+    while ((u8) ptr->x0 != 0xD) {
+        u8 flags = ptr->x1;
+        if ((flags & 0x10) && !(flags & 0x20)) {
+            void* result = (void*) gmClassic_801B2BA4(
+                (s8*) (ms_base + 0x428), data_base + 0x54, arg0);
+            if (result != NULL) {
+                ptr->xC = result;
+            } else {
+                for (;;) {
+                }
+            }
+        }
+        ptr++;
+    }
+
+    /* Pass 4: entries with x1 == 0 or x1 == 4 */
+    ptr = arg0;
+    while ((u8) ptr->x0 != 0xD) {
+        u8 flags = ptr->x1;
+        if (flags == 0 || flags == 4) {
+            void* result = (void*) gmClassic_801B2BA4(
+                (s8*) (ms_base + 0x33C), data_base + 0x2C, arg0);
+            if (result != NULL) {
+                ptr->xC = result;
+            } else {
+                for (;;) {
+                }
+            }
+        }
+        ptr++;
+    }
+
+    /* Pass 5: entries with x1 == 0x80, switch on x2 */
+    ptr = arg0;
+    while ((u8) ptr->x0 != 0xD) {
+        if ((u8) ptr->x1 == 0x80) {
+            u8 x2val = ptr->x2;
+            switch ((s32) x2val) {
+            case 1:
+                ptr->xC = gm_804D4318;
+                break;
+            case 2:
+                ptr->xC = gm_804D4320;
+                break;
+            case 3:
+                ptr->xC = gm_804D4328;
+                break;
+            }
+        }
+        ptr++;
+    }
+
+    /* Pass 6: find entry with x1 & 0x20, set xC and return */
+    ptr = arg0;
+    while ((u8) ptr->x0 != 0xD) {
+        if (ptr->x1 & 0x20) {
+            ptr->xC = (void*) (ms_base + 0x330);
+            return ptr;
+        }
+        ptr++;
+    }
+    return ptr;
+}
 
 /// #gmClassic_OnLoad
 
