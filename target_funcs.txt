@@ -1,7 +1,7 @@
 File: src/melee/gm/gm_1A4C.c
 Funcs:
 - [x] fn_801A7FB4
-- [ ] fn_801A94BC
+- [x] fn_801A94BC
 - [ ] gm_801A9B30_OnEnter
 - [ ] gm_801A8D54
 - [ ] gm_801A9094
