@@ -1,0 +1,11 @@
+File: src/melee/gm/gmtou.c
+Funcs:
+- [x] gm_8019B8C4_OnEnter
+- [x] gm_8019ECAC_OnEnter
+- [x] fn_8019DD60
+- [x] fn_8019C744
+- [x] fn_8019C048
+- [x] fn_8019BA08
+- [x] gm_8019E634
+- [x] gm_8019DF8C_OnFrame
+- [x] fn_8019D1BC
