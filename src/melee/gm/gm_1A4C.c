@@ -237,6 +237,68 @@ void fn_801A851C(HSD_GObj* gobj)
 
 /// #gm_801A85E4
 
+#include <MSL/math.h>
+
+void gm_801A85E4(HSD_JObj* jobj, s32 arg1, s32 arg2)
+{
+    s32 idx;
+    f32 angle;
+    f32 x;
+    f32 z;
+    PAD_STACK(0x20);
+
+    if (arg1 <= 4) {
+        arg2 = 4 - arg1;
+        idx = arg2 + 2;
+        if (idx > 4) {
+            arg2 = 4 - idx;
+            idx = arg2 + 2;
+        }
+        angle = 0.017453292f *
+                ((45.0f * (f32) idx) + (2.0f * HSD_Randf()) - 1.0f);
+        x = 25.0f * cosf(angle);
+        HSD_JObjSetTranslateX(jobj, x);
+        z = 0.9f * ((25.0f * -sinf(angle)) + -18.0f);
+        HSD_JObjSetTranslateZ(jobj, z);
+    } else if (arg1 <= 0xC) {
+        arg2 = 0xC - arg1;
+        idx = arg2 + 8;
+        if (idx > 0xC) {
+            arg2 = 0xC - idx;
+            idx = arg2 + 8;
+        }
+        angle = 0.017453292f *
+                ((25.714285f * (f32) (idx - 5)) + (4.0f * HSD_Randf()) -
+                 2.0f);
+        x = 50.0f * cosf(angle);
+        HSD_JObjSetTranslateX(jobj, x);
+        z = 0.9f * ((50.0f * -sinf(angle)) + -18.0f);
+        HSD_JObjSetTranslateZ(jobj, z);
+    } else if (arg1 <= 0x15) {
+        arg2 = 0x15 - arg1;
+        idx = arg2 + 0x11;
+        if (idx > 0x15) {
+            arg2 = 0x15 - idx;
+            idx = arg2 + 0x11;
+        }
+        angle = 0.017453292f *
+                ((22.5f * (f32) (idx - 0xD)) + HSD_Randf() - 0.5f);
+        x = 75.0f * cosf(angle);
+        HSD_JObjSetTranslateX(jobj, x);
+        z = 0.8f * ((75.0f * -sinf(angle)) + -18.0f);
+        HSD_JObjSetTranslateZ(jobj, z);
+    } else if (arg1 == 0x16) {
+        HSD_JObjSetTranslateX(jobj, -80.0f);
+        HSD_JObjSetTranslateZ(jobj, -70.0f);
+    } else if (arg1 == 0x17) {
+        HSD_JObjSetTranslateX(jobj, 75.0f);
+        HSD_JObjSetTranslateZ(jobj, -75.0f);
+    } else {
+        HSD_JObjSetTranslateX(jobj, 90.0f);
+        HSD_JObjSetTranslateZ(jobj, -55.0f);
+    }
+}
+
 static HSD_GObj* gm_80480A00[0x34];
 static s32 gm_80480AD0[0x1A];
 
