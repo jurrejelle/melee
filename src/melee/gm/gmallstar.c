@@ -3,6 +3,7 @@
 #include "gm/gmallstar.static.h"
 
 #include "gm_unsplit.h"
+#include "gmregcommon.h"
 
 #include "baselib/random.h"
 #include "gr/ground.h"
@@ -358,11 +359,81 @@ MinorScene gm_803DE930_MinorScenes[] = {
     },
 };
 
+static gm_803DEBE8_t gm_803DEBE8[52] = {
+    { 0xB1, 0xB1, 0, 8 },
+    { 0xB2, 0xB2, 0, 1 },
+    { 0xB3, 0xB3, 0, 6 },
+    { 0xB4, 0xB4, 0, 0x10 },
+    { 0xB5, 0xB5, 0, 0x11 },
+    { 0xB6, 0xB6, 0, 4 },
+    { 0xB7, 0xB7, 0, 2 },
+    { 0xB8, 0xB8, 0, 0xD },
+    { 0xB9, 0xB9, 0, 7 },
+    { 0xBA, 0xBA, 0, 0 },
+    { 0xBB, 0xBB, 0, 0xB },
+    { 0xBC, 0xBC, 0, 0xF },
+    { 0xBD, 0xBD, 0, 0xE },
+    { 0xBE, 0xBE, 0, 0xC },
+    { 0xBF, 0xBF, 0, 0x12 },
+    { 0xC0, 0xC0, 0, 9 },
+    { 0xC1, 0xC1, 0, 0xA },
+    { 0xC2, 0xC2, 0, 5 },
+    { 0xC3, 0xC3, 0, 0x16 },
+    { 0xC4, 0xC4, 0, 0x15 },
+    { 0xC5, 0xC5, 0, 0x14 },
+    { 0xC6, 0xC6, 0, 0x18 },
+    { 0xC7, 0xC7, 0, 0x17 },
+    { 0xC9, 0xC9, 0, 0x19 },
+    { 0xC8, 0xC8, 0, 3 },
+    /* round data (AllstarRoundInfo[13]) encoded as raw bytes */
+    { 0, 0, 0, 0 }, { 0, 0, 0, 1 },
+    { 0, 0, 0, 1 }, { 0, 0, 0, 1 },
+    { 0, 0, 0, 2 }, { 0, 0, 0, 1 },
+    { 0, 0, 0, 3 }, { 0, 0, 0, 1 },
+    { 0, 0, 0, 4 }, { 0, 0, 0, 2 },
+    { 0, 0, 0, 6 }, { 0, 0, 0, 2 },
+    { 0, 0, 0, 8 }, { 0, 0, 0, 2 },
+    { 0, 0, 0, 10 }, { 0, 0, 0, 2 },
+    { 0, 0, 0, 12 }, { 0, 0, 0, 3 },
+    { 0, 0, 0, 15 }, { 0, 0, 0, 3 },
+    { 0, 0, 0, 18 }, { 0, 0, 0, 3 },
+    { 0, 0, 0, 21 }, { 0, 0, 0, 3 },
+    { 0, 0, 0, 24 }, { 0, 0, 0, 1 },
+    /* trailing pad */
+    { 0, 0, 0, 0 },
+};
+
+gm_80490940_t gm_80490940[5];
+
 /// #gm_801B5324
 
 /// #gm_801B5624
 
-/// #gm_801B59AC
+void gm_801B59AC(MinorScene* arg0)
+{
+    u8* base = (u8*) gm_803DE930_MinorScenes;
+    MatchExitInfo* exit = gm_801A4284(arg0);
+    u8 idx = arg0->idx;
+    s32 result = exit->x8;
+    UnkAllstarData* data = &gm_80473A18;
+    u16 round = gm_8017BE84(idx);
+    u32 opp_start = ((AllstarRoundInfo*)(base + 0x31C))[round].start;
+    u32 opp_idx = ((u32)((u8*)&((gm_803DEBE8_t*)base)[opp_start] + 0x2B8) - (u32)(base + 0x2B8)) / sizeof(gm_803DEBE8_t);
+
+    if (result != 0) {
+        ((u8*) gm_80490940)[opp_idx] = 2;
+    } else {
+        ((u8*) gm_80490940)[opp_idx] = 1;
+    }
+    data->x74 = exit->match_end.player_standings[0].percent;
+    exit->match_end.frame_count;
+    data->x9C += exit->match_end.frame_count;
+    if (gm_8017D7AC(exit, &data->x0, 0x69) != 0 &&
+        (u8) arg0->idx == 0x60)
+    {
+        gm_8017CBAC((UnkAdventureData*) data, gmMainLib_8015CDE0(), 0x17);
+    }
+}
 
 void fn_801B5AA8(int arg0)
 {
