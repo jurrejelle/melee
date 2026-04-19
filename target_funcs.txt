@@ -1,0 +1,6 @@
+File: src/melee/gm/gmstaffroll.c
+Funcs:
+- [x] fn_801AA854
+- [x] gm_801AC6D8_OnEnter
+- [x] fn_801AAB74
+- [x] fn_801AB200
