@@ -7,7 +7,8 @@
 
 #include <melee/gm/types.h>
 
-/* 1B2BA4 */ UNK_RET gmClassic_801B2BA4(UNK_PARAMS);
+/* 1B2BA4 */ s32 gmClassic_801B2BA4(s8* arg0, u8* arg1,
+                                     gm_803DDEC8Struct* arg2);
 /* 1B2D54 */ UNK_RET gmClassic_801B2D54(gm_803DDEC8Struct*);
 /* 1B2F78 */ void gmClassic_OnLoad(void);
 /* 1B34B8 */ void gmClassic_OnInit(void);

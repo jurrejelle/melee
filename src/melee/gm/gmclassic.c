@@ -4,6 +4,7 @@
 
 #include <melee/gm/gmmain_lib.h>
 #include <melee/gm/gmregcommon.h>
+#include <melee/gr/stage.h>
 #include <melee/lb/lbdvd.h>
 
 extern UNK_T gmClassic_80470708[];
@@ -314,7 +315,109 @@ MinorScene gm_803DDC58_MinorScenes[] = {
     { -1 },
 };
 
-/// #gmClassic_801B2BA4
+s32 gmClassic_801B2BA4(s8* arg0, u8* arg1, gm_803DDEC8Struct* arg2)
+{
+    s8* result;
+    u8* idx_ptr;
+    s32 outer;
+    s8 target_char;
+    s8* entry;
+    s32 j;
+    int cur_char;
+    s32 stage1;
+    gm_803DDEC8Struct* temp;
+    void* xC;
+    s8* count_ptr;
+    s32 cnt;
+
+    result = NULL;
+    target_char = (s8) gmMainLib_8015CDC8()->c_kind;
+    idx_ptr = arg1;
+    outer = 0;
+
+    goto loop_check;
+
+loop_body:
+    entry = arg0 + *idx_ptr * 6;
+
+    for (j = 0; j < 3; j++) {
+        cur_char = entry[j + 2];
+
+        if (cur_char == 0x21) {
+            continue;
+        }
+
+        if (gm_80164430(*(u16*) entry) == 0) {
+            goto loop_incr;
+        }
+        if (gm_80164840(cur_char) == 0) {
+            goto loop_incr;
+        }
+        if (cur_char == target_char) {
+            goto loop_incr;
+        }
+
+        temp = arg2;
+        while (temp->x0 != 0xD) {
+            if (temp->xC != NULL) {
+                if (cur_char == ((s8*) temp->xC)[2]) {
+                    goto loop_incr;
+                }
+            }
+            if (temp->xC != NULL) {
+                if (cur_char == ((s8*) temp->xC)[3]) {
+                    goto loop_incr;
+                }
+            }
+            if (temp->xC != NULL) {
+                if (cur_char == ((s8*) temp->xC)[4]) {
+                    goto loop_incr;
+                }
+            }
+            temp++;
+        }
+
+        temp = arg2;
+        while (temp->x0 != 0xD) {
+            if (temp->xC != NULL) {
+                stage1 = Stage_8022519C(
+                    (InternalStageId) *(u16*) entry);
+                xC = temp->xC;
+                if (stage1 == Stage_8022519C(
+                        (InternalStageId) *(u16*) xC))
+                {
+                    result = entry;
+                    goto loop_incr;
+                }
+            }
+            temp++;
+        }
+    }
+
+    if (entry != NULL) {
+        return (s32) entry;
+    }
+
+loop_incr:
+    outer++;
+    idx_ptr++;
+
+loop_check:
+    count_ptr = arg0;
+    cnt = 0;
+    while (*(u16*) count_ptr != 0x148) {
+        count_ptr += 6;
+        cnt++;
+    }
+    if (outer < cnt) {
+        goto loop_body;
+    }
+
+    if (result != NULL) {
+        return (s32) result;
+    }
+    return 0;
+}
 
 /// #gmClassic_801B2D54
 
