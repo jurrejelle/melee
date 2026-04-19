@@ -113,7 +113,106 @@ void fn_8019BF8C(HSD_GObj* gobj)
     lbl_80479A58.xE++;
 }
 
-/// #fn_8019C048
+extern s32 lbl_803B7D18[9];
+
+void fn_8019C048(HSD_GObj* gobj)
+{
+    TmData* tmd;
+    s32 idx;
+    HSD_JObj* jobj;
+    f32 x;
+    u8 state;
+    u8 start_frame, cur_frame, end_frame, loop_flag;
+    s32 table[9];
+
+    tmd = gm_8018F634();
+    idx = fn_8018F62C(gobj);
+    jobj = gobj->hsd_obj;
+
+    table[0] = lbl_803B7D18[0];
+    table[1] = lbl_803B7D18[1];
+    table[2] = lbl_803B7D18[2];
+    table[3] = lbl_803B7D18[3];
+    table[4] = lbl_803B7D18[4];
+    table[5] = lbl_803B7D18[5];
+    table[6] = lbl_803B7D18[6];
+    table[7] = lbl_803B7D18[7];
+    table[8] = lbl_803B7D18[8];
+
+    if ((s8) (u8) HSD_PadMasterStatus[(u8) idx].err != 0) {
+        HSD_JObjSetFlagsAll(jobj, JOBJ_HIDDEN);
+        HSD_SisLib_803A7548(tmd->x524[2], (s32) idx, 0.0f, 0.0f);
+        return;
+    }
+
+    HSD_JObjClearFlagsAll(jobj, JOBJ_HIDDEN);
+
+    state = lbl_80479A58.x1D[idx].x0;
+    if (state == 4) {
+        HSD_SisLib_803A7548(tmd->x524[2], (s32) idx, 0.0f, 0.0f);
+    } else {
+        HSD_SisLib_803A7548(tmd->x524[2], (s32) idx, 1.0f, 1.0f);
+    }
+
+    {
+        u8 players = tmd->x30;
+        if ((s32) players == 4) {
+            x = (13.0f * (f32) idx) + -19.5f;
+        } else if ((s32) players == 3) {
+            x = 6.5f + ((13.0f * (f32) idx) - 19.5f);
+        } else {
+            x = 6.5f + ((13.0f * (2.0f * (f32) idx)) - 19.5f);
+        }
+    }
+
+    HSD_JObjSetTranslateX(jobj, x);
+
+    tmd->x524[2]->hidden = 0;
+
+    state = lbl_80479A58.x1D[idx].x0;
+    lbl_80479A58.x1D[idx].a = ((u16*) table)[state * 3 + 0];
+    lbl_80479A58.x1D[idx].c = ((u16*) table)[state * 3 + 1];
+    lbl_80479A58.x1D[idx].x2 = ((u16*) table)[state * 3 + 2];
+
+    start_frame = lbl_80479A58.x1D[idx].a;
+    cur_frame = lbl_80479A58.x1D[idx].b;
+    end_frame = lbl_80479A58.x1D[idx].c;
+    loop_flag = lbl_80479A58.x1D[idx].x2;
+
+    if (cur_frame < start_frame) {
+        lbl_80479A58.x1D[idx].b = start_frame;
+        cur_frame = start_frame;
+    }
+
+    if (cur_frame < end_frame) {
+        lbl_80479A58.x1D[idx].b = (u8) (cur_frame + 1);
+    } else {
+        lbl_80479A58.x1D[idx].x1 = 1;
+        if (loop_flag != 0) {
+            lbl_80479A58.x1D[idx].b = start_frame;
+        } else {
+            lbl_80479A58.x1D[idx].b = end_frame;
+        }
+    }
+
+    state = lbl_80479A58.x1D[idx].x0;
+    if (state == 0 && lbl_80479A58.x38[idx] == 6) {
+        if (lbl_80479A58.x1D[idx].x1 != 0 && (u8) tmd->x4B8[idx].x0 != 0) {
+            lbl_80479A58.x1D[idx].x0 = 1;
+            lbl_80479A58.x1D[idx].x1 = 0;
+        }
+    }
+
+    state = lbl_80479A58.x1D[idx].x0;
+    if (state == 1) {
+        if (lbl_80479A58.x1D[idx].x1 != 0) {
+            lbl_80479A58.x1D[idx].x0 = 2;
+            lbl_80479A58.x1D[idx].x1 = 0;
+        }
+    }
+
+    fn_8019044C(jobj, (f32) lbl_80479A58.x1D[idx].b);
+}
 
 void fn_8019C3EC(HSD_GObj* gobj)
 {
