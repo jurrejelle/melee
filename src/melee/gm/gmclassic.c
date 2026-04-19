@@ -8,6 +8,7 @@
 #include <melee/gr/stage.h>
 #include <melee/lb/lbaudio_ax.h>
 #include <melee/lb/lbdvd.h>
+#include <sysdolphin/baselib/random.h>
 
 extern UNK_T gmClassic_80470708[];
 extern DebugGameOverData gmClassic_80470850;
@@ -532,7 +533,154 @@ gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
     return ptr;
 }
 
-/// #gmClassic_OnLoad
+void gmClassic_OnLoad(void)
+{
+    u8* buf = gmClassic_80490880;
+    MinorScene* ms = gm_803DDC58_MinorScenes;
+    UnkAllstarData* data;
+    gm_803DDEC8Struct* entry;
+    int count;
+    int i;
+    PAD_STACK(56);
+
+    entry = (gm_803DDEC8Struct*) ((u8*) ms + 0x270);
+    while (entry->x0 != 0x0D) {
+        entry->xC = NULL;
+        entry++;
+    }
+
+    /* Block 1: scan offset 0x520, fill offset 0x80 */
+    {
+        u16* scan = (u16*) ((u8*) ms + 0x520);
+        count = 0;
+        while (*scan != 0x148) {
+            scan = (u16*) ((u8*) scan + 6);
+            count++;
+        }
+        for (i = 0; i < count; i++) {
+            buf[i + 0x80] = i;
+        }
+        {
+            u8* sp = buf + 0x80;
+            int j;
+            for (j = 0; j < count; j++) {
+                u8* swap = buf + HSD_Randi(count);
+                u8 tmp = *sp;
+                *sp = swap[0x80];
+                swap[0x80] = tmp;
+                sp++;
+            }
+        }
+    }
+
+    /* Block 2: scan offset 0x4DC, fill offset 0x74 */
+    {
+        u16* scan = (u16*) ((u8*) ms + 0x4DC);
+        count = 0;
+        while (*scan != 0x148) {
+            scan = (u16*) ((u8*) scan + 6);
+            count++;
+        }
+        for (i = 0; i < count; i++) {
+            buf[i + 0x74] = i;
+        }
+        {
+            u8* sp = buf + 0x74;
+            int j;
+            for (j = 0; j < count; j++) {
+                u8* swap = buf + HSD_Randi(count);
+                u8 tmp = *sp;
+                *sp = swap[0x74];
+                swap[0x74] = tmp;
+                sp++;
+            }
+        }
+    }
+
+    /* Block 3: scan offset 0x428, fill offset 0x54 */
+    {
+        u16* scan = (u16*) ((u8*) ms + 0x428);
+        count = 0;
+        while (*scan != 0x148) {
+            scan = (u16*) ((u8*) scan + 6);
+            count++;
+        }
+        for (i = 0; i < count; i++) {
+            buf[i + 0x54] = i;
+        }
+        {
+            u8* sp = buf + 0x54;
+            int j;
+            for (j = 0; j < count; j++) {
+                u8* swap = buf + HSD_Randi(count);
+                u8 tmp = *sp;
+                *sp = swap[0x54];
+                swap[0x54] = tmp;
+                sp++;
+            }
+        }
+    }
+
+    /* Block 4: scan offset 0x33C, fill offset 0x2C */
+    {
+        u16* scan = (u16*) ((u8*) ms + 0x33C);
+        count = 0;
+        while (*scan != 0x148) {
+            scan = (u16*) ((u8*) scan + 6);
+            count++;
+        }
+        for (i = 0; i < count; i++) {
+            buf[i + 0x2C] = i;
+        }
+        {
+            u8* sp = buf + 0x2C;
+            int j;
+            for (j = 0; j < count; j++) {
+                u8* swap = buf + HSD_Randi(count);
+                u8 tmp = *sp;
+                *sp = swap[0x2C];
+                swap[0x2C] = tmp;
+                sp++;
+            }
+        }
+    }
+
+    data = gm_8017EB30();
+    gmMainLib_8015CDC8();
+    gm_8017C984(data);
+
+    {
+        int n = 2;
+        u8* p = buf + 0x20;
+        do {
+            p[0] = 0;
+            p[1] = 0;
+            p[2] = 0;
+            p[3] = 0;
+            p[4] = 0;
+            p[5] = 0;
+            p += 6;
+        } while (--n);
+    }
+
+    gm_8017DB58(data->x0.xC.x24);
+    data->x0.slot = gm_801677F0();
+    data->x48 = gm_8017EB3C;
+    data->x4C = gm_8017EB64;
+    data->x50 = gm_8017EBCC;
+    data->x54 = gm_8017EB98;
+    data->x64 = gm_8017ED3C;
+    data->x68 = gm_8017ED8C;
+    data->x58 = (u32) gm_8017ECA0;
+    data->_5C = (u32) gm_8017ED08;
+    data->_60 = (u32) gm_8017ECD4;
+    data->_6C = (u32) gm_8017EC00;
+    data->_70 = (u32) gm_8017EC50;
+
+    gm_SetSceneMinor(0x70U);
+    gm_80172174();
+    Ground_801C5A28();
+}
 
 void gmClassic_OnInit(void)
 {

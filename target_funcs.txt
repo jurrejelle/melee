@@ -5,4 +5,4 @@ Funcs:
 - [x] gmClassic_801B3B40
 - [x] gmClassic_801B2D54
 - [x] gmClassic_801B3500
-- [ ] gmClassic_OnLoad
+- [x] gmClassic_OnLoad
