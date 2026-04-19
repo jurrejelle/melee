@@ -23,6 +23,7 @@
 #include <sysdolphin/baselib/gobjproc.h>
 #include <sysdolphin/baselib/jobj.h>
 #include <sysdolphin/baselib/lobj.h>
+#include <sysdolphin/baselib/random.h>
 #include <sysdolphin/baselib/sobjlib.h>
 
 #include "gm/gmregtyfall.static.h"
@@ -196,6 +197,7 @@ void fn_801A80F0(HSD_GObj* gobj)
     HSD_JObjAnimAll(GET_JOBJ(gobj));
 }
 
+#pragma dont_inline on
 void gm_801A8114(HSD_JObj* arg0, int arg1)
 {
     HSD_JObj* transJobj;
@@ -222,6 +224,7 @@ void gm_801A8114(HSD_JObj* arg0, int arg1)
     HSD_JObjSetScaleY(transJobj, scale);
     HSD_JObjSetScaleZ(transJobj, scale);
 }
+#pragma dont_inline reset
 
 void fn_801A851C(HSD_GObj* gobj)
 {
@@ -234,6 +237,7 @@ void fn_801A851C(HSD_GObj* gobj)
 
 /// #gm_801A85E4
 
+static HSD_GObj* gm_80480A00[0x34];
 static s32 gm_80480AD0[0x1A];
 
 void gm_801A8D54(s32* arg0)
@@ -293,8 +297,6 @@ void gm_801A8D54(s32* arg0)
 }
 
 /// #gm_801A9094
-
-static HSD_GObj* gm_80480A00[0x34];
 
 void gm_801A9094(void)
 {
@@ -402,6 +404,114 @@ void fn_801A94BC(HSD_GObj* gobj)
 }
 
 /// #gm_801A9630
+
+static HSD_GObj* gm_804D67B8;
+static HSD_GObj* gm_804D67BC;
+static HSD_GObj* gm_804D67C0;
+
+void gm_801A9630(void)
+{
+    HSD_GObj* gobj;
+    HSD_GObj* cam_gobj;
+    HSD_CObj* cobj;
+    HSD_Fog* fog;
+    HSD_LObj* lobj;
+    HSD_JObj* jobj;
+    HSD_JObj* child;
+    s32 i;
+    PAD_STACK(8);
+
+    for (i = 0; i < 0x1A; i++) {
+        gm_80480A00[i] = NULL;
+    }
+
+    gm_804D67C4 = 0xB4;
+
+    for (i = 0; i < 0x1A; i++) {
+        gm_801A4310();
+        if (un_803048C0(gm_801A659C(i)) ? true : false) {
+            gm_80480AD0[i] = HSD_Randi(0x2710);
+        } else {
+            gm_80480AD0[i] = 0;
+        }
+    }
+
+    // Fog GObj
+    gobj = GObj_Create(0xE, 3, 0);
+    fog = HSD_FogLoadDesc(gm_804D67A4->fogs->desc);
+    HSD_GObjObject_80390A70(gobj, (u8) HSD_GObj_804D7848, fog);
+    GObj_SetupGXLink(gobj, HSD_GObj_FogCallback, 0, 0);
+    HSD_Fog_8037DE7C(fog, gm_804D67A4->fogs->anims[0]->aobjdesc);
+    HSD_FogReqAnim(fog, 0.0f);
+    HSD_FogInterpretAnim(fog);
+    HSD_GObj_SetupProc(gobj, fn_801A7FB4, 0x17);
+
+    // Light GObj
+    gobj = GObj_Create(0xB, 3, 0);
+    lobj = lb_80011AC4(gm_804D67A4->lights);
+    HSD_GObjObject_80390A70(gobj, (u8) HSD_GObj_804D784A, lobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_LObjCallback, 0, 0);
+    HSD_LObjAddAnimAll(lobj, (*gm_804D67A4->lights)->anims[0]);
+    HSD_LObjReqAnimAll(lobj, 0.0f);
+    HSD_LObjAnimAll(lobj);
+    HSD_GObj_SetupProc(gobj, fn_801A80CC, 0x17);
+
+    // Camera GObj
+    cam_gobj = GObj_Create(0x13, 0x14, 0);
+    cobj = lb_80013B14(
+        (HSD_CameraDescPerspective*) gm_804D67A4->cameras[0].desc);
+    HSD_GObjObject_80390A70(cam_gobj, HSD_GObj_804D784B, cobj);
+    GObj_SetupGXLinkMax(cam_gobj, HSD_GObj_803910D8, 8);
+    cam_gobj->gxlink_prios = 0x801;
+    child = NULL;
+    HSD_CObjAddAnim(cobj, gm_804D67A4->cameras[0].anims[0]);
+    HSD_CObjReqAnim(cobj, 0.0f);
+    HSD_CObjAnim(cobj);
+    HSD_GObj_SetupProc(cam_gobj, fn_801A94BC, 0);
+
+    // Background JObj GObj 1
+    gobj = GObj_Create(0xE, 0xF, 0);
+    gm_804D67C0 = gobj;
+    jobj = HSD_JObjLoadJoint(gm_804D67A0->models[0]->joint);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xB, 0);
+    gm_8016895C(jobj, gm_804D67A0->models[0], 0);
+    HSD_JObjReqAnimAll(jobj, 0.0f);
+    HSD_JObjAnimAll(jobj);
+    HSD_GObj_SetupProc(gobj, fn_801A9498, 0x17);
+
+    // Background JObj GObj 2
+    gobj = GObj_Create(0xE, 0xF, 0);
+    gm_804D67BC = gobj;
+    jobj = HSD_JObjLoadJoint(gm_804D67AC->models[0]->joint);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xB, 0);
+    gm_8016895C(jobj, gm_804D67A4->models[0], 0);
+    HSD_JObjReqAnimAll(jobj, 0.0f);
+    HSD_JObjAnimAll(jobj);
+    HSD_GObj_SetupProc(gobj, fn_801A851C, 0x17);
+
+    // Character display setup
+    gm_801A9094();
+    gm_801A4B90();
+
+    // Character JObj GObj 3
+    gobj = GObj_Create(0xE, 0xF, 0);
+    gm_804D67B8 = gobj;
+    jobj = HSD_JObjLoadJoint(gm_804D6798);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xB, 0);
+    gm_801A8114(jobj, gm_801A659C(gm_801BEFB0()));
+
+    // Walk JObj tree to find constraint target (3 levels deep)
+    child = HSD_JObjGetChild(GET_JOBJ(gm_804D67BC));
+    child = HSD_JObjGetChild(child);
+    child = HSD_JObjGetChild(child);
+
+    lb_8000C1C0(jobj, child);
+    lb_8000C290(jobj, child);
+    HSD_GObj_SetupProc(gobj, fn_801A80F0, 0x17);
+}
 
 static u8 gm_804D67C8;
 static u8 gm_804D67C9;

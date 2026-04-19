@@ -26,6 +26,8 @@
 
 /* 4D6798 */ extern HSD_Joint* gm_804D6798;
 /* 4D679C */ extern HSD_Archive* gm_804D679C;
+/* 4D67A0 */ extern SceneDesc* gm_804D67A0;
+/* 4D67A4 */ extern SceneDesc* gm_804D67A4;
 /* 4D67A8 */ extern SceneDesc* gm_804D67A8;
 /* 4D67AC */ extern SceneDesc* gm_804D67AC;
 

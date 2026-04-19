@@ -281,8 +281,8 @@ static u8 gm_804D6740;
 static SceneDesc* gm_804D6748;
 HSD_Joint* gm_804D6798;
 HSD_Archive* gm_804D679C;
-static SceneDesc* gm_804D67A0;
-static SceneDesc* gm_804D67A4;
+SceneDesc* gm_804D67A0;
+SceneDesc* gm_804D67A4;
 SceneDesc* gm_804D67A8;
 SceneDesc* gm_804D67AC;
 
