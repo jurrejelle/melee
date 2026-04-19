@@ -18,11 +18,14 @@
 #include <melee/gm/gm_18A5.h>
 #include <melee/gm/gmmain_lib.h>
 #include <melee/gm/types.h>
+#include <melee/gm/gm_1601.h>
 #include <melee/lb/lbarchive.h>
 #include <melee/lb/lbaudio_ax.h>
 #include <melee/lb/lbdvd.h>
 #include <melee/lb/types.h>
 #include <melee/sc/types.h>
+
+#include <dolphin/os.h>
 
 /// Filename is just a guess, based on some strings in the file
 /// Seems to be Tournament game code
@@ -41,6 +44,11 @@ extern HSD_Archive* lbl_804D6688;
 extern HSD_Archive* lbl_804D668C;
 extern s32 lbl_804D663C;
 extern f32 lbl_803DA2E0[];
+
+extern MatchEnd gm_80477738;
+extern s32 lbl_803B7D3C[4];
+extern s32 lbl_804DA948;
+s32 fn_80166CBC(void*, ssize_t);
 
 static inline TmData* GetTmData(void)
 {
@@ -772,7 +780,217 @@ void fn_8019DD60(void)
 
 /// #gm_8019DF8C_OnFrame
 
-/// #gm_8019E634
+void gm_8019E634(void)
+{
+    s32 indices[4];
+    s32 results[4];
+    s32 hbuf_init;
+    TmData* tmd;
+    s32 hmn_cpu;
+    s32 i, j;
+    u64 audio_mask;
+
+    tmd = gm_8018F634();
+    hmn_cpu = tmd->hmn_cpu_count;
+
+    indices[0] = lbl_803B7D3C[0];
+    indices[1] = lbl_803B7D3C[1];
+    indices[2] = lbl_803B7D3C[2];
+    indices[3] = lbl_803B7D3C[3];
+
+    /* Get match results per player */
+    for (i = 0; i < (s32) tmd->x30; i++) {
+        results[i] = fn_80166CBC(&gm_80477738, i);
+    }
+
+    /* Bubble sort results, keeping indices in parallel */
+    for (i = 0; i < (s32)(tmd->x30 - 1); i++) {
+        for (j = 0; j < (s32)((tmd->x30 - 1) - i); j++) {
+            if (results[j] > results[j + 1]) {
+                s32 tr = results[j];
+                s32 ti = indices[j];
+                results[j] = results[j + 1];
+                indices[j] = indices[j + 1];
+                results[j + 1] = tr;
+                indices[j + 1] = ti;
+            }
+        }
+    }
+
+    /* Handicap adjustment */
+    if ((u8) gmMainLib_8015CC34()->handicap == 1) {
+        u8* hbuf;
+
+        hbuf_init = lbl_804DA948;
+        hbuf = (u8*) &hbuf_init;
+
+        /* Read handicap from x37 entries */
+        i = 0;
+        do {
+            if (i < (s32) tmd->x30) {
+                s32 id = results[i];
+                TmData* p = gm_8018F634();
+                for (j = 0; j < (s32) p->x2E; j++) {
+                    if (id != (s32) p->x37[j].xF) continue;
+                    goto found1;
+                }
+                j = 0;
+            found1:
+                hbuf[i] = (u8) tmd->x37[j].x2;
+            }
+            i++;
+        } while (i < 4);
+
+        fn_80169000(&gm_80477738, &hbuf_init);
+
+        /* Write back adjusted handicap */
+        i = 0;
+        do {
+            if (i < (s32) tmd->x30) {
+                s32 id = results[i];
+                TmData* p = gm_8018F634();
+                for (j = 0; j < (s32) p->x2E; j++) {
+                    if (id != (s32) p->x37[j].xF) continue;
+                    goto found2;
+                }
+                j = 0;
+            found2:
+                tmd->x37[j].x2 = hbuf[i];
+            }
+            i++;
+        } while (i < 4);
+    }
+
+    /* Assign bracket positions */
+    if ((s32) gm_804771C4.match_type == 1) {
+        /* Team mode */
+        for (i = 0; i < hmn_cpu; i++) {
+            s32 id = indices[i];
+            TmData* p = gm_8018F634();
+            for (j = 0; j < (s32) p->x2E; j++) {
+                if (id != (s32) p->x37[j].xF) continue;
+                goto found3;
+            }
+            j = 0;
+        found3:
+            tmd->x37[j].xE = (tmd->x2E - 1) - i;
+
+            id = tmd->x30 + i;
+            p = gm_8018F634();
+            for (j = 0; j < (s32) p->x2E; j++) {
+                if (id != (s32) p->x37[j].xF) continue;
+                goto found4;
+            }
+            j = 0;
+        found4:
+            tmd->x37[j].xE = (s8) indices[i];
+        }
+    } else {
+        /* FFA mode */
+        for (i = 0; i < hmn_cpu; i++) {
+            s32 id = indices[(tmd->x30 - 1) - i];
+            TmData* p = gm_8018F634();
+            for (j = 0; j < (s32) p->x2E; j++) {
+                if (id != (s32) p->x37[j].xF) continue;
+                goto found5;
+            }
+            j = 0;
+        found5:
+            tmd->x37[j].xE = (tmd->x2E - 1) - i;
+
+            id = tmd->x30 + i;
+            p = gm_8018F634();
+            for (j = 0; j < (s32) p->x2E; j++) {
+                if (id != (s32) p->x37[j].xF) continue;
+                goto found6;
+            }
+            j = 0;
+        found6:
+            tmd->x37[j].xE = (s8) indices[(tmd->x30 - 1) - i];
+        }
+    }
+
+    /* Adjust remaining bracket positions */
+    for (i = tmd->x30 + hmn_cpu; i < (s32) tmd->x2E; i++) {
+        TmData* p = gm_8018F634();
+        for (j = 0; j < (s32) p->x2E; j++) {
+            if (i != (s32) p->x37[j].xF) continue;
+            goto found7;
+        }
+        j = 0;
+    found7:
+        tmd->x37[j].xE -= hmn_cpu;
+    }
+
+    /* Copy x37 data to x4B8 */
+    for (i = 0; i < (s32) tmd->x30; i++) {
+        TmData* p;
+
+        p = gm_8018F634();
+        for (j = 0; j < (s32) p->x2E; j++) {
+            if (i != (s32) p->x37[j].xE) continue;
+            goto found8;
+        }
+        j = 0;
+    found8:
+        tmd->x4B8[i].x6 = tmd->x37[j].x9;
+
+        p = gm_8018F634();
+        for (j = 0; j < (s32) p->x2E; j++) {
+            if (i != (s32) p->x37[j].xE) continue;
+            goto found9;
+        }
+        j = 0;
+    found9:
+        tmd->x4B8[i].x1 = tmd->x37[j].x2;
+
+        p = gm_8018F634();
+        for (j = 0; j < (s32) p->x2E; j++) {
+            if (i != (s32) p->x37[j].xE) continue;
+            goto found10;
+        }
+        j = 0;
+    found10:
+        tmd->x4B8[i].x3 = tmd->x37[j].x3;
+
+        p = gm_8018F634();
+        for (j = 0; j < (s32) p->x2E; j++) {
+            if (i != (s32) p->x37[j].xE) continue;
+            goto found11;
+        }
+        j = 0;
+    found11:
+        tmd->x4B8[i].x0 = tmd->x37[j].x0;
+
+        p = gm_8018F634();
+        for (j = 0; j < (s32) p->x2E; j++) {
+            if (i != (s32) p->x37[j].xE) continue;
+            goto found12;
+        }
+        j = 0;
+    found12:
+        tmd->x4B8[i].x5 = tmd->x37[j].x7;
+
+        p = gm_8018F634();
+        for (j = 0; j < (s32) p->x2E; j++) {
+            if (i != (s32) p->x37[j].xE) continue;
+            goto found13;
+        }
+        j = 0;
+    found13:
+        tmd->x4B8[i].x2 = tmd->x37[j].x5;
+    }
+
+    /* Debug output + audio preloading */
+    audio_mask = 0;
+    for (i = 0; i < (s32) tmd->x30; i++) {
+        OSReport("ckind:%d\n", (s32) tmd->x4B8[i].x1);
+        audio_mask |= lbAudioAx_80026E84((CharacterKind) tmd->x4B8[i].x1);
+    }
+    lbAudioAx_80026F2C(0x16);
+    lbAudioAx_8002702C(6, audio_mask);
+    lbAudioAx_80027168();
+}
 
 void gm_8019ECAC_OnEnter(void* arg0)
 {
