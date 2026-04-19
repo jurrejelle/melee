@@ -10,9 +10,12 @@
 #include "lb/lbbgflash.h"
 #include "lb/lbmthp.h"
 #include "mn/mnmain.h"
+#include "ty/tydisplay.h"
 #include "ty/toy.h"
 
+#include <sysdolphin/baselib/archive.h>
 #include <sysdolphin/baselib/fog.h>
+#include <sysdolphin/baselib/gobj.h>
 #include <sysdolphin/baselib/gobjgxlink.h>
 #include <sysdolphin/baselib/gobjobject.h>
 #include <sysdolphin/baselib/gobjplink.h>
@@ -194,6 +197,60 @@ void gm_801A8D54(s32* arg0)
 }
 
 /// #gm_801A9094
+
+static HSD_GObj* gm_80480A00[0x34];
+
+void gm_801A9094(void)
+{
+    s32 sp8C[0x1A];
+    s32 i;
+    TyDspEntry* dsp;
+    HSD_Joint* joint;
+    HSD_MatAnimJoint* matanim;
+    HSD_Joint* bg_joint;
+    HSD_GObj* gobj;
+    HSD_JObj* root;
+    HSD_JObj* child;
+    PAD_STACK(0x88);
+
+    gm_801A8D54(sp8C);
+    i = 0x19;
+    do {
+        if (sp8C[i] != 0x1A) {
+            dsp = un_8031B9DC(gm_801A659C(sp8C[i]));
+            joint = HSD_ArchiveGetPublicAddress(
+                gm_804D679C, (const char*) un_8031BB34((s8) dsp->x04));
+            matanim = HSD_ArchiveGetPublicAddress(
+                gm_804D679C, un_8031BB94((s8) dsp->x04));
+            bg_joint = HSD_ArchiveGetPublicAddress(
+                gm_804D679C, "ToyDspStand_Top_joint");
+            gobj = GObj_Create(0xE, 0xF, 0);
+            gm_80480A00[sp8C[i]] = gobj;
+            root = HSD_JObjAlloc();
+            HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, root);
+            GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xB, 0);
+            HSD_JObjSetScaleX(root, 1.8f);
+            HSD_JObjSetScaleY(root, 1.8f);
+            HSD_JObjSetScaleZ(root, 1.8f);
+            if (joint == NULL) {
+                __assert("jobj.h", 0x2F5U, "joint");
+            }
+            child = HSD_JObjLoadJoint(joint);
+            if (child == NULL) {
+                __assert("jobj.h", 0x2F7U, "jobj");
+            }
+            HSD_JObjAddChild(root, child);
+            HSD_JObjAddAnimAll(child, NULL, matanim, NULL);
+            HSD_JObjReqAnimAll(child, (f32) dsp->x05);
+            HSD_JObjAnimAll(child);
+            HSD_JObjSetTranslateX(child, dsp->x08);
+            HSD_JObjSetTranslateZ(child, dsp->x0C);
+            HSD_JObjAddChild(root, HSD_JObjLoadJoint(bg_joint));
+            gm_801A85E4(root, i, sp8C[i]);
+        }
+        i--;
+    } while (i >= 0);
+}
 
 void fn_801A9498(HSD_GObj* gobj)
 {

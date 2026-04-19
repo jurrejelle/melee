@@ -280,7 +280,7 @@ void fn_801A6C30(HSD_GObj* gobj)
 static u8 gm_804D6740;
 static SceneDesc* gm_804D6748;
 static HSD_Joint* gm_804D6798;
-static HSD_Archive* gm_804D679C;
+HSD_Archive* gm_804D679C;
 static SceneDesc* gm_804D67A0;
 static SceneDesc* gm_804D67A4;
 static SceneDesc* gm_804D67A8;

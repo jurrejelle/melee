@@ -15,9 +15,9 @@
 /* 1A80F0 */ void fn_801A80F0(HSD_GObj*);
 /* 1A8114 */ void gm_801A8114(HSD_JObj*, int);
 /* 1A851C */ void fn_801A851C(HSD_GObj*);
-/* 1A85E4 */ UNK_RET gm_801A85E4(UNK_PARAMS);
+/* 1A85E4 */ void gm_801A85E4(HSD_JObj*, s32, s32);
 /* 1A8D54 */ void gm_801A8D54(s32*);
-/* 1A9094 */ UNK_RET gm_801A9094(UNK_PARAMS);
+/* 1A9094 */ void gm_801A9094(void);
 /* 1A9498 */ void fn_801A9498(HSD_GObj*);
 /* 1A94BC */ void fn_801A94BC(HSD_GObj*);
 /* 1A9630 */ UNK_RET gm_801A9630(UNK_PARAMS);

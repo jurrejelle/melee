@@ -23,4 +23,6 @@
 /* 1A7070 */ void gm_801A7070_OnEnter(UNK_T);
 /* 1A79D4 */ void gm_801A79D4_OnFrame(void);
 
+/* 4D679C */ extern HSD_Archive* gm_804D679C;
+
 #endif
