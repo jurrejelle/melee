@@ -516,7 +516,6 @@ void gm_801B60A4_OnLoad(void)
     u32 var_r28;
     int temp;
     gm_803DEBE8_t tmp;
-    PAD_STACK(12);
 
     data = &gm_80473A18;
     gmMainLib_8015CDE0();
@@ -587,13 +586,14 @@ void gm_801B60A4_OnLoad(void)
         p->x76[0x16] = temp;
         p->x76[0x17] = temp;
 
-        temp = 0x1A;
-        if (i < temp) {
+        {
             u8* q = ((u8*) p) + i;
-            i = temp - i;
-            do {
-                *(q++ + 0x76) = temp;
-            } while (--i != 0);
+            int count = 0x1A - i;
+            if (i < 0x1A) {
+                do {
+                    *(q++ + 0x76) = 0x21;
+                } while (--count != 0);
+            }
         }
     }
 
