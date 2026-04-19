@@ -4,6 +4,7 @@
 
 #include <melee/gm/gmmain_lib.h>
 #include <melee/gm/gmregcommon.h>
+#include <melee/gr/ground.h>
 #include <melee/gr/stage.h>
 #include <melee/lb/lbdvd.h>
 
@@ -474,7 +475,77 @@ void gmClassic_801B3A34(MinorScene* arg0)
     gm_8016F088(temp_r30);
 }
 
-/// #gmClassic_801B3B40
+void gmClassic_801B3B40(MinorScene* arg0)
+{
+    MatchExitInfo* mei;
+    UnkAllstarData* asd;
+    s32 exit_result;
+    gm_803DDEC8Struct* entry;
+    u8 unused[16];
+    s32 sp18;
+    s32 sp14;
+    s32 idx;
+    u8 char_id;
+    u32* time_ptr;
+    s32* best_ptr;
+    s32 mask;
+    PAD_STACK(8);
+
+    mei = (MatchExitInfo*) gm_801A4284(arg0);
+    asd = gm_8017EB30();
+    entry = &gmClassic_803DDEC8[(u8) gm_8017BE84(arg0->idx)];
+    exit_result = mei->x8;
+    idx = (u16) gm_8017BE84(arg0->idx) - 1;
+
+    if (exit_result != 0) {
+        gm_804908A0[idx] = 2;
+    } else {
+        gm_804908A0[idx] = 1;
+    }
+
+    if (gm_8017D7AC(mei, &asd->x0, 0x69) != 0 && entry[1].x0 == 0xD) {
+        gm_8017CBAC((UnkAdventureData*) asd, gmMainLib_8015CDC8(), 0x15);
+    }
+
+    if (entry->x1 == 0x80 && entry->x2 == 1) {
+        char_id = gm_80164024((u8) asd->x0.ckind);
+        time_ptr = gmMainLib_8015D438(char_id);
+        best_ptr = gmMainLib_8015D450(char_id);
+        Ground_801C1DE4(&sp18, &sp14);
+
+        if (sp18 == 0) {
+            mask = 1 << char_id;
+            if (!(mask & gmMainLib_8015EDBC()->x8)) {
+                *best_ptr = (s32) mei->match_end.frame_count;
+                gmMainLib_8015EDBC()->x8 |= mask;
+            } else {
+                if ((u32) *best_ptr > mei->match_end.frame_count) {
+                    *best_ptr = (s32) mei->match_end.frame_count;
+                }
+            }
+            gmMainLib_8015ED98()->x1C |= mask;
+            gmMainLib_8015EDB0()->x4 |= mask;
+        }
+
+        if (gmMainLib_8015D48C(char_id) == 0) {
+            if (sp18 == 0) {
+                gmMainLib_8015D4E8(char_id, 1);
+                *time_ptr = mei->match_end.frame_count;
+                return;
+            }
+            {
+                u32 diff = sp14 - sp18;
+                if ((u32) *time_ptr < diff) {
+                    *time_ptr = diff;
+                }
+            }
+        } else if (sp18 == 0) {
+            if ((u32) *time_ptr > mei->match_end.frame_count) {
+                *time_ptr = mei->match_end.frame_count;
+            }
+        }
+    }
+}
 
 void gmClassic_801B3D44(MinorScene* scene)
 {
