@@ -994,17 +994,15 @@ struct MenuExitData {
 STATIC_ASSERT(sizeof(struct MenuExitData) == 0x4);
 
 typedef struct gm_803DDEC8Struct {
-    u8 x0;
-    u8 x1_b0 : 1;
-    u8 x1_b1 : 1;
-    u8 x1_b2 : 1;
-    u8 x1_b3 : 1;
-    u8 x1_b4 : 1;
-    u8 x1_b5 : 1;
-    u8 x1_b6 : 1;
-    u8 x1_b7 : 1;
-    u8 x2[0xC - 0x2];
-    void* xC;
+    /* 0x00 */ u8 x0;
+    /* 0x01 */ u8 x1;
+    /* 0x02 */ u8 x2;
+    /* 0x03 */ u8 pad03;
+    /* 0x04 */ u16 x4;
+    /* 0x06 */ u16 x6;
+    /* 0x08 */ u8 x8;
+    /* 0x09 */ u8 pad09[3];
+    /* 0x0C */ void* xC;
 } gm_803DDEC8Struct;
 
 typedef struct CssSubStruct {

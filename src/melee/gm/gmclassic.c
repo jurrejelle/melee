@@ -3,6 +3,7 @@
 #include "gm_unsplit.h"
 
 #include <melee/gm/gmmain_lib.h>
+#include <melee/gm/gmregcommon.h>
 #include <melee/lb/lbdvd.h>
 
 extern UNK_T gmClassic_80470708[];
@@ -10,6 +11,7 @@ extern DebugGameOverData gmClassic_80470850;
 extern UNK_T gmClassic_8047086C;
 extern UNK_T gmClassic_80472AF8;
 extern UNK_T gmClassic_80490880;
+extern u8 gm_804908A0[];
 extern UNK_T gmClassic_804D68D0;
 
 MinorScene gm_803DDC58_MinorScenes[] = {
@@ -331,7 +333,43 @@ void gmClassic_OnInit(void)
 
 /// #gmClassic_801B3500
 
-/// #gmClassic_801B3A34
+void gmClassic_801B3A34(MinorScene* arg0)
+{
+    StartMeleeData* temp_r30;
+    gm_803DDEC8Struct* temp_r31;
+    UnkAllstarData* temp_r29;
+    u16 var_r27;
+    u8 flags;
+    u8 temp_r28;
+    int idx_val;
+    s32 sp8;
+    s32 spC;
+
+    PAD_STACK(8);
+
+    temp_r30 = gm_801A427C(arg0);
+    temp_r31 = &gmClassic_803DDEC8[(u8) gm_8017BE84(arg0->idx)];
+    temp_r29 = gm_8017EB30();
+    var_r27 = *(u16*) temp_r31->xC;
+    if (temp_r31->x1 == 0x80 && temp_r31->x2 == 1) {
+        var_r27 = gm_801647F8(temp_r29->x0.ckind);
+    }
+    flags = temp_r31->x1;
+    if (flags == 4) {
+        var_r27 = 0xAF;
+    }
+    temp_r29->x0.x8 = flags;
+    temp_r29->x0.x9 = temp_r31->x2;
+    temp_r29->x0.xB = temp_r31->x8;
+    idx_val = (u16) gm_8017BE84(arg0->idx) - 1;
+    temp_r28 = gm_804908A0[idx_val];
+    sp8 = (s32)(u16) gm_8017BE84(arg0->idx);
+    spC = (s32) temp_r28;
+    gm_8017CE34(temp_r30, (UnkAdventureData*) temp_r29,
+                (s8*) temp_r31->xC + 2, temp_r31->x6, 1, 0,
+                temp_r31->x4, (int) var_r27, sp8, spC);
+    gm_8016F088(temp_r30);
+}
 
 /// #gmClassic_801B3B40
 
@@ -361,7 +399,7 @@ void gmClassic_801B3E44(MinorScene* scene)
     CSSData* temp_r30 = gm_801A4284(scene);
     gmm_x0_528_t* temp_r29 = gmMainLib_8015CDC8();
     UnkAllstarData* temp_r31 = gm_8017EB30();
-    gm_803DDEC8Struct* r4 = &gmClassic_803DDEC8;
+    gm_803DDEC8Struct* r4 = gmClassic_803DDEC8;
     if (temp_r30->pending_scene_change == 2) {
         // This only happens when, instead of pressing start to begin the game,
         // we press back to exit.
