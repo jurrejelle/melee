@@ -9,6 +9,7 @@
 #include "gr/ground.h"
 
 #include <melee/gm/gmmain_lib.h>
+#include <melee/lb/lbaudio_ax.h>
 #include <melee/lb/lbbgflash.h>
 #include <melee/lb/lbdvd.h>
 
@@ -405,7 +406,145 @@ static gm_803DEBE8_t gm_803DEBE8[52] = {
 
 gm_80490940_t gm_80490940[5];
 
-/// #gm_801B5324
+void gm_801B5324(UnkAllstarData* arg0, u8 arg1)
+{
+    s8 chars[3];
+    u8 colors[3];
+    u8* base;
+    gm_803DEBE8_t* opp_data;
+    s32 is_last_round;
+    s32 count_processed;
+    s32 count;
+    u8* gc;
+    s32 slot_idx;
+    u64 audio;
+    s32 i;
+
+    PAD_STACK(12);
+    base = (u8*) gm_803DE930_MinorScenes;
+    is_last_round = 0;
+    count_processed = 0;
+
+    {
+        u32 start = *(u32*)(base + arg1 * 8 + 0x31C);
+        opp_data = (gm_803DEBE8_t*)(base + start * 4 + 0x2B8);
+        count = *(s32*)(base + arg1 * 8 + 0x320);
+    }
+
+    chars[0] = 0x21;
+    chars[1] = 0x21;
+    chars[2] = 0x21;
+
+    if (count > 0) {
+        if (count > 8) {
+            u32 blocks = (u32)(count - 8 + 7) >> 3;
+            gm_803DEBE8_t* src = opp_data;
+            s8* dst = chars;
+            if (count - 8 > 0) {
+                do {
+                    count_processed += 8;
+                    dst[0] = (s8) src[0].x3;
+                    dst[1] = src[1].x3;
+                    dst[2] = src[2].x3;
+                    dst[3] = src[3].x3;
+                    dst[4] = src[4].x3;
+                    dst[5] = src[5].x3;
+                    dst[6] = src[6].x3;
+                    dst[7] = src[7].x3;
+                    src += 8;
+                    dst += 8;
+                } while (--blocks);
+            }
+        }
+
+        {
+            s32 total = *(s32*)(base + arg1 * 8 + 0x320);
+            gm_803DEBE8_t* src2 = &opp_data[count_processed];
+            s8* dst2 = &chars[count_processed];
+            s32 remaining = total - count_processed;
+            if (count_processed < total) {
+                do {
+                    u8 val = src2->x3;
+                    src2++;
+                    *dst2 = (s8) val;
+                    dst2++;
+                } while (--remaining);
+            }
+        }
+    }
+
+    {
+        u8* cp = colors;
+        i = 0;
+        do {
+            *cp = ((u8 (*)(u8, u8, u8)) arg0->x54)(arg1,
+                         arg0->x0.cpu_level, (u8) i);
+            i++;
+            cp++;
+        } while (i < 3);
+    }
+
+    gmRegSetupEnemyColorTable(arg0->x0.ckind, arg0->x0.color, chars, colors);
+
+    if ((s32) arg1 == 0xC) {
+        chars[0] = 3;
+        colors[0] = 0;
+        is_last_round = 1;
+        chars[1] = 3;
+        colors[1] = 0;
+        chars[2] = 3;
+        colors[2] = 0;
+    }
+
+    gc = (u8*) &lbDvd_8001822C()->game_cache;
+    slot_idx = 1;
+    lbDvd_80018C6C();
+    *(s32*)(gc + 8) = (s32)(s8) arg0->x0.ckind;
+    *(u8*)(gc + 0xC) = arg0->x0.color;
+    lbDvd_80018254();
+    lbDvd_80018C2C(0xC7);
+    lbDvd_80017700(4);
+
+    {
+        u8* slot = gc + slot_idx * 8;
+        u8 fill = 0xFF;
+        s8* cp = chars;
+        u8* pp = colors;
+
+        for (i = 0; i < 3; i++) {
+            if ((s8) *cp != 0x21) {
+                *(s32*)(slot + 8) = (s32)(s8) *cp;
+                if (is_last_round != 0) {
+                    *(u8*)(slot + 0xC) = fill;
+                } else {
+                    *(u8*)(slot + 0xC) = *pp;
+                }
+                slot += 8;
+            }
+            cp++;
+            pp++;
+        }
+    }
+
+    *(s32*)(gc + 4) = (s32) opp_data->x2;
+    lbDvd_80018254();
+
+    audio = lbAudioAx_80026E84((CharacterKind)(s8) arg0->x0.ckind);
+    {
+        s8* cp = chars;
+        i = 0;
+        do {
+            audio |= lbAudioAx_80026E84((CharacterKind)(s8) *cp);
+            i++;
+            cp++;
+        } while (i < 3);
+    }
+
+    audio |= lbAudioAx_80026EBC((InternalStageId) opp_data->x2);
+    lbAudioAx_80026F2C(0x1C);
+    lbAudioAx_8002702C(0xC, audio);
+    lbAudioAx_80027168();
+}
 
 /// #gm_801B5624
 
