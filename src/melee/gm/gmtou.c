@@ -19,6 +19,8 @@
 #include <melee/gm/gmmain_lib.h>
 #include <melee/gm/types.h>
 #include <melee/gm/gm_1601.h>
+#include <melee/gm/gm_1A3F.h>
+#include <melee/gm/gm_1A45.h>
 #include <melee/lb/lbarchive.h>
 #include <melee/lb/lbaudio_ax.h>
 #include <melee/lb/lbdvd.h>
@@ -778,7 +780,274 @@ void fn_8019DD60(void)
     }
 }
 
-/// #gm_8019DF8C_OnFrame
+void gm_8019DF8C_OnFrame(void)
+{
+    TmVsData vsdata;
+    TmData* tmd;
+    s32 confirmed;
+    s32 i, j;
+    u32 buttons;
+    u32 pressed;
+    PAD_STACK(4);
+
+    tmd = gm_8018F634();
+    fn_8018F674(4);
+    fn_8018F640(4);
+
+    if (mn_8022F218() != 0) {
+        lbAudioAx_80024030(0);
+        mn_8022F268();
+        gm_801A4B60();
+        gm_801A42F8(1);
+        return;
+    }
+
+    /* Count confirmed players */
+    confirmed = 0;
+    for (i = 0; i < (s32) tmd->x30; i++) {
+        if (lbl_80479A58.x1D[i].x0 == 2 &&
+            lbl_80479A58.x1D[i].b >= 0x3CU &&
+            (s8)(u8) HSD_PadMasterStatus[(u8) i].err == 0)
+        {
+            confirmed += 1;
+        }
+    }
+
+    if (confirmed == (s32) tmd->x30) {
+        /* All confirmed: increment timer */
+        lbl_80479A58.x0 += 1;
+        if ((u32) lbl_80479A58.x0 >= 0x1EU) {
+            for (j = 0; j < (s32) tmd->x2E; j++) {
+                tmd->x37[j].xF = tmd->x37[j].xE;
+            }
+            fn_801965C4();
+        }
+    } else {
+        /* Not all confirmed: per-player input handling */
+        lbl_80479A58.x0 = 0;
+
+        for (i = 0; i < (s32) tmd->x30; i++) {
+            if ((s8)(u8) HSD_PadMasterStatus[(u8) i].err == 0) {
+                buttons = fn_8018F640(i);
+                pressed = fn_8018F674(i);
+
+                /* Abort combo check */
+                if (fn_8018F6A8(i) & 0x200) {
+                    lbl_80479A58.x18[i] = (u8)(lbl_80479A58.x18[i] + 1);
+                    if ((u8) lbl_80479A58.x18[i] > 0x5AU) {
+                        lbAudioAx_80024030(1);
+                        gm_SetScenePendingMinor(0U);
+                        gm_801A4B60();
+                        return;
+                    }
+                    goto check_confirm;
+                }
+                lbl_80479A58.x18[i] = 0;
+
+            check_confirm:
+                /* Character/color navigation (only when not confirmed/selected) */
+                {
+                    u8 status = lbl_80479A58.x1D[i].x0;
+                    if (status != 2 && status != 1) {
+                        /* L+R auto-confirm */
+                        if ((fn_8018F6A8(i) & 0x40) && (fn_8018F6A8(i) & 0x20)) {
+                            TmData* p = gm_8018F634();
+                            for (j = 0; j < (s32) p->x2E; j++) {
+                                if (i != (s32) p->x37[j].xE) continue;
+                                goto lr_found;
+                            }
+                            j = 0;
+                        lr_found:
+                            *(u8*)((u8*) tmd + j * 0x12 + 0x3C) = 1;
+                            tmd->x4B8[i].x2 = 1;
+                        }
+
+                        /* Left D-pad: browse character left */
+                        if (pressed & 0x40001) {
+                            u8 chr;
+                            lbAudioAx_80024030(2);
+
+                            {
+                                TmData* p = gm_8018F634();
+                                for (j = 0; j < (s32) p->x2E; j++) {
+                                    if (i != (s32) p->x37[j].xE) continue;
+                                    goto left_found1;
+                                }
+                                j = 0;
+                            left_found1:;
+                            }
+
+                            *(u8*)((u8*) tmd + j * 0x12 + 0x3C) = 0;
+                            tmd->x4B8[i].x2 = 0;
+
+                            chr = tmd->x4B8[i].x1;
+                            do {
+                                if (chr != 0) {
+                                    chr -= 1;
+                                } else {
+                                    chr = fn_8018F6DC(0x19);
+                                }
+                            } while (gm_80164840(fn_8018F6FC((CSSIconHud) chr)) == 0);
+                            tmd->x4B8[i].x1 = chr;
+
+                            {
+                                TmData* p = gm_8018F634();
+                                for (j = 0; j < (s32) p->x2E; j++) {
+                                    if (i != (s32) p->x37[j].xE) continue;
+                                    goto left_found2;
+                                }
+                                j = 0;
+                            left_found2:;
+                            }
+                            *(u8*)((u8*) tmd + j * 0x12 + 0x3A) = tmd->x4B8[i].x1;
+
+                            {
+                                TmData* p = gm_8018F634();
+                                for (j = 0; j < (s32) p->x2E; j++) {
+                                    if (i != (s32) p->x37[j].xE) continue;
+                                    goto left_found3;
+                                }
+                                j = 0;
+                            left_found3:;
+                            }
+                            tmd->x4B8[i].x3 = 0;
+                            *(u8*)((u8*) tmd + j * 0x12 + 0x3E) = 0;
+
+                        } else if (pressed & 0x80002) {
+                            /* Right D-pad: browse character right */
+                            u8 chr;
+                            lbAudioAx_80024030(2);
+
+                            {
+                                TmData* p = gm_8018F634();
+                                for (j = 0; j < (s32) p->x2E; j++) {
+                                    if (i != (s32) p->x37[j].xE) continue;
+                                    goto right_found1;
+                                }
+                                j = 0;
+                            right_found1:;
+                            }
+
+                            *(u8*)((u8*) tmd + j * 0x12 + 0x3C) = 0;
+                            tmd->x4B8[i].x2 = 0;
+
+                            chr = tmd->x4B8[i].x1;
+                            do {
+                                if ((s32) chr < fn_8018F6DC(0x19)) {
+                                    chr += 1;
+                                } else {
+                                    chr = fn_8018F6DC(0);
+                                }
+                            } while (gm_80164840(fn_8018F6FC((CSSIconHud) chr)) == 0);
+                            tmd->x4B8[i].x1 = chr;
+
+                            {
+                                TmData* p = gm_8018F634();
+                                for (j = 0; j < (s32) p->x2E; j++) {
+                                    if (i != (s32) p->x37[j].xE) continue;
+                                    goto right_found2;
+                                }
+                                j = 0;
+                            right_found2:;
+                            }
+                            *(u8*)((u8*) tmd + j * 0x12 + 0x3A) = tmd->x4B8[i].x1;
+
+                            {
+                                TmData* p = gm_8018F634();
+                                for (j = 0; j < (s32) p->x2E; j++) {
+                                    if (i != (s32) p->x37[j].xE) continue;
+                                    goto right_found3;
+                                }
+                                j = 0;
+                            right_found3:;
+                            }
+                            tmd->x4B8[i].x3 = 0;
+                            *(u8*)((u8*) tmd + j * 0x12 + 0x3E) = 0;
+                        }
+                    }
+                }
+
+                /* A/Start: confirm selection */
+                if (buttons & 0x1100) {
+                    if ((u8) lbl_80479A58.x1D[i].x0 != 2) {
+                        u16 char_id;
+                        lbAudioAx_80024030(1);
+                        lbl_80479A58.x1D[i].x0 = 1;
+                        char_id = tmd->x4B8[i].x6;
+                        if (char_id <= 0x78U) {
+                            gm_80167858(i, (s32) char_id, 0xB, 0x14);
+                        } else {
+                            gm_80167858(i, 0x78, 0xB, 0x14);
+                        }
+                    }
+                } else if (buttons & 0x200) {
+                    /* B: cancel */
+                    if ((u8) lbl_80479A58.x1D[i].x0 == 2) {
+                        lbAudioAx_80024030(0);
+                        lbl_80479A58.x1D[i].x0 = 3;
+                    }
+                } else {
+                    /* D-pad up/down: color selection */
+                    u8 color_status = lbl_80479A58.x1D[i].x0;
+                    if (color_status != 2 && color_status != 1) {
+                        if (buttons & 0x400) {
+                            /* Down: increment color */
+                            if ((s32) tmd->x4B8[i].x3 < (s32)(gm_80169238(fn_8018F6FC((CSSIconHud) tmd->x4B8[i].x1)) - 1)) {
+                                tmd->x4B8[i].x3 += 1;
+                            }
+
+                            {
+                                TmData* p = gm_8018F634();
+                                for (j = 0; j < (s32) p->x2E; j++) {
+                                    if (i != (s32) p->x37[j].xE) continue;
+                                    goto down_found;
+                                }
+                                j = 0;
+                            down_found:;
+                            }
+                            *(u8*)((u8*) tmd + j * 0x12 + 0x3E) = tmd->x4B8[i].x3;
+
+                        } else if (buttons & 0x800) {
+                            /* Up: decrement color */
+                            u8 color = tmd->x4B8[i].x3;
+                            if (color != 0) {
+                                tmd->x4B8[i].x3 = color - 1;
+                            }
+
+                            {
+                                TmData* p = gm_8018F634();
+                                for (j = 0; j < (s32) p->x2E; j++) {
+                                    if (i != (s32) p->x37[j].xE) continue;
+                                    goto up_found;
+                                }
+                                j = 0;
+                            up_found:;
+                            }
+                            *(u8*)((u8*) tmd + j * 0x12 + 0x3E) = tmd->x4B8[i].x3;
+                        }
+                    }
+                }
+            }
+        }
+
+        /* Build TmVsData and transition */
+        {
+            s32 stage;
+            if (fn_80196564(tmd) != 0) {
+                stage = fn_8019655C();
+            } else {
+                stage = (s32) tmd->x28;
+            }
+            vsdata.stage_id = (u32) stage;
+        }
+        for (i = 0; i < 4; i++) {
+            vsdata.slot_type[i] = (Gm_PKind) tmd->x4B8[i].x0;
+            vsdata.char_id[i] = fn_8018F6FC((CSSIconHud) tmd->x4B8[i].x1);
+            vsdata.color[i] = (u32) tmd->x4B8[i].x3;
+        }
+        fn_8019EE80(&vsdata);
+    }
+}
 
 void gm_8019E634(void)
 {
