@@ -2,6 +2,8 @@
 
 #include "gm_unsplit.h"
 
+#include "ft/forward.h"
+#include "gm/gm_1BA8.h"
 #include "gm/gmregtyfall.h"
 #include "if/textlib.h"
 #include "lb/lbaudio_ax.h"
@@ -133,7 +135,63 @@ void fn_801A851C(HSD_GObj* gobj)
 
 /// #gm_801A85E4
 
-/// #gm_801A8D54
+static s32 gm_80480AD0[0x1A];
+
+void gm_801A8D54(s32* arg0)
+{
+    s32 sp84[0x1A];
+    int i;
+    int j;
+    int count;
+    s32 temp_i;
+    s32 temp_j;
+    PAD_STACK(0x68);
+
+    for (i = 0; i < 0x1A; i++) {
+        arg0[i] = 0x1A;
+        sp84[i] = 0x1A;
+    }
+
+    count = 0;
+    for (i = 0; i < 0x1A; i++) {
+        if ((u32)(i - 0x12) <= 1U) {
+            gm_801A4310();
+            if ((un_803048C0(gm_801A659C(i)) ? true : false) &&
+                gm_801BEFB0() != CKIND_ZELDA &&
+                gm_801BEFB0() != CKIND_SEAK)
+            {
+                sp84[count] = i;
+                count++;
+            }
+        } else {
+            gm_801A4310();
+            if ((un_803048C0(gm_801A659C(i)) ? true : false) &&
+                i != gm_801BEFB0())
+            {
+                sp84[count] = i;
+                count++;
+            }
+        }
+    }
+
+    for (i = 0; i < 0x1A; i++) {
+        if (sp84[i] != 0x1A) {
+            for (j = i + 1; j < 0x1A; j++) {
+                if (sp84[j] != 0x1A) {
+                    if ((gm_80480AD0[sp84[i]] < gm_80480AD0[sp84[j]] ? 1 : 2) == 2) {
+                        temp_i = sp84[i];
+                        sp84[i] = sp84[j];
+                        sp84[j] = temp_i;
+                    }
+                }
+            }
+        }
+    }
+
+    for (i = 0; i < 0x1A; i++) {
+        arg0[i] = sp84[i];
+    }
+}
 
 /// #gm_801A9094
 
