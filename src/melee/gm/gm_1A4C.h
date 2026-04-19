@@ -9,7 +9,7 @@
 /* 1A7A44 */ void fn_801A7A44(HSD_GObj*);
 /* 1A7A68 */ void fn_801A7A68(HSD_GObj*);
 /* 1A7A8C */ void fn_801A7A8C(HSD_GObj*);
-/* 1A7B00 */ UNK_RET gm_801A7B00(UNK_PARAMS);
+/* 1A7B00 */ void gm_801A7B00(void);
 /* 1A7FB4 */ void fn_801A7FB4(HSD_GObj*);
 /* 1A80CC */ void fn_801A80CC(HSD_GObj*);
 /* 1A80F0 */ void fn_801A80F0(HSD_GObj*);

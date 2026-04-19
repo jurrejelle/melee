@@ -5,6 +5,6 @@ Funcs:
 - [x] gm_801A9B30_OnEnter
 - [x] gm_801A8D54
 - [x] gm_801A9094
-- [ ] gm_801A7B00
+- [x] gm_801A7B00
 - [ ] gm_801A9630
 - [ ] gm_801A85E4

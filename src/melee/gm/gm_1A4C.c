@@ -14,14 +14,21 @@
 #include "ty/toy.h"
 
 #include <sysdolphin/baselib/archive.h>
+#include <sysdolphin/baselib/cobj.h>
 #include <sysdolphin/baselib/fog.h>
 #include <sysdolphin/baselib/gobj.h>
 #include <sysdolphin/baselib/gobjgxlink.h>
 #include <sysdolphin/baselib/gobjobject.h>
 #include <sysdolphin/baselib/gobjplink.h>
+#include <sysdolphin/baselib/gobjproc.h>
 #include <sysdolphin/baselib/jobj.h>
 #include <sysdolphin/baselib/lobj.h>
 #include <sysdolphin/baselib/sobjlib.h>
+
+#include "gm/gmregtyfall.static.h"
+#include "lb/lb_00B0.h"
+#include "lb/lb_00F9.h"
+#include "sc/types.h"
 
 extern Event gm_804D6724;
 
@@ -52,6 +59,95 @@ void fn_801A7A8C(HSD_GObj* gobj)
 }
 
 /// #gm_801A7B00
+
+void gm_801A7B00(void)
+{
+    HSD_GObj* gobj;
+    HSD_GObj* cam_gobj;
+    HSD_CObj* cobj;
+    HSD_JObj* jobj;
+    HSD_JObj* child;
+    HSD_JObj* target;
+    s32 char_idx;
+    f32 val;
+    f32 scale;
+    PAD_STACK(0x30);
+
+    // Light GObj
+    gobj = GObj_Create(0xB, 3, 0);
+    HSD_GObjObject_80390A70(gobj, (u8) HSD_GObj_804D784A,
+                            lb_80011AC4(gm_804D67A8->lights));
+    GObj_SetupGXLink(gobj, HSD_GObj_LObjCallback, 0, 0);
+
+    // Camera GObj
+    cam_gobj = GObj_Create(0x13, 0x14, 0);
+    cobj = lb_80013B14(
+        (HSD_CameraDescPerspective*) gm_804D67A8->cameras[0].desc);
+    HSD_GObjObject_80390A70(cam_gobj, HSD_GObj_804D784B, cobj);
+    GObj_SetupGXLinkMax(cam_gobj, HSD_GObj_803910D8, 8);
+    cam_gobj->gxlink_prios = 0x801;
+    child = NULL;
+    HSD_CObjAddAnim(cobj, gm_804D67A8->cameras[0].anims[0]);
+    HSD_CObjReqAnim(cobj, 0.0f);
+    HSD_CObjAnim(cobj);
+    HSD_GObj_SetupProc(cam_gobj, fn_801A7A8C, 0);
+
+    // Main JObj GObj
+    gobj = GObj_Create(0xE, 0xF, 0);
+    gm_804D67B0 = gobj;
+    jobj = HSD_JObjLoadJoint(gm_804D6798);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xB, 0);
+    gm_8016895C(jobj, gm_804D67A8->models[0], 0);
+    HSD_JObjReqAnimAll(jobj, 0.0f);
+    HSD_JObjAnimAll(jobj);
+    HSD_GObj_SetupProc(gobj, fn_801A7A44, 0x17);
+
+    gm_801A4B90();
+
+    // Character display GObj
+    gobj = GObj_Create(0xE, 0xF, 0);
+    gm_804D67B4 = gobj;
+    jobj = HSD_JObjLoadJoint(gm_804D67AC->models[0]->joint);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xB, 0);
+
+    char_idx = gm_801A659C(gm_801BEFB0());
+    if (jobj == NULL) {
+
+    } else {
+        child = jobj->child;
+    }
+
+    val = -un_803060BC(char_idx, 0);
+    fake_tyfall_HSD_JObjSetTranslateX(child, val);
+    val = -un_803060BC(char_idx, 1);
+    fake_tyfall_HSD_JObjSetTranslateY(child, val);
+    val = -un_803060BC(char_idx, 2);
+    fake_tyfall_HSD_JObjSetTranslateZ(child, val);
+
+    val = -(0.017453292f * un_803060BC(char_idx, 5));
+    fake_tyfall_HSD_JObjSetRotationY(child, val);
+
+    scale = 1.0f / un_803060BC(char_idx, 3);
+    scale = un_803060BC(char_idx, 4) * scale;
+    fake_tyfall_HSD_JObjSetScaleX(child, scale);
+    fake_tyfall_HSD_JObjSetScaleY(child, scale);
+    fake_tyfall_HSD_JObjSetScaleZ(child, scale);
+
+    HSD_GObj_SetupProc(gobj, fn_801A7A68, 0x17);
+
+    // Walk JObj tree to find constraint target
+    target = HSD_JObjGetChild(GET_JOBJ(gm_804D67B0));
+    target = HSD_JObjGetChild(target);
+    target = HSD_JObjGetChild(target);
+    target = HSD_JObjGetChild(target);
+    target = HSD_JObjGetChild(target);
+    target = HSD_JObjGetNext(target);
+
+    lb_8000C1C0((HSD_JObj*) gobj->hsd_obj, target);
+    lb_8000C290((HSD_JObj*) gobj->hsd_obj, target);
+}
 
 void fn_801A7FB4(HSD_GObj* gobj)
 {

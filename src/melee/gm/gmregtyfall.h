@@ -4,6 +4,7 @@
 #include <placeholder.h>
 
 #include <melee/gm/forward.h>
+#include <melee/sc/forward.h>
 #include <sysdolphin/baselib/forward.h>
 
 /* 1A659C */ bool gm_801A659C(int);
@@ -23,6 +24,9 @@
 /* 1A7070 */ void gm_801A7070_OnEnter(UNK_T);
 /* 1A79D4 */ void gm_801A79D4_OnFrame(void);
 
+/* 4D6798 */ extern HSD_Joint* gm_804D6798;
 /* 4D679C */ extern HSD_Archive* gm_804D679C;
+/* 4D67A8 */ extern SceneDesc* gm_804D67A8;
+/* 4D67AC */ extern SceneDesc* gm_804D67AC;
 
 #endif
