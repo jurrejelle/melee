@@ -4,4 +4,4 @@ Funcs:
 - [x] gm_801B60A4_OnLoad
 - [x] gm_801B5324
 - [x] gm_801B5624
-- [ ] gm_801B5ACC
+- [x] gm_801B5ACC

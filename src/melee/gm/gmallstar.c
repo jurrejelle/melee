@@ -698,6 +698,98 @@ void fn_801B5AA8(int arg0)
 }
 
 /// #gm_801B5ACC
+void gm_801B5ACC(MinorScene* arg0)
+{
+    s8 chars[3];
+    StartMeleeData* data;
+    u8* base;
+    UnkAllstarData* allstar;
+    u16 round;
+    u8 color;
+    s32 i;
+    s32 next_count;
+
+    PAD_STACK(24);
+    chars[0] = 0x21;
+    chars[1] = 0x21;
+    chars[2] = 0x21;
+    base = (u8*) gm_803DE930_MinorScenes;
+    data = gm_801A427C(arg0);
+    allstar = &gm_80473A18;
+    allstar->x0.x8 |= 0x80;
+
+    round = gm_8017BE84(arg0->idx);
+    {
+        u32 s = ((AllstarRoundInfo*)(base + 0x31C))[round].start;
+        u32 opp_idx = ((u32)((u8*)&((gm_803DEBE8_t*)(base))[s] + 0x2B8) -
+                       (u32)(base + 0x2B8)) / sizeof(gm_803DEBE8_t);
+        color = ((u8*) gm_80490940)[opp_idx];
+    }
+
+    gm_8017CE34(data, (UnkAdventureData*) allstar, chars, 0, 0, 0, 0,
+                0x55, 0, (s32) color);
+
+    data->rules.x0_6 = 0;
+    data->rules.x0_7 = 1;
+    data->rules.x1_0 = 1;
+    data->rules.x10 = (s32) allstar->x9C / 60;
+    data->rules.x14 = (s32) allstar->x9C % 60;
+    data->rules.xD = 0x78;
+    data->players[0].x10 = allstar->x74;
+    data->players[0].xD_b2 = 1;
+    data->rules.x7 = 9;
+
+    round = gm_8017BE84(arg0->idx);
+    i = 0;
+    {
+        AllstarRoundInfo* ri = &((AllstarRoundInfo*)(base + 0x31C))[round];
+        while (i < (s32) ri->count) {
+            s32 slot;
+            do {
+                slot = HSD_Randi(0x1A);
+            } while ((s32) allstar->x76[slot] != 0x21);
+            allstar->x76[slot] =
+                ((gm_803DEBE8_t*)(base + 0x2B8))[ri->start + i].x3;
+            i++;
+        }
+    }
+
+    {
+        AllstarRoundInfo* ri2 = &((AllstarRoundInfo*)(base + 0x31C))[round];
+        s32 next_start;
+
+        next_count = (s32) ri2[1].count;
+        next_start = (s32) ri2[1].start;
+        for (i = 0; i < next_count; i++) {
+            allstar->_94[2 + i] =
+                ((gm_803DEBE8_t*)(base + 0x2B8))[next_start + i].x3;
+        }
+    }
+
+    allstar->_94[1] = (u8) next_count;
+    allstar->_94[0] = (u8)(round + 1);
+    data->players[0].xC_b1 = 0;
+    data->rules.x1_2 = 1;
+    data->rules.x1_3 = 1;
+    data->rules.x4_4 = 0;
+    gm_8016F088(data);
+    gm_8016A92C(&data->rules);
+
+    {
+        s32 end_idx = (s32)
+            ((AllstarRoundInfo*)(base + 0x31C))[round + 1].start;
+        gm_803DEBE8_t* opp =
+            &((gm_803DEBE8_t*)(base + 0x2B8))[end_idx];
+        while (end_idx < 0x19) {
+            gm_8016A998((s8) opp->x3, 0);
+            opp++;
+            end_idx++;
+        }
+    }
+
+    gm_801B5324(allstar, round + 1);
+    data->rules.x50 = (void (*)(u8)) fn_801B5AA8;
+}
 
 void gm_801B5E7C(MinorScene* arg0)
 {
