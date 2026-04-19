@@ -37,6 +37,7 @@ extern u8 lbl_804D6680[8];
 static struct TmAnimTimers lbl_80479A58;
 extern HSD_Archive* lbl_804D6688;
 extern HSD_Archive* lbl_804D668C;
+extern s32 lbl_804D663C;
 
 static inline TmData* GetTmData(void)
 {
@@ -137,7 +138,7 @@ void fn_8019C3EC(HSD_GObj* gobj)
         var_f1 = 6.5f + ((13.0f * (2.0f * idx)) - 19.5f);
     }
     fn_8018FDC4(jobj, 4.5f + var_f1, 3.0f, 666.0f);
-    if (lbl_80479A58.x20[idx].x0 == 4) {
+    if (lbl_80479A58.x1D[idx].x0 == 4) {
         HSD_JObjSetFlagsAll(jobj, JOBJ_HIDDEN);
     }
     fn_8019BA08(idx, jobj);
@@ -156,7 +157,7 @@ void fn_8019C570(HSD_GObj* gobj)
         return;
     }
     HSD_JObjClearFlagsAll(jobj, JOBJ_HIDDEN);
-    if (lbl_80479A58.x20[idx].x0 == 4) {
+    if (lbl_80479A58.x1D[idx].x0 == 4) {
         HSD_JObjSetFlagsAll(jobj, JOBJ_HIDDEN);
     }
     if (tmd->x4B8[idx].x2 != 0) {
@@ -211,7 +212,7 @@ void fn_8019CA38(HSD_GObj* gobj)
         var_f1 = 6.5f + ((13.0f * (2.0f * (s32) idx)) - 19.5f);
     }
     fn_8018FDC4(jobj, var_f1, 666.0f, 666.0f);
-    if (lbl_80479A58.x20[idx].x0 == 2) {
+    if (lbl_80479A58.x1D[idx].x0 == 2) {
         HSD_JObjSetFlagsAll(jobj, JOBJ_HIDDEN);
     }
 
@@ -353,7 +354,60 @@ void fn_8019D074(HSD_GObj* gobj)
 
 /// #fn_8019D1BC
 
-/// #fn_8019DD60
+void fn_8019DD60(void)
+{
+    HSD_GObj* gobj;
+    HSD_Text* text;
+    TmData* tmd;
+    s32 i;
+    PAD_STACK(16);
+
+    tmd = gm_8018F634();
+    if (tmd->x2C == 0) {
+        if ((s32) gm_804771C4.match_type == 1) {
+            lbAudioAx_800237A8(0x7545, 0x7F, 0x40);
+        } else {
+            lbAudioAx_800237A8(0x7546, 0x7F, 0x40);
+        }
+    }
+    tmd->x2C = 0;
+    gobj = fn_80190174(lbl_804D6690->cameras->desc);
+    fn_801901F8(lbl_804D6690->cameras->desc);
+    fn_801902F0((s32) gobj);
+    fn_8019027C((UNK_T) lbl_804D6690->lights);
+    fn_8019035C(0, lbl_804D6690->models[5], 0, 0x1A, 2, 1, fn_8019BF18,
+                0.0f);
+    fn_8019035C(0, lbl_804D6690->models[4], 0, 0x1A, 2, 1, fn_8019BF8C,
+                0.0f);
+    tmd->x524[2] = HSD_SisLib_803A6754(0, (s32) lbl_804D663C);
+    tmd->x524[2]->default_kerning = 1;
+    text = tmd->x524[2];
+    text->font_size.x = 0.054945f;
+    text->font_size.y = 0.08f;
+    tmd->x524[2]->default_alignment = 1;
+    fn_8019D1BC();
+    gobj = GObj_Create(0xE, 0x1A, 0);
+    HSD_GObjObject_80390A70(gobj, (u8) HSD_GObj_804D7848,
+                            HSD_FogLoadDesc(lbl_804D6690->fogs->desc));
+    GObj_SetupGXLink(gobj, HSD_GObj_FogCallback, 0, 0);
+
+    lbl_80479A58.x0 = 0;
+    lbl_80479A58.x4 = 0;
+    lbl_80479A58.xE = 0x50;
+    lbl_80479A58.xF = 0;
+    for (i = 0; i < (s32) tmd->x30; i++) {
+        lbl_80479A58.x18[i] = 0;
+        lbl_80479A58.x6[i] = 0;
+        lbl_80479A58.x10[i] = 0;
+        lbl_80479A58.x1D[i].a = 0;
+        lbl_80479A58.x1D[i].b = 0;
+        lbl_80479A58.x1D[i].c = 0x1E;
+        lbl_80479A58.x1D[i].x1 = 0;
+        lbl_80479A58.x1D[i].x2 = 0;
+        lbl_80479A58.x1D[i].x0 = 0;
+        lbl_80479A58.x38[i] = 6;
+    }
+}
 
 /// #gm_8019DF8C_OnFrame
 
