@@ -314,10 +314,8 @@ void gm_801AC6D8_OnEnter(void* unused)
         {
             if (lbLang_IsSettingUS()) {
                 lb_80011E24(jobj, jobj_arr, 103, 20, -1);
-                M2C_FIELD(M2C_FIELD(jobj_arr[1]->u.dobj->mobj, void**, 8),
-                          s32*, 0x58) =
-                    M2C_FIELD(M2C_FIELD(jobj_arr[1]->u.dobj->mobj, void**, 8),
-                              s32*, 0x58);
+                jobj_arr[0]->u.dobj->mobj->tobj->imagedesc =
+                    jobj_arr[1]->u.dobj->mobj->tobj->imagedesc;
             }
         }
         HSD_GObj_SetupProc(gobj, fn_801AAB18, 0);
