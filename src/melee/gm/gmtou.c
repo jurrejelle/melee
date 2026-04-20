@@ -760,8 +760,10 @@ void fn_8019DD60(void)
     tmd->x524[2]->default_alignment = 1;
     fn_8019D1BC();
     gobj = GObj_Create(0xE, 0x1A, 0);
-    HSD_GObjObject_80390A70(gobj, (u8) HSD_GObj_804D7848,
-                            HSD_FogLoadDesc(lbl_804D6690->fogs->desc));
+    {
+        HSD_Fog* tmp = HSD_FogLoadDesc(lbl_804D6690->fogs->desc);
+        HSD_GObjObject_80390A70(gobj, (u8) HSD_GObj_804D7848, tmp);
+    }
     GObj_SetupGXLink(gobj, HSD_GObj_FogCallback, 0, 0);
 
     lbl_80479A58.x0 = 0;
