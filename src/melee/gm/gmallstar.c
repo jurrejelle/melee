@@ -935,14 +935,13 @@ void gm_801B60A4_OnLoad(void)
         p->x76[0x16] = temp;
         p->x76[0x17] = temp;
 
-        {
+        temp = 0x1A;
+        if (i < temp) {
             u8* q = ((u8*) p) + i;
-            int count = 0x1A - i;
-            if (i < 0x1A) {
-                do {
-                    *(q++ + 0x76) = 0x21;
-                } while (--count != 0);
-            }
+            i = temp - i;
+            do {
+                *(q++ + 0x76) = temp;
+            } while (--i != 0);
         }
     }
 
