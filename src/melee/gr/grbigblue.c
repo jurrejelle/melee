@@ -1969,6 +1969,11 @@ s32 grBigBlue_801EDF44(Ground_GObj* gobj, s32 index)
     switch ((gp[offset + 0xD4] >> 2) & 0x3F) {
     case 1:
         break;
+    case 9:
+        if (0.0F == *(f32*) (gp + offset + 0xEC)) {
+            result = 1;
+        }
+        break;
     case 7: {
         f32 blast = Stage_GetBlastZoneRightOffset();
         f32 scale = Ground_801C0498();
@@ -1997,11 +2002,6 @@ s32 grBigBlue_801EDF44(Ground_GObj* gobj, s32 index)
         }
         break;
     }
-    case 9:
-        if (0.0F == *(f32*) (gp + offset + 0xEC)) {
-            result = 1;
-        }
-        break;
     case 2:
     case 3:
     case 4:
