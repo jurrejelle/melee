@@ -872,7 +872,329 @@ bool grBigBlue_801EA054(Ground_GObj* arg)
     return false;
 }
 
-/// #grBigBlue_801EA05C
+void grBigBlue_801EA05C(Ground_GObj* gobj)
+{
+    HSD_JObj* jobj = GET_JOBJ(gobj);
+    u8* gp = (u8*) gobj->user_data;
+    Vec3 pos;
+    Vec3 half_top;
+    Vec3 half_bot;
+    Vec3 normal;
+    Vec3 euler;
+    Vec3 pos2;
+    f32 y_check;
+    PAD_STACK(32);
+
+    HSD_JObjGetTranslation2(jobj, &pos);
+
+    if (grBigBlue_801EC58C(&pos, &normal, 500.0f) == grBb_804DB310) {
+        normal.z = 0.0f;
+        normal.x = 0.0f;
+        normal.y = 1.0f;
+    }
+
+    euler.y = 0.0f;
+    euler.x = 0.0f;
+    euler.z = atan2f(-normal.x, normal.y);
+
+    half_top.x = 68.0f * Ground_801C0498() * 0.5f;
+    half_top.z = 0.0f;
+    half_top.y = 0.0f;
+    lbVector_ApplyEulerRotation(&half_top, &euler);
+    lbVector_Add(&half_top, &pos);
+
+    half_bot.x = -(68.0f * Ground_801C0498() * 0.5f);
+    half_bot.z = 0.0f;
+    half_bot.y = 0.0f;
+    lbVector_ApplyEulerRotation(&half_bot, &euler);
+    lbVector_Add(&half_bot, &pos);
+
+    switch ((s8) gp[0xC4]) {
+    case 0:
+        if (*(s32*) ((u8*) GET_GROUND(Ground_801C2BA4(0x20)) + 0xD0) != 0)
+        {
+            *(s32*) (gp + 0xC8) = 0;
+            *(s32*) (gp + 0xD0) = 0;
+            *(s32*) (gp + 0xCC) = 0;
+            gp[0xC4] = 1;
+        }
+        break;
+
+    case 1:
+    {
+        s32 timer = *(s32*) (gp + 0xC8);
+        if (timer <= 0) {
+            f32 right_y;
+            f32 left_y;
+            f32 range;
+            s32 r;
+
+            memzero(&pos, 0xC);
+            memzero(&half_bot, 0xC);
+            pos.x = Stage_GetBlastZoneRightOffset();
+            half_bot.x = -Stage_GetBlastZoneRightOffset();
+
+            right_y = grBigBlue_801EC58C(&pos, NULL, 500.0f);
+            left_y = grBigBlue_801EC58C(&half_bot, NULL, 500.0f);
+
+            *(f32*) (gp + 0xD4) = grBb_804D69C8->xF4;
+            range = grBb_804D69C8->xF8 - grBb_804D69C8->xF4;
+            if (range < 0.0f) {
+                range = -range;
+            }
+            if ((s32) range != 0) {
+                r = HSD_Randi((s32) range);
+            } else {
+                r = 0;
+            }
+            *(f32*) (gp + 0xD4) = *(f32*) (gp + 0xD4) + (f32) r;
+
+            pos.y = right_y + *(f32*) (gp + 0xD4);
+            half_bot.y = left_y + *(f32*) (gp + 0xD4);
+
+            if (right_y != grBb_804DB310 || left_y != grBb_804DB310) {
+                s32 collision;
+                f32 platform_h;
+                f32 bounds_y;
+
+                if (left_y == grBb_804DB310) {
+                    gp[0xC5] = (u8) (s8) -1;
+                } else if (right_y == grBb_804DB310) {
+                    gp[0xC5] = 1;
+                } else {
+                    f32 diff = right_y - left_y;
+                    if (diff < 0.0f) {
+                        diff = -diff;
+                    }
+                    if (diff < 80.0f) {
+                        s8 dir;
+                        if (HSD_Randi(2) != 0) {
+                            dir = 1;
+                        } else {
+                            dir = -1;
+                        }
+                        gp[0xC5] = (u8) dir;
+                    } else {
+                        s8 dir;
+                        if (right_y < left_y) {
+                            dir = -1;
+                        } else {
+                            dir = 1;
+                        }
+                        gp[0xC5] = (u8) dir;
+                    }
+                }
+
+                if ((s8) gp[0xC5] == 1) {
+                    pos.x = half_bot.x;
+                    pos.y = half_bot.y;
+                    pos.z = half_bot.z;
+                }
+
+                platform_h = 52.0f * Ground_801C0498();
+                collision = grBigBlue_801E8794(jobj, &pos, 0,
+                    2.0f * (68.0f * Ground_801C0498()), platform_h);
+
+                if (collision == 0) {
+                    f32 cam_top = Stage_GetCamBoundsTopOffset();
+                    f32 cam_bot = Stage_GetCamBoundsBottomOffset();
+                    f32 cam_left = Stage_GetCamBoundsLeftOffset();
+                    f32 cam_right = Stage_GetCamBoundsRightOffset();
+                    bounds_y = grBigBlue_801E8B84(cam_top, cam_bot,
+                                                  cam_left, cam_right);
+                    if (pos.y <= bounds_y) {
+                        collision = 1;
+                    }
+                }
+
+                if (collision == 0) {
+                    if (pos.y == grBb_804DB310) {
+                        OSReport("%s:%d: fly spawn error! (%d/%f)\n",
+                                 "grbigblue.c", 1994, 0, grBb_804DB310);
+                        HSD_ASSERT(1994, 0);
+                    }
+
+                    HSD_JObjSetTranslate(jobj, &pos);
+
+                    *(f32*) (gp + 0xDC) = pos.y;
+                    *(f32*) (gp + 0xEC) = 0.0f;
+                    *(f32*) (gp + 0xE8) = 0.0f;
+                    *(f32*) (gp + 0xE4) = 0.0f;
+
+                    HSD_JObjClearFlagsAll(jobj, 0x10);
+                    gp[0xC4] = 2;
+                }
+            }
+        } else {
+            *(s32*) (gp + 0xC8) = timer - 1;
+        }
+        break;
+    }
+
+    case 2:
+    {
+        f32 cam_top = Stage_GetCamBoundsTopOffset();
+        f32 cam_bot = Stage_GetCamBoundsBottomOffset();
+        f32 left_x = pos.x - (68.0f * Ground_801C0498() * 0.5f + 20.0f);
+        f32 bounds_y = grBigBlue_801E8B84(cam_top, cam_bot, left_x,
+            pos.x + (68.0f * Ground_801C0498() * 0.5f + 20.0f));
+        f32 surface_y;
+        f32 half_h;
+        s32 ace_result;
+        f32 vel_y;
+
+        pos2 = pos;
+
+        surface_y = grBigBlue_801EC58C(&pos2, NULL, 500.0f);
+
+        half_h = 52.0f * Ground_801C0498() * 0.5f + 4.0f;
+        ace_result = grBigBlue_801EACE8(jobj, &pos, &y_check,
+            68.0f * Ground_801C0498() * 0.5f + 10.0f, half_h);
+
+        if (ace_result == 0 ||
+            (ace_result == 1 && pos.y < y_check))
+        {
+            if (bounds_y <= surface_y) {
+                if (surface_y == grBb_804DB310) {
+                    *(f32*) (gp + 0xDC) = half_top.y;
+                } else {
+                    *(f32*) (gp + 0xDC) =
+                        surface_y + *(f32*) (gp + 0xD4);
+                }
+            } else {
+                *(f32*) (gp + 0xDC) =
+                    bounds_y + *(f32*) (gp + 0xD4);
+            }
+        } else if (ace_result == 1) {
+            *(f32*) (gp + 0xDC) = pos.y + (pos.y - y_check);
+        }
+
+        {
+            f32 target_y = *(f32*) (gp + 0xDC);
+            f32 diff = pos.y - target_y;
+            if (diff < 0.0f) {
+                diff = -diff;
+            }
+            if (diff < 0.5f) {
+                vel_y = 0.0f;
+            } else if (pos.y < target_y) {
+                f32 max = grBb_804D69C8->x128;
+                vel_y = (target_y - pos.y) / grBb_804D69C8->x124;
+                if (vel_y > max) {
+                    vel_y = max;
+                }
+            } else {
+                f32 min = -grBb_804D69C8->x130;
+                vel_y = (target_y - pos.y) / grBb_804D69C8->x12C;
+                if (vel_y < min) {
+                    vel_y = min;
+                }
+            }
+        }
+
+        pos.y += vel_y;
+        HSD_JObjSetTranslateY(jobj, pos.y);
+
+        {
+            s32 timer = *(s32*) (gp + 0xCC);
+            if (timer <= 0) {
+                s32 timer_range = grBb_804D69C8->x110 - grBb_804D69C8->x10C;
+                s32 r;
+                f32 speed_range;
+                s32 speed_r;
+                f32 speed;
+
+                if (timer_range < 0) {
+                    timer_range = -timer_range;
+                }
+                if (timer_range != 0) {
+                    r = HSD_Randi(timer_range);
+                } else {
+                    r = 0;
+                }
+                *(s32*) (gp + 0xCC) = r;
+                *(s32*) (gp + 0xCC) += grBb_804D69C8->x10C;
+
+                speed_range =
+                    (grBb_804D69C8->x100 - grBb_804D69C8->xFC) / 0.1f;
+                if ((s32) speed_range != 0) {
+                    speed_r = HSD_Randi((s32) speed_range);
+                } else {
+                    speed_r = 0;
+                }
+                speed = (f32) speed_r * 0.1f;
+                if (speed == 0.0f) {
+                    speed = grBb_804D69C8->xFC;
+                }
+                *(f32*) (gp + 0xE4) = speed * (f32) (s8) gp[0xC5];
+            } else {
+                *(s32*) (gp + 0xCC) = timer - 1;
+            }
+        }
+
+        {
+            s32 timer = *(s32*) (gp + 0xD0);
+            if (timer <= 0) {
+                s32 timer_range = grBb_804D69C8->x110 - grBb_804D69C8->x10C;
+                s32 r;
+                f32 speed_range;
+                s32 speed_r;
+                f32 speed;
+
+                if (timer_range < 0) {
+                    timer_range = -timer_range;
+                }
+                if (timer_range != 0) {
+                    r = HSD_Randi(timer_range);
+                } else {
+                    r = 0;
+                }
+                *(s32*) (gp + 0xD0) = r;
+                *(s32*) (gp + 0xD0) += grBb_804D69C8->x10C;
+
+                speed_range =
+                    (grBb_804D69C8->x108 - grBb_804D69C8->x104) / 0.1f;
+                if ((s32) speed_range != 0) {
+                    speed_r = HSD_Randi((s32) speed_range);
+                } else {
+                    speed_r = 0;
+                }
+                speed = (f32) speed_r * 0.1f;
+                if (speed == 0.0f) {
+                    speed = grBb_804D69C8->x104;
+                }
+                if (HSD_Randi(2) != 0) {
+                    speed *= -1.0f;
+                }
+                *(f32*) (gp + 0xE8) = speed;
+            } else {
+                *(s32*) (gp + 0xD0) = timer - 1;
+            }
+        }
+
+        HSD_JObjAddTranslationX(jobj, *(f32*) (gp + 0xE4));
+        HSD_JObjAddTranslationY(jobj, *(f32*) (gp + 0xE8));
+
+        if (((s8) gp[0xC5] == -1 &&
+             HSD_JObjGetTranslationX(jobj) <
+                 -(Stage_GetBlastZoneRightOffset() - 50.0f)) ||
+            ((s8) gp[0xC5] == 1 &&
+             HSD_JObjGetTranslationX(jobj) >
+                 Stage_GetBlastZoneRightOffset() - 50.0f))
+        {
+            HSD_JObjSetFlagsAll(jobj, 0x10);
+            *(f32*) (gp + 0xEC) = 0.0f;
+            *(f32*) (gp + 0xE8) = 0.0f;
+            *(f32*) (gp + 0xE4) = 0.0f;
+            *(s32*) ((u8*) GET_GROUND(Ground_801C2BA4(0x20)) + 0xD0) = 0;
+            gp[0xC4] = 0;
+        }
+        break;
+    }
+    }
+
+    Ground_801C2FE0(gobj);
+}
 
 void grBigBlue_801EAB4C(Ground_GObj* arg) {}
 
