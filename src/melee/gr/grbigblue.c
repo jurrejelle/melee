@@ -530,10 +530,10 @@ void fn_801E8560(Ground* gp, s32 param, CollData* coll, s32 time_param,
     HSD_JObj* jobj;
     s32 joint_index;
     Vec3 pos;
-    f32 dx, dy, dist;
+    f32 dist;
     s32 active_joint;
     u8* p;
-    PAD_STACK(24);
+    PAD_STACK(20);
 
     if ((s32) coll->x34_flags.b1234 != 1 && (s32) coll->x34_flags.b1234 != 3) {
         return;
@@ -559,9 +559,11 @@ void fn_801E8560(Ground* gp, s32 param, CollData* coll, s32 time_param,
 
     pos = jobj->translate;
 
-    dx = pos.x - coll->cur_pos.x;
-    dy = pos.y - coll->cur_pos.y;
-    dist = dy * dy + dx * dx;
+    {
+        f32 dx = pos.x - coll->cur_pos.x;
+        f32 dy = pos.y - coll->cur_pos.y;
+        dist = dy * dy + dx * dx;
+    }
 
     dist = sqrtf(dist);
 

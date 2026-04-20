@@ -6,7 +6,7 @@ Funcs:
 - [x] fn_801EF60C
 - [x] grBigBlue_801E8794
 - [x] grBigBlue_801EF424
-- [ ] fn_801E8560
+- [x] fn_801E8560
 - [ ] grBigBlue_801EACE8
 - [ ] grBigBlue_801EDF44
 - [ ] grBigBlue_801EC6C0
