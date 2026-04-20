@@ -69,7 +69,7 @@
 /* 1ECB50 */ void grBigBlue_801ECB50(Ground_GObj*);
 /* 1ED694 */ void grBigBlue_801ED694(Ground_GObj*, s32);
 /* 1EDF44 */ s32 grBigBlue_801EDF44(Ground_GObj*, s32);
-/* 1EE398 */ void grBigBlue_801EE398(Ground_GObj*, s32, s32);
+/* 1EE398 */ s32 grBigBlue_801EE398(Ground_GObj*, s32, s32);
 /* 1EEF00 */ bool grBigBlue_801EEF00(Ground_GObj*, s32);
 /* 1EF424 */ void grBigBlue_801EF424(Ground_GObj*);
 /* 1EF60C */ void fn_801EF60C(Ground*, s32, CollData*, s32, s32, f32);
