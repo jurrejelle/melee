@@ -519,7 +519,695 @@ bool grBigBlue_801E6C58(Ground_GObj* arg)
     return false;
 }
 
-/// #grBigBlue_801E6C60
+void grBigBlue_801E6C60(Ground_GObj* gobj)
+{
+    s32 i;
+    Ground* gp;
+    Ground* base;
+    i = 0;
+    gp = gobj->user_data;
+    base = gp;
+
+    do {
+        u8 bone_idx = gp->gv.bigblue.x20;
+        u8 state = gp->gv.bigblue.x21;
+        HSD_JObj* jobj =
+            *(HSD_JObj**) ((u8*) base + ((s8) bone_idx * 4) + 0xD4);
+
+        switch ((s8) state) {
+        case 0:
+        {
+            if ((int) grBigBlue_801E89DC(0) != 0) {
+                s32 range = grBb_804D69C8->x8C;
+                s32 rand_val;
+                Vec3 pos;
+
+                if (range != 0) {
+                    rand_val = HSD_Randi(range);
+                } else {
+                    rand_val = 0;
+                }
+                *(s32*) ((u8*) gp + 0xE8) =
+                    grBb_804D69C8->x88 + rand_val;
+
+                HSD_JObjGetTranslation(jobj, &pos);
+
+                *(Vec3*) ((u8*) gp + 0x11C) = pos;
+                *(f32*) ((u8*) gp + 0x130) = 0.0f;
+                *(f32*) ((u8*) gp + 0x12C) = 0.0f;
+                *(f32*) ((u8*) gp + 0x128) = 0.0f;
+                gp->gv.bigblueroute.xFC.z = 0.0f;
+                gp->gv.bigblueroute.xFC.y = 0.0f;
+                gp->gv.bigblueroute.xFC.x = 0.0f;
+                gp->gv.bigblue.x21 = 1;
+            }
+            break;
+        }
+        case 1:
+            if ((int) grBigBlue_801E89DC(0) == 0) {
+                gp->gv.bigblue.x21 = 0;
+            } else {
+            case 2:
+                if (*(s32*) ((u8*) gp + 0xE8) <= 0) {
+                    Vec3 pos;
+                    Vec3 neg_pos;
+                    f32 right_y, left_y;
+                    s32 found;
+                    s32 retries;
+
+                    memzero(&pos, 0xC);
+                    memzero(&neg_pos, 0xC);
+                    pos.x = 10.0f + Stage_GetBlastZoneRightOffset();
+                    neg_pos.x =
+                        -(10.0f + Stage_GetBlastZoneRightOffset());
+
+                    right_y =
+                        grBigBlue_801EC58C(&pos, NULL, 500.0f);
+                    left_y =
+                        grBigBlue_801EC58C(&neg_pos, NULL, 500.0f);
+
+                    if (right_y != -3.4028235e38f ||
+                        left_y != -3.4028235e38f)
+                    {
+                        f32 height_range;
+                        s32 height_rand;
+
+                        *(f32*) ((u8*) gp + 0xEC) =
+                            grBb_804D69C8->x90;
+                        height_range =
+                            grBb_804D69C8->x94 - grBb_804D69C8->x90;
+                        if (height_range < 0.0f) {
+                            height_range = -height_range;
+                        }
+                        if ((s32) height_range != 0) {
+                            height_rand =
+                                HSD_Randi((s32) height_range);
+                        } else {
+                            height_rand = 0;
+                        }
+                        *(f32*) ((u8*) gp + 0xEC) +=
+                            (f32) height_rand;
+                        pos.y = right_y +
+                            *(f32*) ((u8*) gp + 0xEC);
+                        neg_pos.y = left_y +
+                            *(f32*) ((u8*) gp + 0xEC);
+
+                        if (left_y == -3.4028235e38f) {
+                            *(u8*) ((u8*) gp + 0xE6) = (u8) -1;
+                        } else if (right_y == -3.4028235e38f) {
+                            *(u8*) ((u8*) gp + 0xE6) = 1;
+                        } else {
+                            f32 diff =
+                                right_y - left_y;
+                            if (diff < 0.0f) {
+                                diff = -diff;
+                            }
+                            if (diff < 80.0f) {
+                                s8 dir;
+                                if (HSD_Randi(2) != 0) {
+                                    dir = 1;
+                                } else {
+                                    dir = -1;
+                                }
+                                *(u8*) ((u8*) gp + 0xE6) =
+                                    (u8) dir;
+                            } else {
+                                s8 dir2;
+                                if (right_y < left_y) {
+                                    dir2 = -1;
+                                } else {
+                                    dir2 = 1;
+                                }
+                                *(u8*) ((u8*) gp + 0xE6) =
+                                    (u8) dir2;
+                            }
+                        }
+
+                        if ((int) grBigBlue_801E89DC(1) != 0) {
+                            *(u8*) ((u8*) gp + 0xE6) = 1;
+                            pos.x = -(10.0f +
+                                Stage_GetBlastZoneRightOffset());
+                        } else if ((s32) *(s8*) ((u8*) gp + 0xE6) ==
+                                   1)
+                        {
+                            pos = neg_pos;
+                        }
+
+                        retries = 0;
+                        found = 0;
+                        for (;;) {
+                            Vec3 speeds;
+
+                            speeds = grBb_803B8114;
+                            found = grBigBlue_801E8794(
+                                jobj, &pos, 0,
+                                2.0f * (((f32*) &speeds)
+                                    [(s8) bone_idx] *
+                                    Ground_801C0498()),
+                                25.0f);
+                            if (found == 0) {
+                                Vec3 speeds2;
+                                speeds2 = grBb_803B8114;
+                                found = grBigBlue_801EAB50(
+                                    &pos, 0,
+                                    2.0f * (((f32*) &speeds2)
+                                        [(s8) bone_idx] *
+                                        Ground_801C0498()),
+                                    25.0f);
+                            }
+                            if (found == 0) {
+                                f32 bound =
+                                    grBigBlue_801E8D04();
+                                if (pos.y <= bound) {
+                                    found = 1;
+                                }
+                            }
+                            if (found == 1) {
+                                retries += 1;
+                                pos.y += 25.0f;
+                                if (retries < 3) {
+                                    continue;
+                                }
+                            }
+                            break;
+                        }
+                        if (found != 0) {
+                            pos.y = 10.0f +
+                                Stage_GetCamBoundsTopOffset();
+                        }
+                        if (pos.y == -3.4028235e38f) {
+                            pos.y = 10.0f +
+                                Stage_GetCamBoundsTopOffset();
+                        }
+
+                        HSD_JObjSetTranslate(jobj, &pos);
+                        gp->gv.bigblueroute.xF0.z = pos.y;
+
+                        *(Vec3*) ((u8*) gp + 0x11C) = pos;
+                        *(f32*) ((u8*) gp + 0x128) =
+                            grBb_804D69C8->x98 *
+                            (f32) (s8) *(u8*) ((u8*) gp + 0xE6);
+                        *(f32*) ((u8*) gp + 0x130) = 0.0f;
+                        *(f32*) ((u8*) gp + 0x12C) = 0.0f;
+                        gp->gv.bigblueroute.xFC.z = 0.0f;
+                        gp->gv.bigblueroute.xFC.y = 0.0f;
+                        gp->gv.bigblueroute.xFC.x = 0.0f;
+                        *(s32*) ((u8*) gp + 0x118) = 0;
+                        *(s32*) ((u8*) gp + 0x110) = 0;
+                        gp->gv.bigblue.x21 = 3;
+                        HSD_JObjClearFlagsAll(jobj, 0x10);
+                        *(s32*) ((u8*) gp + 0x134) = 0;
+                        {
+                            s32 chance = grBb_804D69C8->xB8;
+                            s32 spawn;
+                            if (chance != 0) {
+                                spawn = HSD_Randi(chance);
+                            } else {
+                                spawn = 0;
+                            }
+                            if (spawn == 0) {
+                                grBigBlue_801E8A1C(i);
+                            }
+                        }
+                        base->gv.arwing.xC4 += 1;
+                        if ((int) grBigBlue_801E89DC(2) == 0) {
+                            u32 cnt = base->gv.arwing.xC4;
+                            if ((s32) cnt >=
+                                (s32) grBb_804D69C8->x11C)
+                            {
+                                s32 max = grBb_804D69C8->x120;
+                                if ((s32) cnt <= max &&
+                                    ((s32) cnt == max ||
+                                     HSD_Randi(2) != 0))
+                                {
+                                    grBigBlue_801E8978(
+                                        2, (void*) 1, jobj);
+                                }
+                            }
+                        }
+                        if ((int) grBigBlue_801E89DC(1) == 0) {
+                            u32 cnt2 = base->gv.arwing.xC4;
+                            if ((s32) cnt2 >=
+                                    (s32) grBb_804D69C8->xDC &&
+                                (s32) *(s8*) ((u8*) gp + 0xE6) ==
+                                    1 &&
+                                ((s32) cnt2 >=
+                                     (s32) grBb_804D69C8->xE0 ||
+                                 HSD_Randi(2) != 0))
+                            {
+                                grBigBlue_801E8978(
+                                    0, NULL, NULL);
+                                grBigBlue_801E8978(
+                                    1, (void*) 1, jobj);
+                                base->gv.arwing.xC4 = 0;
+                            }
+                        }
+                    }
+                } else {
+                    u8* bone_ptr = (u8*) base;
+                    Ground* other = base;
+                    s32 active_count = 0;
+                    s32 j = 0;
+
+                    do {
+                        if (jobj != *(HSD_JObj**)
+                            (bone_ptr + 0xD4))
+                        {
+                            u8 other_state =
+                                other->gv.bigblue.x21;
+                            if ((s8) other_state == 3) {
+                                if (((s32) *(s8*) ((u8*) other +
+                                        0xE6) == 1 &&
+                                     *(f32*) ((u8*) other +
+                                        0x11C) <
+                                        Stage_GetCamBoundsRightOffset()) ||
+                                    ((s8) *(u8*) ((u8*) other +
+                                        0xE6) == -1 &&
+                                     *(f32*) ((u8*) other +
+                                        0x11C) >
+                                        Stage_GetCamBoundsLeftOffset()))
+                                {
+                                    active_count++;
+                                }
+                            } else if ((s8) other_state == 1 &&
+                                       *(s32*) ((u8*) other +
+                                           0xE8) == 0)
+                            {
+                                active_count++;
+                            }
+                        }
+                        j++;
+                        bone_ptr += 4;
+                        other = (Ground*) ((u8*) other + 0x54);
+                    } while (j < 3);
+
+                    if (active_count <= 1) {
+                        *(s32*) ((u8*) gp + 0xE8) = 0;
+                    } else {
+                        *(s32*) ((u8*) gp + 0xE8) -= 1;
+                    }
+                }
+            }
+            break;
+
+        case 3:
+        {
+            Vec3 cur_pos;
+            f32 surface_y;
+            Point3d normal;
+            Vec3 euler;
+            Vec3 fwd, back;
+            f32 speed_val;
+
+            HSD_JObjGetTranslation(jobj, &cur_pos);
+            surface_y = grBigBlue_801EC58C(
+                &cur_pos, &normal, 500.0f);
+            if (surface_y == -3.4028235e38f) {
+                normal.z = 0.0f;
+                *(f32*) &normal = 0.0f;
+                normal.y = 1.0f;
+            }
+            euler.y = 0.0f;
+            euler.z = 0.0f;
+            euler.x = atan2f(
+                -*(f32*) &normal, normal.y);
+
+            {
+                Vec3 speeds;
+                speeds = grBb_803B8114;
+                speed_val =
+                    (f32) (s8) *(u8*) ((u8*) gp + 0xE6) *
+                    (((f32*) &speeds)[(s8) bone_idx] *
+                     Ground_801C0498());
+            }
+            fwd.x = speed_val;
+            fwd.z = 0.0f;
+            fwd.y = 0.0f;
+            lbVector_ApplyEulerRotation(&fwd, &euler);
+            lbVector_Add(&fwd, &cur_pos);
+
+            {
+                Vec3 speeds2;
+                speeds2 = grBb_803B8114;
+                speed_val =
+                    (f32) -(s8) *(u8*) ((u8*) gp + 0xE6) *
+                    (((f32*) &speeds2)[(s8) bone_idx] *
+                     Ground_801C0498());
+            }
+            back.x = speed_val;
+            back.z = 0.0f;
+            back.y = 0.0f;
+            lbVector_ApplyEulerRotation(&back, &euler);
+            lbVector_Add(&back, &cur_pos);
+
+            {
+                s32 sub_state =
+                    *(s32*) ((u8*) gp + 0x110);
+                s32 phase =
+                    *(s32*) ((u8*) gp + 0x118);
+
+                if (sub_state == 0 || phase == 3) {
+                    if (*(s32*) ((u8*) gp + 0x114) == 0 &&
+                        sub_state != 0)
+                    {
+                        gp->gv.bigblueroute.xF0.y = cur_pos.y;
+                        *(s32*) ((u8*) gp + 0xE8) =
+                            grBb_804D69C8->xB0;
+                        *(s32*) ((u8*) gp + 0x118) = 1;
+                    }
+                    gp->gv.bigblueroute.xF0.x = euler.x;
+                    {
+                        if (HSD_JObjGetRotationZ(jobj) <
+                            gp->gv.bigblueroute.xF0.x)
+                        {
+                            f32 delta = 0.017453292f *
+                                (grBb_804D69C8->x9C *
+                                 (gp->gv.bigblueroute.xF0.x -
+                                  HSD_JObjGetRotationZ(jobj)));
+                            HSD_JObjAddRotationZ(jobj, delta);
+                            if (HSD_JObjGetRotationZ(jobj) >=
+                                gp->gv.bigblueroute.xF0.x)
+                            {
+                                HSD_JObjSetRotationZ(
+                                    jobj,
+                                    gp->gv.bigblueroute.xF0.x);
+                            }
+                        } else {
+                            f32 delta = 0.017453292f *
+                                (grBb_804D69C8->x9C *
+                                 (gp->gv.bigblueroute.xF0.x -
+                                  HSD_JObjGetRotationZ(jobj)));
+                            HSD_JObjAddRotationZ(jobj, delta);
+                            if (HSD_JObjGetRotationZ(jobj) <=
+                                gp->gv.bigblueroute.xF0.x)
+                            {
+                                HSD_JObjSetRotationZ(
+                                    jobj,
+                                    gp->gv.bigblueroute.xF0.x);
+                            }
+                        }
+                    }
+                } else {
+                    s32 dir_val;
+
+                    if (*(s32*) ((u8*) gp + 0x114) == 0) {
+                        gp->gv.bigblueroute.xF0.y = cur_pos.y;
+                        *(s32*) ((u8*) gp + 0xE8) =
+                            grBb_804D69C8->xB0;
+                        *(s32*) ((u8*) gp + 0x118) = 1;
+                    }
+                    if (*(f32*) ((u8*) gp + 0x108) <
+                        *(f32*) ((u8*) gp + 0x10C))
+                    {
+                        dir_val = 1;
+                    } else {
+                        dir_val = -1;
+                    }
+                    if (gp->gv.bigblueroute.xFC.y !=
+                        (f32) dir_val)
+                    {
+                        *(s32*) ((u8*) gp + 0xE8) =
+                            grBb_804D69C8->xB0;
+                        *(s32*) ((u8*) gp + 0x118) = 1;
+                    }
+                    gp->gv.bigblueroute.xFC.y = (f32) dir_val;
+
+                    if (phase == 2) {
+                        cur_pos.y +=
+                            *(f32*) ((u8*) gp + 0x12C);
+                        gp->gv.bigblueroute.xF0.x = euler.x;
+                        {
+                            if (HSD_JObjGetRotationZ(jobj) <
+                                gp->gv.bigblueroute.xF0.x)
+                            {
+                                f32 delta = 0.017453292f *
+                                    (grBb_804D69C8->x9C *
+                                     (gp->gv.bigblueroute.xF0.x -
+                                      HSD_JObjGetRotationZ(
+                                          jobj)));
+                                HSD_JObjAddRotationZ(
+                                    jobj, delta);
+                                if (HSD_JObjGetRotationZ(jobj) >=
+                                    gp->gv.bigblueroute.xF0.x)
+                                {
+                                    HSD_JObjSetRotationZ(
+                                        jobj,
+                                        gp->gv.bigblueroute.xF0.x);
+                                }
+                            } else {
+                                f32 delta = 0.017453292f *
+                                    (grBb_804D69C8->x9C *
+                                     (gp->gv.bigblueroute.xF0.x -
+                                      HSD_JObjGetRotationZ(
+                                          jobj)));
+                                HSD_JObjAddRotationZ(
+                                    jobj, delta);
+                                if (HSD_JObjGetRotationZ(jobj) <=
+                                    gp->gv.bigblueroute.xF0.x)
+                                {
+                                    HSD_JObjSetRotationZ(
+                                        jobj,
+                                        gp->gv.bigblueroute.xF0.x);
+                                }
+                            }
+                        }
+                        if (cur_pos.y >=
+                            gp->gv.bigblueroute.xF0.y)
+                        {
+                            *(f32*) ((u8*) gp + 0x12C) = 0.0f;
+                            gp->gv.bigblueroute.xFC.z = 0.0f;
+                            gp->gv.bigblueroute.xFC.y = 0.0f;
+                            *(s32*) ((u8*) gp + 0x118) = 4;
+                        }
+                    } else if (*(s32*) ((u8*) gp + 0xE8) <= 0) {
+                        *(f32*) ((u8*) gp + 0x12C) =
+                            grBb_804D69C8->xAC;
+                        *(s32*) ((u8*) gp + 0xE8) =
+                            grBb_804D69C8->xB4;
+                        *(s32*) ((u8*) gp + 0x118) = 3;
+                    } else {
+                        f32 prev_x =
+                            *(f32*) ((u8*) gp + 0x108);
+                        f32 prev_y =
+                            *(f32*) ((u8*) gp + 0x10C);
+
+                        if (prev_x < prev_y) {
+                            gp->gv.bigblueroute.xFC.z =
+                                grBb_804D69C8->xA0 *
+                                (prev_y - prev_x);
+                            if (gp->gv.bigblueroute.xFC.z >=
+                                grBb_804D69C8->xA4)
+                            {
+                                gp->gv.bigblueroute.xFC.z =
+                                    grBb_804D69C8->xA4;
+                            }
+                            cur_pos.y -= grBb_804D69C8->xA8;
+                        } else {
+                            gp->gv.bigblueroute.xFC.z =
+                                -grBb_804D69C8->xA0 *
+                                (prev_x - prev_y);
+                            if (gp->gv.bigblueroute.xFC.z <=
+                                -grBb_804D69C8->xA4)
+                            {
+                                gp->gv.bigblueroute.xFC.z =
+                                    -grBb_804D69C8->xA4;
+                            }
+                            cur_pos.y += grBb_804D69C8->xA8;
+                        }
+                        {
+                            f32 delta = 0.017453292f *
+                                gp->gv.bigblueroute.xFC.z;
+                            HSD_JObjAddRotationZ(jobj, delta);
+                        }
+                        {
+                            f32 angle_deg = 57.29578f *
+                                HSD_JObjGetRotationZ(jobj);
+                            if (cur_pos.y <
+                                (surface_y +
+                                 grBb_804D69C8->x90))
+                            {
+                                if (angle_deg > 30.0f) {
+                                    HSD_JObjSetRotationZ(
+                                        jobj, 0.5235988f);
+                                }
+                                if (angle_deg < -30.0f) {
+                                    HSD_JObjSetRotationZ(
+                                        jobj, -0.5235988f);
+                                }
+                            }
+                            if (angle_deg > 65.0f) {
+                                HSD_JObjSetRotationZ(
+                                    jobj, 1.1344640f);
+                            }
+                            if (angle_deg < -65.0f) {
+                                HSD_JObjSetRotationZ(
+                                    jobj, -1.1344640f);
+                            }
+                        }
+                        *(s32*) ((u8*) gp + 0xE8) -= 1;
+                    }
+                }
+            }
+
+            {
+                f32 cam_top = Stage_GetCamBoundsTopOffset();
+                f32 cam_bot = Stage_GetCamBoundsBottomOffset();
+                f32 speed3;
+                Vec3 probe_pos;
+                f32 probe_y;
+                f32 coll_y;
+                s32 coll_result;
+                f32 target_y;
+                f32 y_diff;
+                f32 y_vel;
+
+                {
+                    Vec3 speeds3;
+                    speeds3 = grBb_803B8114;
+                    speed3 = ((f32*) &speeds3)[(s8) bone_idx] *
+                        Ground_801C0498();
+                }
+                {
+                    Vec3 speeds4;
+                    f32 speed_off4;
+                    speeds4 = grBb_803B8114;
+                    speed_off4 =
+                        ((f32*) &speeds4)[(s8) bone_idx] *
+                        Ground_801C0498();
+                    target_y = grBigBlue_801E8B84(
+                        cam_top, cam_bot,
+                        cur_pos.x - (20.0f + speed3),
+                        cur_pos.x + (20.0f + speed_off4));
+                }
+
+                probe_pos = cur_pos;
+                probe_y = grBigBlue_801EC58C(
+                    &probe_pos, NULL, 500.0f);
+
+                {
+                    Vec3 speeds5;
+                    f32 speed_off5;
+                    speeds5 = grBb_803B8114;
+                    speed_off5 =
+                        ((f32*) &speeds5)[(s8) bone_idx] *
+                        Ground_801C0498();
+                    coll_result = grBigBlue_801EACE8(
+                        jobj, &cur_pos, &coll_y,
+                        10.0f + speed_off5,
+                        16.5f);
+                }
+
+                if (coll_result == 0 ||
+                    (coll_result == 1 &&
+                     cur_pos.y < coll_y))
+                {
+                    if (target_y <= probe_y) {
+                        if (probe_y == -3.4028235e38f) {
+                            gp->gv.bigblueroute.xF0.z =
+                                fwd.y;
+                        } else {
+                            gp->gv.bigblueroute.xF0.z =
+                                probe_y +
+                                *(f32*) ((u8*) gp + 0xEC);
+                        }
+                    } else {
+                        gp->gv.bigblueroute.xF0.z =
+                            target_y +
+                            *(f32*) ((u8*) gp + 0xEC);
+                    }
+                } else if (coll_result == 1) {
+                    gp->gv.bigblueroute.xF0.z =
+                        cur_pos.y + (cur_pos.y - coll_y);
+                }
+
+                target_y = gp->gv.bigblueroute.xF0.z;
+                y_diff = cur_pos.y - target_y;
+                if (y_diff < 0.0f) {
+                    y_diff = -y_diff;
+                }
+                if (y_diff < 0.5f) {
+                    y_vel = 0.0f;
+                } else if (cur_pos.y < target_y) {
+                    y_vel = (target_y - cur_pos.y) /
+                        grBb_804D69C8->xBC;
+                    if (y_vel > grBb_804D69C8->xC0) {
+                        y_vel = grBb_804D69C8->xC0;
+                    }
+                } else {
+                    y_vel = (target_y - cur_pos.y) /
+                        grBb_804D69C8->xC4;
+                    if (y_vel < -grBb_804D69C8->xC8) {
+                        y_vel = -grBb_804D69C8->xC8;
+                    }
+                }
+                cur_pos.y += y_vel;
+            }
+
+            {
+                f32 x_vel =
+                    *(f32*) ((u8*) gp + 0x128);
+                HSD_JObjAddTranslationX(jobj, x_vel);
+            }
+            HSD_JObjSetTranslateY(jobj, cur_pos.y);
+
+            *(Vec3*) ((u8*) gp + 0x11C) = cur_pos;
+            *(s32*) ((u8*) gp + 0x114) =
+                *(s32*) ((u8*) gp + 0x110);
+            *(s32*) ((u8*) gp + 0x110) = 0;
+            *(f32*) ((u8*) gp + 0x10C) = 0.0f;
+            *(f32*) ((u8*) gp + 0x108) = 0.0f;
+
+            if (*(f32*) ((u8*) gp + 0x128) < 0.0f) {
+                if (!(HSD_JObjGetTranslationX(jobj) <
+                      -((10.0f + Stage_GetBlastZoneRightOffset())
+                        - 50.0f)))
+                {
+                    goto check_positive;
+                }
+                goto reset_route;
+            }
+        check_positive:
+            if (*(f32*) ((u8*) gp + 0x128) > 0.0f) {
+                if (HSD_JObjGetTranslationX(jobj) >
+                    (10.0f + Stage_GetBlastZoneRightOffset())
+                    - 50.0f)
+                {
+                reset_route:
+                    HSD_JObjSetFlagsAll(jobj, 0x10);
+                    HSD_JObjSetRotationZ(jobj, 0.0f);
+                    *(f32*) ((u8*) gp + 0x130) = 0.0f;
+                    *(f32*) ((u8*) gp + 0x12C) = 0.0f;
+                    *(f32*) ((u8*) gp + 0x128) = 0.0f;
+                    gp->gv.bigblueroute.xFC.z = 0.0f;
+                    gp->gv.bigblueroute.xFC.y = 0.0f;
+                    gp->gv.bigblueroute.xFC.x = 0.0f;
+                    gp->gv.bigblueroute.xF0.x = 0.0f;
+                    *(s32*) ((u8*) gp + 0x118) = 0;
+                    *(s32*) ((u8*) gp + 0x110) = 0;
+                    {
+                        s32 range = grBb_804D69C8->x8C;
+                        s32 rand_val;
+                        if (range != 0) {
+                            rand_val = HSD_Randi(range);
+                        } else {
+                            rand_val = 0;
+                        }
+                        *(s32*) ((u8*) gp + 0xE8) =
+                            (grBb_804D69C8->x88 +
+                             rand_val) / 2;
+                    }
+                    gp->gv.bigblue.x21 = 1;
+                }
+            }
+            break;
+        }
+        }
+        i++;
+        gp = (Ground*) ((u8*) gp + 0x54);
+    } while (i < 3);
+
+    Ground_801C2FE0(gobj);
+}
 
 void grBigBlue_801E855C(Ground_GObj* arg) {}
 
@@ -764,14 +1452,14 @@ f32 grBigBlue_801E8B84(f32 right, f32 left, f32 bottom, f32 top)
     return result;
 }
 
-void grBigBlue_801E8D04(void)
+f32 grBigBlue_801E8D04(void)
 {
     f32 val4, val3, val2, val1;
     val1 = Stage_GetCamBoundsRightOffset();
     val2 = Stage_GetCamBoundsLeftOffset();
     val3 = Stage_GetCamBoundsBottomOffset();
     val4 = Stage_GetCamBoundsTopOffset();
-    grBigBlue_801E8B84(val4, val3, val2, val1);
+    return grBigBlue_801E8B84(val4, val3, val2, val1);
 }
 
 void grBigBlue_801E8D64(Ground_GObj* gobj)
