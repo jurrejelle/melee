@@ -54,9 +54,14 @@ typedef struct grBb_YakumonoParams {
     f32 x84;
     u8 pad88[0xCC - 0x88];
     f32 xCC;
-    u8 padD0[0xD8 - 0xD0];
+    f32 xD0;
+    f32 xD4;
     f32 xD8;
-    u8 padDC[0xF4 - 0xDC];
+    u8 padDC[0xE4 - 0xDC];
+    f32 xE4;
+    f32 xE8;
+    f32 xEC;
+    f32 xF0;
     f32 xF4;
     f32 xF8;
     f32 xFC;
