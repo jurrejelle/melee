@@ -17,6 +17,7 @@ extern UNK_T gmClassic_80472AF8;
 extern u8 gmClassic_80490880[];
 extern u8 gm_804908A0[];
 extern UNK_T gmClassic_804D68D0;
+extern gm_803DDEC8Struct gmClassic_803DDEC8[];
 
 MinorScene gm_803DDC58_MinorScenes[] = {
     {
@@ -422,8 +423,6 @@ loop_check:
     return 0;
 }
 
-/// #gmClassic_801B2D54
-
 static u8 gm_804D4318[8] = { 0x01, 0x48, 0x21, 0x21, 0x21, 0x00, 0x00, 0x00 };
 static u8 gm_804D4320[8] = { 0x00, 0x52, 0x21, 0x21, 0x21, 0x00, 0x00, 0x00 };
 static u8 gm_804D4328[8] = { 0x00, 0x53, 0x21, 0x21, 0x21, 0x00, 0x00, 0x00 };
@@ -549,7 +548,6 @@ void gmClassic_OnLoad(void)
         entry++;
     }
 
-    /* Block 1: scan offset 0x520, fill offset 0x80 */
     {
         u16* scan = (u16*) ((u8*) ms + 0x520);
         count = 0;
@@ -573,7 +571,6 @@ void gmClassic_OnLoad(void)
         }
     }
 
-    /* Block 2: scan offset 0x4DC, fill offset 0x74 */
     {
         u16* scan = (u16*) ((u8*) ms + 0x4DC);
         count = 0;
@@ -597,7 +594,6 @@ void gmClassic_OnLoad(void)
         }
     }
 
-    /* Block 3: scan offset 0x428, fill offset 0x54 */
     {
         u16* scan = (u16*) ((u8*) ms + 0x428);
         count = 0;
@@ -621,7 +617,6 @@ void gmClassic_OnLoad(void)
         }
     }
 
-    /* Block 4: scan offset 0x33C, fill offset 0x2C */
     {
         u16* scan = (u16*) ((u8*) ms + 0x33C);
         count = 0;

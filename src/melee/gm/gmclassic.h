@@ -21,6 +21,4 @@
 /* 1B3E44 */ void gmClassic_801B3E44(MinorScene*);
 /* 1B3F18 */ void gmClassic_801B3F18(MinorScene*);
 
-gm_803DDEC8Struct gmClassic_803DDEC8[];
-
 #endif
