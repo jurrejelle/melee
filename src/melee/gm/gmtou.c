@@ -345,7 +345,6 @@ void fn_8019C6AC(HSD_GObj* gobj)
     lbl_80479A58.xF++;
 }
 
-/// #fn_8019C744
 void fn_8019C744(HSD_GObj* gobj)
 {
     TmData* tmd;
@@ -370,9 +369,7 @@ void fn_8019C744(HSD_GObj* gobj)
         if (lbl_80479A58.x10[idx] < 0x28U) {
             lbl_80479A58.x10[idx]++;
         }
-        HSD_JObjSetTranslateY(jobj,
-            *(f32*) ((u8*) lbl_803DA2E0 +
-                     lbl_80479A58.x10[idx] * sizeof(f32) + 0x20));
+        HSD_JObjSetTranslateY(jobj, lbl_803DA2E0[lbl_80479A58.x10[idx] + 0x8]);
     } else {
         lbl_80479A58.x10[idx] = 0;
     }
