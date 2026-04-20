@@ -4,30 +4,32 @@
 
 #include "placeholder.h"
 
+#include "baselib/fog.h"
+#include "baselib/gobjgxlink.h"
+#include "baselib/gobjobject.h"
 #include "mn/mnmain.h"
 
 #include <melee/pl/forward.h>
 
+#include <dolphin/os.h>
 #include <sysdolphin/baselib/controller.h>
-#include <sysdolphin/baselib/gobj.h>
 #include <sysdolphin/baselib/dobj.h>
+#include <sysdolphin/baselib/gobj.h>
 #include <sysdolphin/baselib/jobj.h>
 #include <sysdolphin/baselib/mobj.h>
 #include <sysdolphin/baselib/random.h>
 #include <sysdolphin/baselib/sislib.h>
-#include <melee/gm/gm_18A5.h>
-#include <melee/gm/gmmain_lib.h>
-#include <melee/gm/types.h>
 #include <melee/gm/gm_1601.h>
+#include <melee/gm/gm_18A5.h>
 #include <melee/gm/gm_1A3F.h>
 #include <melee/gm/gm_1A45.h>
+#include <melee/gm/gmmain_lib.h>
+#include <melee/gm/types.h>
 #include <melee/lb/lbarchive.h>
 #include <melee/lb/lbaudio_ax.h>
 #include <melee/lb/lbdvd.h>
 #include <melee/lb/types.h>
 #include <melee/sc/types.h>
-
-#include <dolphin/os.h>
 
 /// Filename is just a guess, based on some strings in the file
 /// Seems to be Tournament game code
