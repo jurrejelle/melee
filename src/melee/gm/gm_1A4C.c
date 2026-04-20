@@ -340,7 +340,7 @@ void gm_801A8D54(s32* arg0)
     for (i = 0; i < 0x1A; i++) {
         if (sp84[i] != 0x1A) {
             for (j = i + 1; j < 0x1A; j++) {
-                if (sp84[j] != 0x1A) {
+                if (0x1A != sp84[j]) {
                     if ((gm_80480AD0[sp84[i]] < gm_80480AD0[sp84[j]] ? 1 : 2) == 2) {
                         temp_i = sp84[i];
                         sp84[i] = sp84[j];
