@@ -964,10 +964,12 @@ s32 grBigBlue_801EACE8(HSD_JObj* exclude, Vec3* point, f32* out_y,
         HSD_JObjGetTranslation2(jobj, &pos);
 
         hw_left = grBb_803B8114;
-        left_x = pos.x - *p_left * Ground_801C0498();
+        left_x = *p_left * Ground_801C0498();
+        left_x = pos.x - left_x;
 
         hw_right = grBb_803B8114;
-        right_x = pos.x + *p_right * Ground_801C0498();
+        right_x = *p_right * Ground_801C0498();
+        right_x = pos.x + right_x;
 
         if ((right_x > left_bound && right_x < right_bound) ||
             (left_x < right_bound && left_x > left_bound))
