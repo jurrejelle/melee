@@ -657,16 +657,11 @@ bool grBigBlue_801E8794(void* exclude, Vec3* pos, bool checkSecondary,
                 result = true;
                 break;
             }
+        }
 
-            if (checkSecondary && (s8) base2[0xE6] == -1) {
-                result = true;
-                break;
-            }
-        } else {
-            if (checkSecondary && (s8) base2[0xE6] == -1) {
-                result = true;
-                break;
-            }
+        if (checkSecondary && (s8) base2[0xE6] == -1) {
+            result = true;
+            break;
         }
     }
 

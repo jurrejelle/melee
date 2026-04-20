@@ -4,7 +4,7 @@ Funcs:
 - [x] grBigBlue_801E8A1C
 - [x] grBigBlue_801E8B84
 - [x] fn_801EF60C
-- [ ] grBigBlue_801E8794
+- [x] grBigBlue_801E8794
 - [ ] grBigBlue_801EF424
 - [ ] fn_801E8560
 - [ ] grBigBlue_801EACE8
