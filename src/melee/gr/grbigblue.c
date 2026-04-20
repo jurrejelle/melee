@@ -3457,7 +3457,455 @@ s32 grBigBlue_801EDF44(Ground_GObj* gobj, s32 index)
     return result;
 }
 
-/// #grBigBlue_801EE398
+#pragma push
+#pragma fp_contract on
+s32 grBigBlue_801EE398(Ground_GObj* gobj, s32 arg1, s32 arg2)
+{
+    s32 result = 0;
+    Ground* gp = gobj->user_data;
+    Vec3 pos;
+
+    switch (arg2) {
+    case 1: {
+        s32 offset = arg1 << 6;
+        u8* car_d4 = (u8*) gp + offset + 0xD4;
+        u8* car;
+
+        HSD_JObjSetFlagsAll(
+            ((HSD_JObj**) gp->gv.bigblue.xC8)
+                [(*(u16*) car_d4 >> 4) & 0x1F],
+            0x10U);
+
+        car = (u8*) gp + offset;
+        if (*(f32*) (car + 0xE0) > 0.0f) {
+            ((u8*) gp->gv.bigblue.xCC)
+                [(*(u16*) car_d4 >> 4) & 0x1F] = 0;
+        } else {
+            ((u8*) gp->gv.bigblue.xCC)
+                [(*(u16*) car_d4 >> 4) & 0x1F] = 2;
+        }
+        {
+            register s32 st_val;
+            register u8 byte;
+            st_val = arg2;
+            byte = *car_d4;
+#ifdef MWERKS_GEKKO
+            asm { rlwimi byte, st_val, 2, 24, 29 }
+#endif
+            result = 1;
+            *car_d4 = byte;
+        }
+        break;
+    }
+
+    case 10: {
+        s32 offset = arg1 << 6;
+        {
+            u8* base = (u8*) gp + offset;
+            *(s32*) (base + 0xF0) = 0x14;
+        }
+        {
+            s32 d4_off = offset + 0xD4;
+            register s32 st_val;
+            register u8 byte;
+            st_val = arg2;
+            result = 1;
+            byte = ((u8*) gp)[d4_off];
+#ifdef MWERKS_GEKKO
+            asm { rlwimi byte, st_val, 2, 24, 29 }
+#endif
+            ((u8*) gp)[d4_off] = byte;
+        }
+        break;
+    }
+
+    case 2:
+    case 3:
+    case 4: {
+        s32 hi = (s32) grBb_804D69C8->x60;
+        s32 lo = (s32) grBb_804D69C8->x5C;
+
+        if (lo > hi) {
+            s32 diff = lo - hi;
+            s32 rand_val;
+            if (diff != 0) {
+                rand_val = HSD_Randi(diff);
+            } else {
+                rand_val = 0;
+            }
+            lo = hi + rand_val;
+        } else if (lo < hi) {
+            s32 diff = hi - lo;
+            s32 rand_val;
+            if (diff != 0) {
+                rand_val = HSD_Randi(diff);
+            } else {
+                rand_val = 0;
+            }
+            lo += rand_val;
+        }
+        {
+            s32 offset = arg1 << 6;
+            {
+                u8* base = (u8*) gp + offset;
+                *(s32*) (base + 0xF0) = lo;
+            }
+            {
+                s32 d4_off = offset + 0xD4;
+                register s32 st_val;
+                register u8 byte;
+                st_val = arg2;
+                result = 1;
+                byte = ((u8*) gp)[d4_off];
+#ifdef MWERKS_GEKKO
+                asm { rlwimi byte, st_val, 2, 24, 29 }
+#endif
+                ((u8*) gp)[d4_off] = byte;
+            }
+        }
+        break;
+    }
+
+    case 5: {
+        f32 blast = Stage_GetBlastZoneRightOffset();
+
+        pos.x = (grBb_804D69C8->x68 * Ground_801C0498()) + blast;
+        pos.z = 0.0f;
+        pos.y = 0.0f;
+        pos.y = grBigBlue_801EC58C(&pos, NULL, 1000.0f);
+
+        if (grBb_804DB310 != pos.y) {
+            s32 count = 0;
+            s32 j;
+
+            for (j = 0; j < 30; j++) {
+                if (((u8*) gp->gv.bigblue.xCC)[j] == 0) {
+                    count++;
+                }
+            }
+
+            if (count != 0) {
+                s32 pick;
+                s32 slot = 0;
+                s32 offset;
+                u8* car;
+                s32 dir;
+                u8* car_d4;
+                Vec3* car_e0;
+                f32* car_ec;
+                if (count != 0) {
+                    pick = HSD_Randi(count);
+                } else {
+                    pick = slot;
+                }
+
+                for (slot = 0; slot < 30; slot++) {
+                    if (((u8*) gp->gv.bigblue.xCC)[slot] == 0) {
+                        if (--pick < 0) {
+                            break;
+                        }
+                    }
+                }
+
+                offset = arg1 << 6;
+                car = (u8*) gp + offset;
+
+                {
+                    register s32 slot_val;
+                    register u16 hw;
+                    slot_val = slot;
+                    hw = *(u16*) (car + 0xD4);
+#ifdef MWERKS_GEKKO
+                    asm { rlwimi hw, slot_val, 4, 23, 27 }
+#endif
+                    dir = 0;
+                    *(u16*) (car + 0xD4) = hw;
+                }
+
+                car_d4 = car + 0xD4;
+                car_e0 = (Vec3*) (car + 0xE0);
+                car_ec = (f32*) (car + 0xEC);
+
+                {
+                    register s32 dir_val;
+                    register u8 byte;
+                    dir_val = dir;
+                    byte = car[0xD4];
+#ifdef MWERKS_GEKKO
+                    asm { rlwimi byte, dir_val, 1, 30, 30 }
+#endif
+                    car[0xD4] = byte;
+                }
+
+                *(f32*) (car + 0xE0) = pos.x;
+                *(f32*) (car + 0xE4) =
+                    (grBb_804D69C8->x2C * Ground_801C0498()) + pos.y;
+                *(f32*) (car + 0xE8) = 0.0f;
+                *(f32*) (car + 0xD8) = pos.x;
+                *(f32*) (car + 0xDC) = 0.0f;
+
+                *(f32*) (car + 0xF4) = 0.0f;
+                *(f32*) (car + 0xF8) = 0.0f;
+                *(f32*) (car + 0xFC) = 0.0f;
+                *(f32*) (car + 0x100) = 0.0f;
+                *(f32*) (car + 0x104) =
+                    (f32) (M_TAU * HSD_Randf());
+                *(f32*) (car + 0x108) =
+                    grBb_804D69C8->x34 * Ground_801C0498();
+                *(f32*) (car + 0x10C) = 0.0f;
+
+                {
+                    s32 hi = (s32) grBb_804D69C8->x60;
+                    s32 lo = (s32) grBb_804D69C8->x5C;
+                    if (lo > hi) {
+                        s32 diff = lo - hi;
+                        s32 rand_val;
+                        if (diff != 0) {
+                            rand_val = HSD_Randi(diff);
+                        } else {
+                            rand_val = dir;
+                        }
+                        lo = hi + rand_val;
+                    } else if (lo < hi) {
+                        s32 diff = hi - lo;
+                        s32 rand_val;
+                        if (diff != 0) {
+                            rand_val = HSD_Randi(diff);
+                        } else {
+                            rand_val = dir;
+                        }
+                        lo += rand_val;
+                    }
+                    *(s32*) (car + 0xF0) = lo;
+                }
+
+                ((u8*) gp->gv.bigblue.xCC)[slot] = 1;
+                *car_ec = 0.0f;
+
+                {
+                    u8* snd_base =
+                        (u8*) tmpPadData + HSD_Randi(4) * 4;
+                    Ground_801C5440(gp, slot,
+                        *(u32*) (snd_base + 0x6D8));
+                }
+
+                Ground_801C5630(gp, arg1, *car_ec);
+
+                {
+                    HSD_JObj* jobj;
+                    HSD_JObjClearFlagsAll(
+                        ((HSD_JObj**) gp->gv.bigblue.xC8)[slot],
+                        0x10U);
+                    jobj = ((HSD_JObj**) gp->gv.bigblue.xC8)[slot];
+                    HSD_JObjSetTranslate(jobj, car_e0);
+                }
+
+                {
+                    register s32 st_val;
+                    register u8 byte;
+                    st_val = arg2;
+                    byte = *car_d4;
+#ifdef MWERKS_GEKKO
+                    asm { rlwimi byte, st_val, 2, 24, 29 }
+#endif
+                    result = 1;
+                    *car_d4 = byte;
+                }
+            }
+        }
+        break;
+    }
+
+    case 6: {
+        f32 blast = Stage_GetBlastZoneLeftOffset();
+
+        pos.x = -((grBb_804D69C8->x68 * Ground_801C0498()) - blast);
+        pos.z = 0.0f;
+        pos.y = 0.0f;
+        pos.y = grBigBlue_801EC58C(&pos, NULL, 1000.0f);
+
+        if (grBb_804DB310 != pos.y) {
+            s32 count = 0;
+            s32 j;
+
+            for (j = 0; j < 30; j++) {
+                if (((u8*) gp->gv.bigblue.xCC)[j] == 0) {
+                    count++;
+                }
+            }
+
+            if (count != 0) {
+                s32 pick;
+                s32 slot = 0;
+                s32 offset;
+                u8* car;
+                s32 dir;
+                u8* car_d4;
+                Vec3* car_e0;
+                f32* car_ec;
+
+                if (count != 0) {
+                    pick = HSD_Randi(count);
+                } else {
+                    pick = slot;
+                }
+
+                for (slot = 0; slot < 30; slot++) {
+                    if (((u8*) gp->gv.bigblue.xCC)[slot] == 0) {
+                        if (--pick < 0) {
+                            break;
+                        }
+                    }
+                }
+
+                offset = arg1 << 6;
+                car = (u8*) gp + offset;
+
+                {
+                    register s32 slot_val;
+                    register u16 hw;
+                    slot_val = slot;
+                    hw = *(u16*) (car + 0xD4);
+#ifdef MWERKS_GEKKO
+                    asm { rlwimi hw, slot_val, 4, 23, 27 }
+#endif
+                    dir = 0;
+                    *(u16*) (car + 0xD4) = hw;
+                }
+
+                car_d4 = car + 0xD4;
+                car_e0 = (Vec3*) (car + 0xE0);
+                car_ec = (f32*) (car + 0xEC);
+
+                {
+                    register s32 dir_val;
+                    register u8 byte;
+                    dir_val = dir;
+                    byte = car[0xD4];
+#ifdef MWERKS_GEKKO
+                    asm { rlwimi byte, dir_val, 1, 30, 30 }
+#endif
+                    car[0xD4] = byte;
+                }
+
+                *(f32*) (car + 0xE0) = pos.x;
+                *(f32*) (car + 0xE4) =
+                    (grBb_804D69C8->x2C * Ground_801C0498()) + pos.y;
+                *(f32*) (car + 0xE8) = 0.0f;
+                *(f32*) (car + 0xD8) = pos.x;
+                *(f32*) (car + 0xDC) = 0.0f;
+
+                *(f32*) (car + 0xF4) = 0.0f;
+                *(f32*) (car + 0xF8) = 0.0f;
+                *(f32*) (car + 0xFC) = 0.0f;
+                *(f32*) (car + 0x100) = 0.0f;
+                *(f32*) (car + 0x104) =
+                    (f32) (M_TAU * HSD_Randf());
+                *(f32*) (car + 0x108) =
+                    grBb_804D69C8->x34 * Ground_801C0498();
+                *(f32*) (car + 0x10C) = 0.0f;
+
+                {
+                    s32 hi = (s32) grBb_804D69C8->x60;
+                    s32 lo = (s32) grBb_804D69C8->x5C;
+                    if (lo > hi) {
+                        s32 diff = lo - hi;
+                        s32 rand_val;
+                        if (diff != 0) {
+                            rand_val = HSD_Randi(diff);
+                        } else {
+                            rand_val = dir;
+                        }
+                        lo = hi + rand_val;
+                    } else if (lo < hi) {
+                        s32 diff = hi - lo;
+                        s32 rand_val;
+                        if (diff != 0) {
+                            rand_val = HSD_Randi(diff);
+                        } else {
+                            rand_val = dir;
+                        }
+                        lo += rand_val;
+                    }
+                    *(s32*) (car + 0xF0) = lo;
+                }
+
+                ((u8*) gp->gv.bigblue.xCC)[slot] = 1;
+                *car_ec = 0.0f;
+
+                {
+                    u8* snd_base =
+                        (u8*) tmpPadData + HSD_Randi(4) * 4;
+                    Ground_801C5440(gp, slot,
+                        *(u32*) (snd_base + 0x6D8));
+                }
+
+                Ground_801C5630(gp, arg1, *car_ec);
+
+                {
+                    HSD_JObj* jobj;
+                    HSD_JObjClearFlagsAll(
+                        ((HSD_JObj**) gp->gv.bigblue.xC8)[slot],
+                        0x10U);
+                    jobj = ((HSD_JObj**) gp->gv.bigblue.xC8)[slot];
+                    HSD_JObjSetTranslate(jobj, car_e0);
+                }
+
+                {
+                    register s32 st_val;
+                    register u8 byte;
+                    st_val = arg2;
+                    byte = *car_d4;
+#ifdef MWERKS_GEKKO
+                    asm { rlwimi byte, st_val, 2, 24, 29 }
+#endif
+                    result = 1;
+                    *car_d4 = byte;
+                }
+            }
+        }
+        break;
+    }
+
+    case 7:
+    case 8: {
+        s32 offset = arg1 << 6;
+        {
+            u8* base = (u8*) gp + offset;
+            *(s32*) (base + 0xF0) = 0x3E8;
+        }
+        {
+            s32 d4_off = offset + 0xD4;
+            register s32 st_val;
+            register u8 byte;
+            st_val = arg2;
+            result = 1;
+            byte = ((u8*) gp)[d4_off];
+#ifdef MWERKS_GEKKO
+            asm { rlwimi byte, st_val, 2, 24, 29 }
+#endif
+            ((u8*) gp)[d4_off] = byte;
+        }
+        break;
+    }
+
+    case 9: {
+        s32 d4_off = (arg1 << 6) + 0xD4;
+        register s32 st_val;
+        register u8 byte;
+        st_val = arg2;
+        byte = ((u8*) gp)[d4_off];
+#ifdef MWERKS_GEKKO
+        asm { rlwimi byte, st_val, 2, 24, 29 }
+#endif
+        ((u8*) gp)[d4_off] = byte;
+        break;
+    }
+    }
+
+    return result;
+}
+#pragma pop
 
 /// @todo Currently 83.62% match - compiler CSEs gp+offset into one register
 /// (3 NV regs) instead of keeping them separate (4 NV regs with r28 for case
