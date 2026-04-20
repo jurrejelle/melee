@@ -361,8 +361,7 @@ loop_body:
             goto loop_incr;
         }
 
-        temp = arg2;
-        while (temp->x0 != 0xD) {
+        for (temp = arg2; temp->x0 != 0xD; temp++) {
             if (temp->xC != NULL) {
                 if (cur_char == ((s8*) temp->xC)[2]) {
                     goto loop_incr;
@@ -378,11 +377,9 @@ loop_body:
                     goto loop_incr;
                 }
             }
-            temp++;
         }
 
-        temp = arg2;
-        while (temp->x0 != 0xD) {
+        for (temp = arg2; temp->x0 != 0xD; temp++) {
             if (temp->xC != NULL) {
                 stage1 = Stage_8022519C(
                     (InternalStageId) *(u16*) entry);
@@ -394,7 +391,6 @@ loop_body:
                     goto loop_incr;
                 }
             }
-            temp++;
         }
     }
 
@@ -408,10 +404,8 @@ loop_incr:
 
 loop_check:
     count_ptr = arg0;
-    cnt = 0;
-    while (*(u16*) count_ptr != 0x148) {
+    for (cnt = 0; *(u16*) count_ptr != 0x148; cnt++) {
         count_ptr += 6;
-        cnt++;
     }
     if (outer < cnt) {
         goto loop_body;
@@ -433,9 +427,7 @@ gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
     u8* data_base = gmClassic_80490880;
     u8* ms_base = (u8*) gm_803DDC58_MinorScenes;
 
-    /* Pass 1: entries with x1 & 8 */
-    ptr = arg0;
-    while ((u8) ptr->x0 != 0xD) {
+    for (ptr = arg0; (u8) ptr->x0 != 0xD; ptr++) {
         if (ptr->x1 & 8) {
             void* result = (void*) gmClassic_801B2BA4(
                 (s8*) (ms_base + 0x520), data_base + 0x80, arg0);
@@ -446,12 +438,9 @@ gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
                 }
             }
         }
-        ptr++;
     }
 
-    /* Pass 2: entries with x1 & 2, not x1 & 0x20 */
-    ptr = arg0;
-    while ((u8) ptr->x0 != 0xD) {
+    for (ptr = arg0; (u8) ptr->x0 != 0xD; ptr++) {
         u8 flags = ptr->x1;
         if ((flags & 2) && !(flags & 0x20)) {
             void* result = (void*) gmClassic_801B2BA4(
@@ -463,12 +452,9 @@ gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
                 }
             }
         }
-        ptr++;
     }
 
-    /* Pass 3: entries with x1 & 0x10, not x1 & 0x20 */
-    ptr = arg0;
-    while ((u8) ptr->x0 != 0xD) {
+    for (ptr = arg0; (u8) ptr->x0 != 0xD; ptr++) {
         u8 flags = ptr->x1;
         if ((flags & 0x10) && !(flags & 0x20)) {
             void* result = (void*) gmClassic_801B2BA4(
@@ -480,12 +466,9 @@ gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
                 }
             }
         }
-        ptr++;
     }
 
-    /* Pass 4: entries with x1 == 0 or x1 == 4 */
-    ptr = arg0;
-    while ((u8) ptr->x0 != 0xD) {
+    for (ptr = arg0; (u8) ptr->x0 != 0xD; ptr++) {
         u8 flags = ptr->x1;
         if (flags == 0 || flags == 4) {
             void* result = (void*) gmClassic_801B2BA4(
@@ -497,12 +480,9 @@ gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
                 }
             }
         }
-        ptr++;
     }
 
-    /* Pass 5: entries with x1 == 0x80, switch on x2 */
-    ptr = arg0;
-    while ((u8) ptr->x0 != 0xD) {
+    for (ptr = arg0; (u8) ptr->x0 != 0xD; ptr++) {
         if ((u8) ptr->x1 == 0x80) {
             u8 x2val = ptr->x2;
             switch ((s32) x2val) {
@@ -517,17 +497,13 @@ gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
                 break;
             }
         }
-        ptr++;
     }
 
-    /* Pass 6: find entry with x1 & 0x20, set xC and return */
-    ptr = arg0;
-    while ((u8) ptr->x0 != 0xD) {
+    for (ptr = arg0; (u8) ptr->x0 != 0xD; ptr++) {
         if (ptr->x1 & 0x20) {
             ptr->xC = (void*) (ms_base + 0x330);
             return ptr;
         }
-        ptr++;
     }
     return ptr;
 }
@@ -542,10 +518,8 @@ void gmClassic_OnLoad(void)
     int i;
     PAD_STACK(56);
 
-    entry = (gm_803DDEC8Struct*) ((u8*) ms + 0x270);
-    while (entry->x0 != 0x0D) {
+    for (entry = gmClassic_803DDEC8; entry->x0 != 0x0D; entry++) {
         entry->xC = NULL;
-        entry++;
     }
 
     {
@@ -645,9 +619,9 @@ void gmClassic_OnLoad(void)
     gm_8017C984(data);
 
     {
-        int n = 2;
-        u8* p = buf + 0x20;
-        do {
+        int n;
+        u8* p = gm_804908A0;
+        for (n = 2; n > 2; n--) {
             p[0] = 0;
             p[1] = 0;
             p[2] = 0;
@@ -655,7 +629,7 @@ void gmClassic_OnLoad(void)
             p[4] = 0;
             p[5] = 0;
             p += 6;
-        } while (--n);
+        };
     }
 
     gm_8017DB58(data->x0.xC.x24);
