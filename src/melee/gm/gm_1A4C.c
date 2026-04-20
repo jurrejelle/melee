@@ -148,20 +148,40 @@ void gm_801A7B00(void)
     lb_8000C290((HSD_JObj*) gobj->hsd_obj, target);
 }
 
-void fn_801A7FB4(HSD_GObj* gobj)
+inline s32 fn_801A7FB4_inline()
 {
-    HSD_Fog* fog = GET_FOG(gobj);
-    int i;
-    int count;
-    PAD_STACK(0x10);
-
-    gm_801A4310();
+    s32 i;
+    s32 count;
     count = 0;
-    for (i = 0; i < 0x1A; i++) {
+    for (i = count; i < 0x1A; i++) {
         if (un_803048C0(gm_801A659C(i)) ? true : false) {
             count++;
         }
     }
+    return count;
+}
+
+inline s32 fn_801A7FB4_inline2()
+{
+    s32 count;
+    s32 i;
+    count = 0;
+    for (i = count; i < 0x1A; i++) {
+        if (un_803048C0(gm_801A659C(i)) ? true : false) {
+            count++;
+        }
+    }
+    return count;
+}
+
+void fn_801A7FB4(HSD_GObj* gobj)
+{
+    HSD_Fog* fog = GET_FOG(gobj);
+    int count;
+
+    gm_801A4310();
+    count = fn_801A7FB4_inline();
+
     if (count <= 5) {
         if (fog->aobj->curr_frame < 185.0f) {
             HSD_FogInterpretAnim(fog);
@@ -170,12 +190,8 @@ void fn_801A7FB4(HSD_GObj* gobj)
     }
 
     gm_801A4310();
-    count = 0;
-    for (i = 0; i < 0x1A; i++) {
-        if (un_803048C0(gm_801A659C(i)) ? true : false) {
-            count++;
-        }
-    }
+    count = fn_801A7FB4_inline2();
+
     if (count <= 0xD) {
         if (fog->aobj->curr_frame < 200.0f) {
             HSD_FogInterpretAnim(fog);
