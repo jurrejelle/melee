@@ -1,0 +1,24 @@
+File: src/melee/gr/grbigblue.c
+Funcs:
+- [x] grBigBlue_801E59F8
+- [ ] grBigBlue_801E8A1C
+- [ ] grBigBlue_801E8B84
+- [ ] fn_801EF60C
+- [ ] grBigBlue_801E8794
+- [ ] grBigBlue_801EF424
+- [ ] fn_801E8560
+- [ ] grBigBlue_801EACE8
+- [ ] grBigBlue_801EDF44
+- [ ] grBigBlue_801EC6C0
+- [ ] grBigBlue_801EB004
+- [ ] grBigBlue_801E6364
+- [ ] grBigBlue_801EEF00
+- [ ] grBigBlue_801EB4AC
+- [ ] grBigBlue_801E8D64
+- [ ] grBigBlue_801ED694
+- [ ] grBigBlue_801EBAF8
+- [ ] grBigBlue_801EA05C
+- [ ] grBigBlue_801ECB50
+- [ ] grBigBlue_801E93D8
+- [ ] grBigBlue_801EE398
+- [ ] grBigBlue_801E6C60
