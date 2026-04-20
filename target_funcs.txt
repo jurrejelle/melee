@@ -9,7 +9,7 @@ Funcs:
 - [x] fn_801E8560
 - [x] grBigBlue_801EACE8
 - [x] grBigBlue_801EDF44
-- [ ] grBigBlue_801EC6C0
+- [x] grBigBlue_801EC6C0
 - [ ] grBigBlue_801EB004
 - [ ] grBigBlue_801E6364
 - [ ] grBigBlue_801EEF00
