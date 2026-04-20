@@ -59,8 +59,6 @@ void fn_801A7A8C(HSD_GObj* gobj)
     }
 }
 
-/// #gm_801A7B00
-
 void gm_801A7B00(void)
 {
     HSD_GObj* gobj;
@@ -233,8 +231,6 @@ void fn_801A851C(HSD_GObj* gobj)
     }
 }
 
-/// #gm_801A85E4
-
 #include <MSL/math.h>
 
 void gm_801A85E4(HSD_JObj* jobj, s32 arg1, s32 arg2)
@@ -356,8 +352,6 @@ void gm_801A8D54(s32* arg0)
     }
 }
 
-/// #gm_801A9094
-
 void gm_801A9094(void)
 {
     s32 sp8C[0x1A];
@@ -462,8 +456,6 @@ void fn_801A94BC(HSD_GObj* gobj)
         }
     }
 }
-
-/// #gm_801A9630
 
 static HSD_GObj* gm_804D67B8;
 static HSD_GObj* gm_804D67BC;
