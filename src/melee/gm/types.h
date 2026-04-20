@@ -742,7 +742,7 @@ struct UnkAllstarData {
     /* +48*/ UNK_T x48;
     /* +4C*/ UNK_T x4C;
     /* +50*/ UNK_T x50;
-    /* +54*/ UNK_T x54;
+    /* +54*/ u8 (*x54)(u8, u8, u8);
     /* +58*/ u32 x58;
     /* +5C*/ u32 _5C;
     /* +60*/ u32 _60;

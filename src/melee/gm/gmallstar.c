@@ -360,48 +360,21 @@ MinorScene gm_803DE930_MinorScenes[] = {
     },
 };
 
-static gm_803DEBE8_t gm_803DEBE8[52] = {
-    { 0xB1, 0xB1, 0, 8 },
-    { 0xB2, 0xB2, 0, 1 },
-    { 0xB3, 0xB3, 0, 6 },
-    { 0xB4, 0xB4, 0, 0x10 },
-    { 0xB5, 0xB5, 0, 0x11 },
-    { 0xB6, 0xB6, 0, 4 },
-    { 0xB7, 0xB7, 0, 2 },
-    { 0xB8, 0xB8, 0, 0xD },
-    { 0xB9, 0xB9, 0, 7 },
-    { 0xBA, 0xBA, 0, 0 },
-    { 0xBB, 0xBB, 0, 0xB },
-    { 0xBC, 0xBC, 0, 0xF },
-    { 0xBD, 0xBD, 0, 0xE },
-    { 0xBE, 0xBE, 0, 0xC },
-    { 0xBF, 0xBF, 0, 0x12 },
-    { 0xC0, 0xC0, 0, 9 },
-    { 0xC1, 0xC1, 0, 0xA },
-    { 0xC2, 0xC2, 0, 5 },
-    { 0xC3, 0xC3, 0, 0x16 },
-    { 0xC4, 0xC4, 0, 0x15 },
-    { 0xC5, 0xC5, 0, 0x14 },
-    { 0xC6, 0xC6, 0, 0x18 },
-    { 0xC7, 0xC7, 0, 0x17 },
-    { 0xC9, 0xC9, 0, 0x19 },
-    { 0xC8, 0xC8, 0, 3 },
-    /* round data (AllstarRoundInfo[13]) encoded as raw bytes */
-    { 0, 0, 0, 0 }, { 0, 0, 0, 1 },
-    { 0, 0, 0, 1 }, { 0, 0, 0, 1 },
-    { 0, 0, 0, 2 }, { 0, 0, 0, 1 },
-    { 0, 0, 0, 3 }, { 0, 0, 0, 1 },
-    { 0, 0, 0, 4 }, { 0, 0, 0, 2 },
-    { 0, 0, 0, 6 }, { 0, 0, 0, 2 },
-    { 0, 0, 0, 8 }, { 0, 0, 0, 2 },
-    { 0, 0, 0, 10 }, { 0, 0, 0, 2 },
-    { 0, 0, 0, 12 }, { 0, 0, 0, 3 },
-    { 0, 0, 0, 15 }, { 0, 0, 0, 3 },
-    { 0, 0, 0, 18 }, { 0, 0, 0, 3 },
-    { 0, 0, 0, 21 }, { 0, 0, 0, 3 },
-    { 0, 0, 0, 24 }, { 0, 0, 0, 1 },
-    /* trailing pad */
-    { 0, 0, 0, 0 },
+static gm_803DEBE8_t gm_803DEBE8[25] = {
+    { 0xB1, 0xB1, 0, 8 },    { 0xB2, 0xB2, 0, 1 },    { 0xB3, 0xB3, 0, 6 },
+    { 0xB4, 0xB4, 0, 0x10 }, { 0xB5, 0xB5, 0, 0x11 }, { 0xB6, 0xB6, 0, 4 },
+    { 0xB7, 0xB7, 0, 2 },    { 0xB8, 0xB8, 0, 0xD },  { 0xB9, 0xB9, 0, 7 },
+    { 0xBA, 0xBA, 0, 0 },    { 0xBB, 0xBB, 0, 0xB },  { 0xBC, 0xBC, 0, 0xF },
+    { 0xBD, 0xBD, 0, 0xE },  { 0xBE, 0xBE, 0, 0xC },  { 0xBF, 0xBF, 0, 0x12 },
+    { 0xC0, 0xC0, 0, 9 },    { 0xC1, 0xC1, 0, 0xA },  { 0xC2, 0xC2, 0, 5 },
+    { 0xC3, 0xC3, 0, 0x16 }, { 0xC4, 0xC4, 0, 0x15 }, { 0xC5, 0xC5, 0, 0x14 },
+    { 0xC6, 0xC6, 0, 0x18 }, { 0xC7, 0xC7, 0, 0x17 }, { 0xC9, 0xC9, 0, 0x19 },
+    { 0xC8, 0xC8, 0, 3 }
+};
+
+static AllstarRoundInfo gm_803DEC4C[26] = {
+    { 0, 1 },  { 1, 1 },  { 2, 1 },  { 3, 1 },  { 4, 2 },  { 6, 2 },  { 8, 2 },
+    { 10, 2 }, { 12, 3 }, { 15, 3 }, { 18, 3 }, { 21, 3 }, { 24, 1 },
 };
 
 gm_80490940_t gm_80490940[5];
@@ -415,7 +388,7 @@ void gm_801B5324(UnkAllstarData* arg0, u8 arg1)
     s32 is_last_round;
     s32 count_processed;
     s32 count;
-    u8* gc;
+    struct PreloadCacheScene* gc;
     s32 slot_idx;
     u64 audio;
     s32 i;
@@ -426,9 +399,9 @@ void gm_801B5324(UnkAllstarData* arg0, u8 arg1)
     count_processed = 0;
 
     {
-        u32 start = *(u32*)(base + arg1 * 8 + 0x31C);
-        opp_data = (gm_803DEBE8_t*)(base + start * 4 + 0x2B8);
-        count = *(s32*)(base + arg1 * 8 + 0x320);
+        u32 start = gm_803DEC4C[arg1].start;
+        opp_data = &gm_803DEBE8[start * 4];
+        count = gm_80490940[arg1].x0;
     }
 
     chars[0] = 0x21;
@@ -458,7 +431,7 @@ void gm_801B5324(UnkAllstarData* arg0, u8 arg1)
         }
 
         {
-            s32 total = *(s32*)(base + arg1 * 8 + 0x320);
+            s32 total = gm_80490940[arg1].x0;
             gm_803DEBE8_t* src2 = &opp_data[count_processed];
             s8* dst2 = &chars[count_processed];
             s32 remaining = total - count_processed;
@@ -475,13 +448,9 @@ void gm_801B5324(UnkAllstarData* arg0, u8 arg1)
 
     {
         u8* cp = colors;
-        i = 0;
-        do {
-            *cp = ((u8 (*)(u8, u8, u8)) arg0->x54)(arg1,
-                         arg0->x0.cpu_level, (u8) i);
-            i++;
-            cp++;
-        } while (i < 3);
+        for (i = 0; i < 3; i++) {
+            cp[i] = arg0->x54(arg1, arg0->x0.cpu_level, (u8) i);
+        }
     }
 
     gmRegSetupEnemyColorTable(arg0->x0.ckind, arg0->x0.color, chars, colors);
@@ -496,33 +465,31 @@ void gm_801B5324(UnkAllstarData* arg0, u8 arg1)
         colors[2] = 0;
     }
 
-    gc = (u8*) &lbDvd_8001822C()->game_cache;
+    gc = lbDvd_8001822C();
     slot_idx = 1;
     lbDvd_80018C6C();
-    *(s32*)(gc + 8) = (s32)(s8) arg0->x0.ckind;
-    *(u8*)(gc + 0xC) = arg0->x0.color;
+    gc->game_cache.entries[0].char_id = (s32) (s8) arg0->x0.ckind;
+    gc->game_cache.entries[0].color = arg0->x0.color;
     lbDvd_80018254();
     lbDvd_80018C2C(0xC7);
     lbDvd_80017700(4);
 
     {
-        u8* slot = gc + slot_idx * 8;
+        PreloadCacheSceneEntry* slot = &gc->game_cache.entries[slot_idx];
         u8 fill = 0xFF;
         s8* cp = chars;
         u8* pp = colors;
 
         for (i = 0; i < 3; i++) {
             if ((s8) *cp != 0x21) {
-                *(s32*)(slot + 8) = (s32)(s8) *cp;
+                slot->char_id = cp[i];
                 if (is_last_round != 0) {
-                    *(u8*)(slot + 0xC) = fill;
+                    (slot + 1)->color = fill;
                 } else {
-                    *(u8*)(slot + 0xC) = *pp;
+                    (slot + 1)->color = pp[i];
                 }
-                slot += 8;
+                slot += 1;
             }
-            cp++;
-            pp++;
         }
     }
 
@@ -532,12 +499,9 @@ void gm_801B5324(UnkAllstarData* arg0, u8 arg1)
     audio = lbAudioAx_80026E84((CharacterKind)(s8) arg0->x0.ckind);
     {
         s8* cp = chars;
-        i = 0;
-        do {
-            audio |= lbAudioAx_80026E84((CharacterKind)(s8) *cp);
-            i++;
-            cp++;
-        } while (i < 3);
+        for (i = 0; i < 3; i++) {
+            audio |= lbAudioAx_80026E84(cp[i]);
+        }
     }
 
     audio |= lbAudioAx_80026EBC((InternalStageId) opp_data->x2);
@@ -566,9 +530,9 @@ void gm_801B5624(MinorScene* arg0)
     count_processed = 0;
 
     {
-        u32 start = *(u32*)(base + round * 8 + 0x31C);
-        opp_data = (gm_803DEBE8_t*)(base + start * 4 + 0x2B8);
-        count = *(s32*)(base + round * 8 + 0x320);
+        u32 start = gm_803DEC4C[round].start;
+        opp_data = &gm_803DEBE8[start];
+        count = gm_80490940[opp_data->x0].x0;
     }
 
     chars[0] = 0x21;
@@ -598,7 +562,7 @@ void gm_801B5624(MinorScene* arg0)
         }
 
         {
-            s32 total = *(s32*)(base + round * 8 + 0x320);
+            s32 total = gm_80490940[round].x0;
             gm_803DEBE8_t* src2 = &opp_data[count_processed];
             s8* dst2 = &chars[count_processed];
             s32 remaining = total - count_processed;
@@ -618,9 +582,9 @@ void gm_801B5624(MinorScene* arg0)
 
     round = gm_8017BE84(arg0->idx);
     {
-        u32 s = ((AllstarRoundInfo*)(base + 0x31C))[round].start;
-        u32 opp_idx = ((u32)((u8*)&((gm_803DEBE8_t*)(base))[s] + 0x2B8) - (u32)(base + 0x2B8)) / sizeof(gm_803DEBE8_t);
-        color = ((u8*) gm_80490940)[opp_idx];
+        u32 s = gm_803DEC4C[round].start;
+        u32 opp_idx = gm_803DEBE8[s].x0;
+        color = gm_80490940[opp_idx].x0;
     }
 
     round = gm_8017BE84(arg0->idx);
@@ -674,16 +638,15 @@ void gm_801B59AC(MinorScene* arg0)
     s32 result = exit->x8;
     UnkAllstarData* data = &gm_80473A18;
     u16 round = gm_8017BE84(idx);
-    u32 opp_start = ((AllstarRoundInfo*)(base + 0x31C))[round].start;
-    u32 opp_idx = ((u32)((u8*)&((gm_803DEBE8_t*)base)[opp_start] + 0x2B8) - (u32)(base + 0x2B8)) / sizeof(gm_803DEBE8_t);
+    u32 opp_start = gm_803DEC4C[round].start;
+    u32 opp_idx = gm_803DEBE8[opp_start].x0;
 
     if (result != 0) {
-        ((u8*) gm_80490940)[opp_idx] = 2;
+        (gm_80490940)[opp_idx].x0 = 2;
     } else {
-        ((u8*) gm_80490940)[opp_idx] = 1;
+        (gm_80490940)[opp_idx].x0 = 1;
     }
     data->x74 = exit->match_end.player_standings[0].percent;
-    exit->match_end.frame_count;
     data->x9C += exit->match_end.frame_count;
     if (gm_8017D7AC(exit, &data->x0, 0x69) != 0 &&
         (u8) arg0->idx == 0x60)
@@ -697,7 +660,6 @@ void fn_801B5AA8(int arg0)
     lbBgFlash_8002063C(0x78);
 }
 
-/// #gm_801B5ACC
 void gm_801B5ACC(MinorScene* arg0)
 {
     s8 chars[3];
@@ -720,10 +682,9 @@ void gm_801B5ACC(MinorScene* arg0)
 
     round = gm_8017BE84(arg0->idx);
     {
-        u32 s = ((AllstarRoundInfo*)(base + 0x31C))[round].start;
-        u32 opp_idx = ((u32)((u8*)&((gm_803DEBE8_t*)(base))[s] + 0x2B8) -
-                       (u32)(base + 0x2B8)) / sizeof(gm_803DEBE8_t);
-        color = ((u8*) gm_80490940)[opp_idx];
+        u32 s = gm_803DEC4C[round].start;
+        u32 opp_idx = gm_803DEBE8[s].x0;
+        color = gm_80490940[opp_idx].x0;
     }
 
     gm_8017CE34(data, (UnkAdventureData*) allstar, chars, 0, 0, 0, 0,
@@ -740,29 +701,26 @@ void gm_801B5ACC(MinorScene* arg0)
     data->rules.x7 = 9;
 
     round = gm_8017BE84(arg0->idx);
-    i = 0;
+
     {
-        AllstarRoundInfo* ri = &((AllstarRoundInfo*)(base + 0x31C))[round];
-        while (i < (s32) ri->count) {
+        AllstarRoundInfo* ri = &gm_803DEC4C[round];
+        for (i = 0; i < (s32) ri->count; i++) {
             s32 slot;
             do {
                 slot = HSD_Randi(0x1A);
             } while ((s32) allstar->x76[slot] != 0x21);
-            allstar->x76[slot] =
-                ((gm_803DEBE8_t*)(base + 0x2B8))[ri->start + i].x3;
-            i++;
+            allstar->x76[slot] = gm_803DEBE8[ri->start + i].x3;
         }
     }
 
     {
-        AllstarRoundInfo* ri2 = &((AllstarRoundInfo*)(base + 0x31C))[round];
+        AllstarRoundInfo* ri2 = &gm_803DEC4C[round];
         s32 next_start;
 
         next_count = (s32) ri2[1].count;
         next_start = (s32) ri2[1].start;
         for (i = 0; i < next_count; i++) {
-            allstar->_94[2 + i] =
-                ((gm_803DEBE8_t*)(base + 0x2B8))[next_start + i].x3;
+            allstar->_94[2 + i] = gm_803DEBE8[next_start + i].x3;
         }
     }
 
@@ -776,10 +734,8 @@ void gm_801B5ACC(MinorScene* arg0)
     gm_8016A92C(&data->rules);
 
     {
-        s32 end_idx = (s32)
-            ((AllstarRoundInfo*)(base + 0x31C))[round + 1].start;
-        gm_803DEBE8_t* opp =
-            &((gm_803DEBE8_t*)(base + 0x2B8))[end_idx];
+        s32 end_idx = (s32) gm_803DEC4C[round + 1].start;
+        gm_803DEBE8_t* opp = &gm_803DEBE8[end_idx];
         while (end_idx < 0x19) {
             gm_8016A998((s8) opp->x3, 0);
             opp++;
@@ -873,9 +829,9 @@ void gm_801B60A4_OnLoad(void)
     {
         gm_80490940_t* p = gm_80490940;
         char* pp = (char*) p;
-        int i = 25;
-        while (i--) {
-            *(pp++) = 0;
+        int i;
+        for (i = 25; i > 0; i--) {
+            pp[i] = 0;
         }
     }
 
