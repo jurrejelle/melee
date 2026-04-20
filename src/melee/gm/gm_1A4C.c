@@ -197,7 +197,6 @@ void fn_801A80F0(HSD_GObj* gobj)
     HSD_JObjAnimAll(GET_JOBJ(gobj));
 }
 
-#pragma dont_inline on
 void gm_801A8114(HSD_JObj* arg0, int arg1)
 {
     HSD_JObj* transJobj;
@@ -224,7 +223,6 @@ void gm_801A8114(HSD_JObj* arg0, int arg1)
     HSD_JObjSetScaleY(transJobj, scale);
     HSD_JObjSetScaleZ(transJobj, scale);
 }
-#pragma dont_inline reset
 
 void fn_801A851C(HSD_GObj* gobj)
 {
