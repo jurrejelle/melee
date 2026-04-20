@@ -16,9 +16,9 @@ Funcs:
 - [x] grBigBlue_801EB4AC
 - [x] grBigBlue_801E8D64
 - [x] grBigBlue_801ED694
-- [ ] grBigBlue_801EBAF8
-- [ ] grBigBlue_801EA05C
-- [ ] grBigBlue_801ECB50
-- [ ] grBigBlue_801E93D8
-- [ ] grBigBlue_801EE398
-- [ ] grBigBlue_801E6C60
+- [x] grBigBlue_801EBAF8
+- [x] grBigBlue_801EA05C
+- [x] grBigBlue_801ECB50
+- [x] grBigBlue_801E93D8
+- [x] grBigBlue_801EE398
+- [x] grBigBlue_801E6C60
