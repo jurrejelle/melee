@@ -2,7 +2,7 @@ File: src/melee/gr/grbigblue.c
 Funcs:
 - [x] grBigBlue_801E59F8
 - [x] grBigBlue_801E8A1C
-- [ ] grBigBlue_801E8B84
+- [x] grBigBlue_801E8B84
 - [ ] fn_801EF60C
 - [ ] grBigBlue_801E8794
 - [ ] grBigBlue_801EF424
