@@ -50,13 +50,13 @@ extern s32 lbl_804D663C;
 
 struct lbl_803DA2E0_t {
     u8 x0[0x20];
-    f32 x20[(0xc4 - 0x20) / 4];
+    f32 x20[0x29];
 };
 extern struct lbl_803DA2E0_t lbl_803DA2E0;
 
 extern MatchEnd gm_80477738;
 extern s32 lbl_803B7D3C[4];
-extern s32 lbl_804DA948;
+extern u8* lbl_804DA948;
 s32 fn_80166CBC(void*, ssize_t);
 
 static inline TmData* GetTmData(void)
@@ -801,7 +801,6 @@ void gm_8019DF8C_OnFrame(void)
         return;
     }
 
-    /* Count confirmed players */
     confirmed = 0;
     for (i = 0; i < (s32) tmd->x30; i++) {
         if (lbl_80479A58.x1D[i].x0 == 2 &&
@@ -813,7 +812,6 @@ void gm_8019DF8C_OnFrame(void)
     }
 
     if (confirmed == (s32) tmd->x30) {
-        /* All confirmed: increment timer */
         lbl_80479A58.x0 += 1;
         if ((u32) lbl_80479A58.x0 >= 0x1EU) {
             for (j = 0; j < (s32) tmd->x2E; j++) {
@@ -822,7 +820,6 @@ void gm_8019DF8C_OnFrame(void)
             fn_801965C4();
         }
     } else {
-        /* Not all confirmed: per-player input handling */
         lbl_80479A58.x0 = 0;
 
         for (i = 0; i < (s32) tmd->x30; i++) {
@@ -843,130 +840,133 @@ void gm_8019DF8C_OnFrame(void)
                 }
                 lbl_80479A58.x18[i] = 0;
 
-            check_confirm:
-                /* Character/color navigation (only when not confirmed/selected) */
-                {
-                    u8 status = lbl_80479A58.x1D[i].x0;
-                    if (status != 2 && status != 1) {
-                        /* L+R auto-confirm */
-                        if ((fn_8018F6A8(i) & 0x40) && (fn_8018F6A8(i) & 0x20)) {
+            check_confirm: {
+                u8 status = lbl_80479A58.x1D[i].x0;
+                if (status != 2 && status != 1) {
+                    if ((fn_8018F6A8(i) & 0x40) && (fn_8018F6A8(i) & 0x20)) {
+                        TmData* p = gm_8018F634();
+                        for (j = 0; j < (s32) p->x2E; j++) {
+                            if (i != (s32) p->x37[j].xE)
+                                continue;
+                            goto lr_found;
+                        }
+                        j = 0;
+                    lr_found:
+                        tmd->x37[j].x5 = 1;
+                        tmd->x4B8[i].x2 = 1;
+                    }
+
+                    if (pressed & 0x40001) {
+                        u8 chr;
+                        lbAudioAx_80024030(2);
+
+                        {
                             TmData* p = gm_8018F634();
                             for (j = 0; j < (s32) p->x2E; j++) {
-                                if (i != (s32) p->x37[j].xE) continue;
-                                goto lr_found;
+                                if (i != (s32) p->x37[j].xE)
+                                    continue;
+                                goto left_found1;
                             }
                             j = 0;
-                        lr_found:
-                            *(u8*)((u8*) tmd + j * 0x12 + 0x3C) = 1;
-                            tmd->x4B8[i].x2 = 1;
+                        left_found1:;
                         }
 
-                        /* Left D-pad: browse character left */
-                        if (pressed & 0x40001) {
-                            u8 chr;
-                            lbAudioAx_80024030(2);
+                        tmd->x37[j].x5 = 0;
+                        tmd->x4B8[i].x2 = 0;
 
-                            {
-                                TmData* p = gm_8018F634();
-                                for (j = 0; j < (s32) p->x2E; j++) {
-                                    if (i != (s32) p->x37[j].xE) continue;
-                                    goto left_found1;
-                                }
-                                j = 0;
-                            left_found1:;
+                        chr = tmd->x4B8[i].x1;
+                        do {
+                            if (chr != 0) {
+                                chr -= 1;
+                            } else {
+                                chr = fn_8018F6DC(0x19);
                             }
+                        } while (gm_80164840(fn_8018F6FC((CSSIconHud) chr)) ==
+                                 0);
+                        tmd->x4B8[i].x1 = chr;
 
-                            *(u8*)((u8*) tmd + j * 0x12 + 0x3C) = 0;
-                            tmd->x4B8[i].x2 = 0;
-
-                            chr = tmd->x4B8[i].x1;
-                            do {
-                                if (chr != 0) {
-                                    chr -= 1;
-                                } else {
-                                    chr = fn_8018F6DC(0x19);
-                                }
-                            } while (gm_80164840(fn_8018F6FC((CSSIconHud) chr)) == 0);
-                            tmd->x4B8[i].x1 = chr;
-
-                            {
-                                TmData* p = gm_8018F634();
-                                for (j = 0; j < (s32) p->x2E; j++) {
-                                    if (i != (s32) p->x37[j].xE) continue;
-                                    goto left_found2;
-                                }
-                                j = 0;
-                            left_found2:;
+                        {
+                            TmData* p = gm_8018F634();
+                            for (j = 0; j < (s32) p->x2E; j++) {
+                                if (i != (s32) p->x37[j].xE)
+                                    continue;
+                                goto left_found2;
                             }
-                            *(u8*)((u8*) tmd + j * 0x12 + 0x3A) = tmd->x4B8[i].x1;
-
-                            {
-                                TmData* p = gm_8018F634();
-                                for (j = 0; j < (s32) p->x2E; j++) {
-                                    if (i != (s32) p->x37[j].xE) continue;
-                                    goto left_found3;
-                                }
-                                j = 0;
-                            left_found3:;
-                            }
-                            tmd->x4B8[i].x3 = 0;
-                            *(u8*)((u8*) tmd + j * 0x12 + 0x3E) = 0;
-
-                        } else if (pressed & 0x80002) {
-                            /* Right D-pad: browse character right */
-                            u8 chr;
-                            lbAudioAx_80024030(2);
-
-                            {
-                                TmData* p = gm_8018F634();
-                                for (j = 0; j < (s32) p->x2E; j++) {
-                                    if (i != (s32) p->x37[j].xE) continue;
-                                    goto right_found1;
-                                }
-                                j = 0;
-                            right_found1:;
-                            }
-
-                            *(u8*)((u8*) tmd + j * 0x12 + 0x3C) = 0;
-                            tmd->x4B8[i].x2 = 0;
-
-                            chr = tmd->x4B8[i].x1;
-                            do {
-                                if ((s32) chr < fn_8018F6DC(0x19)) {
-                                    chr += 1;
-                                } else {
-                                    chr = fn_8018F6DC(0);
-                                }
-                            } while (gm_80164840(fn_8018F6FC((CSSIconHud) chr)) == 0);
-                            tmd->x4B8[i].x1 = chr;
-
-                            {
-                                TmData* p = gm_8018F634();
-                                for (j = 0; j < (s32) p->x2E; j++) {
-                                    if (i != (s32) p->x37[j].xE) continue;
-                                    goto right_found2;
-                                }
-                                j = 0;
-                            right_found2:;
-                            }
-                            *(u8*)((u8*) tmd + j * 0x12 + 0x3A) = tmd->x4B8[i].x1;
-
-                            {
-                                TmData* p = gm_8018F634();
-                                for (j = 0; j < (s32) p->x2E; j++) {
-                                    if (i != (s32) p->x37[j].xE) continue;
-                                    goto right_found3;
-                                }
-                                j = 0;
-                            right_found3:;
-                            }
-                            tmd->x4B8[i].x3 = 0;
-                            *(u8*)((u8*) tmd + j * 0x12 + 0x3E) = 0;
+                            j = 0;
+                        left_found2:;
                         }
+                        tmd->x37[j].x3 = tmd->x4B8[i].x1;
+
+                        {
+                            TmData* p = gm_8018F634();
+                            for (j = 0; j < (s32) p->x2E; j++) {
+                                if (i != (s32) p->x37[j].xE)
+                                    continue;
+                                goto left_found3;
+                            }
+                            j = 0;
+                        left_found3:;
+                        }
+                        tmd->x4B8[i].x3 = 0;
+                        tmd->x37[j].x7 = 0;
+
+                    } else if (pressed & 0x80002) {
+                        u8 chr;
+                        lbAudioAx_80024030(2);
+
+                        {
+                            TmData* p = gm_8018F634();
+                            for (j = 0; j < (s32) p->x2E; j++) {
+                                if (i != (s32) p->x37[j].xE)
+                                    continue;
+                                goto right_found1;
+                            }
+                            j = 0;
+                        right_found1:;
+                        }
+
+                        tmd->x37[j].x5 = 0;
+                        tmd->x4B8[i].x2 = 0;
+
+                        chr = tmd->x4B8[i].x1;
+                        do {
+                            if ((s32) chr < fn_8018F6DC(0x19)) {
+                                chr += 1;
+                            } else {
+                                chr = fn_8018F6DC(0);
+                            }
+                        } while (gm_80164840(fn_8018F6FC((CSSIconHud) chr)) ==
+                                 0);
+                        tmd->x4B8[i].x1 = chr;
+
+                        {
+                            TmData* p = gm_8018F634();
+                            for (j = 0; j < (s32) p->x2E; j++) {
+                                if (i != (s32) p->x37[j].xE)
+                                    continue;
+                                goto right_found2;
+                            }
+                            j = 0;
+                        right_found2:;
+                        }
+                        tmd->x37[j].x3 = tmd->x4B8[i].x1;
+
+                        {
+                            TmData* p = gm_8018F634();
+                            for (j = 0; j < (s32) p->x2E; j++) {
+                                if (i != (s32) p->x37[j].xE)
+                                    continue;
+                                goto right_found3;
+                            }
+                            j = 0;
+                        right_found3:;
+                        }
+                        tmd->x4B8[i].x3 = 0;
+                        tmd->x37[j].x7 = 0;
                     }
                 }
+            }
 
-                /* A/Start: confirm selection */
                 if (buttons & 0x1100) {
                     if ((u8) lbl_80479A58.x1D[i].x0 != 2) {
                         u16 char_id;
@@ -980,13 +980,11 @@ void gm_8019DF8C_OnFrame(void)
                         }
                     }
                 } else if (buttons & 0x200) {
-                    /* B: cancel */
                     if ((u8) lbl_80479A58.x1D[i].x0 == 2) {
                         lbAudioAx_80024030(0);
                         lbl_80479A58.x1D[i].x0 = 3;
                     }
                 } else {
-                    /* D-pad up/down: color selection */
                     u8 color_status = lbl_80479A58.x1D[i].x0;
                     if (color_status != 2 && color_status != 1) {
                         if (buttons & 0x400) {
@@ -1004,7 +1002,7 @@ void gm_8019DF8C_OnFrame(void)
                                 j = 0;
                             down_found:;
                             }
-                            *(u8*)((u8*) tmd + j * 0x12 + 0x3E) = tmd->x4B8[i].x3;
+                            tmd->x37[j].x7 = tmd->x4B8[i].x3;
 
                         } else if (buttons & 0x800) {
                             /* Up: decrement color */
@@ -1022,14 +1020,13 @@ void gm_8019DF8C_OnFrame(void)
                                 j = 0;
                             up_found:;
                             }
-                            *(u8*)((u8*) tmd + j * 0x12 + 0x3E) = tmd->x4B8[i].x3;
+                            tmd->x37[j].x7 = tmd->x4B8[i].x3;
                         }
                     }
                 }
             }
         }
 
-        /* Build TmVsData and transition */
         {
             s32 stage;
             if (fn_80196564(tmd) != 0) {
@@ -1052,7 +1049,7 @@ void gm_8019E634(void)
 {
     s32 indices[4];
     s32 results[4];
-    s32 hbuf_init;
+    u8* hbuf_init;
     TmData* tmd;
     s32 hmn_cpu;
     s32 i, j;
@@ -1090,11 +1087,10 @@ void gm_8019E634(void)
         u8* hbuf;
 
         hbuf_init = lbl_804DA948;
-        hbuf = (u8*) &hbuf_init;
+        hbuf = hbuf_init;
 
         /* Read handicap from x37 entries */
-        i = 0;
-        do {
+        for (i = 0; i < 4; i++) {
             if (i < (s32) tmd->x30) {
                 s32 id = results[i];
                 TmData* p = gm_8018F634();
@@ -1106,14 +1102,12 @@ void gm_8019E634(void)
             found1:
                 hbuf[i] = (u8) tmd->x37[j].x2;
             }
-            i++;
-        } while (i < 4);
+        }
 
         fn_80169000(&gm_80477738, &hbuf_init);
 
         /* Write back adjusted handicap */
-        i = 0;
-        do {
+        for (i = 0; i < 4; i++) {
             if (i < (s32) tmd->x30) {
                 s32 id = results[i];
                 TmData* p = gm_8018F634();
@@ -1125,8 +1119,7 @@ void gm_8019E634(void)
             found2:
                 tmd->x37[j].x2 = hbuf[i];
             }
-            i++;
-        } while (i < 4);
+        }
     }
 
     /* Assign bracket positions */
