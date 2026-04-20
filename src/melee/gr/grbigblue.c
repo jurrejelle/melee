@@ -1397,7 +1397,255 @@ void grBigBlue_801EB4AC(Ground_GObj* gobj)
     mpLib_80058560();
 }
 
-/// #grBigBlue_801EBAF8
+void grBigBlue_801EBAF8(Ground_GObj* gobj)
+{
+    u8* gp = (u8*) gobj->user_data;
+    HSD_JObj* jobj = gobj->hsd_obj;
+    Vec3 bone_pos;
+    Vec3 vel;
+    Vec3 center;
+    Vec3 normal_out;
+    Vec3 target;
+    Vec3 prev;
+    f32 target_y;
+    f32 rot_z;
+    f32 angular_vel;
+    grBb_TrackEntry* entry;
+
+    center.x = 0.0F;
+    center.z = 0.0F;
+    center.y = grBb_804D69C8->x0 * Ground_801C0498();
+
+    prev = *(Vec3*) (gp + 0xC8);
+
+    entry = &grBb_TrackEntries[((*(u32*) (gp + 0xC4)) >> 15) & 0x7F];
+
+    lb_8000B1CC(Ground_801C3FA4(gobj, entry->start_index), NULL, &bone_pos);
+
+    {
+        f32 angle = *(f32*) (gp + 0xF8);
+        if (angle < 0.0F) {
+            angle = -angle;
+        }
+        if (angle < 0.17453292F &&
+            bone_pos.x < -300.0F * Ground_801C0498())
+        {
+            grBigBlue_801EB4AC(gobj);
+        }
+    }
+
+    {
+        f32 angle = *(f32*) (gp + 0xF8);
+        if (angle < 0.0F) {
+            angle = -angle;
+        }
+        if (angle < 0.17453292F) {
+            if (bone_pos.x < 0.0F) {
+                u8 byte = gp[0xC4];
+                if ((byte >> 5) & 1) {
+                    gp[0xC4] = byte & ~0x20;
+                }
+            } else {
+                u8 byte = gp[0xC4];
+                if (!((byte >> 5) & 1) &&
+                    (((*(u32*) (gp + 0xC4)) >> 15) & 0x7F) == 0xB)
+                {
+                    gp[0xC4] = byte | 0x20;
+                }
+            }
+        }
+    }
+
+    if ((((*(u32*) (gp + 0xC4)) >> 15) & 0x7F) == 0xB) {
+        u32 state = (gp[0xC7] >> 4) & 0xF;
+        if (state == 0) {
+            gp[0xC7] = (gp[0xC7] & ~0xF0) | 0x10;
+        } else if (state == 1) {
+            mpJointListAdd(0x29);
+            mpJointListAdd(0x2A);
+            mpJointListAdd(0x2B);
+            mpLib_80057BC0(0x2C);
+            mpLib_80057BC0(0x2D);
+            mpLib_80057BC0(0x2E);
+            mpLib_80057BC0(0x2F);
+            mpLib_80057BC0(0x30);
+            mpLib_80057BC0(0x30);
+            gp[0xC7] = (gp[0xC7] & ~0xF0) | 0x20;
+        } else if (state == 2) {
+            if (*(f32*) (gp + 0xF8) < -0.5235988F) {
+                mpJointListAdd(0x2C);
+                mpJointListAdd(0x2D);
+                mpJointListAdd(0x2E);
+                gp[0xC7] = (gp[0xC7] & ~0xF0) | 0x30;
+            }
+        } else if (state == 3) {
+            if (*(f32*) (gp + 0xF8) < -2.7925267F) {
+                mpLib_80057BC0(0x29);
+                mpLib_80057BC0(0x2A);
+                mpLib_80057BC0(0x2B);
+                mpJointListAdd(0x2F);
+                mpJointListAdd(0x30);
+                mpJointListAdd(0x31);
+                gp[0xC7] = (gp[0xC7] & ~0xF0) | 0x40;
+            }
+        }
+    }
+
+    if (!((gp[0xC4] >> 6) & 1)) {
+        target_y = grBigBlue_801EC58C(&center, &normal_out,
+                                      20.0F * Ground_801C0498());
+    } else {
+        target_y = grBigBlue_801EC58C(&center, &normal_out,
+                                      120.0F * Ground_801C0498());
+    }
+
+    if (target_y != grBb_804DB310 &&
+        (!((gp[0xC4] >> 6) & 1) || target_y > center.y))
+    {
+        f32 max_steer = grBb_804D69C8->x70;
+        if (target_y > max_steer) {
+            target_y = max_steer;
+        } else if (target_y < -max_steer) {
+            target_y = -max_steer;
+        }
+
+        target.x = center.x;
+        target.y = target_y;
+        target.z = center.z;
+
+        if ((((*(u32*) (gp + 0xC4)) >> 15) & 0x7F) == 0xB &&
+            ((gp[0xC4] >> 5) & 1))
+        {
+            rot_z = -atan2f(-normal_out.x, normal_out.y);
+        } else {
+            rot_z = -*(f32*) (gp + 0xF8);
+        }
+
+        gp[0xC4] &= ~0x40;
+    } else {
+        if (!((gp[0xC4] >> 6) & 1)) {
+            lbVector_Diff((Vec3*) (gp + 0xD4), (Vec3*) (gp + 0xC8),
+                          (Vec3*) (gp + 0xE0));
+            {
+                f32 speed = grBb_804D69C8->x7C * Ground_801C0498();
+                *(f32*) (gp + 0xEC) = sinf(*(f32*) (gp + 0xF8)) * speed;
+            }
+            gp[0xC4] |= 0x40;
+        }
+
+        if (target_y != grBb_804DB310) {
+            *(f32*) (gp + 0xEC) =
+                -(3.0F * (grBb_804D69C8->x78 * Ground_801C0498()) -
+                  *(f32*) (gp + 0xEC));
+        } else {
+            *(f32*) (gp + 0xEC) =
+                -(grBb_804D69C8->x78 * Ground_801C0498() -
+                  *(f32*) (gp + 0xEC));
+        }
+
+        target.x = center.x;
+        target.y = center.y + *(f32*) (gp + 0xEC);
+        target.z = center.z;
+
+        rot_z = -*(f32*) (gp + 0xF8);
+    }
+
+    angular_vel = rot_z;
+    if (rot_z > 0.0F) {
+        angular_vel = 0.0F;
+    } else {
+        f32 abs_rot = rot_z;
+        if (abs_rot < 0.0F) {
+            abs_rot = -abs_rot;
+        }
+        if (abs_rot > 0.0034906585F) {
+            angular_vel *= grBb_804D69C8->x74;
+        }
+    }
+
+    vel.x = *(f32*) (gp + 0xC8);
+    vel.y = *(f32*) (gp + 0xCC);
+    vel.z = *(f32*) (gp + 0xD0);
+    lbVector_Sub(&vel, &target);
+
+    if (angular_vel != 0.0F) {
+        f32 s = sinf(angular_vel);
+        f32 c = (f32) cosf(angular_vel);
+        f32 new_y = (f32) ((f64) vel.x * (f64) s + (f64) vel.y * (f64) c);
+        vel.x = (f32) ((f64) vel.x * (f64) c - (f64) vel.y * (f64) s);
+        vel.y = new_y;
+    }
+
+    lbVector_Add(&vel, &center);
+
+    *(f32*) (gp + 0xC8) = vel.x;
+    *(f32*) (gp + 0xCC) = vel.y;
+    *(f32*) (gp + 0xD0) = vel.z;
+
+    {
+        f32 old_rot = *(f32*) (gp + 0xF8);
+        *(f32*) (gp + 0xF8) = old_rot + angular_vel;
+        if (!((gp[0xC4] >> 5) & 1) && old_rot > 0.0F) {
+            if (*(f32*) (gp + 0xF8) <= 0.0F) {
+                *(f32*) (gp + 0xF8) = 0.0F;
+            }
+        }
+    }
+
+    {
+        f32 rot = *(f32*) (gp + 0xF8);
+        if (rot > M_PI) {
+            *(f32*) (gp + 0xF8) = (f32) ((f64) rot - M_TAU);
+        } else if (rot < -M_PI) {
+            *(f32*) (gp + 0xF8) = (f32) ((f64) rot + M_TAU);
+        }
+    }
+
+    *(f32*) (gp + 0xC8) =
+        -(grBb_804D69C8->x6C * Ground_801C0498() - *(f32*) (gp + 0xC8));
+
+    {
+        f32 lat_adj = 0.6F * (entry->delta.z / entry->delta.x) *
+                      (grBb_804D69C8->x6C * Ground_801C0498());
+
+        if (bone_pos.z > lat_adj) {
+            *(f32*) (gp + 0xD0) = *(f32*) (gp + 0xD0) - lat_adj;
+        } else if (bone_pos.z < -lat_adj) {
+            *(f32*) (gp + 0xD0) = *(f32*) (gp + 0xD0) + lat_adj;
+        } else {
+            *(f32*) (gp + 0xD0) = *(f32*) (gp + 0xD0) - bone_pos.z;
+        }
+    }
+
+    HSD_JObjSetTranslateX(jobj, *(f32*) (gp + 0xC8));
+    HSD_JObjSetTranslateY(jobj, *(f32*) (gp + 0xCC));
+    HSD_JObjSetTranslateZ(jobj, *(f32*) (gp + 0xD0));
+
+    HSD_JObjSetRotationZ(jobj, *(f32*) (gp + 0xF8));
+
+    lbVector_Rotate(&vel, 4, -*(f32*) (gp + 0xF8));
+    vel.z = 0.0F;
+    vel.x = 0.0F;
+    lbVector_Rotate(&vel, 4, *(f32*) (gp + 0xF8));
+
+    {
+        HSD_GObj* car = Ground_801C2BA4(2);
+        if (car != NULL) {
+            HSD_JObjSetTranslate(car->hsd_obj, &vel);
+            HSD_JObjSetRotationZ(car->hsd_obj, *(f32*) (gp + 0xF8));
+        }
+    }
+
+    {
+        HSD_GObj* car = Ground_801C2BA4(1);
+        if (car != NULL) {
+            HSD_JObjSetTranslate(car->hsd_obj, &vel);
+            HSD_JObjSetRotationZ(car->hsd_obj, *(f32*) (gp + 0xF8));
+        }
+    }
+
+    *(Vec3*) (gp + 0xD4) = prev;
+}
 
 f32 grBigBlue_801EC58C(Vec3* pos, Vec3* normal_out, f32 half_height)
 {
