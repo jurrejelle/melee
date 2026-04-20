@@ -461,6 +461,11 @@ static HSD_GObj* gm_804D67B8;
 static HSD_GObj* gm_804D67BC;
 static HSD_GObj* gm_804D67C0;
 
+void gm_801A8114_inline(HSD_JObj* arg0, int arg1);
+void gm_801A8114_inline(HSD_JObj* arg0, int arg1) {
+    gm_801A8114(arg0, arg1);
+}
+
 void gm_801A9630(void)
 {
     HSD_GObj* gobj;
@@ -553,7 +558,7 @@ void gm_801A9630(void)
     jobj = HSD_JObjLoadJoint(gm_804D6798);
     HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
     GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 0xB, 0);
-    gm_801A8114(jobj, gm_801A659C(gm_801BEFB0()));
+    gm_801A8114_inline(jobj, gm_801A659C(gm_801BEFB0()));
 
     // Walk JObj tree to find constraint target (3 levels deep)
     child = HSD_JObjGetChild(GET_JOBJ(gm_804D67BC));
