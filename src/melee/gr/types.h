@@ -1139,8 +1139,8 @@ struct grBigBlue_GroundVars {
     /*  +4 gp+C8 */ void* xC8;
     /*  +8 gp+CC */ void* xCC;
     /*  +C gp+D0 */ f32 xD0;
-    /* +10 gp+D4 */ HSD_JObj* xD4[2];
-    /* pad */ char pad_3[8];
+    /* +10 gp+D4 */ HSD_JObj* xD4[3];
+    /* pad */ char pad_3[4];
     /* +20 gp+E4 */ struct grBigBlue_GroundData data[3];
 };
 
