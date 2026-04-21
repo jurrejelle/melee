@@ -1133,9 +1133,19 @@ STATIC_ASSERT(sizeof(struct grBigBlue_GroundData) == 0x54);
 ///   velocity(+38), accel(+3C), rotation(+40), amplitude(+44),
 ///   angular_vel(+48).
 struct grBigBlue_GroundVars {
-    /*  +0 gp+C4 */ s8 x0;
-    /*  +0 gp+C5 */ s8 x1;
-    /* pad */ char pad_1[2];
+    union {
+        /*  +0 gp+C4 */ u32 x0_w;
+        struct {
+            /*  +0 gp+C5 */ u8 x0;
+            /*  +0 gp+C6 */ u8 x1;
+            /*  +0 gp+C7 */ u8 x2;
+            /*  +0 gp+C8 */ u8 x3;
+        };
+        struct {
+            u8 x0_b1 : 1;
+            u8 pad[3];
+        };
+    };
     /*  +4 gp+C8 */ void* xC8;
     /*  +8 gp+CC */ void* xCC;
     /*  +C gp+D0 */ f32 xD0;

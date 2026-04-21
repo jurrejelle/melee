@@ -281,7 +281,8 @@ void grBigBlue_801E6120(Ground_GObj* arg) {}
 
 void fn_801E6124(Ground_GObj* gobj)
 {
-    GET_GROUND(gobj)->gv.bigblue.x0 = false;
+    Ground* g = GET_GROUND(gobj);
+    g->gv.bigblue.x0_b1 = false;
 }
 
 void grBigBlue_801E613C(Ground_GObj* gobj)
@@ -293,7 +294,7 @@ void grBigBlue_801E613C(Ground_GObj* gobj)
     grAnime_801C8138(gobj, gp->map_id, 0);
     Ground_801C2ED0(jobj, gp->map_id);
     grBigBlue_801EB004(gobj);
-    gp->gv.bigblue.x0 = true;
+    gp->gv.bigblue.x0_w = true;
     Ground_801C10B8(gobj, fn_801E6124);
 }
 
@@ -505,7 +506,7 @@ void grBigBlue_801E6904(Ground_GObj* gobj)
     gp->gv.bigblue.data[2].index = 2;
     gp->gv.bigblue.data[2].x1 = 0;
     gp->gv.bigblue.data[2].x50 = 0;
-    gp->gv.bigblue.x0 = 0;
+    gp->gv.bigblue.x0_w = 0;
 
     grBigBlue_801E8978(0, NULL, NULL);
 
@@ -1373,13 +1374,13 @@ f32 grBigBlue_801E8D04(void)
 
 void grBigBlue_801E8D64(Ground_GObj* gobj)
 {
-    Ground* gp = gobj->user_data;
+    Ground* gp = GET_GROUND(gobj);
     HSD_JObj* jobj = gobj->hsd_obj;
     Vec3 pos;
     Vec3 scale;
     Vec3 translate;
     f32 y_pos;
-    FORCE_PAD_STACK(16);
+    PAD_STACK(0x10);
 
     Ground_801C2ED0(jobj, gp->map_id);
     gp->x10_flags.b5 = 1;
@@ -1771,14 +1772,14 @@ void grBigBlue_801EA05C(Ground_GObj* gobj)
     lbVector_ApplyEulerRotation(&half_bot, &euler);
     lbVector_Add(&half_bot, &pos);
 
-    switch (gp->gv.bigblue.x0) {
+    switch (gp->gv.bigblue.x0_w) {
     case 0:
         if (*(s32*) ((u8*) GET_GROUND(Ground_801C2BA4(0x20)) + 0xD0) != 0)
         {
             *(s32*) (gp + 0xC8) = 0;
             *(s32*) (gp + 0xD0) = 0;
             *(s32*) (gp + 0xCC) = 0;
-            gp->gv.bigblue.x0 = 1;
+            gp->gv.bigblue.x0_w = 1;
         }
         break;
 
@@ -1884,7 +1885,7 @@ void grBigBlue_801EA05C(Ground_GObj* gobj)
                     *(f32*) (gp + 0xE4) = 0.0f;
 
                     HSD_JObjClearFlagsAll(jobj, 0x10);
-                    gp->gv.bigblue.x0 = 2;
+                    gp->gv.bigblue.x0_w = 2;
                 }
             }
         } else {
@@ -2049,7 +2050,7 @@ void grBigBlue_801EA05C(Ground_GObj* gobj)
             *(f32*) (gp + 0xE8) = 0.0f;
             *(f32*) (gp + 0xE4) = 0.0f;
             GET_GROUND(Ground_801C2BA4(0x20))->gv.bigblue.xD0 = 0;
-            gp->gv.bigblue.x0 = 0;
+            gp->gv.bigblue.x0_w = 0;
         }
         break;
     }
@@ -2069,7 +2070,7 @@ bool grBigBlue_801EAB50(Vec3* pos, s32 flag, f32 rangeX, f32 rangeY)
     f32 dist;
     PAD_STACK(32);
 
-    if (gp->gv.bigblue.x0 == 2) {
+    if (gp->gv.bigblue.x0_w == 2) {
         dist = HSD_JObjGetTranslationX(jobj) - pos->x;
         if (dist < 0.0F) {
             dist = -(HSD_JObjGetTranslationX(jobj) - pos->x);
