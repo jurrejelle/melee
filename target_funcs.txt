@@ -2,5 +2,5 @@ File: src/melee/gr/gryorster.c
 Funcs:
 - [x] grYorster_80202428
 - [x] grYorster_802024F0
-- [ ] grYorster_802022A4
+- [x] grYorster_802022A4
 - [ ] grYorster_8020266C
