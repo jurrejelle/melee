@@ -516,7 +516,22 @@ void grRCruise_80201110(Ground_GObj* gobj)
     gp->gv.rcruise.x04->unk_scale = 0.2 * HSD_Randf() + 0.1;
 }
 
-/// #grRCruise_80201288
+void grRCruise_80201288(HSD_JObj* jobj, void (*callback)(HSD_DObj*, u32),
+                        u32 flags)
+{
+    if (jobj != NULL) {
+        HSD_DObj* dobj = HSD_JObjGetDObj(jobj);
+        if (dobj != NULL) {
+            callback(dobj, flags);
+        }
+        if (jobj->child != NULL) {
+            grRCruise_80201288(jobj->child, callback, flags);
+        }
+        if (jobj->next != NULL) {
+            grRCruise_80201288(jobj->next, callback, flags);
+        }
+    }
+}
 
 void grRCruise_80201410(Ground_GObj* gobj)
 {
