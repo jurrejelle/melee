@@ -56,7 +56,7 @@
 /* 201410 */ void grRCruise_80201410(Ground_GObj*);
 /* 201588 */ void grRCruise_80201588(Ground_GObj*);
 /* 201918 */ void grRCruise_80201918(Vec3*);
-/* 201988 */ UNK_RET grRCruise_80201988(UNK_PARAMS);
+/* 201988 */ bool grRCruise_80201988(s32);
 /* 201B60 */ void grRCruise_80201B60(HSD_JObj*, s32);
 /* 201BE0 */ void fn_80201BE0(HSD_GObj*, s32);
 /* 201C50 */ DynamicsDesc* grRCruise_80201C50(enum_t);

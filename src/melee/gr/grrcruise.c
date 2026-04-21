@@ -676,7 +676,80 @@ void grRCruise_80201918(Vec3* vec)
     vec->x = vec->y = vec->z = 0.0f;
 }
 
-/// #grRCruise_80201988
+bool grRCruise_80201988(s32 line)
+{
+    s32 joint;
+    s32 ok0 = 1;
+    s32 ok1 = 1;
+    s32 ok2 = 1;
+    s32 ok3 = 1;
+    s32 ok4 = 1;
+    s32 ok5 = 1;
+    s32 ok6 = 1;
+    s32 ok7 = 1;
+    s32 ok8 = 1;
+    s32 ok9 = 1;
+    s32 ok10 = 1;
+    s32 ok11 = 1;
+    s32 ok12 = 1;
+    s32 ok13 = 1;
+    s32 ok14 = 1;
+    s32 ok15 = 1;
+
+    if (stage_info.internal_stage_id != RCRUISE || line == -1) {
+        return false;
+    }
+    joint = mpJointFromLine(line);
+    if (joint != 0x1B && joint != 0x24) {
+        ok15 = 0;
+    }
+    if (ok15 == 0 && joint != 0x25) {
+        ok14 = 0;
+    }
+    if (ok14 == 0 && joint != 0x26) {
+        ok13 = 0;
+    }
+    if (ok13 == 0 && joint != 0x27) {
+        ok12 = 0;
+    }
+    if (ok12 == 0 && joint != 0x28) {
+        ok11 = 0;
+    }
+    if (ok11 == 0 && joint != 0x29) {
+        ok10 = 0;
+    }
+    if (ok10 == 0 && joint != 0x2A) {
+        ok9 = 0;
+    }
+    if (ok9 == 0 && joint != 0x2B) {
+        ok8 = 0;
+    }
+    if (ok8 == 0 && joint != 0x1C) {
+        ok7 = 0;
+    }
+    if (ok7 == 0 && joint != 0x1D) {
+        ok6 = 0;
+    }
+    if (ok6 == 0 && joint != 0x1E) {
+        ok5 = 0;
+    }
+    if (ok5 == 0 && joint != 0x1F) {
+        ok4 = 0;
+    }
+    if (ok4 == 0 && joint != 0x20) {
+        ok3 = 0;
+    }
+    if (ok3 == 0 && joint != 0x21) {
+        ok2 = 0;
+    }
+    if (ok2 == 0 && joint != 0x22) {
+        ok1 = 0;
+    }
+    if (ok1 == 0 && joint != 0x23) {
+        ok0 = 0;
+    }
+    return ok0 != 0;
+}
 
 void grRCruise_80201B60(HSD_JObj* jobj, s32 arg1)
 {
