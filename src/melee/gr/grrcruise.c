@@ -740,7 +740,107 @@ void grRCruise_80201410(Ground_GObj* gobj)
     }
 }
 
-/// #grRCruise_80201588
+void grRCruise_80201588(Ground_GObj* gobj)
+{
+    Point3d pos;
+    Ground* gp = gobj->user_data;
+    struct grRCruise_VanishDesc* desc =
+        (struct grRCruise_VanishDesc*) ((u8*) grRc_803E4DA8 + 0x26C);
+    s32 i;
+
+    if (gp->gv.rcruise.vanish == NULL) {
+        __assert(grRc_803E4F24, 0x5D6, grRc_803E4FB0);
+    }
+    for (i = 0; i < 20; i++, desc++) {
+        struct grRCruise_VanishEntry* vanish = &gp->gv.rcruise.vanish[i];
+
+        if (desc->x04 != 0) {
+            continue;
+        }
+        switch (vanish->x00) {
+        case 0:
+            lb_8000B1CC(vanish->x04, NULL, &pos);
+            if (Camera_8003118C(&pos, -20.0f) != 0) {
+                vanish->x00 = 1;
+                grAnime_801C7FF8(gobj, desc->x00, 2, 2, 0.0f, 1.0f);
+                mpJointListAdd(desc->x02);
+                mpLib_80055E9C(desc->x02);
+                mpLib_80057424(desc->x02);
+            }
+            break;
+        case 1:
+            if (grAnime_801C83D0(gobj, desc->x00, 2) != 0) {
+                HSD_GObj* gobj5;
+                HSD_GObj* gobj1;
+                HSD_JObj* jobj;
+
+                vanish->x00 = 2;
+                gobj5 = Ground_801C2BA4(5);
+                if (gobj5 != NULL) {
+                    gobj1 = Ground_801C2BA4(1);
+                    if (gobj1 != NULL) {
+                        jobj = Ground_801C3FA4(gobj5, desc->x00);
+                        if (jobj != NULL) {
+                            HSD_JObjClearFlagsAll(jobj, JOBJ_HIDDEN);
+                        }
+                        jobj = Ground_801C3FA4(gobj1, desc->x00);
+                        if (jobj != NULL) {
+                            grRCruise_80201288(jobj, HSD_DObjSetFlags, 1);
+                        }
+                    }
+                }
+            }
+            break;
+        case 2:
+            lb_8000B1CC(vanish->x04, NULL, &pos);
+            if (Camera_8003118C(&pos, -20.0f) == 0) {
+                HSD_GObj* gobj5;
+                HSD_GObj* gobj1;
+                HSD_JObj* jobj;
+
+                vanish->x00 = 3;
+                grAnime_801C7FF8(gobj, desc->x00, 2, 3, 0.0f, 1.0f);
+                gobj5 = Ground_801C2BA4(5);
+                if (gobj5 != NULL) {
+                    gobj1 = Ground_801C2BA4(1);
+                    if (gobj1 != NULL) {
+                        jobj = Ground_801C3FA4(gobj5, desc->x00);
+                        if (jobj != NULL) {
+                            HSD_JObjSetFlagsAll(jobj, JOBJ_HIDDEN);
+                        }
+                        jobj = Ground_801C3FA4(gobj1, desc->x00);
+                        if (jobj != NULL) {
+                            grRCruise_80201288(jobj, HSD_DObjClearFlags, 1);
+                        }
+                    }
+                }
+            }
+            break;
+        case 3:
+            if (grAnime_801C83D0(gobj, desc->x00, 2) != 0) {
+                s32 j;
+                bool done = true;
+
+                vanish->x00 = 0;
+                grAnime_801C7FF8(gobj, desc->x00, 2, 1, 0.0f, 1.0f);
+                for (j = 0; j < 20; j++) {
+                    if (gp->gv.rcruise.vanish[j].x00 != 0 &&
+                        ((struct grRCruise_VanishDesc*) ((u8*) grRc_803E4DA8 +
+                                                         0x26C))[j]
+                                .x02 == desc->x02)
+                    {
+                        done = false;
+                        break;
+                    }
+                }
+                if (done) {
+                    mpLib_80057BC0(desc->x02);
+                }
+            }
+            break;
+        }
+    }
+}
 
 void grRCruise_80201918(Vec3* vec)
 {
