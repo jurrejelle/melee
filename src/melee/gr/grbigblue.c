@@ -2070,7 +2070,7 @@ bool grBigBlue_801EAB50(Vec3* pos, s32 flag, f32 rangeX, f32 rangeY)
     f32 dist;
     PAD_STACK(32);
 
-    if (gp->gv.bigblue.x0_w == 2) {
+    if ((s8) gp->gv.bigblue.x0 == 2) {
         dist = HSD_JObjGetTranslationX(jobj) - pos->x;
         if (dist < 0.0F) {
             dist = -(HSD_JObjGetTranslationX(jobj) - pos->x);
@@ -2092,7 +2092,7 @@ bool grBigBlue_801EAB50(Vec3* pos, s32 flag, f32 rangeX, f32 rangeY)
         }
 
         if (flag != 0) {
-            if (gp->gv.bigblue.x1 == -1) {
+            if ((s8) gp->gv.bigblue.x1 == -1) {
                 result = true;
             }
         }
