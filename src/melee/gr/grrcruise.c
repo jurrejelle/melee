@@ -26,6 +26,7 @@
 #include <baselib/gobj.h>
 #include <baselib/gobjgxlink.h>
 #include <baselib/gobjproc.h>
+#include <baselib/jobj.h>
 #include <baselib/random.h>
 #include <math.h>
 #include <MSL/trigf.h>
@@ -60,6 +61,17 @@ char grRc_803E4EC0[] = "/GrRc.dat";
 struct grRCruise_StageData {
     StageData x00;
     char x34[0x24];
+};
+
+struct grRCruise_801FF924_GroundVars {
+    u8 x00;
+    u8 pad_01[3];
+    Vec3 x04;
+    Vec3 x10;
+    Vec3 x1C;
+    HSD_JObj* x28[3];
+    HSD_JObj* x34[3];
+    HSD_JObj* x40;
 };
 
 struct grRCruise_StageData grRc_803E4ECC = {
@@ -352,7 +364,40 @@ void grRCruise_801FF8E4(Ground_GObj* gobj)
 
 void grRCruise_801FF920(Ground_GObj* arg) {}
 
-/// #grRCruise_801FF924
+void grRCruise_801FF924(Ground_GObj* gobj)
+{
+    Ground* gp = gobj->user_data;
+    HSD_JObj* jobj = gobj->hsd_obj;
+    struct grRCruise_801FF924_GroundVars* vars = (void*) &gp->gv;
+
+    vars->x34[0] = Ground_801C3FA4(gobj, 4);
+    vars->x34[1] = Ground_801C3FA4(gobj, 5);
+    vars->x34[2] = Ground_801C3FA4(gobj, 6);
+    vars->x40 = Ground_801C3FA4(gobj, 7);
+    vars->x28[0] = Ground_801C3FA4(gobj, 3);
+    if (vars->x28[0] == NULL) {
+        __assert(grRc_803E4F24, 0x2B0, ((char*) grRc_803E4DA8) + 0x1B4);
+    }
+    vars->x28[1] = Ground_801C3FA4(gobj, 2);
+    if (vars->x28[1] == NULL) {
+        __assert(grRc_803E4F24, 0x2B2, ((char*) grRc_803E4DA8) + 0x1CC);
+    }
+    vars->x28[2] = Ground_801C3FA4(gobj, 1);
+    if (vars->x28[2] == NULL) {
+        __assert(grRc_803E4F24, 0x2B4, ((char*) grRc_803E4DA8) + 0x1E4);
+    }
+    HSD_JObjGetTranslate(vars->x28[2], &vars->x04);
+    vars->x10.z = 0.0f;
+    vars->x10.y = 0.0f;
+    vars->x10.x = 0.0f;
+    vars->x1C.z = 0.0f;
+    vars->x1C.y = 0.0f;
+    vars->x1C.x = 0.0f;
+    vars->x00 &= ~0x80;
+    grAnime_801C8138(gobj, gp->map_id, 0);
+    grAnime_801C752C(jobj, 1, 30628, HSD_AObjSetFlags, 3, 0x20000000);
+    gobj->render_cb = (GObj_RenderFunc) fn_80201BE0;
+}
 
 bool grRCruise_801FFAD4(Ground_GObj* arg)
 {

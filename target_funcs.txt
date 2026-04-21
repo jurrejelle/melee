@@ -8,7 +8,7 @@ Funcs:
 - [x] grRCruise_80201410
 - [x] grRCruise_80201288
 - [x] grRCruise_80200578
-- [ ] grRCruise_801FF924
+- [x] grRCruise_801FF924
 - [ ] grRCruise_80201988
 - [ ] grRCruise_80200154
 - [ ] grRCruise_80201588
