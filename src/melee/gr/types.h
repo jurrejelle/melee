@@ -844,7 +844,7 @@ struct grRCruise_Entry {
     /* 0x04 */ s32 x04;
     /* 0x08 */ s32 x08;
     /* 0x0C */ f32 x0C;
-    /* 0x10 */ u8 pad_10[4];
+    /* 0x10 */ f32 x10;
     /* 0x14 */ HSD_JObj* x14;
 };
 

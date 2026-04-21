@@ -14,10 +14,12 @@
 #include "gr/grlib.h"
 #include "gr/ground.h"
 #include "gr/inlines.h"
+#include "gr/stage.h"
 
 #include "lb/forward.h"
 
 #include "lb/lb_00F9.h"
+#include "lb/lbvector.h"
 #include "mp/mplib.h"
 #include "sysdolphin/baselib/memory.h"
 
@@ -106,12 +108,24 @@ extern s16 grRc_803E4FF0[];
 extern s16 grRc_804D4790[4];
 
 static struct {
-    u8 pad_0[0xC];
+    f32 x0;
+    f32 x4;
+    f32 x8;
     s32 x0C;
     s32 x10;
     s32 x14;
     s32 x18;
     s32 x1C;
+    s32 x20;
+    s32 x24;
+    s32 x28;
+    f32 x2C;
+    f32 x30;
+    f32 x34;
+    f32 x38;
+    s32 x3C;
+    s32 x40;
+    s32 x44;
 }* grRc_804D6A10;
 
 void grRCruise_801FF164(bool arg) {}
@@ -409,7 +423,27 @@ bool grRCruise_801FFAD4(Ground_GObj* arg)
     return false;
 }
 
-/// #grRCruise_801FFADC
+void grRCruise_801FFADC(Ground_GObj* gobj)
+{
+    static const s32 ids[] = { 2, 1, 5, 6, 4 };
+    Ground* gp = gobj->user_data;
+    HSD_GObj* hidden_gobj = gp->gv.rcruise2.xEC;
+    Vec3 cam_offset;
+    Vec3 translate;
+    s32 i;
+
+    Stage_UnkSetVec3TCam_Offset(&cam_offset);
+    HSD_JObjGetTranslate(GET_JOBJ(hidden_gobj), &translate);
+    lbVector_Sub(&translate, &cam_offset);
+    HSD_JObjSetTranslate(GET_JOBJ(gobj), &translate);
+
+    for (i = 0; i < 5; i++) {
+        HSD_GObj* stage_gobj = Ground_801C2BA4(ids[i]);
+        if (stage_gobj != NULL) {
+            HSD_JObjSetTranslate(GET_JOBJ(stage_gobj), &translate);
+        }
+    }
+}
 
 void grRCruise_80200070(Ground_GObj* arg) {}
 
@@ -595,7 +629,74 @@ void grRCruise_80200578(Ground* gp_arg, s32 joint_id, CollData* cd, s32 arg3,
     }
 }
 
-/// #grRCruise_8020071C
+void grRCruise_8020071C(Ground_GObj* gobj)
+{
+    Ground* gp = gobj->user_data;
+    HSD_JObj* jobj = Ground_801C3FA4(gobj, 8);
+    HSD_GObj* gobj5 = Ground_801C2BA4(5);
+    HSD_JObj* jobj5 = gobj5 != NULL ? Ground_801C3FA4(gobj5, 8) : NULL;
+    f32 abs_rot = gp->gv.rcruise.x14 < 0.0f ? -gp->gv.rcruise.x14
+                                            : gp->gv.rcruise.x14;
+    f32 wrapped = abs_rot - (360.0f * (s32) (abs_rot / 360.0f));
+
+    switch (gp->gv.rcruise.x2C) {
+    case 0:
+        if (gp->gv.rcruise.x34 == 0) {
+            gp->gv.rcruise.x1C = gp->gv.rcruise.x14 < 0.0f ? 1.0f : -1.0f;
+            gp->gv.rcruise.x20 = grRc_804D6A10->x8 * gp->gv.rcruise.x1C;
+            if (wrapped <= 0.2f) {
+                gp->gv.rcruise.x20 = 0.0f;
+                gp->gv.rcruise.x2C = 0;
+            }
+        } else if (gp->gv.rcruise.x24 < gp->gv.rcruise.x28) {
+            gp->gv.rcruise.x1C = 1.0f;
+            gp->gv.rcruise.x20 = grRc_804D6A10->x0 *
+                                 (gp->gv.rcruise.x28 - gp->gv.rcruise.x24);
+            if (gp->gv.rcruise.x20 > grRc_804D6A10->x4) {
+                gp->gv.rcruise.x20 = grRc_804D6A10->x4;
+            }
+        } else {
+            gp->gv.rcruise.x1C = -1.0f;
+            gp->gv.rcruise.x20 = -grRc_804D6A10->x0 *
+                                 (gp->gv.rcruise.x24 - gp->gv.rcruise.x28);
+            if (gp->gv.rcruise.x20 < -grRc_804D6A10->x4) {
+                gp->gv.rcruise.x20 = -grRc_804D6A10->x4;
+            }
+        }
+        break;
+    case 1:
+        if (gp->gv.rcruise.x38 == 0) {
+            if (gp->gv.rcruise.x34 == 0) {
+                gp->gv.rcruise.x1C = gp->gv.rcruise.x14 < 0.0f ? 1.0f : -1.0f;
+                gp->gv.rcruise.x20 = grRc_804D6A10->x8 * gp->gv.rcruise.x1C;
+                if (wrapped <= 0.2f) {
+                    gp->gv.rcruise.x20 = 0.0f;
+                    gp->gv.rcruise.x2C = 0;
+                }
+            } else {
+                gp->gv.rcruise.x2C = 0;
+            }
+        } else {
+            gp->gv.rcruise.x38--;
+            gp->gv.rcruise.x20 += 0.008f * -gp->gv.rcruise.x1C;
+            if (gp->gv.rcruise.x20 < 0.0f ? -gp->gv.rcruise.x20
+                                          : gp->gv.rcruise.x20 <= 0.008f)
+            {
+                gp->gv.rcruise.x20 = 0.0f;
+            }
+        }
+        break;
+    }
+    gp->gv.rcruise.x14 += gp->gv.rcruise.x20;
+    HSD_JObjSetRotationZ(jobj, 0.017453292f * gp->gv.rcruise.x14);
+    if (jobj5 != NULL) {
+        HSD_JObjSetRotationZ(jobj5, 0.017453292f * gp->gv.rcruise.x14);
+    }
+    gp->gv.rcruise.x30 = gp->gv.rcruise.x34;
+    gp->gv.rcruise.x34 = 0;
+    gp->gv.rcruise.x28 = 0.0f;
+    gp->gv.rcruise.x24 = 0.0f;
+}
 
 void grRCruise_80200B48(Ground_GObj* gobj)
 {
@@ -613,7 +714,87 @@ void grRCruise_80200B48(Ground_GObj* gobj)
     }
 }
 
-/// #grRCruise_80200C04
+void grRCruise_80200C04(Ground_GObj* gobj)
+{
+    Ground* gp = gobj->user_data;
+    s32 i;
+
+    for (i = 0; i < 17; i++) {
+        struct grRCruise_Entry* entry = &gp->gv.rcruise.entries[i];
+
+        switch (entry->x00) {
+        case 1:
+            if (entry->x08 == 0) {
+                entry->x04 = 0;
+                entry->x00 = 0;
+            } else if (entry->x04 >= grRc_804D6A10->x20) {
+                entry->x00 = 2;
+            } else {
+                entry->x04++;
+            }
+            break;
+        case 2:
+            if ((entry->x04 % grRc_804D6A10->x28) == 0) {
+                s32 randi =
+                    HSD_Randi((s32) (100.0f * (grRc_804D6A10->x30 -
+                                               grRc_804D6A10->x2C)));
+                HSD_JObjSetTranslateY(
+                    entry->x14,
+                    entry->x0C + (grRc_804D6A10->x2C + ((f32) randi / 100.0f)));
+            }
+            if (entry->x04 >= grRc_804D6A10->x24) {
+                entry->x10 = 0.0f;
+                entry->x00 = 3;
+            }
+            entry->x04++;
+            break;
+        case 3:
+            entry->x10 -= grRc_804D6A10->x34;
+            if (entry->x10 < -grRc_804D6A10->x38) {
+                entry->x10 = -grRc_804D6A10->x38;
+            }
+            HSD_JObjAddTranslationY(entry->x14, entry->x10);
+            if (entry->x14->translate.y <= Stage_GetCamBoundsBottomOffset()) {
+                entry->x10 = 0.0f;
+                grRCruise_80201B60(entry->x14, 0);
+                mpLib_80057BC0(entry->x02);
+                entry->x04 = 0;
+                entry->x00 = 4;
+            }
+            break;
+        case 4:
+            if (entry->x04 >= grRc_804D6A10->x3C) {
+                HSD_JObjSetTranslateY(entry->x14, entry->x0C);
+                mpLib_80055E9C(entry->x02);
+                mpLib_80057424(entry->x02);
+                grRCruise_80201B60(entry->x14, 1);
+                mpJointListAdd(entry->x02);
+                entry->x04 = 0;
+                entry->pad_01 &= ~0x80;
+                entry->x00 = 5;
+            }
+            entry->x04++;
+            break;
+        case 5:
+            if ((entry->x04 % grRc_804D6A10->x44) == 0) {
+                entry->pad_01 ^= 0x80;
+                if ((entry->pad_01 & 0x80) != 0) {
+                    grRCruise_80201B60(entry->x14, 0);
+                } else {
+                    grRCruise_80201B60(entry->x14, 1);
+                }
+            }
+            if (entry->x04 >= grRc_804D6A10->x40) {
+                grRCruise_80201B60(entry->x14, 1);
+                entry->x04 = 0;
+                entry->x00 = 0;
+            }
+            entry->x04++;
+            break;
+        }
+        entry->x08 = 0;
+    }
+}
 
 // TODO: is this GET_GROUND? calling it directly didn't work.
 inline Ground* grRCruise_802010A4_inline(Ground_GObj* arg0)
