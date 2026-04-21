@@ -79,6 +79,9 @@ struct grRCruise_StageData grRc_803E4ECC = {
 };
 
 char grRc_803E4F24[] = "grrcruise.c";
+char grRc_803E4F44[] =
+    "dynamicsdata_shipflag\0\0\0gp->u.scroll.int_jobj\0\0\0"
+    "gp->u.scroll.cam_jobj\0\0\0gp->u.scroll.ctr_jobj\0\0\0translate";
 
 extern Vec3 grRc_803B8288;
 extern s16 grRc_803E4FF0[];
@@ -290,40 +293,40 @@ void grRCruise_801FF7A0(Ground_GObj* arg) {}
 
 void grRCruise_801FF7A4(Ground_GObj* gobj)
 {
+    Ground_GObj* stage_gobj = gobj;
+    Ground* gp = stage_gobj->user_data;
+    HSD_JObj* jobj = stage_gobj->hsd_obj;
     UnkArchiveStruct* archive;
     DynamicsDesc* data;
-    Ground* gp;
-    HSD_JObj* jobj;
+    PAD_STACK(8);
 
-    gp = GET_GROUND(gobj);
-    jobj = GET_JOBJ(gobj);
     Ground_801C2ED0(jobj, gp->map_id);
-    grAnime_801C8138(gobj, gp->map_id, 0);
+    grAnime_801C8138(stage_gobj, gp->map_id, 0);
     grAnime_801C752C(jobj, 1, 30628, HSD_AObjSetFlags, 3, 0x20000000);
-    if ((archive = grDatFiles_801C6324(), archive != NULL) &&
-        (data = HSD_ArchiveGetPublicAddress(archive->unk0,
-                                            "dynamicsdata_shipflag"),
+    archive = grDatFiles_801C6324();
+    if (archive != NULL &&
+        (data = HSD_ArchiveGetPublicAddress(archive->unk0, grRc_803E4F44),
          data != NULL))
     {
-        Ground_801C3FA4(gobj, 23);
-        grLib_801C9B20(jobj, data, &gp->gv.rcruise2.xC4);
+        grLib_801C9B20(Ground_801C3FA4(stage_gobj, 23), data,
+                       &gp->gv.rcruise2.xC4);
     } else {
         gp->gv.rcruise2.xC4.data = NULL;
     }
 
-    jobj = Ground_801C3FA4(gobj, 10);
+    jobj = Ground_801C3FA4(stage_gobj, 10);
     if (jobj != NULL) {
         Ground_801C2D0C(0, jobj);
     }
-    jobj = Ground_801C3FA4(gobj, 11);
+    jobj = Ground_801C3FA4(stage_gobj, 11);
     if (jobj != NULL) {
         Ground_801C2D0C(1, jobj);
     }
-    jobj = Ground_801C3FA4(gobj, 12);
+    jobj = Ground_801C3FA4(stage_gobj, 12);
     if (jobj != NULL) {
         Ground_801C2D0C(2, jobj);
     }
-    jobj = Ground_801C3FA4(gobj, 13);
+    jobj = Ground_801C3FA4(stage_gobj, 13);
     if (jobj != NULL) {
         Ground_801C2D0C(3, jobj);
     }
