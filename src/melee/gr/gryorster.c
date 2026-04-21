@@ -6,15 +6,23 @@
 
 #include "ft/ftlib.h"
 #include "gr/grdisplay.h"
+#include "gr/grlib.h"
+#include "gr/grmaterial.h"
 #include "gr/ground.h"
 #include "gr/grzakogenerator.h"
 #include "gr/inlines.h"
+#include "it/it_26B1.h"
+#include "lb/lb_00B0.h"
 #include "lb/lb_00F9.h"
 #include "mp/mplib.h"
 
 #include <baselib/gobj.h>
 #include <baselib/gobjgxlink.h>
 #include <baselib/gobjproc.h>
+#include <baselib/jobj.h>
+
+static s32 grYt_803B82A8[] = { 0xA, 0xB, 0xC, 0xD, 0xE,
+                               0xF, 0x10, 0x11, 0x12, 0x0 };
 
 StageCallbacks grYt_803E5198[2] = {
     { grYorster_80202124, grYorster_80202150, grYorster_80202158,
@@ -40,12 +48,19 @@ StageData grYt_803E51CC = {
 };
 
 typedef struct YorsterParams {
-    u8 pad_00[0x14];
-    int x14;
+    f32 x00;
+    f32 x04;
+    f32 x08;
+    f32 x0C;
+    s32 x10;
+    s32 x14;
+    s32 x18;
+    s32 x1C;
 } YorsterParams;
 
 typedef struct grYt_804D6A20_t {
     YorsterParams* x0;
+    u8 pad_04[4];
 } grYt_804D6A20_t;
 grYt_804D6A20_t grYt_804D6A20;
 
@@ -184,13 +199,43 @@ void grYorster_80202428(HSD_GObj* item_gobj, Ground* gp, Vec3* pos,
 
     for (i = 0; i < 9; i++) {
         if (ground->gv.yorster.elements[i].x1C == item_gobj) {
-            ground->gv.yorster.elements[i].x4 += value;
+            ground->gv.yorster.elements[i].x04 += value;
             break;
         }
     }
 }
 
-/// #grYorster_802024F0
+void grYorster_802024F0(Ground* gp, s32 joint_id, CollData* coll_data,
+                        s32 unused, mpLib_GroundEnum ground_kind, f32 value)
+{
+    HSD_GObj* gobj = coll_data->x0_gobj;
+    s32 env = coll_data->x34_flags.b1234;
+    s32 i;
+    PAD_STACK(8);
+
+    if ((env == 1 && !ftLib_800873F4(gobj)) || env == 2 || env == 3) {
+        if (env == 1) {
+            Vec3 pos;
+
+            ftLib_80086BEC(gobj, &pos);
+            value = pos.y;
+            if (value >= grYt_804D6A20.x0->x00) {
+                ftLib_80086A4C(gobj, (f32) grYt_804D6A20.x0->x10);
+            }
+        } else if (value >= grYt_804D6A20.x0->x00) {
+            it_8026B718(gobj, (f32) grYt_804D6A20.x0->x10);
+        }
+
+        for (i = 0; i < 9; i++) {
+            if (joint_id ==
+                Ground_801C32D4(gp->map_id, gp->gv.yorster.elements[i].x14))
+            {
+                gp->gv.yorster.elements[i].x08 += value;
+                break;
+            }
+        }
+    }
+}
 
 /// #grYorster_8020266C
 

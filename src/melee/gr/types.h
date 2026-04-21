@@ -770,9 +770,15 @@ struct grStadium_type9_GroundVars {
 };
 
 struct grYorster_TrackElement {
-    /* 0x00 */ u8 pad_00[4];
-    /* 0x04 */ f32 x4;
-    /* 0x08 */ u8 pad_08[0x14];
+    /* 0x00 */ s8 x00;
+    /* 0x01 */ u8 x01;
+    /* 0x02 */ u8 pad_02[2];
+    /* 0x04 */ f32 x04;
+    /* 0x08 */ f32 x08;
+    /* 0x0C */ s32 x0C;
+    /* 0x10 */ s32 x10;
+    /* 0x14 */ s32 x14;
+    /* 0x18 */ HSD_JObj* x18;
     /* 0x1C */ HSD_GObj* x1C;
 };
 
