@@ -27,6 +27,7 @@
 #include <baselib/gobjgxlink.h>
 #include <baselib/gobjproc.h>
 #include <baselib/random.h>
+#include <math.h>
 #include <MSL/trigf.h>
 
 S16Vec3 grRc_803E4DA8[] = {
@@ -434,7 +435,41 @@ void grRCruise_80200540(Ground_GObj* gobj)
     gp->gv.rcruise.x2C = 0;
 }
 
-/// #grRCruise_80200578
+void grRCruise_80200578(Ground* gp_arg, s32 joint_id, CollData* cd, s32 arg3,
+                        mpLib_GroundEnum arg4, f32 arg5)
+{
+    Point3d pos;
+    HSD_GObj* gobj = (HSD_GObj*) gp_arg;
+    Ground* gp = HSD_GObjGetUserData(gobj);
+    HSD_JObj* jobj = Ground_801C3FA4(gobj, 8);
+    f32 dx;
+    f32 dy;
+    f32 dist;
+    PAD_STACK(16);
+
+    if (cd->x34_flags.b1234 == 1 || cd->x34_flags.b1234 == 2 ||
+        cd->x34_flags.b1234 == 3)
+    {
+        if ((f32) arg3 > 1000.0f) {
+            arg3 = 1000;
+        }
+        lb_8000B1CC(jobj, NULL, &pos);
+        dx = pos.x - cd->cur_pos.x;
+        dy = pos.y - cd->cur_pos.y;
+        dist = dx * dx + dy * dy;
+        if (dist > 0.0f) {
+            dist = sqrtf(dist);
+        }
+        if (dist > 4.0f) {
+            if (pos.x < cd->cur_pos.x) {
+                gp->gv.rcruise.x24 += dist * ((f32) arg3 / 1000.0f);
+            } else {
+                gp->gv.rcruise.x28 += dist * ((f32) arg3 / 1000.0f);
+            }
+        }
+        gp->gv.rcruise.x34++;
+    }
+}
 
 /// #grRCruise_8020071C
 
