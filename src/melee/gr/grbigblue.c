@@ -294,7 +294,7 @@ void grBigBlue_801E613C(Ground_GObj* gobj)
     grAnime_801C8138(gobj, gp->map_id, 0);
     Ground_801C2ED0(jobj, gp->map_id);
     grBigBlue_801EB004(gobj);
-    gp->gv.bigblue.x0_w = true;
+    gp->gv.bigblue.x0_b1 = true;
     Ground_801C10B8(gobj, fn_801E6124);
 }
 
