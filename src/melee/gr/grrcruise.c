@@ -323,6 +323,8 @@ void grRCruise_80200074(Ground_GObj* gobj)
     int i;
     Ground* gp = gobj->user_data;
     HSD_JObj* jobj = GET_JOBJ(gobj);
+    PAD_STACK(8);
+
     Ground_801C2ED0(jobj, gp->map_id);
     grAnime_801C8138(gobj, gp->map_id, 0);
     for (i = 0; i < 3; i++) {
