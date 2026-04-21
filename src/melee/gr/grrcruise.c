@@ -27,6 +27,14 @@
 #include <baselib/gobjgxlink.h>
 #include <baselib/gobjproc.h>
 
+S16Vec3 grRc_803E4DA8[] = {
+    { 0, 1, 1 },   { 1, 1, 1 },   { 2, 1, 1 },   { 3, 1, 1 },   { 4, 1, 1 },
+    { 11, 1, 7 },  { 10, 1, 17 }, { 6, 1, 7 },   { 7, 1, 7 },   { 8, 1, 7 },
+    { 9, 1, 7 },   { 12, 1, 19 }, { 13, 1, 18 }, { 14, 1, 18 }, { 15, 1, 18 },
+    { 16, 1, 18 }, { 17, 1, 18 }, { 18, 1, 18 }, { 19, 1, 18 }, { 20, 1, 18 },
+    { 21, 1, 18 }, { 22, 1, 18 }, { 23, 1, 18 },
+};
+
 StageCallbacks grRc_803E4E34[7] = {
     { grRCruise_801FF3B4, grRCruise_801FF3E0, grRCruise_801FF3E8,
       grRCruise_801FF3EC, 0 },
@@ -43,6 +51,34 @@ StageCallbacks grRc_803E4E34[7] = {
     { grRCruise_801FF7A4, grRCruise_801FF8DC, grRCruise_801FF8E4,
       grRCruise_801FF920, 0 },
 };
+
+char grRc_803E4EC0[] = "/GrRc.dat";
+
+struct grRCruise_StageData {
+    StageData x00;
+    char x34[0x24];
+};
+
+struct grRCruise_StageData grRc_803E4ECC = {
+    {
+        RCRUISE,
+        grRc_803E4E34,
+        grRc_803E4EC0,
+        grRCruise_801FF168,
+        grRCruise_801FF164,
+        grRCruise_801FF298,
+        grRCruise_801FF29C,
+        grRCruise_801FF2C0,
+        grRCruise_80201C50,
+        grRCruise_80201C58,
+        4,
+        grRc_803E4DA8,
+        ARRAY_SIZE(grRc_803E4DA8),
+    },
+    "%s:%d: couldn t get gobj(id=%d)\n",
+};
+
+char grRc_803E4F24[] = "grrcruise.c";
 
 extern Vec3 grRc_803B8288;
 extern s16 grRc_803E4FF0[];
@@ -128,7 +164,7 @@ HSD_GObj* grRCruise_801FF2C8(int gobj_id)
             HSD_GObj_SetupProc(gobj, callbacks->callback2, 4);
         }
     } else {
-        OSReport("%s:%d: couldn t get gobj(id=%d)\n", __FILE__, 290, gobj_id);
+        OSReport(grRc_803E4ECC.x34, grRc_803E4F24, 290, gobj_id);
     }
 
     return gobj;
