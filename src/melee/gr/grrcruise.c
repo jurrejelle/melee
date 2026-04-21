@@ -81,9 +81,12 @@ struct grRCruise_StageData grRc_803E4ECC = {
 };
 
 char grRc_803E4F24[] = "grrcruise.c";
+char grRc_803E4F30[] = "gp->u.map.chikuwa";
 char grRc_803E4F44[] =
     "dynamicsdata_shipflag\0\0\0gp->u.scroll.int_jobj\0\0\0"
     "gp->u.scroll.cam_jobj\0\0\0gp->u.scroll.ctr_jobj\0\0\0translate";
+char grRc_803E4FB0[] = "gp->u.map.vanish";
+char grRc_803E4FC8[] = "gp->u.map.vanish[i].jobj";
 
 extern Vec3 grRc_803B8288;
 extern s16 grRc_803E4FF0[];
@@ -515,7 +518,53 @@ void grRCruise_80201110(Ground_GObj* gobj)
 
 /// #grRCruise_80201288
 
-/// #grRCruise_80201410
+void grRCruise_80201410(Ground_GObj* gobj)
+{
+    Ground_GObj* stage_gobj = gobj;
+    Ground* gp = stage_gobj->user_data;
+    struct grRCruise_VanishDesc* desc =
+        (struct grRCruise_VanishDesc*) ((u8*) grRc_803E4DA8 + 0x26C);
+    u32 i;
+
+    gp->gv.rcruise.vanish = HSD_MemAlloc(0xA0);
+    if (gp->gv.rcruise.vanish == NULL) {
+        __assert(grRc_803E4F24, 0x5AD, grRc_803E4FB0);
+    }
+    for (i = 0; i < 20; i++) {
+        gp->gv.rcruise.vanish[i].x04 = Ground_801C3FA4(stage_gobj, desc->x00);
+        if (gp->gv.rcruise.vanish[i].x04 == NULL) {
+            __assert(grRc_803E4F24, 0x5B3, grRc_803E4FC8);
+        }
+        if (desc->x04 != 0) {
+            HSD_GObj* gobj5;
+            HSD_GObj* gobj1;
+            s16 joint;
+
+            gp->gv.rcruise.vanish[i].x00 = 2;
+            joint = desc->x00;
+            gobj5 = Ground_801C2BA4(5);
+            if (gobj5 != NULL) {
+                gobj1 = Ground_801C2BA4(1);
+                if (gobj1 != NULL) {
+                    HSD_JObj* jobj = Ground_801C3FA4(gobj5, joint);
+                    if (jobj != NULL) {
+                        HSD_JObjClearFlagsAll(jobj, JOBJ_HIDDEN);
+                    }
+                    jobj = Ground_801C3FA4(gobj1, joint);
+                    if (jobj != NULL) {
+                        grRCruise_80201288(jobj, HSD_DObjSetFlags, 1);
+                    }
+                }
+            }
+            mpJointListAdd(desc->x02);
+        } else {
+            gp->gv.rcruise.vanish[i].x00 = 0;
+            grAnime_801C7FF8(stage_gobj, desc->x00, 2, 1, 0.0f, 1.0f);
+            mpLib_80057BC0(desc->x02);
+        }
+        desc++;
+    }
+}
 
 /// #grRCruise_80201588
 
