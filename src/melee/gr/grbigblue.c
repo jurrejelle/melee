@@ -481,9 +481,9 @@ void grBigBlue_801E6904(Ground_GObj* gobj)
 
     grAnime_801C8138(gobj, gp->map_id, 0);
 
-    gp->gv.bigblue.x10 = Ground_801C3FA4(gobj, 1);
-    gp->gv.bigblue.x14 = Ground_801C3FA4(gobj, 6);
-    gp->gv.bigblue.x18 = Ground_801C3FA4(gobj, 11);
+    gp->gv.bigblue.x10[0] = Ground_801C3FA4(gobj, 1);
+    gp->gv.bigblue.x10[1] = Ground_801C3FA4(gobj, 6);
+    gp->gv.bigblue.x10[2] = Ground_801C3FA4(gobj, 11);
 
     gp->gv.bigblue.x20 = 0;
     gp->gv.bigblue.x21 = 0;
@@ -500,13 +500,13 @@ void grBigBlue_801E6904(Ground_GObj* gobj)
 
     scale.x = scale.y = scale.z = Ground_801C0498();
 
-    jobj = gp->gv.bigblue.x10;
+    jobj = gp->gv.bigblue.x10[0];
     HSD_JObjSetScale(jobj, &scale);
 
-    jobj = gp->gv.bigblue.x14;
+    jobj = gp->gv.bigblue.x10[1];
     HSD_JObjSetScale(jobj, &scale);
 
-    jobj = gp->gv.bigblue.x18;
+    jobj = gp->gv.bigblue.x10[2];
     HSD_JObjSetScale(jobj, &scale);
 
     mpJointSetCb1(0, gp, (mpLib_Callback) fn_801E8560);
@@ -2198,7 +2198,7 @@ s32 grBigBlue_801EACE8(HSD_JObj* exclude, Vec3* point, f32* out_y,
                        f32 half_range_x, f32 half_range_y)
 {
     HSD_GObj* gobj;
-    u8* gp;
+    Ground* gp;
     HSD_JObj* jobj;
     Vec3 pos;
     Vec3 hw_left, hw_right;
@@ -2210,7 +2210,7 @@ s32 grBigBlue_801EACE8(HSD_JObj* exclude, Vec3* point, f32* out_y,
     f32* p_left;
     f32* p_right;
     s32 i;
-    PAD_STACK(32);
+    PAD_STACK(0x24);
 
     gobj = Ground_801C2BA4(0x20);
 
@@ -2222,18 +2222,18 @@ s32 grBigBlue_801EACE8(HSD_JObj* exclude, Vec3* point, f32* out_y,
     best_in_range = F32_MAX;
     best_above = -F32_MAX;
 
-    gp = (u8*) gobj->user_data;
+    gp = gobj->user_data;
     p_left = &hw_left.x;
     p_right = &hw_right.x;
 
     for (i = 0; i < 3; i++, p_left++, p_right++) {
-        jobj = *(HSD_JObj**) (gp + 0xD4 + i * 4);
+        jobj = gp->gv.bigblue.x10[i];
 
         if (exclude == jobj) {
             continue;
         }
 
-        if ((int) gp[0xE5 + i * 0x54] != 3) {
+        if ((int) ((u8*) gp)[0xE5 + i * 0x54] != 3) {
             continue;
         }
 
@@ -2267,9 +2267,9 @@ s32 grBigBlue_801EACE8(HSD_JObj* exclude, Vec3* point, f32* out_y,
     /* Route platform */
     gobj = Ground_801C2BA4(0x24);
     jobj = (HSD_JObj*) gobj->hsd_obj;
-    gp = (u8*) gobj->user_data;
+    gp = gobj->user_data;
 
-    if (exclude != jobj && (int) gp[0xC4] == 2) {
+    if (exclude != jobj && (int) gp->gv.bigblue.x0_b0 == 2) {
         HSD_JObjGetTranslation2(jobj, &route_pos);
 
         left_x = route_pos.x - 68.0F * Ground_801C0498() * 0.5F;
