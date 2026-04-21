@@ -22,6 +22,9 @@
 #include <baselib/jobj.h>
 
 s32 grYt_803B82A8[] = { 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x0 };
+char grYt_803E5230[] = "*** End Frame = %d\n";
+char grYt_804D4798[] = "jobj.h";
+char grYt_804D47A0[] = "jobj";
 
 StageCallbacks grYt_803E5198[2] = {
     { grYorster_80202124, grYorster_80202150, grYorster_80202158,
@@ -271,7 +274,132 @@ void grYorster_802024F0(Ground* gp, s32 joint_id, CollData* coll_data,
     }
 }
 
-/// #grYorster_8020266C
+void grYorster_8020266C(HSD_GObj* gobj)
+{
+    Ground* gp = gobj->user_data;
+    s32 i;
+
+    for (i = 0; i < 9; i++) {
+        struct grYorster_TrackElement* entry = &gp->gv.yorster.elements[i];
+        s32 joint = Ground_801C32D4(gp->map_id, entry->x14);
+
+        switch ((s8) entry->x01) {
+        default: {
+            s32 advance = 0;
+
+            if (entry->x04 >= grYt_804D6A20.x0->x08) {
+                s32 frames_left;
+                f32 end_frame = (f32) grYt_804D6A20.x0->x1C;
+
+                grMaterial_801C8E28(entry->x1C);
+                entry->x04 -= grYt_804D6A20.x0->x08;
+                if (entry->x04 >= grYt_804D6A20.x0->x0C) {
+                    frames_left = 0;
+                } else {
+                    frames_left = (s32) (grYt_804D6A20.x0->x0C - entry->x04);
+                }
+                if (end_frame >= lbGetJObjEndFrame(entry->x18)) {
+                    end_frame = lbGetJObjEndFrame(entry->x18);
+                }
+                advance = 1;
+                entry->x10 =
+                    (s32) ((f32) frames_left *
+                           (end_frame / grYt_804D6A20.x0->x0C));
+            } else if (entry->x08 >= grYt_804D6A20.x0->x00) {
+                s32 frames_left;
+                f32 end_frame = (f32) grYt_804D6A20.x0->x1C;
+
+                grMaterial_801C8E28(entry->x1C);
+                entry->x08 -= grYt_804D6A20.x0->x00;
+                if (entry->x08 <= grYt_804D6A20.x0->x00) {
+                    entry->x08 = grYt_804D6A20.x0->x00;
+                }
+                if (entry->x08 >= grYt_804D6A20.x0->x04) {
+                    frames_left = 0;
+                } else {
+                    frames_left =
+                        (s32) (10.0f *
+                               (grYt_804D6A20.x0->x04 - entry->x08));
+                }
+                if (end_frame >= lbGetJObjEndFrame(entry->x18)) {
+                    end_frame = lbGetJObjEndFrame(entry->x18);
+                }
+                advance = 1;
+                entry->x10 =
+                    (s32) ((f32) frames_left /
+                           (10.0f * grYt_804D6A20.x0->x04) * end_frame);
+                entry->x08 = 0.0f;
+                Ground_801C53EC(0xE);
+            }
+            if (advance != 0) {
+                entry->x0C = grYt_804D6A20.x0->x18;
+                entry->x01 = 2;
+            }
+            break;
+        }
+        case 2:
+            if (entry->x0C <= 0) {
+                grAnime_801C7FF8(gobj, entry->x14, 7, 0, (f32) entry->x10,
+                                 1.0f);
+                mpLib_80057BC0(joint);
+                entry->x01 = 3;
+                entry->x0C = entry->x10;
+            } else {
+                entry->x0C--;
+            }
+            break;
+        case 3:
+            if (entry->x0C >= 0x143) {
+                Vec3 pos;
+
+                if (entry->x18 == NULL) {
+                    __assert(grYt_804D4798, 0x3D3, grYt_804D47A0);
+                }
+                pos = entry->x18->translate;
+                if (grLib_801C9EE8(&pos, 10.0f * Ground_801C0498() - 2.0f)) {
+                    grAnime_801C7FF8(gobj, entry->x14, 7, 2, 0.0f, 0.3f);
+                    entry->x0C = 0;
+                    entry->x01 = 4;
+                } else {
+                    grAnime_801C7FF8(gobj, entry->x14, 7, 1, 0.0f, 1.0f);
+                    mpJointListAdd(joint);
+                    grMaterial_801C8E08(entry->x1C);
+                    entry->x04 = 0.0f;
+                    entry->x08 = 0.0f;
+                    entry->x01 = 1;
+                    OSReport(grYt_803E5230, entry->x0C);
+                }
+            } else {
+                entry->x0C++;
+            }
+            break;
+        case 4:
+            if (grAnime_801C84A4(gobj, entry->x14, 7) != 0 ||
+                entry->x0C >= 0x19)
+            {
+                Vec3 pos;
+
+                entry->x0C = 0;
+                if (entry->x18 == NULL) {
+                    __assert(grYt_804D4798, 0x3D3, grYt_804D47A0);
+                }
+                pos = entry->x18->translate;
+                if (!grLib_801C9EE8(&pos, 10.0f * Ground_801C0498() * 0.5f)) {
+                    grAnime_801C7FF8(gobj, entry->x14, 7, 1, 0.0f, 1.0f);
+                    mpJointListAdd(joint);
+                    grMaterial_801C8E08(entry->x1C);
+                    entry->x04 = 0.0f;
+                    entry->x08 = 0.0f;
+                    entry->x01 = 1;
+                }
+            } else {
+                entry->x0C++;
+            }
+            break;
+        }
+        entry->x08 = 0.0f;
+    }
+}
 
 DynamicsDesc* grYorster_80202B5C(enum_t unused)
 {

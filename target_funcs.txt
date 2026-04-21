@@ -3,4 +3,4 @@ Funcs:
 - [x] grYorster_80202428
 - [x] grYorster_802024F0
 - [x] grYorster_802022A4
-- [ ] grYorster_8020266C
+- [x] grYorster_8020266C
