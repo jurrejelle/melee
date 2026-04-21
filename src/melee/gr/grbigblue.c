@@ -6,6 +6,7 @@
 #include "grfzerocar.h"
 #include "grmaterial.h"
 #include "ground.h"
+#include "placeholder.h"
 
 #include <platform.h>
 
@@ -4791,7 +4792,7 @@ void fn_801EF60C(Ground* gp, s32 joint_id, CollData* coll, s32 time_param,
     s32 idx;
     s16* table;
     grBb_YakumonoParams* params;
-    Ground* p;
+    u8* p;
     s32 i;
     u16 hw;
     PAD_STACK(8);
@@ -4802,9 +4803,10 @@ void fn_801EF60C(Ground* gp, s32 joint_id, CollData* coll, s32 time_param,
     if (env != 1) {
         return;
     }
+    table = grBb_803E2D78.x84;
 
-    for (idx = 0; idx < 30; idx++) {
-        if (joint_id == grBb_803E2D78.x84[idx]) {
+    for (idx = 0; idx < 30; table++, idx++) {
+        if (joint_id == *table) {
             break;
         }
     }
@@ -4812,14 +4814,14 @@ void fn_801EF60C(Ground* gp, s32 joint_id, CollData* coll, s32 time_param,
     HSD_ASSERT(0xED9, idx != 30);
 
     params = grBb_804D69C8;
-    p = gp;
+    p = (u8*) gp;
 
     for (i = 0; i < 4; i++) {
-        // TODO fix this index
-        hw = (u16) p->gv.bigblue.xD4[i]->flags;
+        hw = *(u16*) (p + 0xD4);
         if (((hw >> 4) & 0x1F) == idx) {
-            p->gv.bigblue.data[i].xC.y = -coll->x50 * params->x44;
+            *(f32*) (p + 0xF4) = -coll->x50 * params->x44;
         }
+        p += 0x40;
     }
 }
 
