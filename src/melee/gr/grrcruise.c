@@ -26,6 +26,8 @@
 #include <baselib/gobj.h>
 #include <baselib/gobjgxlink.h>
 #include <baselib/gobjproc.h>
+#include <baselib/random.h>
+#include <MSL/trigf.h>
 
 S16Vec3 grRc_803E4DA8[] = {
     { 0, 1, 1 },   { 1, 1, 1 },   { 2, 1, 1 },   { 3, 1, 1 },   { 4, 1, 1 },
@@ -479,7 +481,37 @@ void grRCruise_802010A4(Ground_GObj* gobj, s32 id, CollData* coll)
     }
 }
 
-/// #grRCruise_80201110
+void grRCruise_80201110(Ground_GObj* gobj)
+{
+    Ground* gp = gobj->user_data;
+    f32 angle =
+        gp->gv.rcruise.x08 +
+        atan2f(gp->gv.rcruise.x04->x4.z, gp->gv.rcruise.x04->x4.x);
+
+    if (angle > 1.0471975430846214) {
+        angle = 1.0471976f;
+    }
+    if (angle < -1.0471975430846214) {
+        angle = -1.0471976f;
+    }
+    gp->gv.rcruise.x04->x4.x = cosf(angle);
+    gp->gv.rcruise.x04->x4.z = sinf(angle);
+    if ((gp->gv.rcruise.x04->unk_angle_int % 30) == 0 && HSD_Randf() > 0.5) {
+        gp->gv.rcruise.x08 = -gp->gv.rcruise.x08;
+    }
+    if ((gp->gv.rcruise.x04->unk_angle_int % 300) == 0) {
+        if (gp->gv.rcruise.x0C != 0) {
+            gp->gv.rcruise.x0C = 0;
+        } else if (HSD_Randf() > 0.5) {
+            gp->gv.rcruise.x0C = 1;
+        }
+    }
+    if (gp->gv.rcruise.x0C != 0) {
+        gp->gv.rcruise.x04->unk_scale = 0.3 * HSD_Randf() + 0.2;
+        return;
+    }
+    gp->gv.rcruise.x04->unk_scale = 0.2 * HSD_Randf() + 0.1;
+}
 
 /// #grRCruise_80201288
 
