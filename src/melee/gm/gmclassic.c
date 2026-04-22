@@ -14,10 +14,64 @@ extern UNK_T gmClassic_80470708[];
 extern DebugGameOverData gmClassic_80470850;
 extern UNK_T gmClassic_8047086C;
 extern UNK_T gmClassic_80472AF8;
-extern u8 gmClassic_80490880[];
-extern u8 gm_804908A0[];
 extern UNK_T gmClassic_804D68D0;
-extern gm_803DDEC8Struct gmClassic_803DDEC8[];
+
+typedef struct gmClassicMatchup {
+    /* 0x00 */ u16 x00;
+    /* 0x02 */ s8 x02[3];
+    /* 0x05 */ u8 x05;
+} gmClassicMatchup;
+STATIC_ASSERT(sizeof(gmClassicMatchup) == 6);
+
+typedef struct gmClassicMatchupData {
+    /* 0x00 */ gmClassicMatchup x00;
+    /* 0x06 */ u8 pad_06[2];
+} gmClassicMatchupData;
+STATIC_ASSERT(sizeof(gmClassicMatchupData) == 8);
+
+typedef struct gmClassicIntroData {
+    /* 0x00 */ s32 x00;
+    /* 0x04 */ s32 x04;
+    /* 0x08 */ u8 x08;
+    /* 0x09 */ u8 x09;
+    /* 0x0A */ u8 x0A;
+    /* 0x0B */ u8 x0B;
+    /* 0x0C */ u8 x0C;
+    /* 0x0D */ u8 x0D[3];
+    /* 0x10 */ u8 x10[3];
+    /* 0x13 */ u8 x13[3];
+    /* 0x16 */ u8 x16[3];
+    /* 0x19 */ u8 x19[3];
+    /* 0x1C */ u8 x1C[3];
+    /* 0x1F */ u8 x1F;
+} gmClassicIntroData;
+STATIC_ASSERT(sizeof(gmClassicIntroData) == 0x20);
+
+typedef struct gmClassic_80490880Data {
+    /* 0x00 */ gmClassicIntroData x00;
+    /* 0x20 */ u8 x20[0x0C];
+    /* 0x2C */ u8 x2C[0x28];
+    /* 0x54 */ u8 x54[0x20];
+    /* 0x74 */ u8 x74[0x0C];
+    /* 0x80 */ u8 x80[0x10];
+} gmClassic_80490880Data;
+STATIC_ASSERT(sizeof(gmClassic_80490880Data) == 0x90);
+
+typedef struct gmClassic_803DDEC8Data {
+    /* 0x000 */ gm_803DDEC8Struct x00[12];
+    /* 0x0C0 */ gmClassicMatchup x0C0[2];
+    /* 0x0CC */ gmClassicMatchup x0CC[39];
+    /* 0x1B6 */ u8 pad_1B6[2];
+    /* 0x1B8 */ gmClassicMatchup x1B8[30];
+    /* 0x26C */ gmClassicMatchup x26C[11];
+    /* 0x2AE */ u8 pad_2AE[2];
+    /* 0x2B0 */ gmClassicMatchup x2B0[10];
+    /* 0x2EC */ u8 pad_2EC[4];
+} gmClassic_803DDEC8Data;
+STATIC_ASSERT(sizeof(gmClassic_803DDEC8Data) == 0x2F0);
+
+extern gmClassic_80490880Data gmClassic_80490880;
+extern gmClassic_803DDEC8Data gmClassic_803DDEC8;
 
 MinorScene gm_803DDC58_MinorScenes[] = {
     {
@@ -319,118 +373,142 @@ MinorScene gm_803DDC58_MinorScenes[] = {
     { -1 },
 };
 
-s32 gmClassic_801B2BA4(s8* arg0, u8* arg1, gm_803DDEC8Struct* arg2)
+static gmClassicMatchup* gmClassic_GetMatchup(gm_803DDEC8Struct* entry)
 {
-    s8* result;
-    u8* idx_ptr;
+    return entry->xC;
+}
+
+static s32 gmClassic_GetMatchupCount(const gmClassicMatchup* matchups)
+{
+    s32 count;
+
+    for (count = 0; matchups[count].x00 != 0x148; count++) {
+    }
+
+    return count;
+}
+
+static bool gmClassic_HasDuplicateChar(s8 cur_char, gm_803DDEC8Struct* entries)
+{
+    gm_803DDEC8Struct* entry;
+
+    for (entry = entries; entry->x0 != 0xD; entry++) {
+        const gmClassicMatchup* matchup = gmClassic_GetMatchup(entry);
+
+        if (matchup != NULL &&
+            (cur_char == matchup->x02[0] || cur_char == matchup->x02[1] ||
+             cur_char == matchup->x02[2]))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static bool gmClassic_HasDuplicateStage(const gmClassicMatchup* matchup,
+                                        gm_803DDEC8Struct* entries)
+{
+    gm_803DDEC8Struct* entry;
+    s32 stage1 = Stage_8022519C((InternalStageId) matchup->x00);
+
+    for (entry = entries; entry->x0 != 0xD; entry++) {
+        const gmClassicMatchup* other = gmClassic_GetMatchup(entry);
+
+        if (other != NULL &&
+            stage1 == Stage_8022519C((InternalStageId) other->x00))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+static void gmClassic_InitMatchupOrder(const gmClassicMatchup* matchups,
+                                       u8* order)
+{
+    s32 count = gmClassic_GetMatchupCount(matchups);
+    s32 i;
+
+    for (i = 0; i < count; i++) {
+        order[i] = i;
+    }
+
+    for (i = 0; i < count; i++) {
+        s32 swap_idx = HSD_Randi(count);
+        u8 tmp = order[i];
+        order[i] = order[swap_idx];
+        order[swap_idx] = tmp;
+    }
+}
+
+static gmClassicMatchup* gmClassic_801B2BA4(gmClassicMatchup* arg0, u8* arg1,
+                                            gm_803DDEC8Struct* arg2)
+{
+    gmClassicMatchup* result;
     s32 outer;
     s8 target_char;
-    s8* entry;
     s32 j;
     int cur_char;
-    s32 stage1;
-    gm_803DDEC8Struct* temp;
-    void* xC;
-    s8* count_ptr;
     s32 cnt;
 
     result = NULL;
     target_char = (s8) gmMainLib_8015CDC8()->c_kind;
-    idx_ptr = arg1;
-    outer = 0;
+    cnt = gmClassic_GetMatchupCount(arg0);
 
-    goto loop_check;
+    for (outer = 0; outer < cnt; outer++) {
+        gmClassicMatchup* entry = &arg0[arg1[outer]];
 
-loop_body:
-    entry = arg0 + *idx_ptr * 6;
-
-    for (j = 0; j < 3; j++) {
-        cur_char = entry[j + 2];
-
-        if (cur_char == 0x21) {
+        if (gm_80164430(entry->x00) == 0) {
             continue;
         }
 
-        if (gm_80164430(*(u16*) entry) == 0) {
-            goto loop_incr;
-        }
-        if (gm_80164840(cur_char) == 0) {
-            goto loop_incr;
-        }
-        if (cur_char == target_char) {
-            goto loop_incr;
-        }
+        for (j = 0; j < 3; j++) {
+            cur_char = entry->x02[j];
 
-        for (temp = arg2; temp->x0 != 0xD; temp++) {
-            if (temp->xC != NULL) {
-                if (cur_char == ((s8*) temp->xC)[2]) {
-                    goto loop_incr;
-                }
+            if (cur_char == 0x21) {
+                continue;
             }
-            if (temp->xC != NULL) {
-                if (cur_char == ((s8*) temp->xC)[3]) {
-                    goto loop_incr;
-                }
-            }
-            if (temp->xC != NULL) {
-                if (cur_char == ((s8*) temp->xC)[4]) {
-                    goto loop_incr;
-                }
+
+            if (gm_80164840(cur_char) == 0 || cur_char == target_char ||
+                gmClassic_HasDuplicateChar(cur_char, arg2))
+            {
+                break;
             }
         }
 
-        for (temp = arg2; temp->x0 != 0xD; temp++) {
-            if (temp->xC != NULL) {
-                stage1 = Stage_8022519C(
-                    (InternalStageId) *(u16*) entry);
-                xC = temp->xC;
-                if (stage1 == Stage_8022519C(
-                        (InternalStageId) *(u16*) xC))
-                {
-                    result = entry;
-                    goto loop_incr;
-                }
-            }
+        if (j != 3) {
+            continue;
         }
+
+        if (gmClassic_HasDuplicateStage(entry, arg2)) {
+            result = entry;
+            continue;
+        }
+
+        return entry;
     }
 
-    if (entry != NULL) {
-        return (s32) entry;
-    }
-
-loop_incr:
-    outer++;
-    idx_ptr++;
-
-loop_check:
-    count_ptr = arg0;
-    for (cnt = 0; *(u16*) count_ptr != 0x148; cnt++) {
-        count_ptr += 6;
-    }
-    if (outer < cnt) {
-        goto loop_body;
-    }
-
-    if (result != NULL) {
-        return (s32) result;
-    }
-    return 0;
+    return result;
 }
 
-static u8 gm_804D4318[8] = { 0x01, 0x48, 0x21, 0x21, 0x21, 0x00, 0x00, 0x00 };
-static u8 gm_804D4320[8] = { 0x00, 0x52, 0x21, 0x21, 0x21, 0x00, 0x00, 0x00 };
-static u8 gm_804D4328[8] = { 0x00, 0x53, 0x21, 0x21, 0x21, 0x00, 0x00, 0x00 };
+static gmClassicMatchupData gm_804D4318 = { { 0x148, { 0x21, 0x21, 0x21 }, 0 },
+                                            { 0, 0 } };
+static gmClassicMatchupData gm_804D4320 = { { 0x052, { 0x21, 0x21, 0x21 }, 0 },
+                                            { 0, 0 } };
+static gmClassicMatchupData gm_804D4328 = { { 0x053, { 0x21, 0x21, 0x21 }, 0 },
+                                            { 0, 0 } };
 
-gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
+static gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
 {
     gm_803DDEC8Struct* ptr;
-    u8* data_base = gmClassic_80490880;
-    u8* ms_base = (u8*) gm_803DDC58_MinorScenes;
 
     for (ptr = arg0; (u8) ptr->x0 != 0xD; ptr++) {
         if (ptr->x1 & 8) {
-            void* result = (void*) gmClassic_801B2BA4(
-                (s8*) (ms_base + 0x520), data_base + 0x80, arg0);
+            gmClassicMatchup* result =
+                gmClassic_801B2BA4(gmClassic_803DDEC8.x2B0,
+                                   gmClassic_80490880.x80, arg0);
             if (result != NULL) {
                 ptr->xC = result;
             } else {
@@ -443,8 +521,9 @@ gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
     for (ptr = arg0; (u8) ptr->x0 != 0xD; ptr++) {
         u8 flags = ptr->x1;
         if ((flags & 2) && !(flags & 0x20)) {
-            void* result = (void*) gmClassic_801B2BA4(
-                (s8*) (ms_base + 0x4DC), data_base + 0x74, arg0);
+            gmClassicMatchup* result =
+                gmClassic_801B2BA4(gmClassic_803DDEC8.x26C,
+                                   gmClassic_80490880.x74, arg0);
             if (result != NULL) {
                 ptr->xC = result;
             } else {
@@ -457,8 +536,9 @@ gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
     for (ptr = arg0; (u8) ptr->x0 != 0xD; ptr++) {
         u8 flags = ptr->x1;
         if ((flags & 0x10) && !(flags & 0x20)) {
-            void* result = (void*) gmClassic_801B2BA4(
-                (s8*) (ms_base + 0x428), data_base + 0x54, arg0);
+            gmClassicMatchup* result =
+                gmClassic_801B2BA4(gmClassic_803DDEC8.x1B8,
+                                   gmClassic_80490880.x54, arg0);
             if (result != NULL) {
                 ptr->xC = result;
             } else {
@@ -471,8 +551,9 @@ gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
     for (ptr = arg0; (u8) ptr->x0 != 0xD; ptr++) {
         u8 flags = ptr->x1;
         if (flags == 0 || flags == 4) {
-            void* result = (void*) gmClassic_801B2BA4(
-                (s8*) (ms_base + 0x33C), data_base + 0x2C, arg0);
+            gmClassicMatchup* result =
+                gmClassic_801B2BA4(gmClassic_803DDEC8.x0CC,
+                                   gmClassic_80490880.x2C, arg0);
             if (result != NULL) {
                 ptr->xC = result;
             } else {
@@ -487,13 +568,13 @@ gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
             u8 x2val = ptr->x2;
             switch ((s32) x2val) {
             case 1:
-                ptr->xC = gm_804D4318;
+                ptr->xC = &gm_804D4318.x00;
                 break;
             case 2:
-                ptr->xC = gm_804D4320;
+                ptr->xC = &gm_804D4320.x00;
                 break;
             case 3:
-                ptr->xC = gm_804D4328;
+                ptr->xC = &gm_804D4328.x00;
                 break;
             }
         }
@@ -501,7 +582,7 @@ gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
 
     for (ptr = arg0; (u8) ptr->x0 != 0xD; ptr++) {
         if (ptr->x1 & 0x20) {
-            ptr->xC = (void*) (ms_base + 0x330);
+            ptr->xC = gmClassic_803DDEC8.x0C0;
             return ptr;
         }
     }
@@ -510,126 +591,25 @@ gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
 
 void gmClassic_OnLoad(void)
 {
-    u8* buf = gmClassic_80490880;
-    MinorScene* ms = gm_803DDC58_MinorScenes;
     UnkAllstarData* data;
     gm_803DDEC8Struct* entry;
-    int count;
-    int i;
-    PAD_STACK(56);
+    s32 i;
 
-    for (entry = gmClassic_803DDEC8; entry->x0 != 0x0D; entry++) {
+    for (entry = gmClassic_803DDEC8.x00; entry->x0 != 0x0D; entry++) {
         entry->xC = NULL;
     }
 
-    {
-        u16* scan = (u16*) ((u8*) ms + 0x520);
-        count = 0;
-        while (*scan != 0x148) {
-            scan = (u16*) ((u8*) scan + 6);
-            count++;
-        }
-        for (i = 0; i < count; i++) {
-            buf[i + 0x80] = i;
-        }
-        {
-            u8* sp = buf + 0x80;
-            int j;
-            for (j = 0; j < count; j++) {
-                u8* swap = buf + HSD_Randi(count);
-                u8 tmp = *sp;
-                *sp = swap[0x80];
-                swap[0x80] = tmp;
-                sp++;
-            }
-        }
-    }
-
-    {
-        u16* scan = (u16*) ((u8*) ms + 0x4DC);
-        count = 0;
-        while (*scan != 0x148) {
-            scan = (u16*) ((u8*) scan + 6);
-            count++;
-        }
-        for (i = 0; i < count; i++) {
-            buf[i + 0x74] = i;
-        }
-        {
-            u8* sp = buf + 0x74;
-            int j;
-            for (j = 0; j < count; j++) {
-                u8* swap = buf + HSD_Randi(count);
-                u8 tmp = *sp;
-                *sp = swap[0x74];
-                swap[0x74] = tmp;
-                sp++;
-            }
-        }
-    }
-
-    {
-        u16* scan = (u16*) ((u8*) ms + 0x428);
-        count = 0;
-        while (*scan != 0x148) {
-            scan = (u16*) ((u8*) scan + 6);
-            count++;
-        }
-        for (i = 0; i < count; i++) {
-            buf[i + 0x54] = i;
-        }
-        {
-            u8* sp = buf + 0x54;
-            int j;
-            for (j = 0; j < count; j++) {
-                u8* swap = buf + HSD_Randi(count);
-                u8 tmp = *sp;
-                *sp = swap[0x54];
-                swap[0x54] = tmp;
-                sp++;
-            }
-        }
-    }
-
-    {
-        u16* scan = (u16*) ((u8*) ms + 0x33C);
-        count = 0;
-        while (*scan != 0x148) {
-            scan = (u16*) ((u8*) scan + 6);
-            count++;
-        }
-        for (i = 0; i < count; i++) {
-            buf[i + 0x2C] = i;
-        }
-        {
-            u8* sp = buf + 0x2C;
-            int j;
-            for (j = 0; j < count; j++) {
-                u8* swap = buf + HSD_Randi(count);
-                u8 tmp = *sp;
-                *sp = swap[0x2C];
-                swap[0x2C] = tmp;
-                sp++;
-            }
-        }
-    }
+    gmClassic_InitMatchupOrder(gmClassic_803DDEC8.x2B0, gmClassic_80490880.x80);
+    gmClassic_InitMatchupOrder(gmClassic_803DDEC8.x26C, gmClassic_80490880.x74);
+    gmClassic_InitMatchupOrder(gmClassic_803DDEC8.x1B8, gmClassic_80490880.x54);
+    gmClassic_InitMatchupOrder(gmClassic_803DDEC8.x0CC, gmClassic_80490880.x2C);
 
     data = gm_8017EB30();
     gmMainLib_8015CDC8();
     gm_8017C984(data);
 
-    {
-        int n;
-        u8* p = gm_804908A0;
-        for (n = 2; n > 2; n--) {
-            p[0] = 0;
-            p[1] = 0;
-            p[2] = 0;
-            p[3] = 0;
-            p[4] = 0;
-            p[5] = 0;
-            p += 6;
-        };
+    for (i = 0; i < sizeof(gmClassic_80490880.x20); i++) {
+        gmClassic_80490880.x20[i] = 0;
     }
 
     gm_8017DB58(data->x0.xC.x24);
@@ -664,8 +644,9 @@ void gmClassic_OnInit(void)
 
 void gmClassic_801B3500(MinorScene* arg0)
 {
-    u8* sd;
+    gmClassicIntroData* sd;
     gm_803DDEC8Struct* entry;
+    gmClassicMatchup* matchup;
     UnkAllstarData* ad;
     int enemy_count;
     int ally_count;
@@ -677,150 +658,137 @@ void gmClassic_801B3500(MinorScene* arg0)
     PreloadCacheSceneEntry* ep;
 
     sd = gm_801A427C(arg0);
-    entry = &gmClassic_803DDEC8[(u8) gm_8017BE84(arg0->idx)];
+    entry = &gmClassic_803DDEC8.x00[(u8) gm_8017BE84(arg0->idx)];
+    matchup = gmClassic_GetMatchup(entry);
     ad = gm_8017EB30();
     enemy_count = 0;
     ad->x0.x7 = arg0->idx;
-    sd[0x0A] = entry->x0 + 1;
-    sd[0x08] = ad->x0.slot;
+    sd->x0A = entry->x0 + 1;
+    sd->x08 = ad->x0.slot;
 
-    /* mode determination — store directly in each branch */
     if (entry->x1 & 0x80) {
-        *(s32*) sd = 3;
+        sd->x00 = 3;
     } else if (entry->x1 & 8) {
-        *(s32*) sd = 4;
+        sd->x00 = 4;
     } else if (entry->x1 & 0x10) {
-        *(s32*) sd = 1;
+        sd->x00 = 1;
     } else if (entry->x1 & 2) {
-        *(s32*) sd = 2;
+        sd->x00 = 2;
     } else {
-        *(s32*) sd = 0;
+        sd->x00 = 0;
     }
 
-    /* sub-mode */
-    if (*(s32*) sd != 3)
-        goto submode_default;
-    switch (entry->x2) {
-    case 1:
-        *(s32*) (sd + 4) = 1;
-        break;
-    case 2:
-        *(s32*) (sd + 4) = 2;
-        break;
-    case 3:
-        *(s32*) (sd + 4) = 3;
-        break;
-    default:
-    submode_default:
-        *(s32*) (sd + 4) = 0;
-        break;
-    }
-
-    /* enemy char loop */
-    for (i = 0; i < 3; i++) {
-        sd[i + 0x10] = ((u8*) entry->xC)[i + 2];
-        sd[i + 0x16] = gm_8017CD94((UnkAdventureData*) ad,
-                                    (s8) ((u8*) entry->xC)[i + 2],
-                                    entry->x0, i);
-        gmRegSetupEnemyColorTable(ad->x0.ckind, ad->x0.color,
-                                  (s8*) entry->xC + 2, sd + 0x16);
-        if (entry->x1 & 4) {
-            sd[i + 0x1C] = 1;
-        } else {
-            sd[i + 0x1C] = 0;
+    sd->x04 = 0;
+    if (sd->x00 == 3) {
+        switch (entry->x2) {
+        case 1:
+            sd->x04 = 1;
+            break;
+        case 2:
+            sd->x04 = 2;
+            break;
+        case 3:
+            sd->x04 = 3;
+            break;
         }
-        if (sd[i + 0x10] != 0x21) {
+    }
+
+    for (i = 0; i < 3; i++) {
+        sd->x10[i] = matchup->x02[i];
+        sd->x16[i] =
+            gm_8017CD94((UnkAdventureData*) ad, matchup->x02[i], entry->x0, i);
+        gmRegSetupEnemyColorTable(ad->x0.ckind, ad->x0.color, matchup->x02,
+                                  sd->x16);
+        if (entry->x1 & 4) {
+            sd->x1C[i] = 1;
+        } else {
+            sd->x1C[i] = 0;
+        }
+        if (sd->x10[i] != 0x21) {
             enemy_count++;
         }
     }
-    sd[0x0C] = enemy_count;
+    sd->x0C = enemy_count;
 
-    /* player ckind + Zelda check */
     ally_count = 1;
     ckind = ad->x0.ckind;
     if (ckind == 0x12 && ad->x0.xC.x12 != 0) {
-        sd[0x0D] = 0x13;
+        sd->x0D[0] = 0x13;
     } else {
-        sd[0x0D] = ckind;
+        sd->x0D[0] = ckind;
     }
-    sd[0x13] = ad->x0.color;
+    sd->x13[0] = ad->x0.color;
 
-    /* gm_8017DB88 call (11 args) */
     gm_8017DB88(ad->x0.xC.x24, entry->x1, ad->x0.cpu_level,
-                (u8) gm_8017BE84(arg0->idx), (u8*) entry->xC + 2,
-                sd[0x0D],
+                (u8) gm_8017BE84(arg0->idx), sd->x10, sd->x0D[0],
                 (u8 (*)(s32, s32, u8)) ad->x58,
                 (u8 (*)(s32, s32, u8)) ad->_5C,
                 (u8 (*)(s32, s32, u8)) ad->_60,
                 (f32 (*)(s32, s32)) ad->_6C,
                 (f32 (*)(s32, s32)) ad->_70);
 
-    /* ally loop */
     for (i = 1; i < 3; i++) {
-        sd[i + 0x0D] = gm_8017DB6C((gm_8017DB6C_arg0_t*) ad->x0.xC.x24,
-                                    i - 1);
-        sd[i + 0x13] = gm_8017DB78((gm_8017DB6C_arg0_t*) ad->x0.xC.x24,
-                                    i - 1);
-        if (sd[i + 0x0D] != 0x21) {
+        sd->x0D[i] =
+            gm_8017DB6C((gm_8017DB6C_arg0_t*) ad->x0.xC.x24, i - 1);
+        sd->x13[i] =
+            gm_8017DB78((gm_8017DB6C_arg0_t*) ad->x0.xC.x24, i - 1);
+        if (sd->x0D[i] != 0x21) {
             ally_count++;
         }
     }
-    sd[0x0B] = ally_count;
-    sd[0x09] = ad->x0.x4;
+    sd->x0B = ally_count;
+    sd->x09 = ad->x0.x4;
 
-    /* preload cache setup */
     gc = &lbDvd_8001822C()->game_cache;
     lbDvd_80018C6C();
-    gc->entries[0].char_id = sd[0x0D];
+    gc->entries[0].char_id = sd->x0D[0];
     gc->entries[0].color = ad->x0.color;
     count = 1;
     lbDvd_80018254();
     lbDvd_80018C2C(0xC7);
     lbDvd_80017700(4);
 
-    /* enemy preload entries (3 unrolled) — pointer stepping */
     {
         s8 echar;
 
         ep = &gc->entries[count];
 
-        echar = ((s8*) entry->xC)[2];
+        echar = matchup->x02[0];
         if (echar != 0x21) {
             ep->char_id = echar;
             if (entry->x1 & 8) {
                 ep->color = 0xFF;
             } else {
-                ep->color = sd[0x16];
+                ep->color = sd->x16[0];
             }
             count++;
             ep++;
         }
 
-        echar = ((s8*) entry->xC)[3];
+        echar = matchup->x02[1];
         if (echar != 0x21) {
             ep->char_id = echar;
             if (entry->x1 & 8) {
                 ep->color = 0xFF;
             } else {
-                ep->color = sd[0x17];
+                ep->color = sd->x16[1];
             }
             count++;
             ep++;
         }
 
-        echar = ((s8*) entry->xC)[4];
+        echar = matchup->x02[2];
         if (echar != 0x21) {
             ep->char_id = echar;
             if (entry->x1 & 8) {
                 ep->color = 0xFF;
             } else {
-                ep->color = sd[0x18];
+                ep->color = sd->x16[2];
             }
             count++;
         }
     }
 
-    /* ally preload entries (3 unrolled) — pointer stepping */
     {
         s8 achar;
         Unk1PData_x24* ap;
@@ -853,21 +821,18 @@ void gmClassic_801B3500(MinorScene* arg0)
 
     lbDvd_80018254();
 
-    /* stage ID for preload */
     if (entry->x1 == 0x80 && entry->x2 == 1) {
         gc->stage_id = (u16) gm_801647F8(ad->x0.ckind);
     } else if (entry->x1 == 4) {
         gc->stage_id = 0xAF;
     } else {
-        gc->stage_id = *(u16*) entry->xC;
+        gc->stage_id = matchup->x00;
     }
 
     lbDvd_80018254();
 
-    /* audio preload - player */
     audio = lbAudioAx_80026E84(ad->x0.ckind);
 
-    /* audio preload - allies */
     for (i = 0; i < 3; i++) {
         s8 achar = ad->x0.xC.x24[i].ckind;
         if (achar != 0x21) {
@@ -875,29 +840,26 @@ void gmClassic_801B3500(MinorScene* arg0)
         }
     }
 
-    /* audio preload - enemies */
     for (i = 0; i < 3; i++) {
-        s8 echar = ((s8*) entry->xC)[i + 2];
+        s8 echar = matchup->x02[i];
         if (echar != 0x21) {
             audio |= lbAudioAx_80026E84(echar);
-            if (((s8*) entry->xC)[i + 2] == 4) {
+            if (matchup->x02[i] == 4) {
                 audio |= ((u64) 2 << 32) | 0x4000;
             }
         }
     }
 
-    /* stage audio — no 0xAF case */
     {
         InternalStageId stage_id;
         if (entry->x1 == 0x80 && entry->x2 == 1) {
             stage_id = (u16) gm_801647F8(ad->x0.ckind);
         } else {
-            stage_id = *(u16*) entry->xC;
+            stage_id = matchup->x00;
         }
         audio |= lbAudioAx_80026EBC(stage_id);
     }
 
-    /* final audio calls */
     lbAudioAx_80026F2C(0x1C);
     lbAudioAx_8002702C(0xC, audio);
     lbAudioAx_80027168();
@@ -918,9 +880,9 @@ void gmClassic_801B3A34(MinorScene* arg0)
     PAD_STACK(8);
 
     temp_r30 = gm_801A427C(arg0);
-    temp_r31 = &gmClassic_803DDEC8[(u8) gm_8017BE84(arg0->idx)];
+    temp_r31 = &gmClassic_803DDEC8.x00[(u8) gm_8017BE84(arg0->idx)];
     temp_r29 = gm_8017EB30();
-    var_r27 = *(u16*) temp_r31->xC;
+    var_r27 = gmClassic_GetMatchup(temp_r31)->x00;
     if (temp_r31->x1 == 0x80 && temp_r31->x2 == 1) {
         var_r27 = gm_801647F8(temp_r29->x0.ckind);
     }
@@ -932,11 +894,11 @@ void gmClassic_801B3A34(MinorScene* arg0)
     temp_r29->x0.x9 = temp_r31->x2;
     temp_r29->x0.xB = temp_r31->x8;
     idx_val = (u16) gm_8017BE84(arg0->idx) - 1;
-    temp_r28 = gm_804908A0[idx_val];
+    temp_r28 = gmClassic_80490880.x20[idx_val];
     sp8 = (s32)(u16) gm_8017BE84(arg0->idx);
     spC = (s32) temp_r28;
     gm_8017CE34(temp_r30, (UnkAdventureData*) temp_r29,
-                (s8*) temp_r31->xC + 2, temp_r31->x6, 1, 0,
+                gmClassic_GetMatchup(temp_r31)->x02, temp_r31->x6, 1, 0,
                 temp_r31->x4, (int) var_r27, sp8, spC);
     gm_8016F088(temp_r30);
 }
@@ -959,14 +921,14 @@ void gmClassic_801B3B40(MinorScene* arg0)
 
     mei = (MatchExitInfo*) gm_801A4284(arg0);
     asd = gm_8017EB30();
-    entry = &gmClassic_803DDEC8[(u8) gm_8017BE84(arg0->idx)];
+    entry = &gmClassic_803DDEC8.x00[(u8) gm_8017BE84(arg0->idx)];
     exit_result = mei->x8;
     idx = (u16) gm_8017BE84(arg0->idx) - 1;
 
     if (exit_result != 0) {
-        gm_804908A0[idx] = 2;
+        gmClassic_80490880.x20[idx] = 2;
     } else {
-        gm_804908A0[idx] = 1;
+        gmClassic_80490880.x20[idx] = 1;
     }
 
     if (gm_8017D7AC(mei, &asd->x0, 0x69) != 0 && entry[1].x0 == 0xD) {
@@ -1039,7 +1001,7 @@ void gmClassic_801B3E44(MinorScene* scene)
     CSSData* temp_r30 = gm_801A4284(scene);
     gmm_x0_528_t* temp_r29 = gmMainLib_8015CDC8();
     UnkAllstarData* temp_r31 = gm_8017EB30();
-    gm_803DDEC8Struct* r4 = gmClassic_803DDEC8;
+    gm_803DDEC8Struct* r4 = gmClassic_803DDEC8.x00;
     if (temp_r30->pending_scene_change == 2) {
         // This only happens when, instead of pressing start to begin the game,
         // we press back to exit.
