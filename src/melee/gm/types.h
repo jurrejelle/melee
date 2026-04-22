@@ -428,7 +428,9 @@ struct lbl_8046B6A0_24C_t {
         u8 x7;
         u8 pad8[2];
         u16 xA;
-        u8 padC[0x20 - 0xC];
+        u8 padC[2];
+        u16 xE;
+        u8 pad10[0x20 - 0x10];
         u32 x20;
         u32 x24;
         u32 x28;
@@ -708,19 +710,19 @@ struct Unk1PData {
             /* 25 */ u8 x1;
             /* 26 */ u8 x2;
             /* 27 */ u8 x3;
-            /* 28 */ int x4;
-            /* 2C */ int x8;
+            /* 28 */ f32 x4;
+            /* 2C */ f32 x8;
         } x24[3];
     } xC;
 };
 
 struct UnkAdventureData {
     /* 00 */ Unk1PData x0;
-    /* 48 */ UNK_T x48;
+    /* 48 */ u8 (*x48)(u8, u8);
     /* 4C */ u8 (*x4C)(u8, u8, u8);
-    /* 50 */ UNK_T x50;
+    /* 50 */ u8 (*x50)(u8, u8, u8);
     /* 54 */ u8 (*x54)(u8, u8, u8);
-    /* 58 */ UNK_T x58;
+    /* 58 */ u8 (*x58)(u8, u8, u8);
     /* 5C */ UNK_T x5C;
     /* 60 */ UNK_T x60;
     /* 64 */ float (*x64)(u8, u8);
