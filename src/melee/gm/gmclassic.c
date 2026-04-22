@@ -14,6 +14,7 @@ extern UNK_T gmClassic_80470708[];
 extern DebugGameOverData gmClassic_80470850;
 extern UNK_T gmClassic_8047086C;
 extern UNK_T gmClassic_80472AF8;
+extern u8 gm_804908A0[];
 extern UNK_T gmClassic_804D68D0;
 
 typedef struct gmClassicMatchup {
@@ -373,63 +374,14 @@ MinorScene gm_803DDC58_MinorScenes[] = {
     { -1 },
 };
 
-static gmClassicMatchup* gmClassic_GetMatchup(gm_803DDEC8Struct* entry)
-{
-    return entry->xC;
-}
-
-static s32 gmClassic_GetMatchupCount(const gmClassicMatchup* matchups)
-{
-    s32 count;
-
-    for (count = 0; matchups[count].x00 != 0x148; count++) {
-    }
-
-    return count;
-}
-
-static bool gmClassic_HasDuplicateChar(s8 cur_char, gm_803DDEC8Struct* entries)
-{
-    gm_803DDEC8Struct* entry;
-
-    for (entry = entries; entry->x0 != 0xD; entry++) {
-        const gmClassicMatchup* matchup = gmClassic_GetMatchup(entry);
-
-        if (matchup != NULL &&
-            (cur_char == matchup->x02[0] || cur_char == matchup->x02[1] ||
-             cur_char == matchup->x02[2]))
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-static bool gmClassic_HasDuplicateStage(const gmClassicMatchup* matchup,
-                                        gm_803DDEC8Struct* entries)
-{
-    gm_803DDEC8Struct* entry;
-    s32 stage1 = Stage_8022519C((InternalStageId) matchup->x00);
-
-    for (entry = entries; entry->x0 != 0xD; entry++) {
-        const gmClassicMatchup* other = gmClassic_GetMatchup(entry);
-
-        if (other != NULL &&
-            stage1 == Stage_8022519C((InternalStageId) other->x00))
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 static void gmClassic_InitMatchupOrder(const gmClassicMatchup* matchups,
                                        u8* order)
 {
-    s32 count = gmClassic_GetMatchupCount(matchups);
+    s32 count;
     s32 i;
+
+    for (count = 0; matchups[count].x00 != 0x148; count++) {
+    }
 
     for (i = 0; i < count; i++) {
         order[i] = i;
@@ -447,23 +399,24 @@ static gmClassicMatchup* gmClassic_801B2BA4(gmClassicMatchup* arg0, u8* arg1,
                                             gm_803DDEC8Struct* arg2)
 {
     gmClassicMatchup* result;
+    gmClassicMatchup* entry;
     s32 outer;
     s8 target_char;
-    s32 j;
     int cur_char;
+    s32 stage1;
+    gm_803DDEC8Struct* temp;
+    s32 j;
+    s32 count;
     s32 cnt;
+    bool skip_entry;
 
     result = NULL;
     target_char = (s8) gmMainLib_8015CDC8()->c_kind;
-    cnt = gmClassic_GetMatchupCount(arg0);
+    outer = 0;
 
-    for (outer = 0; outer < cnt; outer++) {
-        gmClassicMatchup* entry = &arg0[arg1[outer]];
-
-        if (gm_80164430(entry->x00) == 0) {
-            continue;
-        }
-
+    while (true) {
+        entry = &arg0[*arg1];
+        skip_entry = false;
         for (j = 0; j < 3; j++) {
             cur_char = entry->x02[j];
 
@@ -471,23 +424,77 @@ static gmClassicMatchup* gmClassic_801B2BA4(gmClassicMatchup* arg0, u8* arg1,
                 continue;
             }
 
-            if (gm_80164840(cur_char) == 0 || cur_char == target_char ||
-                gmClassic_HasDuplicateChar(cur_char, arg2))
-            {
+            if (gm_80164430(entry->x00) == 0) {
+                skip_entry = true;
+                break;
+            }
+            if (gm_80164840(cur_char) == 0) {
+                skip_entry = true;
+                break;
+            }
+            if (cur_char == target_char) {
+                skip_entry = true;
+                break;
+            }
+
+            for (temp = arg2; temp->x0 != 0xD; temp++) {
+                if (temp->xC != NULL) {
+                    if (cur_char == ((gmClassicMatchup*) temp->xC)->x02[0]) {
+                        skip_entry = true;
+                        break;
+                    }
+                }
+                if (temp->xC != NULL) {
+                    if (cur_char == ((gmClassicMatchup*) temp->xC)->x02[1]) {
+                        skip_entry = true;
+                        break;
+                    }
+                }
+                if (temp->xC != NULL) {
+                    if (cur_char == ((gmClassicMatchup*) temp->xC)->x02[2]) {
+                        skip_entry = true;
+                        break;
+                    }
+                }
+            }
+
+            if (skip_entry) {
+                break;
+            }
+
+            for (temp = arg2; temp->x0 != 0xD; temp++) {
+                if (temp->xC != NULL) {
+                    stage1 = Stage_8022519C((InternalStageId) entry->x00);
+                    if (stage1 ==
+                        Stage_8022519C(
+                            (InternalStageId) ((gmClassicMatchup*) temp->xC)
+                                ->x00))
+                    {
+                        result = entry;
+                        skip_entry = true;
+                        break;
+                    }
+                }
+            }
+
+            if (skip_entry) {
                 break;
             }
         }
 
-        if (j != 3) {
-            continue;
+        if (!skip_entry) {
+            return entry;
         }
 
-        if (gmClassic_HasDuplicateStage(entry, arg2)) {
-            result = entry;
-            continue;
+        outer++;
+        arg1++;
+        cnt = 0;
+        for (count = 0; arg0[count].x00 != 0x148; count++) {
+            cnt++;
         }
-
-        return entry;
+        if (outer >= cnt) {
+            break;
+        }
     }
 
     return result;
@@ -608,8 +615,8 @@ void gmClassic_OnLoad(void)
     gmMainLib_8015CDC8();
     gm_8017C984(data);
 
-    for (i = 0; i < sizeof(gmClassic_80490880.x20); i++) {
-        gmClassic_80490880.x20[i] = 0;
+    for (i = 0; i < 0xC; i++) {
+        gm_804908A0[i] = 0;
     }
 
     gm_8017DB58(data->x0.xC.x24);
@@ -646,7 +653,6 @@ void gmClassic_801B3500(MinorScene* arg0)
 {
     gmClassicIntroData* sd;
     gm_803DDEC8Struct* entry;
-    gmClassicMatchup* matchup;
     UnkAllstarData* ad;
     int enemy_count;
     int ally_count;
@@ -659,7 +665,6 @@ void gmClassic_801B3500(MinorScene* arg0)
 
     sd = gm_801A427C(arg0);
     entry = &gmClassic_803DDEC8.x00[(u8) gm_8017BE84(arg0->idx)];
-    matchup = gmClassic_GetMatchup(entry);
     ad = gm_8017EB30();
     enemy_count = 0;
     ad->x0.x7 = arg0->idx;
@@ -678,7 +683,6 @@ void gmClassic_801B3500(MinorScene* arg0)
         sd->x00 = 0;
     }
 
-    sd->x04 = 0;
     if (sd->x00 == 3) {
         switch (entry->x2) {
         case 1:
@@ -690,14 +694,21 @@ void gmClassic_801B3500(MinorScene* arg0)
         case 3:
             sd->x04 = 3;
             break;
+        default:
+            sd->x04 = 0;
+            break;
         }
+    } else {
+        sd->x04 = 0;
     }
 
     for (i = 0; i < 3; i++) {
-        sd->x10[i] = matchup->x02[i];
-        sd->x16[i] =
-            gm_8017CD94((UnkAdventureData*) ad, matchup->x02[i], entry->x0, i);
-        gmRegSetupEnemyColorTable(ad->x0.ckind, ad->x0.color, matchup->x02,
+        sd->x10[i] = ((gmClassicMatchup*) entry->xC)->x02[i];
+        sd->x16[i] = gm_8017CD94((UnkAdventureData*) ad,
+                                 ((gmClassicMatchup*) entry->xC)->x02[i],
+                                 entry->x0, i);
+        gmRegSetupEnemyColorTable(ad->x0.ckind, ad->x0.color,
+                                  ((gmClassicMatchup*) entry->xC)->x02,
                                   sd->x16);
         if (entry->x1 & 4) {
             sd->x1C[i] = 1;
@@ -753,7 +764,7 @@ void gmClassic_801B3500(MinorScene* arg0)
 
         ep = &gc->entries[count];
 
-        echar = matchup->x02[0];
+        echar = ((gmClassicMatchup*) entry->xC)->x02[0];
         if (echar != 0x21) {
             ep->char_id = echar;
             if (entry->x1 & 8) {
@@ -765,7 +776,7 @@ void gmClassic_801B3500(MinorScene* arg0)
             ep++;
         }
 
-        echar = matchup->x02[1];
+        echar = ((gmClassicMatchup*) entry->xC)->x02[1];
         if (echar != 0x21) {
             ep->char_id = echar;
             if (entry->x1 & 8) {
@@ -777,7 +788,7 @@ void gmClassic_801B3500(MinorScene* arg0)
             ep++;
         }
 
-        echar = matchup->x02[2];
+        echar = ((gmClassicMatchup*) entry->xC)->x02[2];
         if (echar != 0x21) {
             ep->char_id = echar;
             if (entry->x1 & 8) {
@@ -826,7 +837,7 @@ void gmClassic_801B3500(MinorScene* arg0)
     } else if (entry->x1 == 4) {
         gc->stage_id = 0xAF;
     } else {
-        gc->stage_id = matchup->x00;
+        gc->stage_id = ((gmClassicMatchup*) entry->xC)->x00;
     }
 
     lbDvd_80018254();
@@ -841,10 +852,10 @@ void gmClassic_801B3500(MinorScene* arg0)
     }
 
     for (i = 0; i < 3; i++) {
-        s8 echar = matchup->x02[i];
+        s8 echar = ((gmClassicMatchup*) entry->xC)->x02[i];
         if (echar != 0x21) {
             audio |= lbAudioAx_80026E84(echar);
-            if (matchup->x02[i] == 4) {
+            if (((gmClassicMatchup*) entry->xC)->x02[i] == 4) {
                 audio |= ((u64) 2 << 32) | 0x4000;
             }
         }
@@ -855,7 +866,7 @@ void gmClassic_801B3500(MinorScene* arg0)
         if (entry->x1 == 0x80 && entry->x2 == 1) {
             stage_id = (u16) gm_801647F8(ad->x0.ckind);
         } else {
-            stage_id = matchup->x00;
+            stage_id = ((gmClassicMatchup*) entry->xC)->x00;
         }
         audio |= lbAudioAx_80026EBC(stage_id);
     }
@@ -882,7 +893,7 @@ void gmClassic_801B3A34(MinorScene* arg0)
     temp_r30 = gm_801A427C(arg0);
     temp_r31 = &gmClassic_803DDEC8.x00[(u8) gm_8017BE84(arg0->idx)];
     temp_r29 = gm_8017EB30();
-    var_r27 = gmClassic_GetMatchup(temp_r31)->x00;
+    var_r27 = ((gmClassicMatchup*) temp_r31->xC)->x00;
     if (temp_r31->x1 == 0x80 && temp_r31->x2 == 1) {
         var_r27 = gm_801647F8(temp_r29->x0.ckind);
     }
@@ -894,11 +905,11 @@ void gmClassic_801B3A34(MinorScene* arg0)
     temp_r29->x0.x9 = temp_r31->x2;
     temp_r29->x0.xB = temp_r31->x8;
     idx_val = (u16) gm_8017BE84(arg0->idx) - 1;
-    temp_r28 = gmClassic_80490880.x20[idx_val];
+    temp_r28 = gm_804908A0[idx_val];
     sp8 = (s32)(u16) gm_8017BE84(arg0->idx);
     spC = (s32) temp_r28;
     gm_8017CE34(temp_r30, (UnkAdventureData*) temp_r29,
-                gmClassic_GetMatchup(temp_r31)->x02, temp_r31->x6, 1, 0,
+                ((gmClassicMatchup*) temp_r31->xC)->x02, temp_r31->x6, 1, 0,
                 temp_r31->x4, (int) var_r27, sp8, spC);
     gm_8016F088(temp_r30);
 }
@@ -926,9 +937,9 @@ void gmClassic_801B3B40(MinorScene* arg0)
     idx = (u16) gm_8017BE84(arg0->idx) - 1;
 
     if (exit_result != 0) {
-        gmClassic_80490880.x20[idx] = 2;
+        gm_804908A0[idx] = 2;
     } else {
-        gmClassic_80490880.x20[idx] = 1;
+        gm_804908A0[idx] = 1;
     }
 
     if (gm_8017D7AC(mei, &asd->x0, 0x69) != 0 && entry[1].x0 == 0xD) {
