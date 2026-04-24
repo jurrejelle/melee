@@ -995,6 +995,8 @@ struct MenuExitData {
 };
 STATIC_ASSERT(sizeof(struct MenuExitData) == 0x4);
 
+struct gmClassicMatchup;
+
 typedef struct gm_803DDEC8Struct {
     /* 0x00 */ u8 x0;
     /* 0x01 */ u8 x1;
@@ -1004,7 +1006,7 @@ typedef struct gm_803DDEC8Struct {
     /* 0x06 */ u16 x6;
     /* 0x08 */ u8 x8;
     /* 0x09 */ u8 pad09[3];
-    /* 0x0C */ void* xC;
+    /* 0x0C */ struct gmClassicMatchup* xC;
 } gm_803DDEC8Struct;
 
 typedef struct CssSubStruct {
