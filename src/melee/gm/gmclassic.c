@@ -400,66 +400,43 @@ static gmClassicMatchup* gmClassic_801B2BA4(gmClassicMatchup* arg0, u8* arg1,
 {
     gmClassicMatchup* result;
     gmClassicMatchup* entry;
+    gm_803DDEC8Struct* temp;
     s32 outer;
     s8 target_char;
     int cur_char;
-    s32 stage1;
-    gm_803DDEC8Struct* temp;
     s32 j;
+    s32 k;
     s32 count;
-    s32 cnt;
-    bool skip_entry;
+    s32 stage1;
 
-    result = NULL;
     target_char = (s8) gmMainLib_8015CDC8()->c_kind;
+    result = NULL;
     outer = 0;
 
-    while (true) {
+    do {
         entry = &arg0[*arg1];
-        skip_entry = false;
         for (j = 0; j < 3; j++) {
             cur_char = entry->x02[j];
 
             if (cur_char == 0x21) {
                 continue;
             }
-
             if (gm_80164430(entry->x00) == 0) {
-                skip_entry = true;
-                break;
+                goto next;
             }
             if (gm_80164840(cur_char) == 0) {
-                skip_entry = true;
-                break;
+                goto next;
             }
             if (cur_char == target_char) {
-                skip_entry = true;
-                break;
+                goto next;
             }
 
             for (temp = arg2; temp->x0 != 0xD; temp++) {
-                if (temp->xC != NULL) {
-                    if (cur_char == temp->xC->x02[0]) {
-                        skip_entry = true;
-                        break;
+                for (k = 0; k < 3; k++) {
+                    if (temp->xC != NULL && cur_char == temp->xC->x02[k]) {
+                        goto next;
                     }
                 }
-                if (temp->xC != NULL) {
-                    if (cur_char == temp->xC->x02[1]) {
-                        skip_entry = true;
-                        break;
-                    }
-                }
-                if (temp->xC != NULL) {
-                    if (cur_char == temp->xC->x02[2]) {
-                        skip_entry = true;
-                        break;
-                    }
-                }
-            }
-
-            if (skip_entry) {
-                break;
             }
 
             for (temp = arg2; temp->x0 != 0xD; temp++) {
@@ -467,37 +444,31 @@ static gmClassicMatchup* gmClassic_801B2BA4(gmClassicMatchup* arg0, u8* arg1,
                     stage1 = Stage_8022519C((InternalStageId) entry->x00);
                     if (stage1 ==
                         Stage_8022519C(
-                            (InternalStageId) temp->xC
-                                ->x00))
+                            (InternalStageId) temp->xC->x00))
                     {
                         result = entry;
-                        skip_entry = true;
-                        break;
+                        goto next;
                     }
                 }
             }
-
-            if (skip_entry) {
-                break;
-            }
         }
-
-        if (!skip_entry) {
-            return entry;
+        if (result == NULL) {
+            goto next;
         }
-
+        return entry;
+    next:
         outer++;
         arg1++;
-        cnt = 0;
-        for (count = 0; arg0[count].x00 != 0x148; count++) {
-            cnt++;
+        count = 0;
+        while (arg0[count].x00 != 0x148) {
+            count++;
         }
-        if (outer >= cnt) {
-            break;
-        }
-    }
+    } while (outer < count);
 
-    return result;
+    if (result != NULL) {
+        return result;
+    }
+    return NULL;
 }
 
 static gmClassicMatchupData gm_804D4318 = { { 0x148, { 0x21, 0x21, 0x21 }, 0 },
