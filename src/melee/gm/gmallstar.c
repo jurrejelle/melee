@@ -401,7 +401,7 @@ void gm_801B5324(UnkAllstarData* arg0, u8 arg1)
     {
         u32 start = gm_803DEC4C[arg1].start;
         opp_data = &gm_803DEBE8[start * 4];
-        count = gm_80490940[arg1].x0;
+        count = gm_803DEC4C[arg1].count;
     }
 
     chars[0] = 0x21;
@@ -410,7 +410,7 @@ void gm_801B5324(UnkAllstarData* arg0, u8 arg1)
 
     if (count > 0) {
         if (count > 8) {
-            u32 blocks = (u32)(count - 8 + 7) >> 3;
+            u32 blocks = (u32) (count - 8 + 7) >> 3;
             gm_803DEBE8_t* src = opp_data;
             s8* dst = chars;
             if (count - 8 > 0) {
@@ -431,11 +431,10 @@ void gm_801B5324(UnkAllstarData* arg0, u8 arg1)
         }
 
         {
-            s32 total = gm_80490940[arg1].x0;
             gm_803DEBE8_t* src2 = &opp_data[count_processed];
             s8* dst2 = &chars[count_processed];
-            s32 remaining = total - count_processed;
-            if (count_processed < total) {
+            s32 remaining = gm_803DEC4C[arg1].count - count_processed;
+            if (count_processed < gm_803DEC4C[arg1].count) {
                 do {
                     u8 val = src2->x3;
                     src2++;
@@ -449,7 +448,8 @@ void gm_801B5324(UnkAllstarData* arg0, u8 arg1)
     {
         u8* cp = colors;
         for (i = 0; i < 3; i++) {
-            cp[i] = arg0->x54(arg1, arg0->x0.cpu_level, (u8) i);
+            *cp = arg0->x54(arg1, arg0->x0.cpu_level, (u8) i);
+            cp++;
         }
     }
 
@@ -475,25 +475,21 @@ void gm_801B5324(UnkAllstarData* arg0, u8 arg1)
     lbDvd_80017700(4);
 
     {
-        PreloadCacheSceneEntry* slot = &gc->game_cache.entries[slot_idx];
-        u8 fill = 0xFF;
-        s8* cp = chars;
-        u8* pp = colors;
-
+        s32 idx = slot_idx;
         for (i = 0; i < 3; i++) {
-            if ((s8) *cp != 0x21) {
-                slot->char_id = cp[i];
+            if ((s8) chars[i] != 0x21) {
+                gc->game_cache.entries[idx].char_id = chars[i];
                 if (is_last_round != 0) {
-                    (slot + 1)->color = fill;
+                    gc->game_cache.entries[idx].color = 0xFF;
                 } else {
-                    (slot + 1)->color = pp[i];
+                    gc->game_cache.entries[idx].color = colors[i];
                 }
-                slot += 1;
+                idx++;
             }
         }
     }
 
-    *(s32*)(gc + 4) = (s32) opp_data->x2;
+    gc->game_cache.stage_id = (InternalStageId) opp_data->x2;
     lbDvd_80018254();
 
     audio = lbAudioAx_80026E84((CharacterKind)(s8) arg0->x0.ckind);
