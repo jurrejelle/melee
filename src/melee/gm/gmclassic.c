@@ -374,8 +374,8 @@ MinorScene gm_803DDC58_MinorScenes[] = {
     { -1 },
 };
 
-static void gmClassic_InitMatchupOrder(const gmClassicMatchup* matchups,
-                                       u8* order)
+static inline void gmClassic_InitMatchupOrder(const gmClassicMatchup* matchups,
+                                              u8* order)
 {
     s32 count;
     s32 i;
@@ -615,8 +615,11 @@ void gmClassic_OnLoad(void)
     gmMainLib_8015CDC8();
     gm_8017C984(data);
 
-    for (i = 0; i < 0xC; i++) {
-        gm_804908A0[i] = 0;
+    for (i = 0; i < 2; i++) {
+        s32 j;
+        for (j = 0; j < 6; j++) {
+            gm_804908A0[i * 6 + j] = 0;
+        }
     }
 
     gm_8017DB58(data->x0.xC.x24);
