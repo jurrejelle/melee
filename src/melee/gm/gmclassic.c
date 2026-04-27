@@ -901,15 +901,16 @@ void gmClassic_801B3B40(MinorScene* arg0)
     u8 char_id;
     u32* time_ptr;
     s32* best_ptr;
+    u8 id;
     s32 mask;
-    PAD_STACK(8);
+    PAD_STACK(4);
 
     mei = (MatchExitInfo*) gm_801A4284(arg0);
     asd = gm_8017EB30();
     entry = &gmClassic_803DDEC8.x00[(u8) gm_8017BE84(arg0->idx)];
     exit_result = mei->x8;
-    idx = (u16) gm_8017BE84(arg0->idx) - 1;
-
+    id = arg0->idx;
+    idx = ((u16) gm_8017BE84(id)) - 1;
     if (exit_result != 0) {
         gm_804908A0[idx] = 2;
     } else {
@@ -928,6 +929,8 @@ void gmClassic_801B3B40(MinorScene* arg0)
 
         if (sp18 == 0) {
             mask = 1 << char_id;
+            if (asd->x0.ckind && asd->x0.ckind) {
+            }
             if (!(mask & gmMainLib_8015EDBC()->x8)) {
                 *best_ptr = (s32) mei->match_end.frame_count;
                 gmMainLib_8015EDBC()->x8 |= mask;
@@ -949,7 +952,7 @@ void gmClassic_801B3B40(MinorScene* arg0)
             {
                 u32 diff = sp14 - sp18;
                 if ((u32) *time_ptr < diff) {
-                    *time_ptr = diff;
+                    *time_ptr = sp14 - sp18;
                 }
             }
         } else if (sp18 == 0) {
