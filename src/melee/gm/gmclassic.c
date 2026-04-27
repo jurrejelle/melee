@@ -599,11 +599,11 @@ void gmClassic_OnLoad(void)
     data->x54 = gm_8017EB98;
     data->x64 = gm_8017ED3C;
     data->x68 = gm_8017ED8C;
-    data->x58 = (u32) gm_8017ECA0;
-    data->_5C = (u32) gm_8017ED08;
-    data->_60 = (u32) gm_8017ECD4;
-    data->_6C = (u32) gm_8017EC00;
-    data->_70 = (u32) gm_8017EC50;
+    data->x58 = gm_8017ECA0;
+    data->x5C = gm_8017ED08;
+    data->x60 = gm_8017ECD4;
+    data->x6C = gm_8017EC00;
+    data->x70 = gm_8017EC50;
 
     gm_SetSceneMinor(0x70U);
     gm_80172174();
@@ -704,11 +704,9 @@ void gmClassic_801B3500(MinorScene* arg0)
 
     gm_8017DB88(ad->x0.xC.x24, entry->x1, ad->x0.cpu_level,
                 (u8) gm_8017BE84(arg0->idx), sd->x10, sd->x0D[0],
-                (u8 (*)(s32, s32, u8)) ad->x58,
-                (u8 (*)(s32, s32, u8)) ad->_5C,
-                (u8 (*)(s32, s32, u8)) ad->_60,
-                (f32 (*)(s32, s32)) ad->_6C,
-                (f32 (*)(s32, s32)) ad->_70);
+                (u8 (*)(s32, s32, u8)) ad->x58, (u8 (*)(s32, s32, u8)) ad->x5C,
+                (u8 (*)(s32, s32, u8)) ad->x60, (f32 (*)(s32, s32)) ad->x6C,
+                (f32 (*)(s32, s32)) ad->x70);
 
     for (i = 1; i < 3; i++) {
         sd->x0D[i] =

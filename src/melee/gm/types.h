@@ -723,12 +723,12 @@ struct UnkAdventureData {
     /* 50 */ u8 (*x50)(u8, u8, u8);
     /* 54 */ u8 (*x54)(u8, u8, u8);
     /* 58 */ u8 (*x58)(u8, u8, u8);
-    /* 5C */ UNK_T x5C;
-    /* 60 */ UNK_T x60;
+    /* 5C */ u8 (*x5C)(u8, u8, u8);
+    /* 60 */ u8 (*x60)(u8, u8, u8);
     /* 64 */ float (*x64)(u8, u8);
     /* 68 */ float (*x68)(u8, u8);
-    /* 6C */ UNK_T x6C;
-    /* 70 */ UNK_T x70;
+    /* 6C */ float (*x6C)(u8, u8);
+    /* 70 */ float (*x70)(u8, u8);
     /* 74 */ u8 x74;
     /* 75 */ u8 x75;
     /* 76 */ u8 x76;
@@ -741,17 +741,17 @@ struct UnkAdventureData {
 
 struct UnkAllstarData {
     /*  +0 */ Unk1PData x0;
-    /* +48*/ UNK_T x48;
-    /* +4C*/ UNK_T x4C;
-    /* +50*/ UNK_T x50;
-    /* +54*/ UNK_T x54;
-    /* +58*/ u32 x58;
-    /* +5C*/ u32 _5C;
-    /* +60*/ u32 _60;
-    /* +64*/ UNK_T x64;
-    /* +68*/ UNK_T x68;
-    /* +6C*/ u32 _6C;
-    /* +70*/ u32 _70;
+    /* 48 */ u8 (*x48)(u8, u8);
+    /* 4C */ u8 (*x4C)(u8, u8, u8);
+    /* 50 */ u8 (*x50)(u8, u8, u8);
+    /* 54 */ u8 (*x54)(u8, u8, u8);
+    /* 58 */ u8 (*x58)(u8, u8, u8);
+    /* 5C */ u8 (*x5C)(u8, u8, u8);
+    /* 60 */ u8 (*x60)(u8, u8, u8);
+    /* 64 */ float (*x64)(u8, u8);
+    /* 68 */ float (*x68)(u8, u8);
+    /* 6C */ float (*x6C)(u8, u8);
+    /* 70 */ float (*x70)(u8, u8);
     /* +74*/ u16 x74;    ///< current percent
     /* +76*/ u8 x76[24]; ///< character id array
     /* +8E*/ u8 x8E[2];
