@@ -480,9 +480,9 @@ static gmClassicMatchupData gm_804D4328 = { { 0x053, { 0x21, 0x21, 0x21 }, 0 },
 
 static gm_803DDEC8Struct* gmClassic_801B2D54(gm_803DDEC8Struct* arg0)
 {
-    gmClassic_803DDEC8Data* d = &gmClassic_803DDEC8;
     gmClassic_80490880Data* o = &gmClassic_80490880;
     gm_803DDEC8Struct* ptr;
+    gmClassic_803DDEC8Data* d = &gmClassic_803DDEC8;
 
     for (ptr = arg0; (u8) ptr->x0 != 0xD; ptr++) {
         if (ptr->x1 & 8) {
