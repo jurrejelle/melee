@@ -47,8 +47,6 @@ static void* grOp_804D6A9C;
 static int grOp_804D48A0[1][2] = { { 4, 0 } };
 static int grOp_804D48A8[1][2] = { { 5, 1 } };
 static int grOp_804D48B0[1][2] = { { 2, 3 } };
-char grOp_804D48B8[] = "jobj";
-char grOp_804D48C0[] = "jobj.h";
 static int grOp_804D48C8[1][2] = { { 4, 0 } };
 static int grOp_804D48D0[1][2] = { { 5, 1 } };
 static int grOp_804D48D8[1][2] = { { 2, 3 } };
