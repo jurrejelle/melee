@@ -487,7 +487,57 @@ void grGreens_80214FA8(Ground_GObj* gobj)
     }
 }
 
-/// #grGreens_802150C4
+void grGreens_802150C4(Ground_GObj* gobj, int arg1, int arg2)
+{
+    Ground* gp = GET_GROUND(gobj);
+
+    if (arg2 > 0 && arg1 > 0 &&
+        getBlock(gp, arg2 - 1, arg1 - 1)->status == 3)
+    {
+        if (getBlock(gp, arg2 - 1, arg1)->status == 3) {
+            mpLib_800581DC(getBlock(gp, arg2 - 1, arg1 - 1)->x18,
+                           getBlock(gp, arg2 - 1, arg1)->x18);
+        } else if (getBlock(gp, arg2, arg1 - 1)->status == 3) {
+            mpLib_800581DC(getBlock(gp, arg2 - 1, arg1 - 1)->x18,
+                           getBlock(gp, arg2, arg1 - 1)->x18);
+        }
+    }
+    if (arg2 < 4 && arg1 > 0 &&
+        getBlock(gp, arg2 + 1, arg1 - 1)->status == 3)
+    {
+        if (getBlock(gp, arg2 + 1, arg1)->status == 3) {
+            mpLib_800581DC(getBlock(gp, arg2 + 1, arg1 - 1)->x18,
+                           getBlock(gp, arg2 + 1, arg1)->x18);
+        } else if (getBlock(gp, arg2, arg1 - 1)->status == 3) {
+            mpLib_800581DC(getBlock(gp, arg2 + 1, arg1 - 1)->x18,
+                           getBlock(gp, arg2, arg1 - 1)->x18);
+        }
+    }
+    if (arg2 > 0 && arg1 < 5 &&
+        getBlock(gp, arg2 - 1, arg1 + 1)->status == 3)
+    {
+        if (getBlock(gp, arg2 - 1, arg1)->status == 3) {
+            mpLib_800581DC(getBlock(gp, arg2 - 1, arg1 + 1)->x18,
+                           getBlock(gp, arg2 - 1, arg1)->x18);
+        } else if (getBlock(gp, arg2, arg1 + 1)->status == 3) {
+            mpLib_800581DC(getBlock(gp, arg2 - 1, arg1 + 1)->x18,
+                           getBlock(gp, arg2, arg1 + 1)->x18);
+        }
+    }
+    if (arg2 < 4 && arg1 < 5 &&
+        getBlock(gp, arg2 + 1, arg1 + 1)->status == 3)
+    {
+        if (getBlock(gp, arg2 + 1, arg1)->status == 3) {
+            mpLib_800581DC(getBlock(gp, arg2 + 1, arg1 + 1)->x18,
+                           getBlock(gp, arg2 + 1, arg1)->x18);
+            return;
+        }
+        if (getBlock(gp, arg2, arg1 + 1)->status == 3) {
+            mpLib_800581DC(getBlock(gp, arg2 + 1, arg1 + 1)->x18,
+                           getBlock(gp, arg2, arg1 + 1)->x18);
+        }
+    }
+}
 
 void grGreens_80215358(Ground_GObj* gobj, int i, int j, int arg3, int arg4)
 {
@@ -667,7 +717,37 @@ s32 grGreens_80215D54(Ground_GObj* gobj, int arg1, int arg2)
 
 /// #grGreens_802166C4
 
-/// #grGreens_80216C20
+void grGreens_80216C20(Ground_GObj* gobj)
+{
+    Ground* gp = GET_GROUND(gobj);
+    int i;
+    int j;
+
+    for (i = 0; i < 5; i++) {
+        for (j = 0; j < 6; j++) {
+            struct grGreens_BlockVars* block = getBlock(gp, i, j);
+
+            if (block->x1_6) {
+                if (i > 0 && getBlock(gp, i - 1, j)->status == 3) {
+                    mpLib_800581DC(block->x18, getBlock(gp, i - 1, j)->x18);
+                }
+                if (j > 0 && getBlock(gp, i, j - 1)->status == 3) {
+                    mpLib_800581DC(block->x18, getBlock(gp, i, j - 1)->x18);
+                }
+                if (i < 4 && getBlock(gp, i + 1, j)->status == 3) {
+                    mpLib_800581DC(block->x18, getBlock(gp, i + 1, j)->x18);
+                }
+                if (j < 5 && getBlock(gp, i, j + 1)->status == 3) {
+                    mpLib_800581DC(block->x18, getBlock(gp, i, j + 1)->x18);
+                }
+                block->x1_6 = 0;
+            } else if (block->x1_7) {
+                grGreens_802150C4(gobj, j, i);
+                block->x1_7 = 0;
+            }
+        }
+    }
+}
 
 void fn_80216DE4(Ground* gp, s32 arg1, CollData* arg2, s32 arg3,
                  enum mpLib_GroundEnum arg4, f32 farg0)
