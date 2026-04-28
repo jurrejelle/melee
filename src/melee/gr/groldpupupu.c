@@ -5,6 +5,7 @@
 
 #include "ft/ftlib.h"
 #include "gr/granime.h"
+#include "gr/grdisplay.h"
 #include "gr/grmaterial.h"
 #include "gr/ground.h"
 #include "gr/grzakogenerator.h"
@@ -13,6 +14,8 @@
 #include "lb/lb_00F9.h"
 
 #include <baselib/gobj.h>
+#include <baselib/gobjgxlink.h>
+#include <baselib/gobjproc.h>
 #include <baselib/jobj.h>
 #include <baselib/random.h>
 #include "ft/ftdevice.h"
@@ -61,6 +64,22 @@ StageCallbacks grOp_803E6688[9] = {
       grOldPupupu_8021110C, 0 },
 };
 
+StageData grOp_803E6748 = {
+    OLDPUPUPU,
+    grOp_803E6688,
+    "/GrOp.dat",
+    grOldPupupu_802107E0,
+    grOldPupupu_802107DC,
+    grOldPupupu_80210884,
+    grOldPupupu_80210888,
+    grOldPupupu_802108AC,
+    grOldPupupu_80211CA0,
+    grOldPupupu_80211CA8,
+    1,
+    0,
+    0,
+};
+
 void grOldPupupu_802107DC(bool arg) {}
 
 void grOldPupupu_802107E0(void)
@@ -103,7 +122,22 @@ HSD_GObj* grOldPupupu_802108B4(int arg0)
     gobj = Ground_GetStageGObj(arg0);
 
     if (gobj != NULL) {
-        Ground_SetupStageCallbacks(gobj, callbacks);
+        Ground* gp = gobj->user_data;
+        gp->x8_callback = NULL;
+        gp->xC_callback = NULL;
+        GObj_SetupGXLink(gobj, grDisplay_801C5DB0, 3, 0);
+
+        if (callbacks->callback3 != NULL) {
+            gp->x1C_callback = callbacks->callback3;
+        }
+
+        if (callbacks->callback0 != NULL) {
+            callbacks->callback0(gobj);
+        }
+
+        if (callbacks->callback2 != NULL) {
+            HSD_GObj_SetupProc(gobj, callbacks->callback2, 4);
+        }
     } else {
         OSReport("%s:%d: couldn t get gobj(id=%d)\n", "groldpupupu.c", 0xD9,
                  arg0);
