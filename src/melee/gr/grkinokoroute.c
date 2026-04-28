@@ -17,6 +17,7 @@
 #include "lb/lb_00B0.h"
 #include "mp/mplib.h"
 
+#include <baselib/debug.h>
 #include <baselib/gobj.h>
 #include <baselib/gobjgxlink.h>
 #include <baselib/gobjproc.h>
@@ -194,7 +195,27 @@ void grKinokoRoute_80207B30(HSD_GObj* gobj)
     ftCo_800C07F8(gobj, 6, grKinokoRoute_80208660);
 }
 
-/// #grKinokoRoute_80207B5C
+void grKinokoRoute_80207B5C(Ground_GObj* gobj)
+{
+    Ground* gp = GET_GROUND(gobj);
+    HSD_JObj* reb0_jobj;
+
+    Ground_801C2ED0(gobj->hsd_obj, gp->map_id);
+    grAnime_801C8138(gobj, gp->map_id, 0);
+    gp->x8_callback = NULL;
+    gp->xC_callback = NULL;
+    gp->x10_flags.b2 = 1;
+    gp->gv.castle5.xC6 = 0;
+    gp->gv.castle11.xCA = 0;
+    gp->gv.castle8.plat[0].state = 0;
+    gp->gv.castle.xC8 = -1;
+    Ground_801C10B8(gobj, grKinokoRoute_80207B30);
+    grKinokoRoute_80208564(gobj);
+    gp->gv.bigblue.x0 |= 0x80;
+    reb0_jobj = Ground_801C2CF4(4);
+    HSD_ASSERT(467, reb0_jobj);
+    HSD_JObjGetTranslation(reb0_jobj, (Vec3*) &gp->gv.arwing.xD0);
+}
 
 bool grKinokoRoute_80207C80(Ground_GObj* arg)
 {
