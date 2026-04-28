@@ -13,8 +13,10 @@
 #include "gr/grmaterial.h"
 #include "gr/grzakogenerator.h"
 #include "gr/inlines.h"
+#include "gr/stage.h"
 #include "it/it_26B1.h"
 #include "lb/lb_00B0.h"
+#include "lb/lbvector.h"
 #include "mp/mplib.h"
 
 #include <baselib/debug.h>
@@ -146,7 +148,59 @@ HSD_GObj* grKinokoRoute_8020754C(int gobj_id)
     return gobj;
 }
 
-/// #grKinokoRoute_80207634
+void grKinokoRoute_80207634(Ground_GObj* gobj)
+{
+    Vec3 cam_offset;
+    Vec3 origin;
+    Ground* gp = GET_GROUND(gobj);
+    HSD_JObj* jobj;
+
+    jobj = Ground_801C2CF4(0x94);
+    if (jobj != NULL) {
+        HSD_JObjGetTranslation(jobj, &origin);
+
+        jobj = Ground_801C2CF4(0x7F);
+        *(HSD_JObj**) ((u8*) gp + 0xD0) = jobj;
+        if (jobj != NULL) {
+            HSD_JObjGetTranslation(jobj, (Vec3*) ((u8*) gp + 0xC4));
+            lbVector_Sub((Vec3*) ((u8*) gp + 0xC4), &origin);
+        }
+
+        jobj = Ground_801C2CF4(0x80);
+        *(HSD_JObj**) ((u8*) gp + 0xE0) = jobj;
+        if (jobj != NULL) {
+            HSD_JObjGetTranslation(jobj, (Vec3*) ((u8*) gp + 0xD4));
+            lbVector_Sub((Vec3*) ((u8*) gp + 0xD4), &origin);
+        }
+
+        jobj = Ground_801C2CF4(0x81);
+        *(HSD_JObj**) ((u8*) gp + 0xF0) = jobj;
+        if (jobj != NULL) {
+            HSD_JObjGetTranslation(jobj, (Vec3*) ((u8*) gp + 0xE4));
+            lbVector_Sub((Vec3*) ((u8*) gp + 0xE4), &origin);
+        }
+
+        jobj = Ground_801C2CF4(0x82);
+        *(HSD_JObj**) ((u8*) gp + 0x100) = jobj;
+        if (jobj != NULL) {
+            HSD_JObjGetTranslation(jobj, (Vec3*) ((u8*) gp + 0xF4));
+            lbVector_Sub((Vec3*) ((u8*) gp + 0xF4), &origin);
+        }
+    } else {
+        *(HSD_JObj**) ((u8*) gp + 0xD0) = NULL;
+        *(HSD_JObj**) ((u8*) gp + 0xE0) = NULL;
+        *(HSD_JObj**) ((u8*) gp + 0xF0) = NULL;
+        *(HSD_JObj**) ((u8*) gp + 0x100) = NULL;
+    }
+
+    Ground_801C39C0();
+    Ground_801C3BB4();
+    Stage_UnkSetVec3TCam_Offset(&cam_offset);
+    Ground_801C3880(1.5f * (Stage_GetCamBoundsTopOffset() - cam_offset.y));
+    Ground_801C3890(1.5f * (Stage_GetCamBoundsBottomOffset() - cam_offset.y));
+    Ground_801C38A0(1.5f * (Stage_GetCamBoundsLeftOffset() - cam_offset.x));
+    Ground_801C38AC(1.5f * (Stage_GetCamBoundsRightOffset() - cam_offset.x));
+}
 
 bool grKinokoRoute_802078E8(Ground_GObj* arg)
 {
