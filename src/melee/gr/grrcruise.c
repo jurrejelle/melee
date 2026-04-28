@@ -63,12 +63,10 @@ StageCallbacks grRc_803E4E34[7] = {
       grRCruise_801FF920, 0 },
 };
 
-char grRc_803E4EC0[] = "/GrRc.dat";
-
 struct StageData grRc_803E4ECC = {
     RCRUISE,
     grRc_803E4E34,
-    grRc_803E4EC0,
+    "/GrRc.dat",
     grRCruise_801FF168,
     grRCruise_801FF164,
     grRCruise_801FF298,
@@ -81,7 +79,7 @@ struct StageData grRc_803E4ECC = {
     ARRAY_SIZE(grRc_803E4DA8),
 };
 
-
+extern struct grRCruise_VanishDesc grRc_803E5014;
 extern Vec3 grRc_803B8288;
 extern s16 grRc_803E4FF0[];
 extern s16 grRc_804D4790[4];
@@ -913,17 +911,15 @@ void grRCruise_80201288(HSD_JObj* jobj, void (*callback)(HSD_DObj*, u32),
 
 void grRCruise_80201410(Ground_GObj* gobj)
 {
-    Ground_GObj* stage_gobj = gobj;
-    Ground* gp = stage_gobj->user_data;
-    struct grRCruise_VanishDesc* desc =
-        (struct grRCruise_VanishDesc*) ((u8*) grRc_803E4DA8 + 0x26C);
+    Ground* gp = gobj->user_data;
+    struct grRCruise_VanishDesc* desc = &grRc_803E5014;
     u32 i;
 
     gp->u.map.vanish = HSD_MemAlloc(0xA0);
     HSD_ASSERT(0x5AD, gp->u.map.vanish);
 
     for (i = 0; i < 20; i++) {
-        gp->u.map.vanish[i].jobj = Ground_801C3FA4(stage_gobj, desc[i].x00);
+        gp->u.map.vanish[i].jobj = Ground_801C3FA4(gobj, desc[i].x00);
         HSD_ASSERT(0x5B3, gp->u.map.vanish[i].jobj);
         if (desc[i].x04 != 0) {
             HSD_GObj* gobj5;
@@ -949,7 +945,7 @@ void grRCruise_80201410(Ground_GObj* gobj)
             mpJointListAdd(desc[i].x02);
         } else {
             gp->u.map.vanish[i].x00 = 0;
-            grAnime_801C7FF8(stage_gobj, desc[i].x00, 2, 1, 0.0f, 1.0f);
+            grAnime_801C7FF8(gobj, desc[i].x00, 2, 1, 0.0f, 1.0f);
             mpLib_80057BC0(desc[i].x02);
         }
     }
@@ -959,8 +955,7 @@ void grRCruise_80201588(Ground_GObj* gobj)
 {
     Point3d pos;
     Ground* gp = gobj->user_data;
-    struct grRCruise_VanishDesc* desc =
-        (struct grRCruise_VanishDesc*) ((u8*) grRc_803E4DA8 + 0x26C);
+    struct grRCruise_VanishDesc* desc = &grRc_803E5014;
     s32 i;
 
     HSD_ASSERT(0x5D6, gp->u.map.vanish);
@@ -1038,9 +1033,7 @@ void grRCruise_80201588(Ground_GObj* gobj)
                 grAnime_801C7FF8(gobj, desc->x00, 2, 1, 0.0f, 1.0f);
                 for (j = 0; j < 20; j++) {
                     if (gp->gv.rcruise.vanish[j].x00 != 0 &&
-                        ((struct grRCruise_VanishDesc*) ((u8*) grRc_803E4DA8 +
-                                                         0x26C))[j]
-                                .x02 == desc->x02)
+                        (&grRc_803E5014)[j].x02 == desc->x02)
                     {
                         done = false;
                         break;
@@ -1061,7 +1054,7 @@ void grRCruise_80201918(Vec3* vec)
     if (gobj != NULL) {
         Ground* gp = gobj->user_data;
         if (gp != NULL) {
-            *vec = *(Vec3*) ((u8*) gp + 0xE0);
+            *vec = gp->u.scroll.x1C;
             return;
         }
     }
