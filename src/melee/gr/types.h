@@ -451,9 +451,9 @@ struct grVenom_GroundVars {
     /* +04 gp+C8 */ u32 xC8;
     /* +08 gp+CC */ u32 xCC;
     /* +0C gp+D0 */ u32 xD0;
-    /* +10 gp+D4 */ u32 xD4;
-    /* +14 gp+D8 */ u32 xD8;
-    /* +18 gp+DC */ u32 xDC;
+    /* +10 gp+D4 */ f32 xD4;
+    /* +14 gp+D8 */ f32 xD8;
+    /* +18 gp+DC */ f32 xDC;
     /* +1C gp+E0 */ f32 xE0;
     /* +20 gp+E4 */ f32 xE4;
     /* +24 gp+E8 */ f32 xE8;
