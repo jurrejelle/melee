@@ -295,6 +295,7 @@ void grGreens_802139C0(Ground_GObj* arg) {}
 void grGreens_802139C4(Ground_GObj* gobj)
 {
     Ground* gp = GET_GROUND(gobj);
+
     ftCo_800C06E8(gobj, 9, fn_80213B1C);
     gp->gv.greens.x0_flags.whole_thing = 0;
     gp->gv.greens.x4 = NULL;
@@ -622,7 +623,45 @@ void fn_80215D50(Item_GObj* item_gobj, Ground* gp, HSD_GObj* gobj)
     return;
 }
 
-/// #grGreens_80215D54
+s32 grGreens_80215D54(Ground_GObj* gobj, int arg1, int arg2)
+{
+    Ground* gp = GET_GROUND(gobj);
+    int row;
+    int x = arg1 << 5;
+
+    for (row = 1; row < 5; row++) {
+        int offset = row * 0xC0;
+        u8* blocks = (u8*) gp->gv.greens.x8_blocks;
+        int status = (blocks[offset + x] >> 4) & 0xF;
+
+        if ((status == 1 || status == 2) &&
+            (((blocks[(row - 1) * 0xC0 + x] >> 4) & 0xF) == 0))
+        {
+            int i;
+            int count = 5 - row;
+
+            if (row < 5) {
+                do {
+                    struct grGreens_BlockVars temp =
+                        *(struct grGreens_BlockVars*) (blocks + offset + x);
+                    *(struct grGreens_BlockVars*) (blocks + offset + x) =
+                        *(struct grGreens_BlockVars*) (blocks + offset + x -
+                                                       0xC0);
+                    *(struct grGreens_BlockVars*) (blocks + offset + x - 0xC0) =
+                        temp;
+                    offset += 0xC0;
+                    count -= 1;
+                } while (count != 0);
+            }
+            if ((((blocks[(row - 1) * 0xC0 + x] >> 4) & 0xF) == 2)) {
+                blocks[(row - 1) * 0xC0 + x] =
+                    (blocks[(row - 1) * 0xC0 + x] & ~0xF0) | 0x10;
+            }
+            row = 0;
+        }
+    }
+    return (s32) gobj;
+}
 
 /// #grGreens_80215ED8
 
