@@ -2,7 +2,7 @@ File: src/melee/gr/grgreens.c
 Funcs:
 - [x] fn_80216DE4
 - [x] grGreens_80213524
-- [ ] grGreens_802139C4
+- [x] grGreens_802139C4
 - [ ] grGreens_80214FA8
 - [ ] grGreens_80214674
 - [ ] grGreens_80215D54
