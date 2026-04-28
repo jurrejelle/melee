@@ -151,8 +151,8 @@ HSD_GObj* grKinokoRoute_8020754C(int gobj_id)
 
 void grKinokoRoute_80207634(Ground_GObj* gobj)
 {
-    Vec3 cam_offset;
     Vec3 origin;
+    Vec3 cam_offset;
     Ground* gp = GET_GROUND(gobj);
     HSD_JObj* jobj;
 
@@ -160,38 +160,38 @@ void grKinokoRoute_80207634(Ground_GObj* gobj)
     if (jobj != NULL) {
         HSD_JObjGetTranslation(jobj, &origin);
 
-        jobj = Ground_801C2CF4(0x7F);
-        *(HSD_JObj**) ((u8*) gp + 0xD0) = jobj;
-        if (jobj != NULL) {
-            HSD_JObjGetTranslation(jobj, (Vec3*) ((u8*) gp + 0xC4));
-            lbVector_Sub((Vec3*) ((u8*) gp + 0xC4), &origin);
+        gp->gv.kinokoroute.entries[0].jobj = Ground_801C2CF4(0x7F);
+        if (gp->gv.kinokoroute.entries[0].jobj != NULL) {
+            HSD_JObjGetTranslation(gp->gv.kinokoroute.entries[0].jobj,
+                                   &gp->gv.kinokoroute.entries[0].pos);
+            lbVector_Sub(&gp->gv.kinokoroute.entries[0].pos, &origin);
         }
 
-        jobj = Ground_801C2CF4(0x80);
-        *(HSD_JObj**) ((u8*) gp + 0xE0) = jobj;
-        if (jobj != NULL) {
-            HSD_JObjGetTranslation(jobj, (Vec3*) ((u8*) gp + 0xD4));
-            lbVector_Sub((Vec3*) ((u8*) gp + 0xD4), &origin);
+        gp->gv.kinokoroute.entries[1].jobj = Ground_801C2CF4(0x80);
+        if (gp->gv.kinokoroute.entries[1].jobj != NULL) {
+            HSD_JObjGetTranslation(gp->gv.kinokoroute.entries[1].jobj,
+                                   &gp->gv.kinokoroute.entries[1].pos);
+            lbVector_Sub(&gp->gv.kinokoroute.entries[1].pos, &origin);
         }
 
-        jobj = Ground_801C2CF4(0x81);
-        *(HSD_JObj**) ((u8*) gp + 0xF0) = jobj;
-        if (jobj != NULL) {
-            HSD_JObjGetTranslation(jobj, (Vec3*) ((u8*) gp + 0xE4));
-            lbVector_Sub((Vec3*) ((u8*) gp + 0xE4), &origin);
+        gp->gv.kinokoroute.entries[2].jobj = Ground_801C2CF4(0x81);
+        if (gp->gv.kinokoroute.entries[2].jobj != NULL) {
+            HSD_JObjGetTranslation(gp->gv.kinokoroute.entries[2].jobj,
+                                   &gp->gv.kinokoroute.entries[2].pos);
+            lbVector_Sub(&gp->gv.kinokoroute.entries[2].pos, &origin);
         }
 
-        jobj = Ground_801C2CF4(0x82);
-        *(HSD_JObj**) ((u8*) gp + 0x100) = jobj;
-        if (jobj != NULL) {
-            HSD_JObjGetTranslation(jobj, (Vec3*) ((u8*) gp + 0xF4));
-            lbVector_Sub((Vec3*) ((u8*) gp + 0xF4), &origin);
+        gp->gv.kinokoroute.entries[3].jobj = Ground_801C2CF4(0x82);
+        if (gp->gv.kinokoroute.entries[3].jobj != NULL) {
+            HSD_JObjGetTranslation(gp->gv.kinokoroute.entries[3].jobj,
+                                   &gp->gv.kinokoroute.entries[3].pos);
+            lbVector_Sub(&gp->gv.kinokoroute.entries[3].pos, &origin);
         }
     } else {
-        *(HSD_JObj**) ((u8*) gp + 0xD0) = NULL;
-        *(HSD_JObj**) ((u8*) gp + 0xE0) = NULL;
-        *(HSD_JObj**) ((u8*) gp + 0xF0) = NULL;
-        *(HSD_JObj**) ((u8*) gp + 0x100) = NULL;
+        gp->gv.kinokoroute.entries[0].jobj = NULL;
+        gp->gv.kinokoroute.entries[1].jobj = NULL;
+        gp->gv.kinokoroute.entries[2].jobj = NULL;
+        gp->gv.kinokoroute.entries[3].jobj = NULL;
     }
 
     Ground_801C39C0();

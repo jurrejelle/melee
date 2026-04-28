@@ -455,6 +455,13 @@ struct grArwing_GroundVars {
     f32 xEC;
 };
 
+struct grKinokoRoute_GroundVars {
+    struct {
+        /* +0x00 */ Vec3 pos;
+        /* +0x0C */ HSD_JObj* jobj;
+    } entries[4];
+};
+
 struct grSmashTaunt_GroundVars {
     /* +0x00 */ s16 state;
     /* +0x02 */ s16 timer;
@@ -1553,6 +1560,7 @@ struct Ground {
             struct GroundVars_izumi izumi;
             struct GroundVars_izumi2 izumi2;
             struct GroundVars_izumi3 izumi3;
+            struct grKinokoRoute_GroundVars kinokoroute;
             struct grKongo_GroundVars kongo;
             struct grKongo_GroundVars2 kongo2;
             struct grKongo_GroundVars3 kongo3;
