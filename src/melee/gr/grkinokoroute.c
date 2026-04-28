@@ -211,10 +211,7 @@ bool grKinokoRoute_802078E8(Ground_GObj* arg)
 
 void grKinokoRoute_802078F0(Ground_GObj* gobj)
 {
-    struct grNKr_802078F0_Entry {
-        Vec3 pos;
-        HSD_JObj* jobj;
-    } *entry;
+    struct grKinokoRoute_GroundVars_Entry* entry;
     Vec3 pos;
     Ground* gp = GET_GROUND(gobj);
     HSD_GObj* fighter = Ground_801C57A4();
@@ -233,7 +230,7 @@ void grKinokoRoute_802078F0(Ground_GObj* gobj)
         scale = 1.0f;
     }
 
-    entry = (struct grNKr_802078F0_Entry*) &gp->gv.kinokoroute.entries[0];
+    entry = &gp->gv.kinokoroute.entries[0];
     for (i = 0; i < 4; i++, entry++) {
         if (entry->jobj != NULL) {
             HSD_JObjSetTranslateX(entry->jobj, scale * (entry->pos.x + pos.x));

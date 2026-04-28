@@ -455,11 +455,13 @@ struct grArwing_GroundVars {
     f32 xEC;
 };
 
+struct grKinokoRoute_GroundVars_Entry {
+    /* +0x00 */ Vec3 pos;
+    /* +0x0C */ HSD_JObj* jobj;
+};
+
 struct grKinokoRoute_GroundVars {
-    struct {
-        /* +0x00 */ Vec3 pos;
-        /* +0x0C */ HSD_JObj* jobj;
-    } entries[4];
+    /* +0x00 */ struct grKinokoRoute_GroundVars_Entry entries[4];
 };
 
 struct grKinokoRoute_GroundVars2 {
