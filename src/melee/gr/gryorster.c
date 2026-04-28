@@ -221,17 +221,15 @@ void grYorster_802022A4(HSD_GObj* gobj)
 void grYorster_80202428(HSD_GObj* item_gobj, Ground* gp, Vec3* pos,
                         HSD_GObj* fighter_gobj, f32 value)
 {
-    Ground* ground = gp;
-    HSD_GObj* fighter = fighter_gobj;
     int i;
 
-    if (ftLib_80086960(fighter)) {
-        ftLib_80086A4C(fighter, (f32) grYt_804D6A20.x0->x14);
+    if (ftLib_80086960(fighter_gobj)) {
+        ftLib_80086A4C(fighter_gobj, grYt_804D6A20.x0->x14);
     }
 
     for (i = 0; i < 9; i++) {
-        if (item_gobj == ground->gv.yorster.elements[i].x1C) {
-            ground->gv.yorster.elements[i].x04 += value;
+        if (item_gobj == gp->gv.yorster.elements[i].x1C) {
+            gp->gv.yorster.elements[i].x04 += value;
             break;
         }
     }
