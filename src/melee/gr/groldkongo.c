@@ -21,7 +21,7 @@
 static struct {
     s16 x0;
     s16 x2;
-    u8 x4[0x4];
+    f32 x4;
     f32 x8;
     f32 xC;
     f32 x10;
@@ -217,7 +217,62 @@ bool grOldKongo_802100F4(Ground_GObj* gobj)
     return false;
 }
 
-/// #grOldKongo_802100FC
+void grOldKongo_802100FC(Ground_GObj* arg0)
+{
+    f32 left;
+    f32 center;
+    f32 right;
+    Ground* gp = GET_GROUND(arg0);
+    HSD_JObj* jobj = GET_JOBJ(arg0);
+    s32 timer = gp->gv.unk.xC4;
+
+    if (timer > 0) {
+        gp->gv.unk.xC4 = timer - 1;
+        if (gp->gv.unk.xC4 == 0) {
+            f32 x;
+
+            grAnime_801C8138(arg0, gp->map_id, 0);
+            HSD_JObjSetTranslateY(
+                jobj, (grOk_804D6A90->x4 * ((2.0f * HSD_Randf()) - 1.0f)) +
+                          70.0f);
+            HSD_JObjSetTranslateZ(jobj, -200.0f);
+            Camera_800307D0(&left, &center, &right);
+            if (HSD_Randi(2) != 0) {
+                if (right > 200.0f) {
+                    x = right;
+                } else {
+                    x = 200.0f;
+                }
+                HSD_JObjSetTranslateX(jobj, x);
+                HSD_JObjClearFlagsAll(Ground_801C3FA4(arg0, 3), 0x10U);
+                return;
+            }
+            x = left;
+            if (!(x < -200.0f)) {
+                x = -200.0f;
+            }
+            HSD_JObjSetTranslateX(jobj, x);
+            HSD_JObjClearFlagsAll(Ground_801C3FA4(arg0, 1), 0x10U);
+        }
+    } else if (grAnime_801C83D0(arg0, 0, 7) != 0) {
+        int min;
+        int max;
+
+        HSD_JObjSetFlagsAll(jobj, 0x10U);
+        min = grOk_804D6A90->x2;
+        max = grOk_804D6A90->x0;
+        if (min > max) {
+            s32 range = min - max;
+
+            min = max + (range != 0 ? HSD_Randi(range) : 0);
+        } else if (min < max) {
+            s32 range = max - min;
+
+            min += (range != 0 ? HSD_Randi(range) : 0);
+        }
+        gp->gv.unk.xC4 = min;
+    }
+}
 
 void grOldKongo_80210450(Ground_GObj* arg) {}
 
