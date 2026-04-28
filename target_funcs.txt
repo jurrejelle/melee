@@ -1,7 +1,7 @@
 File: src/melee/gr/groldpupupu.c
 Funcs:
 - [x] grOldPupupu_802108B4
-- [ ] grOldPupupu_8021119C
+- [x] grOldPupupu_8021119C
 - [ ] fn_802112F4
 - [ ] grOldPupupu_80210D10
 - [ ] grOldPupupu_802113E0
