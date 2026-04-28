@@ -1,7 +1,5 @@
 #include "grvenom.h"
 
-#include "placeholder.h"
-
 #include <platform.h>
 
 #include "gr/grcorneria.h"
@@ -689,12 +687,12 @@ void grVenom_802053B0(Ground_GObj* gobj)
                     }
                     break;
                 case 1:
-                    if (grVenom_80205E84((Vec2*) &sp28) == 0) {
+                    if (grVenom_80205E84(&sp28) == 0) {
                         gp->gv.venom.xD8 = 2;
                     }
                     break;
                 case 2:
-                    if (grVenom_80205E84((Vec2*) &sp28) == 1) {
+                    if (grVenom_80205E84(&sp28) == 1) {
                         lbAudioAx_800237A8(0x6B6C2, 0x7F, 0x40);
                         gp->gv.venom.xD8 = 3;
                     }
@@ -702,14 +700,8 @@ void grVenom_802053B0(Ground_GObj* gobj)
                 }
             }
         } else if (state < 12) {
-            ((jobj) ? ((void) 0) : __assert("jobj.h", 0x294, "jobj"));
-            if (jobj->flags & JOBJ_USE_QUATERNION) {
-                __assert("jobj.h", 0x295, (char*) base + 0x2D4);
-            }
-            jobj->rotate.y = grVe_804DB740;
-            if (!(jobj->flags & JOBJ_MTX_INDEP_SRT)) {
-                HSD_JObjSetMtxDirty(jobj);
-            }
+            HSD_JObjSetRotationY(jobj, grVe_804DB740);
+
             gp2 = gobj->user_data;
             grVenom_802052E0(gobj, &sp1C);
             state = gp2->gv.venom.xD8;
@@ -721,12 +713,12 @@ void grVenom_802053B0(Ground_GObj* gobj)
                 }
                 break;
             case 1:
-                if (grVenom_80205E84((Vec2*) &sp1C) == 0) {
+                if (grVenom_80205E84(&sp1C) == 0) {
                     gp2->gv.venom.xD8 = 2;
                 }
                 break;
             case 2:
-                if (grVenom_80205E84((Vec2*) &sp1C) == 1) {
+                if (grVenom_80205E84(&sp1C) == 1) {
                     lbAudioAx_800237A8(0x6B6C2, 0x7F, 0x40);
                     gp2->gv.venom.xD8 = 3;
                 }
@@ -900,7 +892,7 @@ float Stage_GetBlastZoneLeftOffset(void);
 float Stage_GetBlastZoneRightOffset(void);
 float Stage_GetBlastZoneTopOffset(void);
 
-s32 grVenom_80205E84(Vec2* pos)
+s32 grVenom_80205E84(Vec3* pos)
 {
     if (pos->x > Stage_GetBlastZoneRightOffset() - 20.0F) {
         return 1;
