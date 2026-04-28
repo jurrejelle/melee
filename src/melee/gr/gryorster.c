@@ -21,11 +21,6 @@
 #include <baselib/gobjproc.h>
 #include <baselib/jobj.h>
 
-s32 grYt_803B82A8[] = { 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x0 };
-char grYt_803E5230[] = "*** End Frame = %d\n";
-char grYt_804D4798[] = "jobj.h";
-char grYt_804D47A0[] = "jobj";
-
 StageCallbacks grYt_803E5198[2] = {
     { grYorster_80202124, grYorster_80202150, grYorster_80202158,
       grYorster_8020215C, NULL },
@@ -351,11 +346,8 @@ void grYorster_8020266C(HSD_GObj* gobj)
         case 3:
             if (entry->x0C >= 0x143) {
                 Vec3 pos;
+                HSD_JObjGetTranslation(entry->x18, &pos);
 
-                if (entry->x18 == NULL) {
-                    __assert(grYt_804D4798, 0x3D3, grYt_804D47A0);
-                }
-                pos = entry->x18->translate;
                 if (grLib_801C9EE8(&pos, 10.0f * Ground_801C0498() - 2.0f)) {
                     grAnime_801C7FF8(gobj, entry->x14, 7, 2, 0.0f, 0.3f);
                     entry->x0C = 0;
@@ -367,7 +359,7 @@ void grYorster_8020266C(HSD_GObj* gobj)
                     entry->x04 = 0.0f;
                     entry->x08 = 0.0f;
                     entry->x01 = 1;
-                    OSReport(grYt_803E5230, entry->x0C);
+                    OSReport("*** End Frame = %d\n", entry->x0C);
                 }
             } else {
                 entry->x0C++;
@@ -380,10 +372,7 @@ void grYorster_8020266C(HSD_GObj* gobj)
                 Vec3 pos;
 
                 entry->x0C = 0;
-                if (entry->x18 == NULL) {
-                    __assert(grYt_804D4798, 0x3D3, grYt_804D47A0);
-                }
-                pos = entry->x18->translate;
+                HSD_JObjGetTranslation(entry->x18, &pos);
                 if (!grLib_801C9EE8(&pos, 10.0f * Ground_801C0498() * 0.5f)) {
                     grAnime_801C7FF8(gobj, entry->x14, 7, 1, 0.0f, 1.0f);
                     mpJointListAdd(joint);
