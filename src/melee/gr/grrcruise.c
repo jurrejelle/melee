@@ -18,11 +18,13 @@
 
 #include "lb/forward.h"
 
+#include "lb/lb_00B0.h"
 #include "lb/lb_00F9.h"
 #include "lb/lbvector.h"
 #include "mp/mplib.h"
 #include "sysdolphin/baselib/memory.h"
 
+#include <math.h>
 #include <baselib/archive.h>
 #include <baselib/dobj.h>
 #include <baselib/gobj.h>
@@ -30,7 +32,6 @@
 #include <baselib/gobjproc.h>
 #include <baselib/jobj.h>
 #include <baselib/random.h>
-#include <math.h>
 #include <MSL/trigf.h>
 
 S16Vec3 grRc_803E4DA8[] = {
@@ -405,7 +406,7 @@ void grRCruise_801FF924(Ground_GObj* gobj)
     if (vars->x28[2] == NULL) {
         __assert(grRc_803E4F24, 0x2B4, ((char*) grRc_803E4DA8) + 0x1E4);
     }
-    HSD_JObjGetTranslate(vars->x28[2], &vars->x04);
+    HSD_JObjGetTranslation(vars->x28[2], &vars->x04);
     vars->x10.z = 0.0f;
     vars->x10.y = 0.0f;
     vars->x10.x = 0.0f;
@@ -433,7 +434,7 @@ void grRCruise_801FFADC(Ground_GObj* gobj)
     s32 i;
 
     Stage_UnkSetVec3TCam_Offset(&cam_offset);
-    HSD_JObjGetTranslate(GET_JOBJ(hidden_gobj), &translate);
+    HSD_JObjGetTranslation(GET_JOBJ(hidden_gobj), &translate);
     lbVector_Sub(&translate, &cam_offset);
     HSD_JObjSetTranslate(GET_JOBJ(gobj), &translate);
 
