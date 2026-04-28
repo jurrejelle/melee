@@ -666,7 +666,31 @@ void grGreens_802159B8(Ground* gp, int i, int j, int value)
     }
 }
 
-/// #fn_80215B84
+void fn_80215B84(Item_GObj* item_gobj, Ground* gp, Vec* arg2, HSD_GObj* gobj,
+                 float arg4)
+{
+    int i;
+    int j;
+    int row = -1;
+    int col = 0;
+
+    for (i = 0; i < 5; i++) {
+        for (j = 0; j < 6; j++) {
+            struct grGreens_BlockVars* block = getBlock(gp, i, j);
+
+            if (block->status != Gr_Greens_Block_Status_None &&
+                block->x10 == item_gobj)
+            {
+                row = i;
+                col = j;
+                i = 5;
+                break;
+            }
+        }
+    }
+    HSD_ASSERT(1465, row != -1);
+    grGreens_802159B8(gp, col, row, (s32) gobj);
+}
 
 void fn_80215D50(Item_GObj* item_gobj, Ground* gp, HSD_GObj* gobj)
 {
