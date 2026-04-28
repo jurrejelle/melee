@@ -837,7 +837,7 @@ void gm_801B60A4_OnLoad(void)
     data->x4C = gm_8018A228;
     data->x50 = gm_8018A290;
     data->x54 = gm_8018A25C;
-    data->x58 = 0;
+    data->x58 = NULL;
     data->x64 = gm_8018A2C4;
     var_r29 = gm_803DEBE8;
     data->x68 = gm_8018A314;

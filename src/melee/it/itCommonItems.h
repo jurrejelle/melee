@@ -713,10 +713,10 @@ typedef struct itPokemonAttributes {
 typedef struct itKamexAttributes {
     /* +00 */ f32 x0;
     /* +04 */ s32 timer;
-    /* +08 */ s32 max;
-    /* +0C */ s32 xC;
-    /* +10 */ s32 x10;
-    /* +14 */ s32 x14;
+    /* +08 */ f32 x8;
+    /* +0C */ f32 xC;
+    /* +10 */ f32 x10;
+    /* +14 */ f32 x14;
     /* +18 */ f32 x18;
     /* +1C */ f32 x1C;
 } itKamexAttributes;
@@ -1017,6 +1017,13 @@ typedef struct itChicorita_ItemVars {
     /* ip+E38 */ f32 x64; // y vel
 } itChicorita_ItemVars;
 
+typedef struct itHouou_ItemVars {
+    /* ip+DD4 */ u8 _0[0x60 - 0x0];
+    /* ip+E34 */ s32 timer;
+    /* ip+E38 */ Vec3 start_pos;
+    /* ip+E44 */ f32 vel_accum;
+} itHouou_ItemVars;
+
 typedef struct itChicoritaAttr {
     f32 scale;
     s32 x4; // x60 in item vars gets set to this if -1; max timer/lifetime?
@@ -1285,9 +1292,9 @@ typedef struct it_2E5A_TierEntry {
 /// Special attributes for it_2E5A items. Base physics parameters followed by
 /// three tier entries.
 typedef struct it_2E5A_Attrs {
-    /* 0x00 */ f32 x0;  // passed to it_80275158
-    /* 0x04 */ f32 x4;  // stored into item->xDD4_itemVar.it_2E5A.x10
-    /* 0x08 */ f32 x8;  // stored into item->xDD4_itemVar.it_2E5A.x14
+    /* 0x00 */ f32 x0; // passed to it_80275158
+    /* 0x04 */ f32 x4; // stored into item->xDD4_itemVar.it_2E5A.x10
+    /* 0x08 */ f32 x8; // stored into item->xDD4_itemVar.it_2E5A.x14
     /* 0x0C */ f32 xC;
     /* 0x10 */ f32 x10;
     /* 0x14 */ f32 x14; // item->x40_vel.x multiplier on landing
@@ -1296,7 +1303,8 @@ typedef struct it_2E5A_Attrs {
     /* 0x20 */ f32 x20;
     /* 0x24 */ f32 x24;
     /* 0x28 */ f32 x28;
-    /* 0x2C */ f32 x2C[4]; // per-player spawn multiplier (indexed by gm_8016C6C0)
+    /* 0x2C */ f32
+        x2C[4]; // per-player spawn multiplier (indexed by gm_8016C6C0)
     /* 0x3C */ it_2E5A_TierEntry tiers[3];
 } it_2E5A_Attrs;
 
@@ -1327,7 +1335,7 @@ typedef struct itWhiteBea_ItemVars {
     /*  +0 ip+DD4 */ char pad_0[0x18];
     /* +18 ip+DEC */ s32 x18;
     /* +1C ip+DF0 */ char pad_1C[0x4];
-    /* +20 ip+DF4 */ UNK_T x20;
+    /* +20 ip+DF4 */ Item_GObj* x20;
     /* +24 ip+DF8 */ char pad_24[0x4];
     /* +28 ip+DFC */ s32 x28;
     /* +2C ip+E00 */ char pad_2C[0x10];
@@ -1337,7 +1345,10 @@ typedef struct itWhiteBea_ItemVars {
 } itWhiteBea_ItemVars;
 
 typedef struct itWhiteBeaAttributes {
-    /* +0 */ s32* x0;
+    /* +0 */ struct {
+        s32 x0;
+        f32 x4;
+    }* x0;
     /* +4 */ f32 x4;
     /* +8 */ s16 x8;
     /* +A */ s16 xA;
@@ -1489,9 +1500,10 @@ typedef struct itPatapataAttributes {
     /* 0x1C */ s32 x1C;
     /* 0x20 */ f32 x20;
     /* 0x24 */ s32 x24;
-    /* 0x28 */ s32 x28;
+    /* 0x28 */ f32 x28;
     /* 0x2C */ s32 x2C;
-    /* 0x30 */ u8 pad_30[0x38 - 0x30];
+    /* 0x30 */ f32 x30;
+    /* 0x34 */ f32 x34;
     /* 0x38 */ f32 x38;
     /* 0x3C */ f32 x3C;
 } itPatapataAttributes;
@@ -1507,9 +1519,9 @@ typedef struct itOldottoseaAttributes {
     /* 0x10 */ s8 x10;
     /* 0x11 */ u8 pad0[0x3];
     /* 0x14 */ f32 x14;
-    /* 0x18 */ u8 pad1[0x4];
+    /* 0x18 */ f32 x18;
     /* 0x1C */ f32 x1C;
-    /* 0x20 */ u8 pad2[0x4];
+    /* 0x20 */ f32 x20;
     /* 0x24 */ f32 x24;
     /* 0x28 */ s8 x28;
 } itOldottoseaAttributes;
@@ -1558,6 +1570,16 @@ typedef struct itkireihanaAttributes {
     u32 xC;
 } itkireihanaAttributes;
 
+typedef struct itKabigonAttributes {
+    f32 x0;
+    f32 x4;
+    f32 x8;
+    f32 xC;
+    s32 x10;
+    s32 x14;
+    f32 x18;
+} itKabigonAttributes;
+
 typedef struct itMatadogasAttributes {
     /* +00 */ f32 x0;
     /* +04 */ f32 x4;
@@ -1591,10 +1613,13 @@ typedef struct itOldkuri_ItemVars {
 typedef struct itUnknown_ItemVars {
     /* +00 ip+DD4 */ char pad_0[0x60];
     /* +60 ip+E34 */ f32 x60;
-    /* +64 ip+E38 */ s32 x64;
-    /* +68 ip+E3C */ s32 x68;
+    /* +64 ip+E38 */ union { f32 f; s32 i; } x64;
+    /* +68 ip+E3C */ union { f32 f; s32 i; } x68;
     /* +6C ip+E40 */ Vec3 x6C;
-    /* +78 ip+E4C */ Vec3 x78;
+    /* +78 ip+E4C */ union {
+        Vec3 vec;
+        s32 dir;
+    } x78;
     /* +84 ip+E58 */ s32 x84;
 } itUnknown_ItemVars;
 
@@ -1606,15 +1631,15 @@ typedef struct itGreatFoxLaser_Attrs {
 } itGreatFoxLaser_Attrs;
 
 typedef struct itUnknownAttributes {
-    /* +00 */ f32 x0;
+    /* +00 */ union { f32 f; s32 i; } x0;
     /* +04 */ f32 x4;
     /* +08 */ f32 x8;
     /* +0C */ f32 xC;
     /* +10 */ f32 x10;
     /* +14 */ f32 x14;
-    /* +18 */ s32 x18;
-    /* +1C */ s32 x1C;
-    /* +20 */ s32 x20;
+    /* +18 */ union { f32 f; s32 i; } x18;
+    /* +1C */ union { f32 f; s32 i; } x1C;
+    /* +20 */ union { f32 f; s32 i; } x20;
     /* +24 */ HSD_Joint* x24[26];
 } itUnknownAttributes;
 
