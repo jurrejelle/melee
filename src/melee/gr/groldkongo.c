@@ -78,10 +78,22 @@ HSD_GObj* grOldKongo_8020F52C(int arg0)
     gobj = Ground_GetStageGObj(arg0);
 
     if (gobj != NULL) {
-        Ground_SetupStageCallbacks(gobj, callbacks);
+        Ground* gp = GET_GROUND(gobj);
+
+        gp->x8_callback = NULL;
+        gp->xC_callback = NULL;
+        GObj_SetupGXLink(gobj, grDisplay_801C5DB0, 3, 0);
+        if (callbacks->callback3 != NULL) {
+            gp->x1C_callback = callbacks->callback3;
+        }
+        if (callbacks->callback0 != NULL) {
+            callbacks->callback0(gobj);
+        }
+        if (callbacks->callback2 != NULL) {
+            HSD_GObj_SetupProc(gobj, callbacks->callback2, 4);
+        }
     } else {
-        OSReport("%s:%d: couldn t get gobj(id=%d)\n", "groldkongo.c", 0xD5,
-                 arg0);
+        OSReport("%s:%d: couldn t get gobj(id=%d)\n", __FILE__, 0xD5, arg0);
     }
 
     return gobj;
