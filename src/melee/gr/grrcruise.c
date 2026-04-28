@@ -436,8 +436,8 @@ void grRCruise_80200070(Ground_GObj* arg) {}
 
 void grRCruise_80200074(Ground_GObj* gobj)
 {
-    int i;
     Ground* gp = gobj->user_data;
+    int i;
     HSD_JObj* jobj = GET_JOBJ(gobj);
     PAD_STACK(8);
 
