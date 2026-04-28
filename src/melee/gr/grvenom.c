@@ -674,14 +674,14 @@ void grVenom_802053B0(Ground_GObj* gobj)
     gp = gobj->user_data;
     base = (s32*) &grVe_803E5348;
     jobj = gobj->hsd_obj;
-    ptr = base + gp->gv.venom.xC8;
+    ptr = base + gp->gv.arwing.xC8;
 
     if ((u32) ptr[8] == (u32) gobj) {
-        if (*(s32*) &gp->gv.venom.xD4 == 1) {
-            *(s32*) &gp->gv.venom.xD4 = 0;
+        if ((s32) gp->gv.arwing.xD4 == 1) {
+            gp->gv.arwing.xD4 = 0;
             grAnime_801C8138(gobj, gp->map_id,
                              *(s32*) ((char*) base +
-                                      base[gp->gv.venom.xC8 + 11] * 4 +
+                                      base[gp->gv.arwing.xC8 + 11] * 4 +
                                       0x1E8));
             return;
         }
@@ -690,66 +690,62 @@ void grVenom_802053B0(Ground_GObj* gobj)
         if (state < 8) {
             if (state >= 1) {
                 grVenom_802052E0(gobj, &sp28);
-                state = *(s32*) &gp->gv.venom.xD8;
+                state = gp->gv.arwing.xD8;
                 switch (state) {
                 case 0:
                     if (grVenom_80205DF8(&sp28) == 0) {
                         lbAudioAx_800237A8(0x6B6C0, 0x7F, 0x40);
-                        *(s32*) &gp->gv.venom.xD8 = 1;
+                        gp->gv.arwing.xD8 = 1;
                     }
                     break;
                 case 1:
                     if (grVenom_80205E84((Vec2*) &sp28) == 0) {
-                        *(s32*) &gp->gv.venom.xD8 = 2;
+                        gp->gv.arwing.xD8 = 2;
                     }
                     break;
                 case 2:
                     if (grVenom_80205E84((Vec2*) &sp28) == 1) {
                         lbAudioAx_800237A8(0x6B6C2, 0x7F, 0x40);
-                        *(s32*) &gp->gv.venom.xD8 = 3;
+                        gp->gv.arwing.xD8 = 3;
                     }
                     break;
                 }
             }
         } else if (state < 12) {
-            // FAKE MATCH: Uses HSD_JObjSetRotationY's assert line numbers
-            // (0x294, 0x295) but sets rotate.z. Cannot use
-            // HSD_JObjSetRotationZ inline as it produces different line
-            // numbers. Original assembly has these line numbers embedded.
             ((jobj) ? ((void) 0) : __assert("jobj.h", 0x294, "jobj"));
             if (jobj->flags & JOBJ_USE_QUATERNION) {
                 __assert("jobj.h", 0x295, (char*) base + 0x2D4);
             }
-            jobj->rotate.z = grVe_804DB740;
+            jobj->rotate.y = grVe_804DB740;
             if (!(jobj->flags & JOBJ_MTX_INDEP_SRT)) {
                 HSD_JObjSetMtxDirty(jobj);
             }
             gp2 = gobj->user_data;
             grVenom_802052E0(gobj, &sp1C);
-            state = *(s32*) &gp2->gv.venom.xD8;
+            state = gp2->gv.arwing.xD8;
             switch (state) {
             case 0:
                 if (grVenom_80205DF8(&sp1C) == 0) {
                     lbAudioAx_800237A8(0x6B6C0, 0x7F, 0x40);
-                    *(s32*) &gp2->gv.venom.xD8 = 1;
+                    gp2->gv.arwing.xD8 = 1;
                 }
                 break;
             case 1:
                 if (grVenom_80205E84((Vec2*) &sp1C) == 0) {
-                    *(s32*) &gp2->gv.venom.xD8 = 2;
+                    gp2->gv.arwing.xD8 = 2;
                 }
                 break;
             case 2:
                 if (grVenom_80205E84((Vec2*) &sp1C) == 1) {
                     lbAudioAx_800237A8(0x6B6C2, 0x7F, 0x40);
-                    *(s32*) &gp2->gv.venom.xD8 = 3;
+                    gp2->gv.arwing.xD8 = 3;
                 }
                 break;
             }
         }
 
         if (grAnime_801C83D0(gobj, 0, 7) != 0) {
-            *(s32*) ((char*) base + gp->gv.venom.xC8 * 4 + 0x20) = 0;
+            *(s32*) ((char*) base + gp->gv.arwing.xC8 * 4 + 0x20) = 0;
             Ground_801C4A08(gobj);
         }
     } else {
