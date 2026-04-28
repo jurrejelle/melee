@@ -526,7 +526,25 @@ void grGreens_8021483C(Ground_GObj* gobj)
     }
 }
 
-/// #grGreens_80214B58
+void grGreens_80214B58(Ground_GObj* gobj)
+{
+    static const u8 indices[] = {
+        0x12, 0x0C, 0x0D, 0x06, 0x07, 0x08, 0x00, 0x01, 0x02,
+        0x17, 0x10, 0x11, 0x09, 0x0A, 0x0B, 0x03, 0x04, 0x05,
+    };
+    int i;
+
+    memset(grGr_8049F9E0, 0, sizeof(grGr_8049F9E0));
+    for (i = 0; i < sizeof(indices) / sizeof(indices[0]); i++) {
+        int chance = grGr_params->x8_blockBombChance;
+
+        if (chance != 0 && HSD_Randi(chance) != 0) {
+            grGr_8049F9E0[indices[i]] = 1;
+        } else {
+            grGr_8049F9E0[indices[i]] = 2;
+        }
+    }
+}
 
 void grGreens_80214FA8(Ground_GObj* gobj)
 {

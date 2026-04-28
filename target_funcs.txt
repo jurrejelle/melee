@@ -11,7 +11,7 @@ Funcs:
 - [x] fn_80215B84
 - [x] grGreens_802150C4
 - [x] grGreens_8021483C
-- [ ] grGreens_80214B58
+- [x] grGreens_80214B58
 - [ ] grGreens_802166C4
 - [ ] grGreens_80215358
 - [ ] grGreens_80215ED8
