@@ -243,26 +243,39 @@ void grYorster_802024F0(Ground* gp, s32 joint_id, CollData* coll_data,
     s32 i;
     PAD_STACK(8);
 
-    if ((env == 1 && !ftLib_800873F4(gobj)) || env == 2 || env == 3) {
-        if (env == 1) {
-            Vec3 pos;
+    if (1 != env && env != 2 && env != 3) {
+        return;
+    }
 
-            ftLib_80086BEC(gobj, &pos);
-            value = pos.y;
-            if (value >= grYt_804D6A20.x0->x00) {
-                ftLib_80086A4C(gobj, (f32) grYt_804D6A20.x0->x10);
-            }
-        } else if (value >= grYt_804D6A20.x0->x00) {
+    if (env == 1 && ftLib_800873F4((0, coll_data->x0_gobj))) {
+        return;
+    }
+
+    switch (env) {
+    case 1: {
+        Vec3 pos;
+
+        ftLib_80086BEC(gobj, &pos);
+        value = pos.y;
+        if (value >= grYt_804D6A20.x0->x00) {
+            ftLib_80086A4C(gobj, (f32) grYt_804D6A20.x0->x10);
+        }
+        break;
+    }
+    case 2:
+    case 3:
+        if (value >= grYt_804D6A20.x0->x00) {
             it_8026B718(gobj, (f32) grYt_804D6A20.x0->x10);
         }
+        break;
+    }
 
-        for (i = 0; i < 9; i++) {
-            if (joint_id ==
-                Ground_801C32D4(gp->map_id, gp->gv.yorster.elements[i].x14))
-            {
-                gp->gv.yorster.elements[i].x08 += value;
-                break;
-            }
+    for (i = 0; i < 9; i++) {
+        if (joint_id ==
+            Ground_801C32D4(gp->map_id, gp->gv.yorster.elements[i].x14))
+        {
+            gp->gv.yorster.elements[i].x08 += value;
+            break;
         }
     }
 }
