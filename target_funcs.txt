@@ -6,4 +6,4 @@ Funcs:
 - [x] grKinokoRoute_80207B5C
 - [x] grKinokoRoute_802078F0
 - [x] grKinokoRoute_80207634
-- [ ] grKinokoRoute_80207C88
+- [x] grKinokoRoute_80207C88
