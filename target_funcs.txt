@@ -3,5 +3,5 @@ Funcs:
 - [x] grOldPupupu_802108B4
 - [x] grOldPupupu_8021119C
 - [x] fn_802112F4
-- [ ] grOldPupupu_80210D10
+- [x] grOldPupupu_80210D10
 - [ ] grOldPupupu_802113E0

@@ -3,6 +3,7 @@
 #include "baselib/forward.h"
 #include "forward.h"
 
+#include "cm/camera.h"
 #include "ft/ftlib.h"
 #include "gr/granime.h"
 #include "gr/grdisplay.h"
@@ -13,6 +14,7 @@
 #include "lb/lb_00B0.h"
 #include "lb/lb_00F9.h"
 
+#include <baselib/debug.h>
 #include <baselib/gobj.h>
 #include <baselib/gobjgxlink.h>
 #include <baselib/gobjproc.h>
@@ -40,8 +42,16 @@ static void* grOp_804D6A9C;
 static int grOp_804D48A0[1][2] = { { 4, 0 } };
 static int grOp_804D48A8[1][2] = { { 5, 1 } };
 static int grOp_804D48B0[1][2] = { { 2, 3 } };
+char grOp_804D48B8[] = "jobj";
+char grOp_804D48C0[] = "jobj.h";
 
 static int grOp_804D48E0[1][2] = { { 0, 0 } };
+
+typedef struct grOldPupupuSpawnDesc {
+    s8 x0;
+    s8 x1;
+    s16 x2;
+} grOldPupupuSpawnDesc;
 
 StageCallbacks grOp_803E6688[9] = {
     { grOldPupupu_8021099C, grOldPupupu_802109C8, grOldPupupu_802109D0,
@@ -64,10 +74,12 @@ StageCallbacks grOp_803E6688[9] = {
       grOldPupupu_8021110C, 0 },
 };
 
+char grOp_803E673C[] = "/GrOp.dat";
+
 StageData grOp_803E6748 = {
     OLDPUPUPU,
     grOp_803E6688,
-    "/GrOp.dat",
+    grOp_803E673C,
     grOldPupupu_802107E0,
     grOldPupupu_802107DC,
     grOldPupupu_80210884,
@@ -78,6 +90,19 @@ StageData grOp_803E6748 = {
     1,
     0,
     0,
+};
+
+static grOldPupupuSpawnDesc grOp_803E67B0[10] = {
+    { -1, 1, 1 },
+    { 1, 1, 3 },
+    { 1, 1, 5 },
+    { -1, 1, 7 },
+    { -1, 0, 9 },
+    { 1, 0, 11 },
+    { -1, 0, 13 },
+    { 1, 0, 15 },
+    { -1, 0, 17 },
+    { 1, 0, 19 },
 };
 
 void grOldPupupu_802107DC(bool arg) {}
@@ -284,7 +309,89 @@ bool grOldPupupu_80210D08(Ground_GObj* gobj)
     return false;
 }
 
-/// #grOldPupupu_80210D10
+void grOldPupupu_80210D10(Ground_GObj* gobj)
+{
+    f32 cam_left;
+    f32 cam_right;
+    f32 cam_center;
+    Ground* gp;
+    HSD_GObj* spawn;
+    HSD_JObj* jobj;
+    f32 direction;
+    f32 y;
+    f32 x;
+    f32 step;
+    s16 timer;
+    s16 min_respawn;
+    s16 respawn;
+    s32 count;
+    s32 i;
+    s32 index;
+
+    gp = gobj->user_data;
+    timer = gp->gv.castle5.xC4;
+    gp->gv.castle5.xC4 = timer - 1;
+    if (timer < 0) {
+        direction = Ground_801C0498();
+        index = HSD_Randi(10);
+        if (grOp_803E67B0[index].x1 != 0 && HSD_Randi(5) == 0) {
+            count = 3;
+        } else {
+            count = 1;
+        }
+        Camera_800307D0(&cam_left, &cam_center, &cam_right);
+        if (grOp_803E67B0[index].x0 == 1) {
+            step = -10.0F;
+            if (cam_right < 200.0F) {
+                cam_right = 200.0F;
+            }
+            x = -(((f32) count * -10.0F) - (50.0F + cam_right));
+        } else {
+            step = 10.0F;
+            if (cam_left > -200.0F) {
+                cam_left = -200.0F;
+            }
+            x = -(((f32) count * 10.0F) - (cam_left - 50.0F));
+        }
+        y = direction *
+            (((f32) grOp_804D6A98->x4 * ((2.0F * HSD_Randf()) - 1.0F)) +
+             20.0F);
+        for (i = 0; i < count; i++) {
+            spawn = grOldPupupu_802108B4(2);
+            if (spawn != NULL) {
+                jobj = spawn->hsd_obj;
+                HSD_ASSERT(0x216, jobj);
+                HSD_JObjSetTranslateX(jobj, direction * x);
+                HSD_JObjSetTranslateY(jobj, y);
+                HSD_JObjSetTranslateZ(jobj, -150.0F * direction);
+                grAnime_801C7FF8(spawn, 0, 7, 0, 40.0F * (f32) i, 1.0F);
+                HSD_JObjClearFlagsAll(
+                    Ground_801C3FA4(spawn, grOp_803E67B0[index].x2),
+                    JOBJ_HIDDEN);
+            }
+            x += step;
+        }
+
+        respawn = grOp_804D6A98->x2;
+        min_respawn = grOp_804D6A98->x0;
+        if (respawn > min_respawn) {
+            s32 range = respawn - min_respawn;
+
+            if (range != 0) {
+                respawn = min_respawn + HSD_Randi(range);
+            } else {
+                respawn = min_respawn;
+            }
+        } else if (respawn < min_respawn) {
+            s32 range = min_respawn - respawn;
+
+            if (range != 0) {
+                respawn += HSD_Randi(range);
+            }
+        }
+        gp->gv.castle5.xC4 = respawn;
+    }
+}
 
 void grOldPupupu_8021110C(Ground_GObj* arg) {}
 
