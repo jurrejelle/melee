@@ -542,7 +542,7 @@ void grKinokoRoute_802084B4(HSD_GObj* gobj)
 
 void grKinokoRoute_80208564(HSD_GObj* gobj)
 {
-    Ground* gp = gobj->user_data;
+    Ground* gp = GET_GROUND(gobj);
     u32 i;
     grNKr_Depths depths = grNKr_803B82F4;
 
