@@ -935,71 +935,87 @@ s32 grVenom_80205E84(Vec2* pos)
 
 void grVenom_80206870(Ground_GObj* arg) {}
 
-#if 0
 /// grVenom_80206874
 /// @todo Currently 32.92% match - below 50% threshold, needs significant work
 void grVenom_80206874(Ground_GObj* gobj)
 {
-    u8* base;
     Ground* gp;
     HSD_JObj* jobj;
     s32 zero;
-    f32 scale_factor;
-    u8* entry;
-    f32 scaled;
-    s32 case_val;
-    Ground_GObj* child_gobj;
-    Ground* child_gp;
+    f32 scale;
+    u8* base;
+    u8* data;
+    s32 type;
+    Ground_GObj* other;
+    Ground* other_gp;
     HSD_JObj* jobj2;
-    s32 idx;
-    u8* ptr;
+    f32 scl;
+    void* attr;
 
-    base = (u8*)&grVe_803E5348;
     gp = gobj->user_data;
     jobj = gobj->hsd_obj;
-    scale_factor = Ground_801C0498();
+    scale = Ground_801C0498();
+    base = (u8*) &grVe_803E5348;
 
-    gp->gv.venom.xC8 = grVe_804D6A34;
+    gp->gv.arwing.xC8 = grVe_804D6A34;
     zero = 0;
-    gp->gv.venom.xEC = 0;
-    gp->gv.venom.xE8 = 0;
-    gp->gv.venom.xE4 = 0;
-    gp->gv.venom.xE0 = 0;
+    *(s32*) &gp->gv.arwing.xEC = zero;
+    *(s32*) &gp->gv.arwing.xE0.z = zero;
+    *(s32*) &gp->gv.arwing.xE0.y = zero;
+    *(s32*) &gp->gv.arwing.xE0.x = zero;
 
     grAnime_801C7FF8(gobj, 0, 7, 1, 0.0F, 1.0F);
     grAnime_801C8098(gobj, 2, 7, 3, 0.0F, 1.0F);
 
-    entry = base + gp->gv.venom.xC8 * 4;
-    case_val = *(s32*)(entry + 0x2C);
+    data = base + gp->gv.arwing.xC8 * 4;
+    type = *(s32*) (data + 0x2C);
 
-    if (case_val < 8) {
-        if (case_val >= 1) {
-            idx = *(s32*)(entry + 0x38);
-            ptr = base + idx * 4;
-            child_gobj = (Ground_GObj*)grVenom_80203EAC(*(s32*)(ptr + 0x324));
-            *(s32*)&gp->gv.venom.xDC = (s32)child_gobj;
-            if (child_gobj != NULL) {
-                child_gp = child_gobj->user_data;
-                if (child_gp != NULL) {
-                    child_gp->gv.venom.xC8 = gp->gv.venom.xC8;
+    if (type < 8) {
+        if (type >= 1) {
+            s32 idx = *(s32*) (data + 0x38);
+            u8* data2 = base + idx * 4;
+
+            other = (Ground_GObj*) grVenom_80203EAC(*(s32*) (data2 + 0x324));
+            *(u32*) &gp->gv.arwing.xDC = (u32) other;
+            if (other != NULL) {
+                other_gp = other->user_data;
+                if (other_gp != NULL) {
+                    other_gp->gv.arwing.xC8 = gp->gv.arwing.xC8;
                 }
             }
         } else {
-            *(s32*)&gp->gv.venom.xE0 = -1;
-            *(s32*)&gp->gv.venom.xE4 = -1;
+            *(s32*) &gp->gv.arwing.xE0.x = -1;
+            *(s32*) &gp->gv.arwing.xE0.y = -1;
         }
-    } else if (case_val < 0xC) {
-        jobj2 = Ground_801C3FA4((HSD_GObj*)*(s32*)(entry + 0x20), 5);
+    } else if (type < 0xC) {
+        jobj2 = Ground_801C3FA4((HSD_GObj*) *(s32*) (data + 0x20), 5);
         lb_8000C2F8(Ground_801C3FA4(gobj, 0), jobj2);
-        *(s32*)&gp->gv.venom.xDC = zero;
+        *(u32*) &gp->gv.arwing.xDC = zero;
     } else {
-        *(s32*)&gp->gv.venom.xE0 = -1;
-        *(s32*)&gp->gv.venom.xE4 = -1;
-    } ///< @todo Need grVe_804D6A30 struct with cam_zoom_rate at 0x34
-    // scaled = scale_factor * grVe_804D6A30->cam_zoom_rate;
-    // HSD_JObjSetScaleX/Y/Z(jobj, scaled);
+        *(s32*) &gp->gv.arwing.xE0.x = -1;
+        *(s32*) &gp->gv.arwing.xE0.y = -1;
+    }
+
+    attr = grVe_804D6A30;
+    scl = scale * *(f32*) ((u8*) attr + 0x34);
+    HSD_JObjSetScaleX(jobj, scl);
+
+    attr = grVe_804D6A30;
+    scl = scale * *(f32*) ((u8*) attr + 0x34);
+    HSD_JObjSetScaleY(jobj, scl);
+
+    attr = grVe_804D6A30;
+    scl = scale * *(f32*) ((u8*) attr + 0x34);
+    HSD_JObjSetScaleZ(jobj, scl);
+
+    gp->gv.bigblue.x0_b1 = false;
+    gp->gv.arwing.xD4 = zero;
+    *(s32*) &gp->gv.bigblue.data[0].xC.x = zero;
+    *(s32*) &gp->gv.bigblue.data[0].xC.y = zero;
+    *(s32*) &gp->gv.bigblue.data[0].xC.z =
+        (s32) * (f32*) ((u8*) grVe_804D6A30 + 0x2C);
+    *(s32*) &gp->gv.bigblue.data[0].x18.x = zero;
 }
-#endif
 
 /// #grVenom_80206874
 
