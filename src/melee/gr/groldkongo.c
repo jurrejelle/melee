@@ -4,8 +4,10 @@
 
 #include "forward.h"
 
+#include "cm/camera.h"
 #include "ef/efsync.h"
 #include "ft/ftdevice.h"
+#include "ft/ftlib.h"
 #include "gr/granime.h"
 #include "gr/grmaterial.h"
 #include "gr/ground.h"
