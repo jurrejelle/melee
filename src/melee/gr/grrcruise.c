@@ -843,19 +843,83 @@ void grRCruise_80201110(Ground_GObj* gobj)
     gp->gv.rcruise.x04->unk_scale = 0.2 * HSD_Randf() + 0.1;
 }
 
+inline struct HSD_DObj* grRCruise_80201288_inline(HSD_JObj* arg0)
+{
+    return HSD_JObjGetDObj(arg0);
+}
+
 void grRCruise_80201288(HSD_JObj* jobj, void (*callback)(HSD_DObj*, u32),
                         u32 flags)
 {
+    HSD_DObj* temp_r3;
+    HSD_DObj* temp_r3_2;
+    HSD_DObj* temp_r3_3;
+    HSD_JObj* new_var;
+    HSD_JObj* var_r29;
+    HSD_JObj* var_r29_2;
+    HSD_JObj* var_r3;
+    HSD_JObj* var_r3_2;
+    HSD_JObj* var_r3_3;
+    HSD_JObj* var_r3_4;
+    HSD_JObj* new_var2;
     if (jobj != NULL) {
-        HSD_DObj* dobj = HSD_JObjGetDObj(jobj);
-        if (dobj != NULL) {
-            callback(dobj, flags);
+        temp_r3 = grRCruise_80201288_inline(jobj);
+        if (temp_r3 != NULL) {
+            callback(temp_r3, flags);
         }
-        if (jobj->child != NULL) {
-            grRCruise_80201288(jobj->child, callback, flags);
+        if (jobj == NULL) {
+            var_r29 = NULL;
+        } else {
+            var_r29 = jobj->child;
         }
-        if (jobj->next != NULL) {
-            grRCruise_80201288(jobj->next, callback, flags);
+        if (((new_var = var_r29) != 0L) && (new_var != 0L)) {
+            temp_r3_2 = grRCruise_80201288_inline(new_var);
+            if (temp_r3_2 != NULL) {
+                callback(temp_r3_2, flags);
+            }
+            if (var_r29 == NULL) {
+                var_r3 = NULL;
+            } else {
+                var_r3 = (new_var2 = new_var->child);
+            }
+            if (var_r3 != NULL) {
+                grRCruise_80201288(var_r3, callback, flags);
+            }
+            if (new_var == NULL) {
+                var_r3_2 = NULL;
+            } else {
+                var_r3_2 = new_var->next;
+            }
+            if (var_r3_2 != NULL) {
+                grRCruise_80201288(var_r3_2, callback, flags);
+            }
+        }
+        if (jobj == NULL) {
+            var_r29_2 = NULL;
+        } else {
+            var_r29_2 = jobj->next;
+        }
+        if ((var_r29_2 != NULL) && (var_r29_2 != NULL)) {
+            temp_r3_3 = grRCruise_80201288_inline(var_r29_2);
+            if (temp_r3_3 != NULL) {
+                callback(temp_r3_3, flags);
+            }
+            if (var_r29_2 == NULL) {
+                var_r3_3 = NULL;
+            } else {
+                var_r3_3 = var_r29_2->child;
+            }
+            if (var_r3_3 != NULL) {
+                grRCruise_80201288(var_r3_3, callback, flags);
+            }
+            if (var_r29_2 == NULL) {
+                var_r3_4 = NULL;
+            } else {
+                var_r3_4 = var_r29_2->next;
+            }
+            if (var_r3_4 != NULL) {
+                grRCruise_80201288(var_r3_4, callback, flags);
+            }
         }
     }
 }
