@@ -622,10 +622,10 @@ typedef struct {
 
 void grVenom_802052E0(Ground_GObj* gobj, Vec3* pos)
 {
+    Vec3 jobj_pos;
     s32* spawn_table = (s32*) &grVe_803E5348;
     Ground* gp;
     HSD_JObj* jobj;
-    Vec3 jobj_pos;
     s32* new_var;
     s32* new_var4;
     u8* new_var2;
@@ -650,9 +650,7 @@ void grVenom_802052E0(Ground_GObj* gobj, Vec3* pos)
         pos->y = jobj_pos.y + spawn_data->y;
         pos->z = jobj_pos.z + spawn_data->z;
     } else {
-        pos->z = 0.0F;
-        pos->y = 0.0F;
-        pos->x = 0.0F;
+        pos->x = pos->y = pos->z = grVe_804DB740;
     }
 }
 
