@@ -476,15 +476,14 @@ bool grOldPupupu_8021128C(Vec* vec, f32 maxX, f32 minX, f32 maxY, f32 minY)
 
 bool fn_802112F4(Ground_GObj* gobj, HSD_GObj* fighter_gobj, Vec3* vel)
 {
-    Ground* gp;
     Vec3 pos;
-    PAD_STACK(8);
+    Ground* gp;
 
     ftLib_80086644(fighter_gobj, &pos);
     vel->y = 0.0F;
     vel->z = 0.0F;
 
-    gp = gobj->user_data;
+    gp = GET_GROUND(gobj);
     switch (gp->gv.oldpupupu.xDC) {
     case 1:
         if (grOldPupupu_8021128C(&pos, grOp_804D6A98->x1C, grOp_804D6A98->x20,
