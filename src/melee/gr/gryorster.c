@@ -185,37 +185,30 @@ void grYorster_802022A4(HSD_GObj* gobj)
 {
     s32 joints[9] = { 0xA, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12 };
     Ground* temp_r28;
-    struct grYorster_TrackElement* var_r29;
-    struct grYorster_TrackElement* var_r30;
-    s32* var_r31;
-    s8 var_r27;
+    int i;
 
-    var_r27 = 0;
-    var_r31 = joints;
     temp_r28 = gobj->user_data;
-    var_r29 = temp_r28->gv.yorster.elements;
-    var_r30 = temp_r28->gv.yorster.elements;
-    do {
-        var_r29->x00 = var_r27;
-        var_r29->x01 = 0;
-        var_r29->x04 = 0.0f;
-        var_r29->x08 = 0.0f;
-        var_r29->x14 = *var_r31;
-        var_r30->x18 = Ground_801C3FA4(gobj, *var_r31);
-        var_r30->x1C = grMaterial_801C8CFC(0, 0, temp_r28, var_r30->x18, NULL,
-                                           grYorster_80202428, NULL);
-        grMaterial_801C8E68(var_r30->x1C, GA_Ground);
-        mpJointSetCb2(Ground_801C32D4(temp_r28->map_id, var_r30->x14), temp_r28,
-                      grYorster_802024F0);
-        grMaterial_801C8DE0(var_r30->x1C, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-                            5.0f);
-        grMaterial_801C8E08(var_r30->x1C);
-        grAnime_801C7FF8(gobj, var_r30->x14, 7, 1, 0.0f, 0.0f);
-        var_r27++;
-        var_r29++;
-        var_r31++;
-        var_r30++;
-    } while (var_r27 < 9);
+    for (i = 0; i < 9; i++) {
+        temp_r28->gv.yorster.elements[i].x00 = (s8) i;
+        temp_r28->gv.yorster.elements[i].x01 = 0;
+        temp_r28->gv.yorster.elements[i].x04 = 0.0f;
+        temp_r28->gv.yorster.elements[i].x08 = 0.0f;
+        temp_r28->gv.yorster.elements[i].x14 = joints[i];
+        temp_r28->gv.yorster.elements[i].x18 =
+            Ground_801C3FA4(gobj, joints[i]);
+        temp_r28->gv.yorster.elements[i].x1C = grMaterial_801C8CFC(
+            0, 0, temp_r28, temp_r28->gv.yorster.elements[i].x18, NULL,
+            grYorster_80202428, NULL);
+        grMaterial_801C8E68(temp_r28->gv.yorster.elements[i].x1C, GA_Ground);
+        mpJointSetCb2(Ground_801C32D4(temp_r28->map_id,
+                                      temp_r28->gv.yorster.elements[i].x14),
+                      temp_r28, grYorster_802024F0);
+        grMaterial_801C8DE0(temp_r28->gv.yorster.elements[i].x1C, 0.0f, 0.0f,
+                            0.0f, 0.0f, 0.0f, 0.0f, 5.0f);
+        grMaterial_801C8E08(temp_r28->gv.yorster.elements[i].x1C);
+        grAnime_801C7FF8(gobj, temp_r28->gv.yorster.elements[i].x14, 7, 1,
+                         0.0f, 0.0f);
+    }
 }
 
 void grYorster_80202428(HSD_GObj* item_gobj, Ground* gp, Vec3* pos,
