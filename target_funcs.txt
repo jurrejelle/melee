@@ -1,9 +1,0 @@
-File: src/melee/gr/grkinokoroute.c
-Funcs:
-- [x] grKinokoRoute_8020754C
-- [x] grKinokoRoute_80208564
-- [x] grKinokoRoute_8020836C
-- [x] grKinokoRoute_80207B5C
-- [x] grKinokoRoute_802078F0
-- [x] grKinokoRoute_80207634
-- [x] grKinokoRoute_80207C88
