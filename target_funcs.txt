@@ -1,7 +1,7 @@
 File: src/melee/gr/grvenom.c
 Funcs:
 - [x] grVenom_802052E0
-- [ ] grVenom_80204428
+- [x] grVenom_80204428
 - [ ] grVenom_80204284
 - [ ] grVenom_80203B18
 - [ ] grVenom_80206874
