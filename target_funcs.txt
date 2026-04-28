@@ -1,7 +1,7 @@
 File: src/melee/gr/grkinokoroute.c
 Funcs:
 - [x] grKinokoRoute_8020754C
-- [ ] grKinokoRoute_80208564
+- [x] grKinokoRoute_80208564
 - [ ] grKinokoRoute_8020836C
 - [ ] grKinokoRoute_80207B5C
 - [ ] grKinokoRoute_802078F0

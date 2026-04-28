@@ -27,6 +27,20 @@ static struct {
     grZakoGenerator_SpawnDesc x4;
 }* grNKr_804D6A50;
 
+typedef struct grNKr_Depths {
+    s16 x[51];
+} grNKr_Depths;
+
+static const Vec3 grNKr_803B82E8 = { 0.0f, 0.0f, 0.0f };
+
+static const grNKr_Depths grNKr_803B82F4 = {
+    {
+        1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16, 17,
+        18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
+        35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
+    },
+};
+
 StageCallbacks grNKr_803E57F0[4] = {
     { grKinokoRoute_80207634, grKinokoRoute_802078E8, grKinokoRoute_802078F0,
       grKinokoRoute_80207A94, 0 },
@@ -36,6 +50,24 @@ StageCallbacks grNKr_803E57F0[4] = {
       grKinokoRoute_80207AD8, 0 },
     { grKinokoRoute_80207B5C, grKinokoRoute_80207C80, grKinokoRoute_80207C88,
       grKinokoRoute_80208368, 0xC0000000 },
+};
+
+static char grNKr_803E5840[] = "/GrNKr.dat";
+
+StageData grNKr_803E584C = {
+    KINOKOROUTE,
+    grNKr_803E57F0,
+    grNKr_803E5840,
+    grKinokoRoute_80207420,
+    (void (*)(int)) grKinokoRoute_8020741C,
+    grKinokoRoute_80207490,
+    grKinokoRoute_802074D8,
+    grKinokoRoute_80207544,
+    grKinokoRoute_80208754,
+    grKinokoRoute_8020875C,
+    0,
+    NULL,
+    0,
 };
 
 void grKinokoRoute_8020741C(bool arg) {}
@@ -213,14 +245,10 @@ void grKinokoRoute_80208564(HSD_GObj* gobj)
 {
     Ground* gp = gobj->user_data;
     u32 i;
-    s16 depths[] = {
-        1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13, 14, 15, 16, 17,
-        18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
-        35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
-    };
+    grNKr_Depths depths = grNKr_803B82F4;
 
     for (i = 0; i < 0x33U; i++) {
-        HSD_JObj* jobj = Ground_801C3FA4(gobj, depths[i]);
+        HSD_JObj* jobj = Ground_801C3FA4(gobj, depths.x[i]);
         Item_GObj* item = grMaterial_801C8CFC(
             8, 0, gp, jobj, NULL,
             (void (*)(Item_GObj*, Ground*, Vec3*, HSD_GObj*,
