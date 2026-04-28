@@ -4,6 +4,7 @@
 
 #include "forward.h"
 
+#include "ef/efsync.h"
 #include "ft/ftdevice.h"
 #include "gr/granime.h"
 #include "gr/grmaterial.h"
@@ -20,7 +21,10 @@
 static struct {
     s16 x0;
     s16 x2;
-    u8 x4[0x10];
+    u8 x4[0x4];
+    f32 x8;
+    f32 xC;
+    f32 x10;
     f32 x14;
     f32 x18;
     u8 x1C[0x10];
@@ -36,6 +40,8 @@ static struct {
     f32 x48;
     s32 x4C;
     s32 x50;
+    u8 x54[0x18];
+    s32 x6C;
 }* grOk_804D6A90;
 
 StageCallbacks grOk_803E658C[4] = {
@@ -215,7 +221,46 @@ bool grOldKongo_802100F4(Ground_GObj* gobj)
 
 void grOldKongo_80210450(Ground_GObj* arg) {}
 
-/// #grOldKongo_80210454
+s32 grOldKongo_80210454(HSD_GObj* arg0, HSD_GObj* arg1)
+{
+    Ground* gp;
+    Vec3 pos_gnd;
+    Vec3 pos_ft;
+    f32 unk;
+    f32 rand_val;
+    f32 diff;
+
+    gp = GET_GROUND(arg0);
+
+    if (gp->gv.oldkongo.xC6 != 0) {
+        goto done;
+    }
+
+    Ground_801C4DA0(&pos_gnd, &unk);
+    ftLib_80086644(arg1, &pos_ft);
+
+    if (!((pos_gnd.x - pos_ft.x) * (pos_gnd.x - pos_ft.x) +
+          (pos_gnd.y - pos_ft.y) * (pos_gnd.y - pos_ft.y) +
+          (pos_gnd.z - pos_ft.z) * (pos_gnd.z - pos_ft.z) <
+          grOk_804D6A90->x10 * grOk_804D6A90->x10))
+    {
+        goto done;
+    }
+
+    rand_val = HSD_Randf();
+    diff = grOk_804D6A90->xC - grOk_804D6A90->x8;
+    gp->gv.oldkongo.xCA = (s16) (diff * rand_val + grOk_804D6A90->x8);
+    gp->gv.oldkongo.xD4 = arg1;
+    gp->gv.oldkongo.xC6 = 1;
+    Ground_801C5440(gp, 0, 0x129U);
+    grAnime_801C7FF8(arg0, 2, 7, 1, 0.0f, 1.0f);
+    grMaterial_801C9604(arg0, grOk_804D6A90->x6C, 0);
+    efSync_Spawn(0x405, arg0, &pos_ft);
+    ftLib_80086C18(arg1, 0xD, 0x1E);
+    return 1;
+done:
+    return 0;
+}
 
 void grOldKongo_802105AC(Ground_GObj* gobj)
 {
