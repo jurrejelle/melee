@@ -1,9 +1,11 @@
 #include "grrcruise.h"
 
 #include "grzakogenerator.h"
+#include "placeholder.h"
 
 #include <platform.h>
 
+#include "baselib/debug.h"
 #include "cm/camera.h"
 
 #include "forward.h"
@@ -15,6 +17,7 @@
 #include "gr/ground.h"
 #include "gr/inlines.h"
 #include "gr/stage.h"
+#include "gr/types.h"
 
 #include "lb/forward.h"
 
@@ -62,39 +65,20 @@ StageCallbacks grRc_803E4E34[7] = {
 
 char grRc_803E4EC0[] = "/GrRc.dat";
 
-struct grRCruise_StageData {
-    StageData x00;
-    char x34[0x24];
-};
-
-struct grRCruise_801FF924_GroundVars {
-    u8 x00;
-    u8 pad_01[3];
-    Vec3 x04;
-    Vec3 x10;
-    Vec3 x1C;
-    HSD_JObj* x28[3];
-    HSD_JObj* x34[3];
-    HSD_JObj* x40;
-};
-
-struct grRCruise_StageData grRc_803E4ECC = {
-    {
-        RCRUISE,
-        grRc_803E4E34,
-        grRc_803E4EC0,
-        grRCruise_801FF168,
-        grRCruise_801FF164,
-        grRCruise_801FF298,
-        grRCruise_801FF29C,
-        grRCruise_801FF2C0,
-        grRCruise_80201C50,
-        grRCruise_80201C58,
-        4,
-        grRc_803E4DA8,
-        ARRAY_SIZE(grRc_803E4DA8),
-    },
-    "%s:%d: couldn t get gobj(id=%d)\n",
+struct StageData grRc_803E4ECC = {
+    RCRUISE,
+    grRc_803E4E34,
+    grRc_803E4EC0,
+    grRCruise_801FF168,
+    grRCruise_801FF164,
+    grRCruise_801FF298,
+    grRCruise_801FF29C,
+    grRCruise_801FF2C0,
+    grRCruise_80201C50,
+    grRCruise_80201C58,
+    4,
+    grRc_803E4DA8,
+    ARRAY_SIZE(grRc_803E4DA8),
 };
 
 
@@ -199,7 +183,8 @@ HSD_GObj* grRCruise_801FF2C8(int gobj_id)
             HSD_GObj_SetupProc(gobj, callbacks->callback2, 4);
         }
     } else {
-        OSReport(grRc_803E4ECC.x34, "grrcruise.c", 290, gobj_id);
+        OSReport("%s:%d: couldn t get gobj(id=%d)\n", __FILE__, 0x112,
+                 gobj_id);
     }
 
     return gobj;
@@ -269,8 +254,8 @@ void grRCruise_801FF5B4(Ground_GObj* gobj)
     Ground_801C2ED0(jobj, gp->map_id);
     grAnime_801C8138(gobj, gp->map_id, 0);
     gp->gv.rcruise.x10 = 1;
-    gp->gv.rcruise.entries = HSD_MemAlloc(0x198);
-    HSD_ASSERTMSG(0x19A, gp->gv.rcruise.entries != NULL, "gp->u.map.chikuwa");
+    gp->u.map.chikuwa = HSD_MemAlloc(0x198);
+    HSD_ASSERT(0x19A, gp->u.map.chikuwa);
     grRCruise_80201410(gobj);
     Ground_801C10B8(gobj, grRCruise_801FF444);
     grRCruise_80200540(gobj);
@@ -378,28 +363,30 @@ void grRCruise_801FF920(Ground_GObj* arg) {}
 
 void grRCruise_801FF924(Ground_GObj* gobj)
 {
-    Ground* gp = gobj->user_data;
-    HSD_JObj* jobj = gobj->hsd_obj;
-    struct grRCruise_801FF924_GroundVars* vars = (void*) &gp->gv;
+    Ground* gp = GET_GROUND(gobj);
+    HSD_JObj* jobj = GET_JOBJ(gobj);
+    PAD_STACK(0x8);
 
-    vars->x34[0] = Ground_801C3FA4(gobj, 4);
-    vars->x34[1] = Ground_801C3FA4(gobj, 5);
-    vars->x34[2] = Ground_801C3FA4(gobj, 6);
-    vars->x40 = Ground_801C3FA4(gobj, 7);
-    vars->x28[0] = Ground_801C3FA4(gobj, 3);
-    HSD_ASSERTMSG(0x2B0, vars->x28[0] != NULL, "gp->u.scroll.int_jobj");
-    vars->x28[1] = Ground_801C3FA4(gobj, 2);
-    HSD_ASSERTMSG(0x2B2, vars->x28[1] != NULL, "gp->u.scroll.cam_jobj");
-    vars->x28[2] = Ground_801C3FA4(gobj, 1);
-    HSD_ASSERTMSG(0x2B4, vars->x28[2] != NULL, "gp->u.scroll.ctr_jobj");
-    HSD_JObjGetTranslation(vars->x28[2], &vars->x04);
-    vars->x10.z = 0.0f;
-    vars->x10.y = 0.0f;
-    vars->x10.x = 0.0f;
-    vars->x1C.z = 0.0f;
-    vars->x1C.y = 0.0f;
-    vars->x1C.x = 0.0f;
-    vars->x00 &= ~0x80;
+    gp->u.scroll.x34[0] = Ground_801C3FA4(gobj, 4);
+    gp->u.scroll.x34[1] = Ground_801C3FA4(gobj, 5);
+    gp->u.scroll.x34[2] = Ground_801C3FA4(gobj, 6);
+    gp->u.scroll.x40 = Ground_801C3FA4(gobj, 7);
+    gp->u.scroll.int_jobj = Ground_801C3FA4(gobj, 3);
+    HSD_ASSERT(0x2B0, gp->u.scroll.int_jobj);
+    gp->u.scroll.cam_jobj = Ground_801C3FA4(gobj, 2);
+    HSD_ASSERT(0x2B2, gp->u.scroll.cam_jobj);
+
+    gp->u.scroll.ctr_jobj = Ground_801C3FA4(gobj, 1);
+    HSD_ASSERT(0x2B2, gp->u.scroll.ctr_jobj);
+
+    HSD_JObjGetTranslation(gp->u.scroll.ctr_jobj, &gp->u.scroll.x04);
+    gp->u.scroll.x10.z = 0.0f;
+    gp->u.scroll.x10.y = 0.0f;
+    gp->u.scroll.x10.x = 0.0f;
+    gp->u.scroll.x1C.z = 0.0f;
+    gp->u.scroll.x1C.y = 0.0f;
+    gp->u.scroll.x1C.x = 0.0f;
+    gp->u.scroll.x00 &= ~0x80;
     grAnime_801C8138(gobj, gp->map_id, 0);
     grAnime_801C752C(jobj, 1, 30628, HSD_AObjSetFlags, 3, 0x20000000);
     gobj->render_cb = (GObj_RenderFunc) fn_80201BE0;
@@ -932,18 +919,19 @@ void grRCruise_80201410(Ground_GObj* gobj)
         (struct grRCruise_VanishDesc*) ((u8*) grRc_803E4DA8 + 0x26C);
     u32 i;
 
-    gp->gv.rcruise.vanish = HSD_MemAlloc(0xA0);
-    HSD_ASSERTMSG(0x5AD, gp->gv.rcruise.vanish != NULL, "gp->u.map.vanish");
+    gp->u.map.vanish = HSD_MemAlloc(0xA0);
+    HSD_ASSERT(0x5AD, gp->u.map.vanish);
+
     for (i = 0; i < 20; i++) {
-        gp->gv.rcruise.vanish[i].x04 = Ground_801C3FA4(stage_gobj, desc->x00);
-        HSD_ASSERTMSG(0x5B3, gp->gv.rcruise.vanish[i].x04 != NULL, "gp->u.map.vanish[i].jobj");
-        if (desc->x04 != 0) {
+        gp->u.map.vanish[i].jobj = Ground_801C3FA4(stage_gobj, desc[i].x00);
+        HSD_ASSERT(0x5B3, gp->u.map.vanish[i].jobj);
+        if (desc[i].x04 != 0) {
             HSD_GObj* gobj5;
             HSD_GObj* gobj1;
             s16 joint;
 
-            gp->gv.rcruise.vanish[i].x00 = 2;
-            joint = desc->x00;
+            gp->u.map.vanish[i].x00 = 2;
+            joint = desc[i].x00;
             gobj5 = Ground_801C2BA4(5);
             if (gobj5 != NULL) {
                 gobj1 = Ground_801C2BA4(1);
@@ -958,13 +946,12 @@ void grRCruise_80201410(Ground_GObj* gobj)
                     }
                 }
             }
-            mpJointListAdd(desc->x02);
+            mpJointListAdd(desc[i].x02);
         } else {
-            gp->gv.rcruise.vanish[i].x00 = 0;
-            grAnime_801C7FF8(stage_gobj, desc->x00, 2, 1, 0.0f, 1.0f);
-            mpLib_80057BC0(desc->x02);
+            gp->u.map.vanish[i].x00 = 0;
+            grAnime_801C7FF8(stage_gobj, desc[i].x00, 2, 1, 0.0f, 1.0f);
+            mpLib_80057BC0(desc[i].x02);
         }
-        desc++;
     }
 }
 
@@ -985,7 +972,7 @@ void grRCruise_80201588(Ground_GObj* gobj)
         }
         switch (vanish->x00) {
         case 0:
-            lb_8000B1CC(vanish->x04, NULL, &pos);
+            lb_8000B1CC(vanish->jobj, NULL, &pos);
             if (Camera_8003118C(&pos, -20.0f) != 0) {
                 vanish->x00 = 1;
                 grAnime_801C7FF8(gobj, desc->x00, 2, 2, 0.0f, 1.0f);
@@ -1018,7 +1005,7 @@ void grRCruise_80201588(Ground_GObj* gobj)
             }
             break;
         case 2:
-            lb_8000B1CC(vanish->x04, NULL, &pos);
+            lb_8000B1CC(vanish->jobj, NULL, &pos);
             if (Camera_8003118C(&pos, -20.0f) == 0) {
                 HSD_GObj* gobj5;
                 HSD_GObj* gobj1;
