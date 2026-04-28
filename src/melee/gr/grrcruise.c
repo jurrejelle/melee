@@ -963,7 +963,7 @@ void grRCruise_80201588(Ground_GObj* gobj)
         (struct grRCruise_VanishDesc*) ((u8*) grRc_803E4DA8 + 0x26C);
     s32 i;
 
-    HSD_ASSERTMSG(0x5D6, gp->gv.rcruise.vanish != NULL, "gp->u.map.vanish");
+    HSD_ASSERT(0x5D6, gp->u.map.vanish);
     for (i = 0; i < 20; i++, desc++) {
         struct grRCruise_VanishEntry* vanish = &gp->gv.rcruise.vanish[i];
 
