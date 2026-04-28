@@ -1,9 +1,12 @@
 #include "groldpupupu.h"
 
 #include "baselib/forward.h"
-#include "forward.h"
 
 #include "cm/camera.h"
+
+#include "forward.h"
+
+#include "ft/ftdevice.h"
 #include "ft/ftlib.h"
 #include "gr/granime.h"
 #include "gr/grdisplay.h"
@@ -13,6 +16,7 @@
 #include "gr/inlines.h"
 #include "lb/lb_00B0.h"
 #include "lb/lb_00F9.h"
+#include "lb/lbaudio_ax.h"
 
 #include <baselib/debug.h>
 #include <baselib/gobj.h>
@@ -20,7 +24,6 @@
 #include <baselib/gobjproc.h>
 #include <baselib/jobj.h>
 #include <baselib/random.h>
-#include "ft/ftdevice.h"
 
 static struct {
     s16 x0;
