@@ -470,13 +470,13 @@ struct grVenom_GroundVars2 {
 };
 
 struct grVenom_GroundVars3 {
-    /* +00 gp+C4 */ HSD_JObj* xC4;                                                                       
-    /* +04 gp+C8 */ HSD_JObj* xC8;                                                                       
-    /* +08 gp+CC */ HSD_JObj* xCC;                                                                       
-    /* +0C gp+D0 */ HSD_JObj* xD0;                                                                       
-    /* +10 gp+D4 */ HSD_JObj* xD4;                                                                       
-    /* +14 gp+D8 */ HSD_JObj* xD8;                                                                       
-    /* +18 gp+DC */ HSD_JObj* xDC;   
+    /* +00 gp+C4 */ HSD_JObj* xC4;
+    /* +04 gp+C8 */ HSD_JObj* xC8;
+    /* +08 gp+CC */ HSD_JObj* xCC;
+    /* +0C gp+D0 */ HSD_JObj* xD0;
+    /* +10 gp+D4 */ HSD_JObj* xD4;
+    /* +14 gp+D8 */ HSD_JObj* xD8;
+    /* +18 gp+DC */ HSD_JObj* xDC;
     /* +1C gp+E0 */ struct {
         u8 b0 : 1;
         u8 b1 : 1;
