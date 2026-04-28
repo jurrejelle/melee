@@ -798,9 +798,15 @@ struct grStadium_type9_GroundVars {
 };
 
 struct grYorster_TrackElement {
-    /* 0x00 */ u8 pad_00[4];
-    /* 0x04 */ f32 x4;
-    /* 0x08 */ u8 pad_08[0x14];
+    /* 0x00 */ s8 x00;
+    /* 0x01 */ u8 x01;
+    /* 0x02 */ u8 pad_02[2];
+    /* 0x04 */ f32 x04;
+    /* 0x08 */ f32 x08;
+    /* 0x0C */ s32 x0C;
+    /* 0x10 */ s32 x10;
+    /* 0x14 */ s32 x14;
+    /* 0x18 */ HSD_JObj* x18;
     /* 0x1C */ HSD_GObj* x1C;
 };
 
@@ -872,7 +878,7 @@ struct grRCruise_Entry {
     /* 0x04 */ s32 x04;
     /* 0x08 */ s32 x08;
     /* 0x0C */ f32 x0C;
-    /* 0x10 */ u8 pad_10[4];
+    /* 0x10 */ f32 x10;
     /* 0x14 */ HSD_JObj* x14;
 };
 
@@ -883,6 +889,18 @@ struct grRCruise_SubEntry {
     /* 0x04 */ s32 x04;
     /* 0x08 */ s32 x08;
     /* 0x0C */ HSD_JObj* x0C;
+};
+
+struct grRCruise_VanishEntry {
+    /* 0x00 */ s16 x00;
+    /* 0x02 */ u8 pad_02[2];
+    /* 0x04 */ HSD_JObj* jobj;
+};
+
+struct grRCruise_VanishDesc {
+    /* 0x00 */ s16 x00;
+    /* 0x02 */ s16 x02;
+    /* 0x04 */ s32 x04;
 };
 
 struct grRCruise_GroundVars {
@@ -898,7 +916,7 @@ struct grRCruise_GroundVars {
     } xC4;
     /* +04 gp+C8 */ struct lb_80011A50_t* x04;
     /* +08 gp+CC */ f32 x08;
-    /* +0C gp+D0 */ u32 x0C;
+    /* +0C gp+D0 */ s32 x0C;
     /* +10 gp+D4 */ u32 x10;
     /* +14 gp+D8 */ f32 x14;
     /* +18 gp+DC */ f32 x18;
@@ -912,6 +930,8 @@ struct grRCruise_GroundVars {
     /* +38 gp+FC */ s32 x38;
     /* +3C gp+100 */ struct grRCruise_SubEntry x3C[3];
     /* +6C gp+130 */ struct grRCruise_Entry* entries;
+    /* +70 gp+134 */ struct grRCruise_VanishEntry* vanish;
+    /* +74 gp+138 */ u8 pad_74[0xC];
 };
 
 struct grRCruise_GroundVars2 {
@@ -1403,6 +1423,23 @@ struct grPushOn_GroundVars {
     /* +AC gp+170 */ HSD_LObj* spot_light;
 };
 
+struct ScrollVars {
+    /* +00 gp+C4 */ u8 x00;
+    /* +01 gp+C5 */ u8 pad_01[3];
+    /* +04 gp+C8 */ Vec3 x04;
+    /* +10 gp+D4 */ Vec3 x10;
+    /* +1C gp+E0 */ Vec3 x1C;
+    /* +28 gp+EC */
+    union {
+        HSD_JObj* scroll_jobj;
+        HSD_GObj* anim_gobj;
+    };
+    /* +2C gp+F0 */ HSD_JObj* cam_jobj;
+    /* +30 gp+F4 */ HSD_JObj* ctr_jobj;
+    /* +34 gp+F8 */ HSD_JObj* x34[3];
+    /* +40 gp+104 */ HSD_JObj* x40;
+};
+
 struct grHomeRun_GroundVars {
     u16 xC4;
     u16 xC6;
@@ -1431,6 +1468,9 @@ struct Map_GroundVars {
     /* +38 gp+FC    */ float xFC;
     /* +3C gp+100   */ float x100;
     /* +40 gp+104   */ float x104;
+    /* +44 gp+108   */ u8 pad[0x130 - 0x108];
+    /* +70 gp+130 */ struct grRCruise_VanishEntry* chikuwa;
+    /* +70 gp+134 */ struct grRCruise_VanishEntry* vanish;
 };
 
 struct grOldYoshi_Cloud {
@@ -1609,6 +1649,7 @@ struct Ground {
             struct Last_GroundVars last;
             struct Map_GroundVars map;
             struct grPushOn_GroundVars pushon;
+            struct ScrollVars scroll;
         } u;
     };
 };
