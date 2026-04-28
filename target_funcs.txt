@@ -4,7 +4,7 @@ Funcs:
 - [x] grGreens_80213524
 - [x] grGreens_802139C4
 - [x] grGreens_80214FA8
-- [ ] grGreens_80214674
+- [x] grGreens_80214674
 - [ ] grGreens_80215D54
 - [ ] grGreens_80216C20
 - [ ] grGreens_802159B8
