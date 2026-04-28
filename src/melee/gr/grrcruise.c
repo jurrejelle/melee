@@ -181,7 +181,7 @@ HSD_GObj* grRCruise_801FF2C8(int gobj_id)
             HSD_GObj_SetupProc(gobj, callbacks->callback2, 4);
         }
     } else {
-        OSReport("%s:%d: couldn t get gobj(id=%d)\n", __FILE__, 0x112,
+        OSReport("%s:%d: couldn t get gobj(id=%d)\n", __FILE__, 0x122,
                  gobj_id);
     }
 
