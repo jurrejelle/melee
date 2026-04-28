@@ -369,8 +369,8 @@ void grRCruise_801FF924(Ground_GObj* gobj)
     gp->u.scroll.x34[1] = Ground_801C3FA4(gobj, 5);
     gp->u.scroll.x34[2] = Ground_801C3FA4(gobj, 6);
     gp->u.scroll.x40 = Ground_801C3FA4(gobj, 7);
-    gp->u.scroll.int_jobj = Ground_801C3FA4(gobj, 3);
-    HSD_ASSERT(0x2B0, gp->u.scroll.int_jobj);
+    gp->u.scroll.scroll_jobj = Ground_801C3FA4(gobj, 3);
+    HSD_ASSERT(0x2B0, gp->u.scroll.scroll_jobj);
     gp->u.scroll.cam_jobj = Ground_801C3FA4(gobj, 2);
     HSD_ASSERT(0x2B2, gp->u.scroll.cam_jobj);
 
@@ -395,24 +395,89 @@ bool grRCruise_801FFAD4(Ground_GObj* arg)
     return false;
 }
 
-void grRCruise_801FFADC(Ground_GObj* gobj)
+void grRCruise_801FFADC(Ground_GObj* arg0)
 {
-    static const s32 ids[] = { 2, 1, 5, 6, 4 };
-    Ground* gp = gobj->user_data;
-    HSD_GObj* hidden_gobj = gp->gv.rcruise2.xEC;
+    Vec3 sp64;
     Vec3 cam_offset;
-    Vec3 translate;
-    s32 i;
+    Vec3 cam_offset2;
+    Vec3 diff;
+    Vec3 sp24;
+    Vec3 sp18;
+    Ground* gp;
+    HSD_GObj* gobj;
+    HSD_JObj* temp_r29_2;
+    HSD_JObj* temp_r30;
+    HSD_JObj* temp_r31;
+    f32 temp_f31;
+    f32 temp_f4;
 
-    Stage_UnkSetVec3TCam_Offset(&cam_offset);
-    HSD_JObjGetTranslation(GET_JOBJ(hidden_gobj), &translate);
-    lbVector_Sub(&translate, &cam_offset);
-    HSD_JObjSetTranslate(GET_JOBJ(gobj), &translate);
+    HSD_JObj* jobj;
+    Ground* temp_r4;
+    PAD_STACK(0x18);
 
-    for (i = 0; i < 5; i++) {
-        HSD_GObj* stage_gobj = Ground_801C2BA4(ids[i]);
-        if (stage_gobj != NULL) {
-            HSD_JObjSetTranslate(GET_JOBJ(stage_gobj), &translate);
+    gp = arg0->user_data;
+    if (!(((u8) gp->u.scroll.x00 >> 7U) & 1)) {
+        Stage_UnkSetVec3TCam_Offset(&cam_offset);
+        HSD_ASSERT(0x2E0U, gp->u.scroll.anim_gobj);
+        temp_r4 = gp->u.scroll.anim_gobj->user_data;
+        temp_r30 = temp_r4->u.scroll.cam_jobj;
+        temp_r31 = temp_r4->u.scroll.ctr_jobj;
+        Stage_UnkSetVec3TCam_Offset(&cam_offset2);
+        lb_8000B1CC(temp_r31, NULL, &sp18);
+        lb_8000B1CC(temp_r30, NULL, &sp24);
+        lbVector_Diff(&sp24, &sp18, &diff);
+        temp_f4 = sp18.z / diff.z;
+        sp64.x = -((diff.x * temp_f4) - sp18.x);
+        sp64.y = -((diff.y * temp_f4) - sp18.y);
+        sp64.z = 0.0f;
+        lbVector_Sub(&sp64, &cam_offset2);
+        sp64.y += 10.0f;
+        lbVector_Diff(&gp->u.scroll.x10, &sp64, &gp->gv.arwing.xE0);
+        gp->u.scroll.x10 = sp64;
+        sp64.x *= -1.0f;
+        sp64.y *= -1.0f;
+        sp64.z *= -1.0f;
+        lbVector_Add(&sp64, &cam_offset);
+        temp_r29_2 = arg0->hsd_obj;
+        if (temp_r29_2 != NULL) {
+            HSD_JObjSetTranslate(temp_r29_2, &sp64);
+            temp_f31 = -350.0f * Ground_801C0498();
+            HSD_JObjAddTranslationZ(temp_r29_2, temp_f31);
+        }
+        gobj = Ground_801C2BA4(2);
+        if (gobj != NULL) {
+            jobj = gobj->hsd_obj;
+            if (jobj != NULL) {
+                HSD_JObjSetTranslate(jobj, &sp64);
+            }
+        }
+        gobj = Ground_801C2BA4(1);
+        if (gobj != NULL) {
+            jobj = gobj->hsd_obj;
+            if (jobj != NULL) {
+                HSD_JObjSetTranslate(jobj, &sp64);
+            }
+        }
+        gobj = Ground_801C2BA4(5);
+        if (gobj != NULL) {
+            jobj = gobj->hsd_obj;
+            if (jobj != NULL) {
+                HSD_JObjSetTranslate(jobj, &sp64);
+            }
+        }
+        gobj = Ground_801C2BA4(6);
+        if (gobj != NULL) {
+            jobj = gobj->hsd_obj;
+            if (jobj != NULL) {
+                HSD_JObjSetTranslate(jobj, &sp64);
+            }
+        }
+        gobj = Ground_801C2BA4(4);
+        if (gobj != NULL) {
+            jobj = gobj->hsd_obj;
+            if (jobj != NULL) {
+                HSD_JObjSetTranslate(jobj, &sp64);
+            }
         }
     }
 }
