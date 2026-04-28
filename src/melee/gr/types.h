@@ -462,6 +462,17 @@ struct grKinokoRoute_GroundVars {
     } entries[4];
 };
 
+struct grKinokoRoute_GroundVars2 {
+    /* +00 gp+C4 */ u8 flags;
+    /* +01 */ u8 pad_01[1];
+    /* +02 gp+C6 */ s16 phase;
+    /* +04 gp+C8 */ s16 spawn_idx;
+    /* +06 gp+CA */ s16 zone_idx;
+    /* +08 gp+CC */ s16 cam_timer;
+    /* +0A */ u8 pad_0A[2];
+    /* +0C gp+D0 */ Vec3 reb0_pos;
+};
+
 struct grSmashTaunt_GroundVars {
     /* +0x00 */ s16 state;
     /* +0x02 */ s16 timer;
@@ -1561,6 +1572,7 @@ struct Ground {
             struct GroundVars_izumi2 izumi2;
             struct GroundVars_izumi3 izumi3;
             struct grKinokoRoute_GroundVars kinokoroute;
+            struct grKinokoRoute_GroundVars2 kinokoroute2;
             struct grKongo_GroundVars kongo;
             struct grKongo_GroundVars2 kongo2;
             struct grKongo_GroundVars3 kongo3;
