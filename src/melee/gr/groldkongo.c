@@ -23,7 +23,16 @@ static struct {
     u8 x4[0x10];
     f32 x14;
     f32 x18;
-    u8 x1C[0x2C];
+    u8 x1C[0x10];
+    s16 x2C;
+    s16 x2E;
+    s16 x30;
+    s16 x32;
+    s16 x34;
+    s16 x36;
+    s16 x38;
+    s16 x3A;
+    u8 x3C[0xC];
     f32 x48;
     s32 x4C;
     s32 x50;
@@ -39,6 +48,9 @@ StageCallbacks grOk_803E658C[4] = {
     { grOldKongo_8020F654, grOldKongo_8020F6B4, grOldKongo_8020F6BC,
       grOldKongo_8020F6E0, 0xC0000000 },
 };
+
+char grOk_803E6640[] = "groldkongo.c";
+char grOk_804D4888 = 0x30;
 
 void grOldKongo_8020F468(bool arg) {}
 
@@ -227,7 +239,75 @@ void grOldKongo_802105C8(HSD_GObj* gobj)
     }
 }
 
-/// #grOldKongo_80210650
+f32 grOldKongo_80210650(void)
+{
+    s32 var_r3;
+    f32 var_f31;
+    s32 temp_r3 = grOk_804D6A90->x2C + grOk_804D6A90->x2E +
+                  grOk_804D6A90->x30 + grOk_804D6A90->x32 +
+                  grOk_804D6A90->x34 + grOk_804D6A90->x36 +
+                  grOk_804D6A90->x38 + grOk_804D6A90->x3A;
+
+    if (temp_r3 != 0) {
+        var_r3 = HSD_Randi(temp_r3);
+    } else {
+        var_r3 = 0;
+    }
+    {
+        s32 temp_r3_2 = var_r3 - grOk_804D6A90->x2C;
+
+        if (temp_r3_2 < 0) {
+            var_f31 = 2.3561945f;
+        } else {
+            s32 temp_r3_3 = temp_r3_2 - grOk_804D6A90->x2E;
+
+            if (temp_r3_3 < 0) {
+                var_f31 = 1.5707964f;
+            } else {
+                s32 temp_r3_4 = temp_r3_3 - grOk_804D6A90->x30;
+
+                if (temp_r3_4 < 0) {
+                    var_f31 = 0.7853982f;
+                } else {
+                    s32 temp_r3_5 = temp_r3_4 - grOk_804D6A90->x32;
+
+                    if (temp_r3_5 < 0) {
+                        var_f31 = 0.0f;
+                    } else {
+                        s32 temp_r3_6 = temp_r3_5 - grOk_804D6A90->x34;
+
+                        if (temp_r3_6 < 0) {
+                            var_f31 = -0.7853982f;
+                        } else {
+                            s32 temp_r3_7 = temp_r3_6 - grOk_804D6A90->x36;
+
+                            if (temp_r3_7 < 0) {
+                                var_f31 = -1.5707964f;
+                            } else {
+                                s32 temp_r3_8 =
+                                    temp_r3_7 - grOk_804D6A90->x38;
+
+                                if (temp_r3_8 < 0) {
+                                    var_f31 = -2.3561945f;
+                                } else {
+                                    temp_r3_8 -= grOk_804D6A90->x3A;
+                                    if (temp_r3_8 < 0) {
+                                        var_f31 = -3.1415927f;
+                                    } else {
+                                        __assert(grOk_803E6640, 0x312,
+                                                 &grOk_804D4888);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return var_f31;
+}
 
 DynamicsDesc* grOldKongo_80210780(enum_t gobj)
 {
