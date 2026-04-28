@@ -1430,7 +1430,7 @@ struct Map_GroundVars {
     /* +38 gp+FC    */ float xFC;
     /* +3C gp+100   */ float x100;
     /* +40 gp+104   */ float x104;
-    /* +44 gp+108   */ u8 pad[0x130 - 0x104];
+    /* +44 gp+108   */ u8 pad[0x130 - 0x108];
     /* +70 gp+130 */ struct grRCruise_VanishEntry* chikuwa;
     /* +70 gp+134 */ struct grRCruise_VanishEntry* vanish;
 };
