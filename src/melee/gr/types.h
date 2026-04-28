@@ -1606,7 +1606,7 @@ struct Ground {
             struct GroundVars_unk unk;
             struct grHomeRun_GroundVars homerun;
             struct grVenom_GroundVars venom;
-            struct grVenom_GroundVars2 venom3;
+            struct grVenom_GroundVars2 venom2;
             struct grYorster_GroundVars yorster;
             struct grZebes_GroundVars zebes;
             struct grZebes_GroundVars2 zebes2;
