@@ -459,10 +459,10 @@ void grVenom_80204B88(Ground_GObj* gobj)
     GXColor color_neutral1;
     GXColor color_neutral2;
 
-    env_flags = *(u8*) &gp->gv.venom3.xE0_state;
+    env_flags = *(u8*) &gp->gv.venom3.xE0_state.xE0_state_pad;
 
     if ((env_flags >> 5) & 1) {
-        if (gp->gv.venom3.xE0_state.state != 1) {
+        if (gp->gv.venom3.xE0_state.xE0_state_pad.state != 1) {
             color_set1 = grVe_804DB7D8;
             Ground_801C052C(&color_set1);
             Ground_801C05D4(&color_set1);
@@ -473,16 +473,16 @@ void grVenom_80204B88(Ground_GObj* gobj)
             Ground_801C055C(&color_set1);
             Ground_801C05BC(&color_set1);
             Ground_801C0574(&color_set1);
-            gp->gv.venom3.xE0_state.state = 1;
+            gp->gv.venom3.xE0_state.xE0_state_pad.state = 1;
         }
     } else if ((env_flags >> 1) & 1) {
-        if (gp->gv.venom3.xE0_state.state != 2) {
+        if (gp->gv.venom3.xE0_state.xE0_state_pad.state != 2) {
             color_set2 = grVe_804DB7DC;
             Ground_801C05BC(&color_set2);
-            gp->gv.venom3.xE0_state.state = 2;
+            gp->gv.venom3.xE0_state.xE0_state_pad.state = 2;
         }
     } else {
-        if (gp->gv.venom3.xE0_state.state != 0) {
+        if (gp->gv.venom3.xE0_state.xE0_state_pad.state != 0) {
             color_neutral1 = grVe_804DB7E0;
             color_neutral2 = grVe_804DB7E4;
             Ground_801C052C(&color_neutral1);
@@ -494,7 +494,7 @@ void grVenom_80204B88(Ground_GObj* gobj)
             Ground_801C055C(&color_neutral2);
             Ground_801C05BC(&color_neutral2);
             Ground_801C0574(&color_neutral2);
-            gp->gv.venom3.xE0_state.state = 0;
+            gp->gv.venom3.xE0_state.xE0_state_pad.state = 0;
         }
     }
 }
