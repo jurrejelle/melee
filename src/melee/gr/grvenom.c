@@ -406,29 +406,26 @@ void grVenom_80204284(Ground_GObj* gobj)
 
 void grVenom_80204424(Ground_GObj* arg) {}
 
-/// @todo Currently 99.70% match - needs register allocation fix
-/// FAKE MATCH: grVenom_GroundVars has wrong types for this function
 void grVenom_80204428(Ground_GObj* gobj)
 {
     Ground* gp = GET_GROUND(gobj);
+    PAD_STACK(8);
 
-    gp->gv.venom.xC4 = (u32) Ground_801C3FA4(gobj, 4);
-    gp->gv.venom.xC8 = (u32) Ground_801C3FA4(gobj, 0xE);
-    gp->gv.venom.xCC = (u32) Ground_801C3FA4(gobj, 0x10);
-    gp->gv.venom.xD0 = (u32) Ground_801C3FA4(gobj, 0x11);
-    *(u32*) &gp->gv.venom.xD4 = (u32) Ground_801C3FA4(gobj, 0x12);
-    *(u32*) &gp->gv.venom.xD8 = (u32) Ground_801C3FA4(gobj, 0x13);
-    *(u32*) &gp->gv.venom.xDC = (u32) Ground_801C3FA4(gobj, 0x15);
+    gp->gv.venom3.xC4 = Ground_801C3FA4(gobj, 4);
+    gp->gv.venom3.xC8 = Ground_801C3FA4(gobj, 0xE);
+    gp->gv.venom3.xCC = Ground_801C3FA4(gobj, 0x10);
+    gp->gv.venom3.xD0 = Ground_801C3FA4(gobj, 0x11);
+    gp->gv.venom3.xD4 = Ground_801C3FA4(gobj, 0x12);
+    gp->gv.venom3.xD8 = Ground_801C3FA4(gobj, 0x13);
+    gp->gv.venom3.xDC = Ground_801C3FA4(gobj, 0x15);
 
-    // Access bitfields using mutecity2 which has 8 bitfields at xC4_flags
-    // xC4_flags is at offset 0, we need offset 0x1C, so shift by 7 u32s
-    gp->gv.venom3.xC4_flags.b0 = 0;
-    gp->gv.venom3.xC4_flags.b1 = 0;
-    gp->gv.venom3.xC4_flags.b2 = 0;
-    gp->gv.venom3.xC4_flags.b3 = 0;
-    gp->gv.venom3.xC4_flags.b4 = 0;
-    gp->gv.venom3.xC4_flags.b5 = 0;
-    gp->gv.venom3.xC4_flags.b6 = 0;
+    gp->gv.venom3.xE0_state.b0 = 0;
+    gp->gv.venom3.xE0_state.b1 = 0;
+    gp->gv.venom3.xE0_state.b2 = 0;
+    gp->gv.venom3.xE0_state.b3 = 0;
+    gp->gv.venom3.xE0_state.b4 = 0;
+    gp->gv.venom3.xE0_state.b5 = 0;
+    gp->gv.venom3.xE0_state.b6 = 0;
 
     gp->gv.venom.xE4 = 0.0F;
 
@@ -993,7 +990,7 @@ void grVenom_80206874(Ground_GObj* gobj)
     scl = scale * *(f32*) ((u8*) attr + 0x34);
     HSD_JObjSetScaleZ(jobj, scl);
 
-    gp->gv.venom3.xC4_flags.b1 = false;
+    gp->gv.venom3.xE0_state.b1 = false;
     gp->gv.venom.xD4 = zero;
     gp->gv.venom.xF0 = zero;
     gp->gv.venom.xF4 = zero;
