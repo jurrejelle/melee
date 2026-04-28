@@ -106,7 +106,11 @@ static StageCallbacks grGr_callbacks[] = {
     },
 };
 
-static s16 grGr_803E7840[128] = { 0 };
+static s16 grGr_803E7840[128] = {
+    5,    6,    7,    8,    9,    0xA,  0xB,  0xC,  0xD,  0xE,
+    0xF,  0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+    0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22,
+};
 static u8 grGr_8049F9E0[0x20];
 
 static inline int randrange(int min, int max);
@@ -446,14 +450,80 @@ void grGreens_80214804(Ground_GObj* gobj)
 void grGreens_8021483C(Ground_GObj* gobj)
 {
     Ground* gp = GET_GROUND(gobj);
-    float f24 = -F32_MAX;
-    float f31 = F32_MAX;
-    float f23 = -F32_MAX;
-    float f30 = F32_MAX;
-    float f29 = -F32_MAX;
-    float f28 = -F32_MAX;
-    float f27 = F32_MAX;
-    float f26 = F32_MAX;
+    Vec vec;
+    float left_max = -F32_MAX;
+    float left_min = F32_MAX;
+    float left_top = -F32_MAX;
+    float left_bottom = F32_MAX;
+    float right_max = -F32_MAX;
+    float right_top = -F32_MAX;
+    float right_min = F32_MAX;
+    float right_bottom = F32_MAX;
+    int i;
+
+    for (i = 0; i < 30; i++) {
+        HSD_JObj* jobj = Ground_801C3FA4(gobj, grGr_803E7840[i]);
+
+        HSD_ASSERT(1014, jobj);
+        lb_8000B1CC(jobj, NULL, &vec);
+        if (vec.x < 0.0f) {
+            if (left_max < vec.x) {
+                left_max = vec.x;
+            }
+            if (left_min > vec.x) {
+                left_min = vec.x;
+            }
+            if (left_top < vec.y) {
+                left_top = vec.y;
+            }
+            if (left_bottom > vec.y) {
+                left_bottom = vec.y;
+            }
+        } else {
+            if (right_max < vec.x) {
+                right_max = vec.x;
+            }
+            if (right_min > vec.x) {
+                right_min = vec.x;
+            }
+            if (right_top < vec.y) {
+                right_top = vec.y;
+            }
+            if (right_bottom > vec.y) {
+                right_bottom = vec.y;
+            }
+        }
+    }
+    left_max = (left_max - left_min) * 0.5f;
+    for (i = 0; i < 5; i++) {
+        float y = ((left_top - left_bottom) * 0.25f * i) + left_bottom;
+        Vec* row = &gp->gv.greens.x4[i * 6];
+
+        row[0].x = (left_max * 0.0f) + left_min;
+        row[0].y = y;
+        row[0].z = 0.0f;
+        row[1].x = (left_max * 1.0f) + left_min;
+        row[1].y = y;
+        row[1].z = 0.0f;
+        row[2].x = (left_max * 2.0f) + left_min;
+        row[2].y = y;
+        row[2].z = 0.0f;
+    }
+    right_max = (right_max - right_min) * 0.5f;
+    for (i = 0; i < 5; i++) {
+        float y = ((right_top - right_bottom) * 0.25f * i) + right_bottom;
+        Vec* row = &gp->gv.greens.x4[i * 6];
+
+        row[3].x = (right_max * 0.0f) + right_min;
+        row[3].y = y;
+        row[3].z = 0.0f;
+        row[4].x = (right_max * 1.0f) + right_min;
+        row[4].y = y;
+        row[4].z = 0.0f;
+        row[5].x = (right_max * 2.0f) + right_min;
+        row[5].y = y;
+        row[5].z = 0.0f;
+    }
 }
 
 /// #grGreens_80214B58
