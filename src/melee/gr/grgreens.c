@@ -26,7 +26,9 @@
 #include <melee/it/it_2725.h>
 #include <melee/lb/lb_00B0.h>
 #include <melee/lb/lb_00F9.h>
+#include <melee/lb/lbaudio_ax.h>
 #include <melee/mp/mplib.h>
+#include <melee/it/items/itwhispyapple.h>
 
 #define Gr_Greens_Block_Status_None 0
 #define Gr_Greens_Block_Max 30
@@ -55,7 +57,38 @@ static struct {
     float x44_right;
     float x48_top;
     float x4C_bottom;
+    float x50_windDelay;
+    float x54_windDuration;
+    float x58_windDirectionCheckDelay;
+    int x5C_appleCountMax;
+    int x60_appleCountMin;
+    int x64_appleStartFrame;
+    int x68_appleInterval;
+    float x6C_appleYMin;
+    float x70_appleYMax;
+    float x74_appleThreshold1;
+    float x78_appleThreshold2;
 }* grGr_params;
+
+struct grGreens_WindVars {
+    int xC4_queueIndex;
+    int xC8_state;
+    int xCC_anim;
+    int xD0_timer;
+    int xD4_pending;
+    int xD8_direction;
+    int xDC_windState;
+    int xE0_frameCounter;
+    int xE4_appleCount;
+    int xE8_appleSide;
+};
+
+static inline struct grGreens_WindVars* grGreens_GetWindVars(Ground* gp);
+static inline struct grGreens_WindVars* grGreens_GetWindVars(Ground* gp)
+{
+    return (struct grGreens_WindVars*) &gp->gv.greens;
+}
+
 static StageCallbacks grGr_callbacks[] = {
     {
         grGreens_8021360C,
@@ -108,6 +141,25 @@ static StageCallbacks grGr_callbacks[] = {
     },
 };
 
+static const s32 grGr_803E7734[] = {
+    0, 1, 0, 1, 0, 2, 0, 1, 0, 2,
+};
+static const s32 grGr_803E775C[] = {
+    0, 0, 0, 14, 0, 0, 0, 14,
+};
+static const s32 grGr_803E777C[] = {
+    1, 8, 15, 16, 2, 9, 3, 10, 4, 11, 5, 12, 6, 13,
+};
+static const s32 grGr_803E77B4[] = {
+    0, 0, 0, 14, 0, 0, 0, 14,
+};
+static const s32 grGr_803E77D4[] = {
+    1, 8, 15, 16, 2, 9, 3, 10, 4, 11, 5, 12, 6, 13,
+};
+static const Vec3 grGr_803E780C[] = {
+    { -1.0f, 0.0f, 0.0f },
+    { 1.0f, 0.0f, 0.0f },
+};
 static s16 grGr_803E7840[128] = {
     5,    6,    7,    8,    9,    0xA,  0xB,  0xC,  0xD,  0xE,
     0xF,  0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
@@ -356,17 +408,18 @@ void grGreens_802139C0(Ground_GObj* arg) {}
 void grGreens_802139C4(Ground_GObj* gobj)
 {
     Ground* gp = GET_GROUND(gobj);
+    struct grGreens_WindVars* vars = grGreens_GetWindVars(gp);
 
     ftCo_800C06E8(gobj, 9, fn_80213B1C);
-    gp->gv.greens.x0_flags.whole_thing = 0;
-    gp->gv.greens.x4 = NULL;
-    gp->gv.greens.x8_blocks = NULL;
-    gp->gv.greens.xC = randrange(grGr_params->x34_windTimerMin,
-                                 grGr_params->x38_windTimerMax);
-    gp->gv.greens.x10 = 1;
-    gp->gv.greens.x1C = 0;
-    gp->gv.greens.x14 = HSD_Randi(2);
-    gp->gv.greens.x18 = 0;
+    vars->xC4_queueIndex = 0;
+    vars->xC8_state = 0;
+    vars->xCC_anim = 0;
+    vars->xD0_timer = randrange(grGr_params->x34_windTimerMin,
+                                grGr_params->x38_windTimerMax);
+    vars->xD4_pending = 1;
+    vars->xD8_direction = HSD_Randi(2);
+    vars->xDC_windState = 0;
+    vars->xE0_frameCounter = 0;
     grAnime_801C8138(gobj, gp->map_id, 0);
 }
 
@@ -433,14 +486,264 @@ bool fn_80213B1C(Ground_GObj* ground_gobj, Fighter_GObj* fighter_gobj,
 
 void grGreens_80213C10(Ground_GObj* gobj)
 {
-    // Ground_GObj* gobj2 = Ground_801C2BA4(4);
-    // Ground* gp = GET_GROUND(gobj);
-    // Ground* gp2 = GET_GROUND(gobj2);
-    // gp->u.greens.x18 = 0;
-    // if (grGr_804D6AAC == 0 && grGr_804D6AAD == 0) {
-    //     gp->u.greens.x1C++;
-    //     switch (gp->u.greens.x4) {}
-    // }
+    Ground_GObj* bg_gobj = Ground_801C2BA4(4);
+    Ground* gp = GET_GROUND(gobj);
+    Ground* bg_gp = GET_GROUND(bg_gobj);
+    struct grGreens_WindVars* vars = grGreens_GetWindVars(gp);
+
+    vars->xDC_windState = 0;
+
+    if (grGr_804D6AAC != 0 || grGr_804D6AAD != 0) {
+        return;
+    }
+
+    vars->xE0_frameCounter++;
+
+    switch (vars->xC8_state) {
+    case 0:
+        if (vars->xD4_pending != 0) {
+            vars->xD4_pending = 0;
+            vars->xCC_anim = HSD_Randi(8);
+            vars->xD0_timer = randrange(grGr_params->x34_windTimerMin,
+                                        grGr_params->x38_windTimerMax);
+            grAnime_801C8138(gobj, gp->map_id,
+                             grGr_803E775C[vars->xCC_anim]);
+            grAnime_801C8138(bg_gobj, bg_gp->map_id,
+                             grGr_803E77B4[vars->xCC_anim]);
+            return;
+        }
+
+        vars->xD0_timer--;
+        if (grAnime_801C84A4(gobj, 0, 7) != 0) {
+            if (vars->xD0_timer > 0) {
+                vars->xCC_anim = HSD_Randi(8);
+                grAnime_801C8138(gobj, gp->map_id,
+                                 grGr_803E775C[vars->xCC_anim]);
+                grAnime_801C8138(bg_gobj, bg_gp->map_id,
+                                 grGr_803E77B4[vars->xCC_anim]);
+                return;
+            }
+
+            vars->xC4_queueIndex = (vars->xC4_queueIndex + 1) % 10;
+            vars->xC8_state = grGr_803E7734[vars->xC4_queueIndex];
+            vars->xD4_pending = 1;
+        }
+        break;
+
+    case 1:
+        if (vars->xD4_pending != 0) {
+            HSD_JObj* jobj;
+            Vec3 pos;
+
+            vars->xD4_pending = 0;
+            vars->xCC_anim = 0;
+            jobj = gobj->hsd_obj;
+            HSD_ASSERT(979, jobj);
+            HSD_JObjGetTranslation(jobj, &pos);
+            vars->xD8_direction = ftLib_800864A8(&pos, NULL) == 1.0f;
+            vars->xD0_timer = 0;
+            grAnime_801C8138(
+                gobj, gp->map_id,
+                grGr_803E777C[vars->xCC_anim * 2 + vars->xD8_direction]);
+            grAnime_801C8138(
+                bg_gobj, bg_gp->map_id,
+                grGr_803E77D4[vars->xCC_anim * 2 + vars->xD8_direction]);
+            return;
+        }
+
+        switch (vars->xCC_anim) {
+        case 0:
+        case 5:
+            if (grAnime_801C83D0(gobj, 0, 7) != 0) {
+                vars->xCC_anim++;
+                grAnime_801C8138(
+                    gobj, gp->map_id,
+                    grGr_803E777C[vars->xCC_anim * 2 + vars->xD8_direction]);
+                grAnime_801C8138(
+                    bg_gobj, bg_gp->map_id,
+                    grGr_803E77D4[vars->xCC_anim * 2 + vars->xD8_direction]);
+                return;
+            }
+            break;
+
+        case 1:
+            if (grAnime_801C83D0(gobj, 0, 7) != 0) {
+                vars->xCC_anim++;
+                grAnime_801C8138(
+                    gobj, gp->map_id,
+                    grGr_803E777C[vars->xCC_anim * 2 + vars->xD8_direction]);
+                grAnime_801C8138(
+                    bg_gobj, bg_gp->map_id,
+                    grGr_803E77D4[vars->xCC_anim * 2 + vars->xD8_direction]);
+                lbAudioAx_800237A8(0x68FB8, 0x7F, 0x40);
+                return;
+            }
+            break;
+
+        case 2:
+            if (grAnime_801C84A4(gobj, 0, 7) != 0) {
+                vars->xD0_timer++;
+                if ((float) vars->xD0_timer > grGr_params->x50_windDelay) {
+                    vars->xCC_anim++;
+                    vars->xD0_timer = 0;
+                    grAnime_801C8138(
+                        gobj, gp->map_id,
+                        grGr_803E777C[vars->xCC_anim * 2 +
+                                      vars->xD8_direction]);
+                    grAnime_801C8138(
+                        bg_gobj, bg_gp->map_id,
+                        grGr_803E77D4[vars->xCC_anim * 2 +
+                                      vars->xD8_direction]);
+                    lbAudioAx_800237A8(vars->xD8_direction == 0 ? 0x68FB0
+                                                                : 0x68FB1,
+                                       0x7F, 0x40);
+                    return;
+                }
+            }
+            break;
+
+        case 3:
+            if (grAnime_801C83D0(gobj, 0, 7) != 0) {
+                vars->xCC_anim++;
+                grAnime_801C8138(
+                    gobj, gp->map_id,
+                    grGr_803E777C[vars->xCC_anim * 2 + vars->xD8_direction]);
+                if (vars->xD8_direction == 0) {
+                    lb_80011A50((Vec3*) &grGr_803E780C[0], 0xF, 0.5f, 0.0f,
+                                0.0f, -grGr_params->x44_right,
+                                grGr_params->x48_top, -grGr_params->x40_left,
+                                grGr_params->x4C_bottom);
+                } else {
+                    lb_80011A50((Vec3*) &grGr_803E780C[1], 0xF, 0.5f, 0.0f,
+                                0.0f, grGr_params->x40_left,
+                                grGr_params->x48_top, grGr_params->x44_right,
+                                grGr_params->x4C_bottom);
+                }
+                grAnime_801C8138(
+                    bg_gobj, bg_gp->map_id,
+                    grGr_803E77D4[vars->xCC_anim * 2 + vars->xD8_direction]);
+                return;
+            }
+            break;
+
+        case 4:
+            Camera_80030E44(1, NULL);
+            vars->xDC_windState = vars->xD8_direction + 1;
+            if (grAnime_801C84A4(gobj, 0, 7) != 0) {
+                HSD_JObj* jobj;
+                Vec3 pos;
+
+                vars->xD0_timer++;
+                if ((float) vars->xD0_timer > grGr_params->x54_windDuration) {
+                    vars->xCC_anim++;
+                    vars->xD0_timer = 0;
+                    grAnime_801C8138(
+                        gobj, gp->map_id,
+                        grGr_803E777C[vars->xCC_anim * 2 +
+                                      vars->xD8_direction]);
+                    grAnime_801C8138(
+                        bg_gobj, bg_gp->map_id,
+                        grGr_803E77D4[vars->xCC_anim * 2 +
+                                      vars->xD8_direction]);
+                    return;
+                }
+
+                if ((float) vars->xD0_timer >
+                    grGr_params->x58_windDirectionCheckDelay)
+                {
+                    jobj = gobj->hsd_obj;
+                    HSD_ASSERT(979, jobj);
+                    HSD_JObjGetTranslation(jobj, &pos);
+                    if (vars->xD8_direction !=
+                        (ftLib_800864A8(&pos, NULL) == 1.0f))
+                    {
+                        vars->xCC_anim++;
+                        vars->xD0_timer = 0;
+                        grAnime_801C8138(
+                            gobj, gp->map_id,
+                            grGr_803E777C[vars->xCC_anim * 2 +
+                                          vars->xD8_direction]);
+                        grAnime_801C8138(
+                            bg_gobj, bg_gp->map_id,
+                            grGr_803E77D4[vars->xCC_anim * 2 +
+                                          vars->xD8_direction]);
+                        return;
+                    }
+                }
+
+                if (vars->xD8_direction == 0) {
+                    lb_80011A50((Vec3*) &grGr_803E780C[0], 0xF, 0.5f, 0.0f,
+                                0.0f, -grGr_params->x44_right,
+                                grGr_params->x48_top, -grGr_params->x40_left,
+                                grGr_params->x4C_bottom);
+                } else {
+                    lb_80011A50((Vec3*) &grGr_803E780C[1], 0xF, 0.5f, 0.0f,
+                                0.0f, grGr_params->x40_left,
+                                grGr_params->x48_top, grGr_params->x44_right,
+                                grGr_params->x4C_bottom);
+                }
+                return;
+            }
+            break;
+
+        case 6:
+            if (grAnime_801C83D0(gobj, 0, 7) != 0) {
+                vars->xC4_queueIndex = (vars->xC4_queueIndex + 1) % 10;
+                vars->xC8_state = grGr_803E7734[vars->xC4_queueIndex];
+                vars->xD4_pending = 1;
+                return;
+            }
+            break;
+        }
+        break;
+
+    case 2:
+        if (vars->xD4_pending != 0) {
+            vars->xD4_pending = 0;
+            vars->xCC_anim = 0;
+            vars->xD0_timer = 0;
+            grAnime_801C8138(gobj, gp->map_id, 7);
+            grAnime_801C8138(bg_gobj, bg_gp->map_id, 7);
+            lbAudioAx_800237A8(0x68FB2, 0x7F, 0x40);
+            vars->xE4_appleCount =
+                randrange(grGr_params->x60_appleCountMin,
+                          grGr_params->x5C_appleCountMax - 1);
+            vars->xE8_appleSide = HSD_Randi(2);
+        } else if (grAnime_801C83D0(gobj, 0, 7) != 0) {
+            if (vars->xE4_appleCount < 0) {
+                vars->xC4_queueIndex = (vars->xC4_queueIndex + 1) % 10;
+                vars->xC8_state = grGr_803E7734[vars->xC4_queueIndex];
+                vars->xD4_pending = 1;
+            } else {
+                grAnime_801C8138(gobj, gp->map_id, 7);
+                grAnime_801C8138(bg_gobj, bg_gp->map_id, 7);
+            }
+        } else if (vars->xE4_appleCount >= 0) {
+            if (vars->xD0_timer >= grGr_params->x64_appleStartFrame &&
+                ((vars->xD0_timer - grGr_params->x64_appleStartFrame) %
+                 grGr_params->x68_appleInterval) == 0)
+            {
+                Vec3 pos;
+                float sign;
+
+                sign = vars->xE8_appleSide == 0 ? -1.0f : 1.0f;
+                pos.x = sign * (40.0f * HSD_Randf());
+                pos.y = ((grGr_params->x70_appleYMax -
+                          grGr_params->x6C_appleYMin) *
+                         HSD_Randf()) +
+                        grGr_params->x6C_appleYMin;
+                pos.z = -40.0f;
+                lbAudioAx_800237A8(0x68FB3, 0x7F, 0x40);
+                it_802EE200(gobj, &pos, grGr_params->x74_appleThreshold1,
+                            grGr_params->x78_appleThreshold2);
+                vars->xE4_appleCount--;
+                vars->xE8_appleSide = (vars->xE8_appleSide + 1) & 1;
+            }
+        }
+
+        vars->xD0_timer++;
+        break;
+    }
 }
 
 void grGreens_80214654(Ground_GObj* arg)
