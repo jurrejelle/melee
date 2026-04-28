@@ -1,5 +1,7 @@
 #include "grvenom.h"
 
+#include "placeholder.h"
+
 #include <platform.h>
 
 #include "gr/grcorneria.h"
@@ -360,9 +362,11 @@ void grVenom_80204284(Ground_GObj* gobj)
     Ground* gp;
     HSD_JObj* src_jobj;
     HSD_JObj* dst_jobj;
+    u32 pad2;
     Ground_GObj* other_gobj;
     Vec3 pos;
     s32 timer;
+    u32 pad;
 
     gp = GET_GROUND(gobj);
     src_jobj = GET_JOBJ(gobj);
@@ -1015,7 +1019,7 @@ void grVenom_80206B90(Ground_GObj* arg) {}
 void grVenom_80206B94(Ground_GObj* gobj)
 {
     Ground* gp = GET_GROUND(gobj);
-    smashTaunt_801E2550(gobj, &gp->gv.venom2.smashtaunt);
+    smashTaunt_801E2550(gobj, &gp->gv.smashtaunt);
 }
 
 bool grVenom_80206BBC(Ground_GObj* arg)
@@ -1026,7 +1030,7 @@ bool grVenom_80206BBC(Ground_GObj* arg)
 void grVenom_80206BC4(Ground_GObj* gobj)
 {
     Ground* gp = GET_GROUND(gobj);
-    grCorneria_801E277C(gobj, &gp->gv.venom2.smashtaunt);
+    grCorneria_801E277C(gobj, &gp->gv.smashtaunt);
 }
 
 void grVenom_80206BEC(Ground_GObj* arg) {}

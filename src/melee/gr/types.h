@@ -466,10 +466,6 @@ struct grVenom_GroundVars {
 };
 
 struct grVenom_GroundVars2 {
-    /* +00 gp+C4 */ struct grSmashTaunt_GroundVars smashtaunt;
-};
-
-struct grVenom_GroundVars3 {
     /* +00 gp+C4 */ HSD_JObj* xC4;
     /* +04 gp+C8 */ HSD_JObj* xC8;
     /* +08 gp+CC */ HSD_JObj* xCC;
@@ -1610,8 +1606,7 @@ struct Ground {
             struct GroundVars_unk unk;
             struct grHomeRun_GroundVars homerun;
             struct grVenom_GroundVars venom;
-            struct grVenom_GroundVars2 venom2;
-            struct grVenom_GroundVars3 venom3;
+            struct grVenom_GroundVars2 venom3;
             struct grYorster_GroundVars yorster;
             struct grZebes_GroundVars zebes;
             struct grZebes_GroundVars2 zebes2;
