@@ -4,4 +4,4 @@ Funcs:
 - [x] grOldPupupu_8021119C
 - [x] fn_802112F4
 - [x] grOldPupupu_80210D10
-- [ ] grOldPupupu_802113E0
+- [x] grOldPupupu_802113E0
