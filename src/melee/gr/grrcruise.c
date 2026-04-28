@@ -22,6 +22,7 @@
 #include "lb/lb_00F9.h"
 #include "lb/lbvector.h"
 #include "mp/mplib.h"
+#include "sysdolphin/baselib/debug.h"
 #include "sysdolphin/baselib/memory.h"
 
 #include <math.h>
@@ -96,13 +97,6 @@ struct grRCruise_StageData grRc_803E4ECC = {
     "%s:%d: couldn t get gobj(id=%d)\n",
 };
 
-char grRc_803E4F24[] = "grrcruise.c";
-char grRc_803E4F30[] = "gp->u.map.chikuwa";
-char grRc_803E4F44[] =
-    "dynamicsdata_shipflag\0\0\0gp->u.scroll.int_jobj\0\0\0"
-    "gp->u.scroll.cam_jobj\0\0\0gp->u.scroll.ctr_jobj\0\0\0translate";
-char grRc_803E4FB0[] = "gp->u.map.vanish";
-char grRc_803E4FC8[] = "gp->u.map.vanish[i].jobj";
 
 extern Vec3 grRc_803B8288;
 extern s16 grRc_803E4FF0[];
@@ -205,7 +199,7 @@ HSD_GObj* grRCruise_801FF2C8(int gobj_id)
             HSD_GObj_SetupProc(gobj, callbacks->callback2, 4);
         }
     } else {
-        OSReport(grRc_803E4ECC.x34, grRc_803E4F24, 290, gobj_id);
+        OSReport(grRc_803E4ECC.x34, "grrcruise.c", 290, gobj_id);
     }
 
     return gobj;
@@ -276,9 +270,7 @@ void grRCruise_801FF5B4(Ground_GObj* gobj)
     grAnime_801C8138(gobj, gp->map_id, 0);
     gp->gv.rcruise.x10 = 1;
     gp->gv.rcruise.entries = HSD_MemAlloc(0x198);
-    if (gp->gv.rcruise.entries == NULL) {
-        __assert("grrcruise.c", 0x19A, "gp->u.map.chikuwa");
-    }
+    HSD_ASSERTMSG(0x19A, gp->gv.rcruise.entries != NULL, "gp->u.map.chikuwa");
     grRCruise_80201410(gobj);
     Ground_801C10B8(gobj, grRCruise_801FF444);
     grRCruise_80200540(gobj);
@@ -343,7 +335,7 @@ void grRCruise_801FF7A4(Ground_GObj* gobj)
     grAnime_801C752C(jobj, 1, 30628, HSD_AObjSetFlags, 3, 0x20000000);
     archive = grDatFiles_801C6324();
     if (archive != NULL &&
-        (data = HSD_ArchiveGetPublicAddress(archive->unk0, grRc_803E4F44),
+        (data = HSD_ArchiveGetPublicAddress(archive->unk0, "dynamicsdata_shipflag"),
          data != NULL))
     {
         grLib_801C9B20(Ground_801C3FA4(stage_gobj, 23), data,
@@ -395,17 +387,11 @@ void grRCruise_801FF924(Ground_GObj* gobj)
     vars->x34[2] = Ground_801C3FA4(gobj, 6);
     vars->x40 = Ground_801C3FA4(gobj, 7);
     vars->x28[0] = Ground_801C3FA4(gobj, 3);
-    if (vars->x28[0] == NULL) {
-        __assert(grRc_803E4F24, 0x2B0, ((char*) grRc_803E4DA8) + 0x1B4);
-    }
+    HSD_ASSERTMSG(0x2B0, vars->x28[0] != NULL, "gp->u.scroll.int_jobj");
     vars->x28[1] = Ground_801C3FA4(gobj, 2);
-    if (vars->x28[1] == NULL) {
-        __assert(grRc_803E4F24, 0x2B2, ((char*) grRc_803E4DA8) + 0x1CC);
-    }
+    HSD_ASSERTMSG(0x2B2, vars->x28[1] != NULL, "gp->u.scroll.cam_jobj");
     vars->x28[2] = Ground_801C3FA4(gobj, 1);
-    if (vars->x28[2] == NULL) {
-        __assert(grRc_803E4F24, 0x2B4, ((char*) grRc_803E4DA8) + 0x1E4);
-    }
+    HSD_ASSERTMSG(0x2B4, vars->x28[2] != NULL, "gp->u.scroll.ctr_jobj");
     HSD_JObjGetTranslation(vars->x28[2], &vars->x04);
     vars->x10.z = 0.0f;
     vars->x10.y = 0.0f;
@@ -883,14 +869,10 @@ void grRCruise_80201410(Ground_GObj* gobj)
     u32 i;
 
     gp->gv.rcruise.vanish = HSD_MemAlloc(0xA0);
-    if (gp->gv.rcruise.vanish == NULL) {
-        __assert(grRc_803E4F24, 0x5AD, grRc_803E4FB0);
-    }
+    HSD_ASSERTMSG(0x5AD, gp->gv.rcruise.vanish != NULL, "gp->u.map.vanish");
     for (i = 0; i < 20; i++) {
         gp->gv.rcruise.vanish[i].x04 = Ground_801C3FA4(stage_gobj, desc->x00);
-        if (gp->gv.rcruise.vanish[i].x04 == NULL) {
-            __assert(grRc_803E4F24, 0x5B3, grRc_803E4FC8);
-        }
+        HSD_ASSERTMSG(0x5B3, gp->gv.rcruise.vanish[i].x04 != NULL, "gp->u.map.vanish[i].jobj");
         if (desc->x04 != 0) {
             HSD_GObj* gobj5;
             HSD_GObj* gobj1;
@@ -930,9 +912,7 @@ void grRCruise_80201588(Ground_GObj* gobj)
         (struct grRCruise_VanishDesc*) ((u8*) grRc_803E4DA8 + 0x26C);
     s32 i;
 
-    if (gp->gv.rcruise.vanish == NULL) {
-        __assert(grRc_803E4F24, 0x5D6, grRc_803E4FB0);
-    }
+    HSD_ASSERTMSG(0x5D6, gp->gv.rcruise.vanish != NULL, "gp->u.map.vanish");
     for (i = 0; i < 20; i++, desc++) {
         struct grRCruise_VanishEntry* vanish = &gp->gv.rcruise.vanish[i];
 
