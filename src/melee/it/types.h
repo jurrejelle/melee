@@ -177,10 +177,25 @@ struct ItemModelDesc {
     u8 xC_bit_field;
 };
 
+// Mirrors HurtCapsule[a_offset..scale] but with a leading bone_id where
+// HurtCapsule has its state field. Stored inline in Article::x8_hurtbones,
+// then copied into Item::xACC_itemHurtbox by it_8027163C.
+typedef struct {
+    enum_t bone_id;
+    Vec3 a_offset;
+    Vec3 b_offset;
+    f32 scale;
+} ItHurtBoneDesc;
+
+typedef struct {
+    s32 count;
+    ItHurtBoneDesc* descs;
+} ItHurtBoneList;
+
 struct Article {
     ItemAttr* x0_common_attr;
     void* x4_specialAttributes;
-    UNK_T x8_hurtbox;
+    ItHurtBoneList* x8_hurtbones;
     ItemStateArray* xC_itemStates;
     ItemModelDesc* x10_modelDesc;
     ItemDynamics* x14_dynamics;
@@ -196,6 +211,10 @@ typedef struct it_266F_ItemVars {
     UnkFlagStruct x18;
     struct lbColl_8000A10C_arg0_t x1C;
 } it_266F_ItemVars;
+
+struct ItemModStruct {
+    GXColor x0_unk;
+};
 
 struct Item {
     void* x0;
@@ -336,11 +355,8 @@ struct Item {
     // u32 xBB8;
     DynamicBoneTable* xBBC_dynamicBoneTable;
     UNK_T xBC0;
-    u8 xBC4;
-    u8 xBC5;
-    u8 xBC6;
-    u8 xBC7;
-    u32 xBC8;
+    GXColor xBC4;
+    ItemModStruct xBC8;
     Vec2 xBCC_unk;
     Vec2 xBD4_grabRange;
     itECB xBDC;
@@ -572,6 +588,7 @@ struct Item {
         itHeiho_ItemVars heiho;
         itHinoarashi_ItemVars hinoarashi;
         itHitodeman_ItemVars hitodeman;
+        itHouou_ItemVars houou;
         itKabigon_ItemVars kabigon;
         itKinoko_ItemVars kinoko;
         itKirbyHammer_ItemVars kirbyhammer;
@@ -693,10 +710,6 @@ struct SpawnItem {
     /* +48 */ GroundOrAir x48_ground_or_air;
 };
 
-struct ItemModStruct {
-    GXColor x0_unk;
-};
-
 struct ItemCommonData {
     s32 x0;
     u32 x4;
@@ -744,8 +757,7 @@ struct ItemCommonData {
     s32 xDC;
     f32 unk_degrees; ///< @at{E0}
     u8 filler_1a[0xE8 - 0xE4];
-    u8 xE8; // struct that has a float (scale?) as the first member? See
-            // it_80275BC8
+    f32 xE8;
     u8 filler_1a_2[0xF0 - 0xEC];
     f32 xF0;
     f32 xF4;
@@ -779,24 +791,19 @@ struct Item_r13_Data {
     s32 x14;
 };
 
-struct HSD_ObjAllocUnk2 {
-    // float x0;
-    // float x4;
-    // float x8;
-    // float xC;
-    // u8 pad_10[0xB0 - 0x10];
-    itECB ecb_arr[11];
-    int xB0;
-    int xB4;
-    int xB8;
-    M2C_UNK xBC;
-    // Vec3 xC0;
-    // u8 pad_CC[0x148 - 0xCC];
-    Vec3 xC0_vec3_arr[11];
+// Per-fighter ECB/position record. Populated by ftCo_80098634 (one entry per
+// fighter); read by it_80271B60 to detect item/fighter ECB overlap.
+struct Item_FtTrack {
+    itECB x0_ecb_arr[11];
+    s32 xB0;
+    s32 xB4;
+    s32 xB8;
+    s32 xBC;
+    Vec3 xC0_pos_arr[11];
     u32 x144;
     u32 x148;
     u32 x14C;
-    u32 x150; // num of itECB/Vec3's with data?
+    u32 x150_count;
     UnkFlagStruct x154;
 };
 
@@ -858,12 +865,14 @@ struct HSD_ObjAllocUnk5 {
     u16 xC;
 };
 
-typedef struct HSD_ObjAllocUnk7 {
+// Each entry records a single damage hit; x0 selects which member of x4 is
+// valid (1 = fighter, 2 = item).
+typedef struct DamageLogEntry {
     s32 x0;
     void* x4;
     HitCapsule* x8;
-    void* xC;
-} HSD_ObjAllocUnk7;
+    HurtCapsule* xC;
+} DamageLogEntry;
 
 struct it_8026C47C_arg0_t {
     s32 unk0;
