@@ -230,7 +230,7 @@ void grYorster_80202428(HSD_GObj* item_gobj, Ground* gp, Vec3* pos,
     }
 
     for (i = 0; i < 9; i++) {
-        if (ground->gv.yorster.elements[i].x1C == item_gobj) {
+        if (item_gobj == ground->gv.yorster.elements[i].x1C) {
             ground->gv.yorster.elements[i].x04 += value;
             break;
         }
