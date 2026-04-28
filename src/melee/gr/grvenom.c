@@ -422,13 +422,13 @@ void grVenom_80204428(Ground_GObj* gobj)
 
     // Access bitfields using mutecity2 which has 8 bitfields at xC4_flags
     // xC4_flags is at offset 0, we need offset 0x1C, so shift by 7 u32s
-    gp->gv.venom.xC4_flags.b0 = 0;
-    gp->gv.venom.xC4_flags.b1 = 0;
-    gp->gv.venom.xC4_flags.b2 = 0;
-    gp->gv.venom.xC4_flags.b3 = 0;
-    gp->gv.venom.xC4_flags.b4 = 0;
-    gp->gv.venom.xC4_flags.b5 = 0;
-    gp->gv.venom.xC4_flags.b6 = 0;
+    gp->gv.venom3.xC4_flags.b0 = 0;
+    gp->gv.venom3.xC4_flags.b1 = 0;
+    gp->gv.venom3.xC4_flags.b2 = 0;
+    gp->gv.venom3.xC4_flags.b3 = 0;
+    gp->gv.venom3.xC4_flags.b4 = 0;
+    gp->gv.venom3.xC4_flags.b5 = 0;
+    gp->gv.venom3.xC4_flags.b6 = 0;
 
     gp->gv.venom.xE4 = 0.0F;
 
@@ -462,10 +462,10 @@ void grVenom_80204B88(Ground_GObj* gobj)
     GXColor color_neutral1;
     GXColor color_neutral2;
 
-    env_flags = *(u8*) &gp->gv.venom.xE0_state;
+    env_flags = *(u8*) &gp->gv.venom3.xE0_state;
 
     if ((env_flags >> 5) & 1) {
-        if (gp->gv.venom.xE0_state.state != 1) {
+        if (gp->gv.venom3.xE0_state.state != 1) {
             color_set1 = grVe_804DB7D8;
             Ground_801C052C(&color_set1);
             Ground_801C05D4(&color_set1);
@@ -476,16 +476,16 @@ void grVenom_80204B88(Ground_GObj* gobj)
             Ground_801C055C(&color_set1);
             Ground_801C05BC(&color_set1);
             Ground_801C0574(&color_set1);
-            gp->gv.venom.xE0_state.state = 1;
+            gp->gv.venom3.xE0_state.state = 1;
         }
     } else if ((env_flags >> 1) & 1) {
-        if (gp->gv.venom.xE0_state.state != 2) {
+        if (gp->gv.venom3.xE0_state.state != 2) {
             color_set2 = grVe_804DB7DC;
             Ground_801C05BC(&color_set2);
-            gp->gv.venom.xE0_state.state = 2;
+            gp->gv.venom3.xE0_state.state = 2;
         }
     } else {
-        if (gp->gv.venom.xE0_state.state != 0) {
+        if (gp->gv.venom3.xE0_state.state != 0) {
             color_neutral1 = grVe_804DB7E0;
             color_neutral2 = grVe_804DB7E4;
             Ground_801C052C(&color_neutral1);
@@ -497,7 +497,7 @@ void grVenom_80204B88(Ground_GObj* gobj)
             Ground_801C055C(&color_neutral2);
             Ground_801C05BC(&color_neutral2);
             Ground_801C0574(&color_neutral2);
-            gp->gv.venom.xE0_state.state = 0;
+            gp->gv.venom3.xE0_state.state = 0;
         }
     }
 }
@@ -993,7 +993,7 @@ void grVenom_80206874(Ground_GObj* gobj)
     scl = scale * *(f32*) ((u8*) attr + 0x34);
     HSD_JObjSetScaleZ(jobj, scl);
 
-    gp->gv.venom.xC4_flags.b1 = false;
+    gp->gv.venom3.xC4_flags.b1 = false;
     gp->gv.venom.xD4 = zero;
     gp->gv.venom.xF0 = zero;
     gp->gv.venom.xF4 = zero;
@@ -1018,7 +1018,7 @@ void grVenom_80206B90(Ground_GObj* arg) {}
 void grVenom_80206B94(Ground_GObj* gobj)
 {
     Ground* gp = GET_GROUND(gobj);
-    smashTaunt_801E2550(gobj, &gp->gv.smashtaunt);
+    smashTaunt_801E2550(gobj, &gp->gv.venom2.smashtaunt);
 }
 
 bool grVenom_80206BBC(Ground_GObj* arg)
@@ -1029,7 +1029,7 @@ bool grVenom_80206BBC(Ground_GObj* arg)
 void grVenom_80206BC4(Ground_GObj* gobj)
 {
     Ground* gp = GET_GROUND(gobj);
-    grCorneria_801E277C(gobj, &gp->gv.smashtaunt);
+    grCorneria_801E277C(gobj, &gp->gv.venom2.smashtaunt);
 }
 
 void grVenom_80206BEC(Ground_GObj* arg) {}

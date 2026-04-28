@@ -447,50 +447,45 @@ struct grSmashTaunt_GroundVars {
 };
 
 struct grVenom_GroundVars {
-    union {
-        struct {
-            /* +00 gp+C4 */ u32 xC4;
-            /* +04 gp+C8 */ u32 xC8;
-            /* +08 gp+CC */ u32 xCC;
-            /* +0C gp+D0 */ u32 xD0;
-            /* +10 gp+D4 */ u32 xD4;
-            /* +14 gp+D8 */ u32 xD8;
-            /* +18 gp+DC */ u32 xDC;
-            /* +1C gp+E0 */ f32 xE0;
-            /* +20 gp+E4 */ f32 xE4;
-            /* +24 gp+E8 */ f32 xE8;
-            /* +28 gp+EC */ f32 xEC;
-            /* +2C gp+F0 */ s32 xF0;
-            /* +30 gp+F4 */ s32 xF4;
-            /* +34 gp+F8 */ s32 xF8;
-            /* +38 gp+FC */ s32 xFC;
-            /* +3C gp+100 */ s32 x100;
-        };
-        /* Bit-flag view of xC4 */
-        struct {
-            struct {
-                u8 b0 : 1;
-                u8 b1 : 1;
-                u8 b2 : 1;
-                u8 b3 : 1;
-                u8 b4 : 1;
-                u8 b5 : 1;
-                u8 b6 : 1;
-                u8 b7 : 1;
-            } xC4_flags;
-        };
-        /* SmashTaunt subsystem view (overlays from offset 0) */
-        struct grSmashTaunt_GroundVars smashtaunt;
-        /* Lighting-state bitfield at +0x1C (gp+E0) */
-        struct {
-            u8 pad_lighting[0x1C];
-            struct {
-                u16 padding1 : 7;
-                u16 state : 2;
-                u16 padding2 : 7;
-            } xE0_state;
-        };
-    };
+    /* +00 gp+C4 */ u32 xC4;
+    /* +04 gp+C8 */ u32 xC8;
+    /* +08 gp+CC */ u32 xCC;
+    /* +0C gp+D0 */ u32 xD0;
+    /* +10 gp+D4 */ u32 xD4;
+    /* +14 gp+D8 */ u32 xD8;
+    /* +18 gp+DC */ u32 xDC;
+    /* +1C gp+E0 */ f32 xE0;
+    /* +20 gp+E4 */ f32 xE4;
+    /* +24 gp+E8 */ f32 xE8;
+    /* +28 gp+EC */ f32 xEC;
+    /* +2C gp+F0 */ s32 xF0;
+    /* +30 gp+F4 */ s32 xF4;
+    /* +34 gp+F8 */ s32 xF8;
+    /* +38 gp+FC */ s32 xFC;
+    /* +3C gp+100 */ s32 x100;
+};
+
+struct grVenom_GroundVars2 {
+    /* +00 gp+C4 */ struct grSmashTaunt_GroundVars smashtaunt;
+};
+
+struct grVenom_GroundVars3 {
+    /* +00 gp+C4 */ struct {
+        u8 b0 : 1;
+        u8 b1 : 1;
+        u8 b2 : 1;
+        u8 b3 : 1;
+        u8 b4 : 1;
+        u8 b5 : 1;
+        u8 b6 : 1;
+        u8 b7 : 1;
+    } xC4_flags;
+    /* +01 */ u8 pad_01[0x1B];
+    /* +1C gp+E0 */ struct {
+        u16 padding1 : 7;
+        u16 state : 2;
+        u16 padding2 : 7;
+    } xE0_state;
 };
 
 struct grArwing_GroundVars {
@@ -1567,6 +1562,8 @@ struct Ground {
             struct GroundVars_unk unk;
             struct grHomeRun_GroundVars homerun;
             struct grVenom_GroundVars venom;
+            struct grVenom_GroundVars2 venom2;
+            struct grVenom_GroundVars3 venom3;
             struct grYorster_GroundVars yorster;
             struct grZebes_GroundVars zebes;
             struct grZebes_GroundVars2 zebes2;
