@@ -703,9 +703,8 @@ bool ftCo_80093694(Fighter_GObj* gobj)
 
 void ftCo_8009370C(Fighter_GObj* gobj, HSD_GObjEvent on_reflect)
 {
-    u8 _[8] = { 0 };
     ReflectDesc reflect;
-    Fighter* fp = gobj->user_data;
+    Fighter* fp = GET_FIGHTER(gobj);
     reflect.x0_bone_id = fp->ft_data->x8->x11;
     reflect.x4_max_damage = fp->shield_health;
     reflect.x8_offset.x = reflect.x8_offset.y = reflect.x8_offset.z = 0;
