@@ -334,14 +334,15 @@ void grGreens_802139C4(Ground_GObj* gobj)
 {
     Ground* gp = GET_GROUND(gobj);
     ftCo_800C06E8(gobj, 9, fn_80213B1C);
-    gp->gv.greens2.x0 = 0;
-    gp->gv.greens2.x4 = 0;
-    gp->gv.greens2.x8 = 0;
-    gp->gv.greens2.xC = randrange(grGr_params->x34_windTimerMin, grGr_params->x38_windTimerMax);
-    gp->gv.greens2.x10 = 1;
-    gp->gv.greens2.x14 = HSD_Randi(2);
-    gp->gv.greens2.x18 = 0;
-    gp->gv.greens2.x1C = 0;
+    gp->gv.greens.x0_flags.whole_thing = 0;
+    gp->gv.greens.x4 = NULL;
+    gp->gv.greens.x8_blocks = NULL;
+    gp->gv.greens.xC = randrange(grGr_params->x34_windTimerMin,
+                                 grGr_params->x38_windTimerMax);
+    gp->gv.greens.x10 = 1;
+    gp->gv.greens.x1C = 0;
+    gp->gv.greens.x14 = HSD_Randi(2);
+    gp->gv.greens.x18 = 0;
     grAnime_801C8138(gobj, gp->map_id, 0);
 }
 
@@ -821,9 +822,9 @@ void grGreens_80214B58(Ground_GObj* gobj)
 
 void grGreens_80214FA8(Ground_GObj* gobj)
 {
-    Ground* gp = GET_GROUND(gobj);
     unsigned int i;
     int j;
+    Ground* gp = GET_GROUND(gobj);
     int k;
     for (i = 0; i < 30; i++) {
         mpJointSetCb2(grGr_803E7840[i], gp, fn_80216DE4);
@@ -999,26 +1000,25 @@ void fn_802159B4(Item_GObj* item_gobj, Ground* gp)
 
 void grGreens_802159B8(Ground* gp, int i, int j, int value)
 {
-    struct grGreens_BlockVars* block = getBlock(gp, j, i);
-    HSD_GObj* gobj = block->x10;
+    HSD_GObj* gobj = getBlock(gp, i, j)->x10;
     Vec vec;
     float f;
-    if (gobj != NULL && !block->x1_7) {
-        block->x1_7 = 1;
+    if (gobj != NULL && !getBlock(gp, i, j)->x1_7) {
+        getBlock(gp, i, j)->x1_7 = 1;
         grMaterial_801C8E28(gobj);
-        block->x1C = value;
+        getBlock(gp, i, j)->x1C = value;
 
-        if (block->x1_1) {
-            HSD_JObjSetFlagsAll(block->xC->hsd_obj, JOBJ_HIDDEN);
+        if (getBlock(gp, i, j)->x1_1) {
+            HSD_JObjSetFlagsAll(getBlock(gp, i, j)->xC->hsd_obj, JOBJ_HIDDEN);
             grMaterial_801C8D98(gobj, 1);
             it_80275414(gobj);
-            block->x1_2 = 1;
+            getBlock(gp, i, j)->x1_2 = 1;
             HSD_JObjGetTranslation(gobj->hsd_obj, &vec);
             vec.y += 5.0f * Ground_801C0498();
             efSync_Spawn(1039, gobj, &vec);
         } else {
             f = 0.0f;
-            block->x1_3 = 1;
+            getBlock(gp, i, j)->x1_3 = 1;
             Camera_80030E44(2, NULL);
             HSD_JObjGetTranslation(gobj->hsd_obj, &vec);
             vec.y += 5.0f * Ground_801C0498();
