@@ -1054,14 +1054,19 @@ struct grGreens_GroundVars {
         };
         int whole_thing;
     } x0_flags;
-    /*  +4 gp+C8 */ union {
-        Vec* x4;
-        int x4i;
-    };
-    /*  +8 gp+CC */ union {
-        struct grGreens_BlockVars* x8_blocks;
-        int x8i;
-    };
+    /*  +4 gp+C8 */ Vec* x4;
+    /*  +8 gp+CC */ struct grGreens_BlockVars* x8_blocks;
+    /*  +C gp+D0 */ int xC;
+    /* +10 gp+D4 */ int x10;
+    /* +14 gp+D8 */ int x14;
+    /* +18 gp+DC */ int x18;
+    /* +1C gp+E0 */ int x1C;
+};
+
+struct grGreens_GroundVars2 {
+    /*  +0 gp+C4 */ int x0;
+    /*  +4 gp+C8 */ int x4;
+    /*  +8 gp+CC */ int x8;
     /*  +C gp+D0 */ int xC;
     /* +10 gp+D4 */ int x10;
     /* +14 gp+D8 */ int x14;
@@ -1597,6 +1602,7 @@ struct Ground {
             struct grFourside_UfoVars foursideUfo;
             struct grFourside_GroundVars2 fourside2;
             struct grGreens_GroundVars greens;
+            struct grGreens_GroundVars2 greens2;
             struct grGarden_GroundVars garden;
             struct grGarden_GroundVars2 garden2;
             struct grIceMt_GroundVars icemt;
