@@ -3243,7 +3243,6 @@ s32 hsd_803962A8(void* data)
 // @TODO: Currently 96.49% match - needs minor register allocation fix
 s32 hsd_803966A0(void* data)
 {
-    struct ParticleScreenState* sp = &hsd_804CF810;
     s32 result;
 
     result = hsd_80395550(data);
@@ -3254,32 +3253,32 @@ s32 hsd_803966A0(void* data)
         u32 cmd = *(u32*) ((u8*) data + 0x14);
         switch (cmd) {
         case 0:
-            sp->xBC = 8;
+            (&hsd_804CF810)->xBC = 8;
             break;
         case 1:
-            sp->xBC = 4;
+            (&hsd_804CF810)->xBC = 4;
             break;
         case 2:
-            sp->xBC = 1;
+            (&hsd_804CF810)->xBC = 1;
             break;
         case 3:
-            sp->xBC = 2;
+            (&hsd_804CF810)->xBC = 2;
             break;
         case 4:
-            sp->xBC = 0x100;
+            (&hsd_804CF810)->xBC = 0x100;
             break;
         case 5:
-            sp->xBC = 0x400;
+            (&hsd_804CF810)->xBC = 0x400;
             break;
         case 6:
-            sp->xBC = 0x200;
+            (&hsd_804CF810)->xBC = 0x200;
             break;
         }
-        ps_remove_node(sp, data);
+        ps_remove_node(&hsd_804CF810, data);
         return 0;
     }
     case -1:
-        ps_remove_node(sp, data);
+        ps_remove_node(&hsd_804CF810, data);
         return 1;
     default:
         return 0;
