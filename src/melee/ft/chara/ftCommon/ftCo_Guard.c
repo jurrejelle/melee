@@ -742,7 +742,7 @@ void ftCo_80093850(Fighter_GObj* gobj)
 
 void ftCo_8009388C(HSD_GObj* gobj)
 {
-    Fighter* fp = gobj->user_data;
+    Fighter* fp = GET_FIGHTER(gobj);
     Fighter_ChangeMotionState(gobj, ftCo_MS_GuardReflect,
                               Ft_MF_SkipAnim | Ft_MF_KeepGfx,
                               fp->cur_anim_frame, 1, 0, NULL);
@@ -761,7 +761,7 @@ void ftCo_8009388C(HSD_GObj* gobj)
 /// @todo Shares a lot of code with #ftCo_800923B4
 void ftCo_800939B4(Fighter_GObj* gobj)
 {
-    Fighter* fp = gobj->user_data;
+    Fighter* fp = GET_FIGHTER(gobj);
     switch (fp->kind) {
     case FTKIND_YOSHI:
         ftYs_Shield_8012C914(gobj);
@@ -781,7 +781,7 @@ void ftCo_800939B4(Fighter_GObj* gobj)
 /// @todo Shared code with #ftCo_8009388C.
 void ftCo_80093A50(Fighter_GObj* gobj)
 {
-    Fighter* fp = gobj->user_data;
+    Fighter* fp = GET_FIGHTER(gobj);
     Fighter_ChangeMotionState(gobj, 182, Ft_MF_SkipAnim, 0, 1, 0, NULL);
     ftAnim_8006EBA4(gobj);
     fp->x672_input_timer_counter = 0xFE;
