@@ -8,10 +8,13 @@
 #include "gr/granime.h"
 #include "gr/grdisplay.h"
 #include "gr/ground.h"
+#include "gr/stage.h"
 #include "gr/grzakogenerator.h"
 #include "gr/inlines.h"
 #include "gr/types.h"
 
+#include "ft/ftlib.h"
+#include "gm/gmregclear.h"
 #include "it/forward.h"
 
 #include "it/inlines.h"
@@ -23,12 +26,27 @@
 #include "lb/types.h"
 
 #include "mp/forward.h"
+#include "mp/mplib.h"
+
+#include "ty/tydisplay.h"
+#include "ty/toy.h"
 
 #include <dolphin/mtx.h>
 #include <dolphin/os/OSError.h>
 #include <baselib/gobj.h>
 #include <baselib/gobjgxlink.h>
 #include <baselib/gobjproc.h>
+
+typedef struct grFigureGet_Data {
+    s32 x0;
+    s32 x4;
+    s32 x8;
+    f32 xC;
+    f32 x10;
+    f32 x14;
+} grFigureGet_Data;
+
+static Vec3 const grFigureGet_803B8470 = { 0.0f, 0.0f, 0.0f };
 
 /* 219530 */ static void grFigureGet_OnDemoInit(int);
 /* 219534 */ static void grFigureGet_OnInit(void);
@@ -71,7 +89,7 @@ StageData grFigureGet_803E7D34 = {
     0,
 };
 
-extern UNK_T grFigureGet_804D6AC0;
+extern grFigureGet_Data* grFigureGet_804D6AC0;
 extern f32 grFigureGet_804DBB60;
 extern f32 grFigureGet_804DBB64;
 
@@ -133,7 +151,67 @@ void grFigureGet_802196E8(Ground_GObj* gobj) {}
 
 void grFigureGet_802196EC(Ground_GObj* gobj) {}
 
-/// #grFigureGet_802196F0
+void grFigureGet_802196F0(Ground_GObj* gobj)
+{
+    s32 sp14;
+    Ground* gp = gobj->user_data;
+    s32 temp_r30;
+    s32 temp_r30_2;
+    s32 temp_r3;
+    s32 temp_r3_2;
+    int* var_r30;
+    s32 var_r29;
+    s32 var_r29_2;
+    s32 var_r29_3;
+    s32 var_r6;
+
+    grAnime_801C8138(gobj, gp->map_id, 0);
+    gp->x8_callback = NULL;
+    gp->xC_callback = NULL;
+    tyDisplay_8031C2CC();
+    temp_r30 = HSD_Randi(3);
+    var_r29 = temp_r30 + 1;
+    (&gp->gv.figureget.x10)[temp_r30] = un_80305058(0, 0x63, 0, 65.0f);
+    if (var_r29 >= 3) {
+        var_r29 = 0;
+    }
+    temp_r30_2 = var_r29 * 4;
+    *(int*) ((u8*) &gp->gv.figureget.x10 + temp_r30_2) = Ground_801C5840();
+    if (un_8031C354(*(int*) ((u8*) &gp->gv.figureget.x10 + temp_r30_2), &sp14, 1,
+                    2) == 0)
+    {
+        do {
+            temp_r3 = un_80305058(2, 0x63, 1, 75.0f);
+            sp14 = temp_r3;
+        } while (*(int*) ((u8*) &gp->gv.figureget.x10 + temp_r30_2) == temp_r3);
+    }
+    var_r29_2 = var_r29 + 1;
+    if (var_r29_2 >= 3) {
+        var_r29_2 = 0;
+    }
+    (&gp->gv.figureget.x10)[var_r29_2] = sp14;
+    var_r29_3 = 0;
+    var_r30 = &gp->gv.figureget.x10;
+    do {
+        un_8031C454(*var_r30);
+        var_r29_3 += 1;
+        var_r30 += 1;
+    } while (var_r29_3 < 3);
+    temp_r3_2 = grFigureGet_804D6AC0->x4;
+    if (temp_r3_2 != 0) {
+        var_r6 = HSD_Randi(temp_r3_2);
+    } else {
+        var_r6 = 0;
+    }
+    gp->gv.figureget.x0 = grFigureGet_804D6AC0->x0 + var_r6;
+    gp->gv.figureget.x4 = 0;
+    gp->gv.figureget.x8 = 0;
+    gp->gv.figureget.xC = 0;
+    memzero(gp->gv.figureget.x1C, 0xC);
+    memzero(gp->gv.figureget.x28, 0xC);
+    memzero(gp->gv.figureget.x34, 0xC);
+    mpJointSetCb1(0, gp, grFigureGet_80219B10);
+}
 
 bool grFigureGet_80219890(Ground_GObj* gobj)
 {
