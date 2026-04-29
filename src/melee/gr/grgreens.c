@@ -38,7 +38,7 @@ static s8 grGr_804D6AAD;
 static struct {
     int x0_blockTimerMin;
     int x4_blockTimerMax;
-    int x8;
+    int x8_blockBombChance;
     int xC;
     int x10;
     int x14;
@@ -809,7 +809,7 @@ void grGreens_80214B58(Ground_GObj* gobj)
 
     memset(grGr_8049F9E0, 0, sizeof(grGr_8049F9E0));
     for (i = 0; i < sizeof(indices) / sizeof(indices[0]); i++) {
-        int chance = grGr_params->x8;
+        int chance = grGr_params->x8_blockBombChance;
 
         if (chance != 0 && HSD_Randi(chance) != 0) {
             grGr_8049F9E0[indices[i]] = 1;
@@ -1236,7 +1236,7 @@ void grGreens_802166C4(Ground_GObj* gobj)
                 {
                     switch (row) {
                     case 4:
-                        weights[col] = grGr_params->x8;
+                        weights[col] = grGr_params->x8_blockBombChance;
                         break;
                     case 3:
                         weights[col] = grGr_params->xC;
