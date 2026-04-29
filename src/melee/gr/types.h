@@ -1054,13 +1054,21 @@ struct grGreens_GroundVars {
         };
         int whole_thing;
     } x0_flags;
-    /*  +4 gp+C8 */ Vec* x4;
-    /*  +8 gp+CC */ struct grGreens_BlockVars* x8_blocks;
+    /*  +4 gp+C8 */ union {
+        Vec* x4;
+        int x4i;
+    };
+    /*  +8 gp+CC */ union {
+        struct grGreens_BlockVars* x8_blocks;
+        int x8i;
+    };
     /*  +C gp+D0 */ int xC;
     /* +10 gp+D4 */ int x10;
     /* +14 gp+D8 */ int x14;
     /* +18 gp+DC */ int x18;
     /* +1C gp+E0 */ int x1C;
+    /* +20 gp+E4 */ int x20;
+    /* +24 gp+E8 */ int x24;
 };
 
 struct grMuteCity_GroundVars {
