@@ -218,7 +218,86 @@ bool grFigureGet_80219890(Ground_GObj* gobj)
     return false;
 }
 
-/// #grFigureGet_80219898
+void grFigureGet_80219898(Ground_GObj* gobj)
+{
+    u8 pad[0x10];
+    HSD_GObj* var_r28;
+    Item_GObj* temp_r3_2;
+    Point3d pos;
+    f32 temp_f1;
+    f32 var_f2;
+    s32 temp_r0;
+    s32 temp_r3;
+    s32 temp_r3_3;
+    s32 temp_r6;
+    s32 var_r30;
+    s32 var_r3;
+    s32 var_r3_2;
+    Ground* gp = gobj->user_data;
+    int* var_r29;
+
+    for (var_r28 = HSD_GObj_Entities->fighters; var_r28 != NULL;
+         var_r28 = var_r28->next)
+    {
+        ftLib_80086984(var_r28)->joint_id_skip = 0;
+    }
+    if (gp->gv.figureget.x4 < grFigureGet_804D6AC0->x8) {
+        temp_r3 = gp->gv.figureget.x0;
+        if (temp_r3 == 0) {
+            pos = grFigureGet_803B8470;
+            gp->gv.figureget.x4 += 1;
+            var_f2 = grFigureGet_804D6AC0->x10 - grFigureGet_804D6AC0->xC;
+            if (var_f2 < 0.0f) {
+                var_f2 = -var_f2;
+            }
+            temp_f1 = var_f2 * 0.5f;
+            temp_f1 -= 20.0f;
+            if ((s32) temp_f1 != 0) {
+                var_r3 = HSD_Randi((s32) temp_f1);
+            } else {
+                var_r3 = 0;
+            }
+            pos.x = 20.0f + (f32) var_r3;
+            if (HSD_Randi(2) == 0) {
+                pos.x *= -1.0f;
+            }
+            pos.y = grFigureGet_804D6AC0->x14 + Stage_GetCamBoundsTopOffset();
+            temp_r6 = gp->gv.figureget.x4;
+            temp_r3_2 = it_802F2094(gobj, &pos,
+                                    (&gp->gv.figureget.xC)[temp_r6], temp_r6);
+            *(Item_GObj**) ((u8*) gp + 0xF4 + gp->gv.figureget.x4 * 4) =
+                temp_r3_2;
+            it_802F2014(temp_r3_2, 0);
+            temp_r3_3 = grFigureGet_804D6AC0->x4;
+            if (temp_r3_3 != 0) {
+                var_r3_2 = HSD_Randi(temp_r3_3);
+            } else {
+                var_r3_2 = 0;
+            }
+            gp->gv.figureget.x0 = grFigureGet_804D6AC0->x0 + var_r3_2;
+        } else {
+            gp->gv.figureget.x0 = temp_r3 - 1;
+        }
+    } else if (grFigureGet_80219C50(gobj) != 0) {
+        var_r30 = 0;
+        var_r29 = gp->gv.figureget.x1C;
+        temp_r0 = gp->gv.figureget.x8;
+        while (var_r30 < temp_r0) {
+            gm_8017E280((u16) *var_r29, 1U);
+            var_r29 += 1;
+            var_r30 += 1;
+        }
+        if (temp_r0 != 0) {
+            if (temp_r0 == 3) {
+                stage_info.flags |= 0x20;
+            }
+            stage_info.flags |= 0x100;
+        } else {
+            stage_info.flags |= 0x200;
+        }
+    }
+    lb_800115F4();
+}
 
 void grFigureGet_80219B0C(Ground_GObj* gobj) {}
 
