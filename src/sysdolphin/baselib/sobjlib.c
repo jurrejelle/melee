@@ -82,6 +82,7 @@ void HSD_SObjLib_803A44D4(HSD_GObj* gobj, HSD_SObj* sobj, u8 priority)
         HSD_GObjObject_80390ADC(gobj);
         HSD_GObjObject_80390A70(gobj, HSD_SObjLib_804D7960, sobj);
     } else {
+        cur = gobj->hsd_obj;
         next = cur;
         while (next->next != NULL && next->x44 <= (u8) priority) {
             next = next->next;
