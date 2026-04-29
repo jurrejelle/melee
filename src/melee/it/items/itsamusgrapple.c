@@ -1378,8 +1378,8 @@ bool it_802BA3BC(ItemLink* tail, ItemLink* head, Vec3* pos,
     Vec3 dir;
     Vec3* dir_ptr;
     Vec3 saved_pos;
-    ItemLink* next_tail;
     ItemLink* link;
+    ItemLink* next_tail;
     s32 count;
     f32 d, remaining, max_dist;
 
@@ -1395,6 +1395,7 @@ bool it_802BA3BC(ItemLink* tail, ItemLink* head, Vec3* pos,
 
     it_802B91C4(tail, pos, attrs, attrs->x38);
     head->pos = saved_pos;
+    if (next_tail){}
 
     d = it_802A3C98(&tail->pos, pos, &dir);
 
@@ -1430,6 +1431,7 @@ bool it_802BA3BC(ItemLink* tail, ItemLink* head, Vec3* pos,
         dir_ptr = &dir;
         pos->x = (dir_ptr->x * attrs->x38) + head->pos.x;
         pos->y = (dir_ptr->y * attrs->x38) + head->pos.y;
+        if (((!(&head->pos)) && (!(&head->pos))) && (!(&head->pos))){}
         pos->z = (dir_ptr->z * attrs->x38) + head->pos.z;
     }
 
