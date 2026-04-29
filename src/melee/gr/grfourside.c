@@ -441,18 +441,15 @@ bool grFourside_801F388C(Ground_GObj* arg)
 
 void grFourside_801F3B6C(Ground_GObj* arg) {}
 
-/// #grFourside_801F3B70
 void grFourside_801F3B70(Ground_GObj* gobj)
 {
     Vec local18;
     Ground* gp = GET_GROUND(gobj);
     HSD_JObj* jobj = Ground_801C3FA4(gobj, 1);
     CmSubject* cam;
-    float fVar2;
     lb_8000B1CC(jobj, NULL, &local18);
     if (gp->gv.foursideUfo.xC != 0) {
-        fVar2 = Stage_GetCamBoundsTopOffset();
-        if (local18.y <= fVar2 + grFs_804D69D8->ufo_cs_offs) {
+        if (local18.y <= Stage_GetCamBoundsTopOffset() + grFs_804D69D8->ufo_cs_offs) {
             if (gp->gv.foursideUfo.x3 == 0) {
                 gp->gv.foursideUfo.x3 = 1;
             }
