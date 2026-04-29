@@ -1395,7 +1395,6 @@ bool it_802BA3BC(ItemLink* tail, ItemLink* head, Vec3* pos,
 
     it_802B91C4(tail, pos, attrs, attrs->x38);
     head->pos = saved_pos;
-    if (next_tail){}
 
     d = it_802A3C98(&tail->pos, pos, &dir);
 
@@ -1418,8 +1417,8 @@ bool it_802BA3BC(ItemLink* tail, ItemLink* head, Vec3* pos,
     while (link != NULL && link->x2C_b0) {
         count++;
         if (it_802A3C98(&link->pos, &head->pos, &dir) > attrs->x38) {
-            dir_ptr = &dir;
             link->pos.x = (dir_ptr->x * attrs->x38) + head->pos.x;
+            dir_ptr = &dir;
             link->pos.y = (dir_ptr->y * attrs->x38) + head->pos.y;
             link->pos.z = (dir_ptr->z * attrs->x38) + head->pos.z;
         }
@@ -1431,7 +1430,6 @@ bool it_802BA3BC(ItemLink* tail, ItemLink* head, Vec3* pos,
         dir_ptr = &dir;
         pos->x = (dir_ptr->x * attrs->x38) + head->pos.x;
         pos->y = (dir_ptr->y * attrs->x38) + head->pos.y;
-        if (((!(&head->pos)) && (!(&head->pos))) && (!(&head->pos))){}
         pos->z = (dir_ptr->z * attrs->x38) + head->pos.z;
     }
 
