@@ -582,24 +582,10 @@ void grOldKongo_80210058(Ground_GObj* arg) {}
 
 void grOldKongo_8021005C(Ground_GObj* gobj)
 {
-    HSD_JObj* jobj = GET_JOBJ(gobj);
-    Ground* gp = GET_GROUND(gobj);
-    int arg0;
-    int arg1;
-
-    HSD_JObjSetFlagsAll(jobj, 0x10U);
-    arg0 = grOk_804D6A90->x2;
-    arg1 = grOk_804D6A90->x0;
-    if (arg0 > arg1) {
-        s32 range = arg0 - arg1;
-
-        arg0 = arg1 + (range != 0 ? HSD_Randi(range) : 0);
-    } else if (arg0 < arg1) {
-        s32 range = arg1 - arg0;
-
-        arg0 += (range != 0 ? HSD_Randi(range) : 0);
-    }
-    gp->gv.unk.xC4 = arg0;
+   Ground *gp = gobj->user_data;
+   HSD_JObj *jobj = (HSD_JObj *) HSD_GObjGetHSDObj(gobj);
+   HSD_JObjSetFlagsAll(jobj, 0x10);
+   gp->gv.unk.xC4 = rand_range(grOk_804D6A90->x2, grOk_804D6A90->x0);
 }
 
 bool grOldKongo_802100F4(Ground_GObj* gobj)
