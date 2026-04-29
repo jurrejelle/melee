@@ -72,6 +72,8 @@ StageData grFigureGet_803E7D34 = {
 };
 
 extern UNK_T grFigureGet_804D6AC0;
+extern f32 grFigureGet_804DBB60;
+extern f32 grFigureGet_804DBB64;
 
 extern StageInfo stage_info;
 
@@ -161,7 +163,9 @@ void grFigureGet_80219B10(Ground* gp, s32 arg1, CollData* cd, s32 arg3,
                 }
             }
             if (count == 0) {
-                if (cd->cur_pos.x <= 4.5f && cd->cur_pos.x >= -4.5f) {
+                if (cd->cur_pos.x <= grFigureGet_804DBB60 &&
+                    cd->cur_pos.x >= grFigureGet_804DBB64)
+                {
                     it_802F202C(cd->x0_gobj);
                     gp->gv.figureget.x28[gp->gv.figureget.x8] = cd->x0_gobj;
                     gp->gv.figureget.x1C[gp->gv.figureget.x8] = value;
