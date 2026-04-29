@@ -159,7 +159,6 @@ void hsd_803AC3E0(struct hsd_803AC3E0_arg0_t* file_desc, int file_idx,
 
 /// #hsd_803AC558
 
-/// @todo Currently 97.73% match - register allocation in arg1==0 path
 u32 fn_803AC634(struct hsd_803AC3E0_arg0_t* file_desc, s32 file_idx)
 {
     if (file_desc->x4C[file_idx] <= 0) {
@@ -172,7 +171,8 @@ u32 fn_803AC634(struct hsd_803AC3E0_arg0_t* file_desc, s32 file_idx)
         s32 remaining;
 
         remaining =
-            file_desc->x4C[0] -
+            file_desc->x4C[0];
+        remaining = remaining -
             (s32) ((sector_size - 0x20) - (file_desc->x24 + 48) % sector_size);
         usable = sector_size - 0x20;
         if (remaining <= 0) {
