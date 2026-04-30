@@ -893,6 +893,7 @@ void fn_801FBEB8(Ground* gr, s32 block_id, CollData* arg2, s32 arg3,
 void fn_801FC9AC(Ground* gr, s32 block_id, s32 arg2, s32 dist,
                  enum mpLib_GroundEnum arg4)
 {
+    PAD_STACK(8);
     if (block_id == 0x14) {
         gr->gv.inishie1.xE8 += 1;
         if (arg4 == 1) {

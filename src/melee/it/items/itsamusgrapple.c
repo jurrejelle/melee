@@ -1104,11 +1104,11 @@ s32 it_802B99A0(ItemLink* link, Vec3* pos, itSamusGrappleAttributes* attrs,
 {
     u8 _pad[8];
     Vec3 dir;
+    Item* grapple_ip = fp->fv.ss.x223C->user_data;
     ItemLink* cur;
     ItemLink* next;
     s32 result;
     f32 d;
-    Item* grapple_ip = fp->fv.ss.x223C->user_data;
     itSamusGrapple_HitboxData hitbox_data;
     PAD_STACK(8);
 
@@ -1378,8 +1378,8 @@ bool it_802BA3BC(ItemLink* tail, ItemLink* head, Vec3* pos,
     Vec3 dir;
     Vec3* dir_ptr;
     Vec3 saved_pos;
-    ItemLink* next_tail;
     ItemLink* link;
+    ItemLink* next_tail;
     s32 count;
     f32 d, remaining, max_dist;
 
@@ -1417,8 +1417,8 @@ bool it_802BA3BC(ItemLink* tail, ItemLink* head, Vec3* pos,
     while (link != NULL && link->x2C_b0) {
         count++;
         if (it_802A3C98(&link->pos, &head->pos, &dir) > attrs->x38) {
-            dir_ptr = &dir;
             link->pos.x = (dir_ptr->x * attrs->x38) + head->pos.x;
+            dir_ptr = &dir;
             link->pos.y = (dir_ptr->y * attrs->x38) + head->pos.y;
             link->pos.z = (dir_ptr->z * attrs->x38) + head->pos.z;
         }
