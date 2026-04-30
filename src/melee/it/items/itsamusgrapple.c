@@ -1104,11 +1104,11 @@ s32 it_802B99A0(ItemLink* link, Vec3* pos, itSamusGrappleAttributes* attrs,
 {
     u8 _pad[8];
     Vec3 dir;
+    Item* grapple_ip = fp->fv.ss.x223C->user_data;
     ItemLink* cur;
     ItemLink* next;
     s32 result;
     f32 d;
-    Item* grapple_ip = fp->fv.ss.x223C->user_data;
     itSamusGrapple_HitboxData hitbox_data;
     PAD_STACK(8);
 
