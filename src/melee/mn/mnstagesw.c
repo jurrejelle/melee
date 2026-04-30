@@ -9,6 +9,7 @@
 #include <sysdolphin/baselib/jobj.h>
 #include <sysdolphin/baselib/memory.h>
 #include <sysdolphin/baselib/sislib.h>
+#include <sysdolphin/baselib/debug.h>
 #include <melee/gm/gm_1601.h>
 #include <melee/gm/gm_1A3F.h>
 #include <melee/gm/gmmain_lib.h>
@@ -27,7 +28,7 @@ typedef struct MnStageSwData {
     u8 x1;
     u8 x2[NUM_STAGES];
     u8 x1F;
-    u8 pad_20[4];
+    HSD_JObj* x20;
     HSD_JObj* x24;
     HSD_JObj* x28;
     HSD_JObj* x2C;
@@ -55,6 +56,8 @@ static HSD_GObj* mnStageSw_804D6BF0;
 static s8 mnStageSw_804D6BF4;
 extern AnimLoopSettings mnStageSw_803ED488[5];
 extern u8 mn_804D6BB5;
+extern StaticModelDesc MenMainConSs_Top;
+extern StaticModelDesc MenMainCursorSs_Top;
 
 /* 23593C */ static void mnStageSw_8023593C(HSD_GObj* gobj);
 /* 2359C8 */ static void mnStageSw_802359C8(MnStageSwData* data);
@@ -597,7 +600,101 @@ static void fn_80236998(HSD_GObj* gobj)
     }
 }
 
-/// #mnStageSw_80236CBC
+static HSD_GObj* mnStageSw_80236CBC(s8 arg0)
+{
+    HSD_GObj* gobj;
+    HSD_JObj* jobj;
+    HSD_JObj* sp44;
+    HSD_JObj* sp48;
+    MnStageSwData* data;
+    f32 y_spacing;
+    u8 hovered;
+    s32 i;
+
+    gobj = GObj_Create(6, 7, 0x80);
+    mnStageSw_804D6BF0 = gobj;
+
+    jobj = HSD_JObjLoadJoint(MenMainConSs_Top.joint);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 6, 0x80);
+    HSD_GObj_SetupProc(gobj, fn_80236998, 0);
+
+    HSD_JObjAddAnimAll(jobj, MenMainConSs_Top.animjoint,
+                       MenMainConSs_Top.matanim_joint,
+                       MenMainConSs_Top.shapeanim_joint);
+    HSD_JObjReqAnimAll(jobj, 0.0f);
+    HSD_JObjAnimAll(jobj);
+
+    data = HSD_MemAlloc(sizeof(MnStageSwData));
+    HSD_ASSERTREPORT(0x397, data, "Can't get user_data.\n");
+    GObj_InitUserData(gobj, 0, HSD_Free, data);
+
+    data->x0 = mn_804A04F0.cur_menu;
+    data->x1 = (u8) mn_804A04F0.hovered_selection;
+    data->x1F = arg0;
+    for (i = 0; i < NUM_STAGES; i++) {
+        if (gm_80164430(gm_801641CC(mnStageSw_803ED4C4[i])) != 0) {
+            data->x2[i] = gm_80164250(mnStageSw_803ED4C4[i]);
+        } else {
+            data->x2[i] = 0;
+        }
+    }
+
+    for (i = 0; i < 6; i++) {
+        lb_80011E24(jobj, &data->x20 + i, i, -1);
+    }
+
+    mn_804A04F0.confirmed_selection = data->x2[data->x1];
+    y_spacing = HSD_JObjGetTranslationY(data->x30) -
+                HSD_JObjGetTranslationY(data->x2C);
+    for (i = 0; i < NUM_STAGES; i++) {
+        u8 enabled = data->x2[i];
+        HSD_JObj* cursor_jobj = HSD_JObjLoadJoint(MenMainCursorSs_Top.joint);
+
+        HSD_JObjAddAnimAll(cursor_jobj, MenMainCursorSs_Top.animjoint,
+                           MenMainCursorSs_Top.matanim_joint,
+                           MenMainCursorSs_Top.shapeanim_joint);
+        lb_80011E24(cursor_jobj, &sp44, 2, -1);
+        HSD_JObjReqAnimAll(sp44, enabled);
+        HSD_JObjAnimAll(sp44);
+        lb_80011E24(cursor_jobj, &sp48, 3, -1);
+        if (i == (u8) mn_804A04F0.hovered_selection) {
+            HSD_JObjReqAnimAll(sp48, mnStageSw_803ED488[0].start_frame);
+            HSD_JObjAnimAll(sp48);
+        } else {
+            HSD_JObjSetFlagsAll(sp48, JOBJ_HIDDEN);
+        }
+        if (gm_80164430(gm_801641CC(mnStageSw_803ED4C4[i])) == 0) {
+            HSD_JObjSetFlagsAll(cursor_jobj, JOBJ_HIDDEN);
+        }
+        if (i < 15) {
+            HSD_JObjAddChild(data->x2C, cursor_jobj);
+            HSD_JObjAddTranslationY(cursor_jobj, y_spacing * (f32) i);
+        } else {
+            HSD_JObjAddChild(data->x34, cursor_jobj);
+            HSD_JObjAddTranslationY(cursor_jobj, y_spacing * (f32) (i - 15));
+        }
+    }
+
+    HSD_JObjSetFlagsAll(data->x2C, JOBJ_HIDDEN);
+    HSD_JObjSetFlagsAll(data->x34, JOBJ_HIDDEN);
+
+    hovered = data->x1;
+    HSD_JObjClearFlagsAll(data->x28, JOBJ_HIDDEN);
+    if (hovered < 15) {
+        HSD_JObjSetTranslateX(data->x28, HSD_JObjGetTranslationX(data->x2C));
+        HSD_JObjSetTranslateY(data->x28,
+                              y_spacing * (f32) hovered +
+                                  HSD_JObjGetTranslationY(data->x2C));
+    } else {
+        HSD_JObjSetTranslateX(data->x28, HSD_JObjGetTranslationX(data->x34));
+        HSD_JObjSetTranslateY(data->x28,
+                              y_spacing * (f32) (hovered - 15) +
+                                  HSD_JObjGetTranslationY(data->x2C));
+    }
+    HSD_JObjSetFlagsAll(data->x28, JOBJ_HIDDEN);
+    return gobj;
+}
 
 void mnStageSw_80237410(void)
 {

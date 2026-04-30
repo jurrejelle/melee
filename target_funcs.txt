@@ -6,4 +6,4 @@ Funcs:
 - [x] mnStageSw_802359C8
 - [x] fn_80236998
 - [x] mnStageSw_80236548
-- [ ] mnStageSw_80236CBC
+- [x] mnStageSw_80236CBC
