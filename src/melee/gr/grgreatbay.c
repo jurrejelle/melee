@@ -1025,8 +1025,8 @@ s16 grGb_803E4048[][2] = {
 
 void grGreatBay_801F660C(Ground_GObj* gobj)
 {
-    u32 i;
     HSD_JObj* jobj;
+    u32 i;
     Vec3 pos;
 
     for (i = 0; i < 7; i++) {
