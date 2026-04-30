@@ -536,7 +536,7 @@ static inline void it_802886C4_inline(Item_GObj* gobj)
 void it_802886C4(Item_GObj* gobj)
 {
     Item* ip = GET_ITEM(gobj);
-    HSD_JObj* jobj = GET_JOBJ(gobj);
+    HSD_JObj *jobj = (0, (HSD_JObj *) HSD_GObjGetHSDObj(gobj));
 
     Item_8026AE84(ip, 0xFB, 0x7F, 0x40);
     Camera_80030E44(2, &ip->pos);
