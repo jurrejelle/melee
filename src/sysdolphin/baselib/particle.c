@@ -1318,8 +1318,6 @@ void fn_803932D0(s32 type, u32 flags, s32 value)
     }
 }
 
-// @TODO: Currently 99.71% match - r30/r31 register swap
-// (startTick/ticksPerUnit)
 s32 hsd_80393328(void)
 {
     u32 ticksPerUnit;
@@ -1338,7 +1336,7 @@ s32 hsd_80393328(void)
     }
     result = 1;
     startTick = OSGetTick();
-    ticksPerUnit = *(u32*) 0x800000F8 >> 2;
+    ticksPerUnit = (*(u32*) 0x800000F8 >> 2) & 0xFFFFFFFFFFFFFFFF;
     do {
         hsd_80392E80();
         if (hsd_804D78B0 == 0) {
