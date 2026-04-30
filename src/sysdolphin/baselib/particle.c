@@ -1635,13 +1635,13 @@ void fn_80393C14(const u8* buf, size_t size)
     int i;
 
     const u32 out_size = hsd_804CF7E8.buf_size;
-    const u32 tmp = out_size - 1;
 
     int write_pos = hsd_804CF7E8.xC;
     u8* out_buf = hsd_804CF7E8.out_buf;
     u8 line_len = hsd_804CF7E8.x11;
 
     for (i = 0; i < size; i++) {
+        const u32 tmp = out_size - 1;
         switch (buf[i]) {
         case '\r':
             break;
