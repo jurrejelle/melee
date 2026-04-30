@@ -294,9 +294,10 @@ void grFigureGet_80219B0C(Ground_GObj* gobj) {}
 void grFigureGet_80219B10(Ground* gp, s32 arg1, CollData* cd, s32 arg3,
                           mpLib_GroundEnum arg4, f32 arg5)
 {
+    ECBFlagStruct* tmp;
     HSD_GObj* item_gobj = cd->x0_gobj;
-    if ((s32) cd->x34_flags.b1234 == 5 && item_gobj &&
-        item_gobj->classifier == HSD_GOBJ_CLASS_ITEM)
+    if (((((s32) (*(tmp = &cd->x34_flags)).b1234) == 5) && item_gobj) &&
+        (item_gobj->classifier == 0x6))
     {
         Item* ip = GET_ITEM(cd->x0_gobj);
         if (ip->kind == It_Kind_Coin && gp->gv.figureget.x8 < 3) {
