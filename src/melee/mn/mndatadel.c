@@ -163,20 +163,23 @@ void fn_8024ECCC(HSD_GObj* arg0)
     s32 sis_id;
     u8 visible;
     u8 cursor_idx;
+    struct MnDataDelData* anim_data;
     struct WarnCmnData* data;
+    PAD_STACK(16);
 
+    anim_data = &mnDataDel_803EF870;
     root = GET_JOBJ(arg0);
     data = mnDataDel_804D6C68->user_data;
     lb_80011E24(root, &panel, WARN_JOINT_PANEL, -1);
     if (data->visible != 0) {
         curr_frame = mn_8022F298(root);
-        if ((mnDataDel_803EF8A0.start_frame <= curr_frame) &&
-            (curr_frame < mnDataDel_803EF8A0.end_frame))
+        if ((anim_data->x30.start_frame <= curr_frame) &&
+            (curr_frame < anim_data->x30.end_frame))
         {
-            curr_frame = mn_8022EFD8(panel, &mnDataDel_803EF8A0);
+            curr_frame = mn_8022EFD8(panel, &anim_data->x30);
             lb_80011E24(root, &exclaim, WARN_JOINT_EXCLAIM, -1, curr_frame);
-            mn_8022EFD8(exclaim, &mnDataDel_803EF8A0);
-            if (curr_frame >= mnDataDel_803EF8A0.end_frame) {
+            mn_8022EFD8(exclaim, &anim_data->x30);
+            if (curr_frame >= anim_data->x30.end_frame) {
                 visible = data->visible;
                 if (mnDataDel_804D6C6C != NULL) {
                     HSD_SisLib_803A5CC4(mnDataDel_804D6C6C);
