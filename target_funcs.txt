@@ -8,5 +8,5 @@ Funcs:
 - [x] grHomeRun_8021EC58
 - [x] grHomeRun_8021C914
 - [x] grHomeRun_8021E500
-- [ ] grHomeRun_8021D680
+- [x] grHomeRun_8021D680
 - [ ] grHomeRun_8021CB20
