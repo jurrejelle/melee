@@ -171,7 +171,6 @@ void fn_8024FBA4(HSD_GObj* gobj)
     }
 }
 
-
 inline HSD_JObj* fn_8024FC48_inline(int arg0);
 inline HSD_JObj* fn_8024FC48_inline(int arg0)
 {

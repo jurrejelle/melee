@@ -342,7 +342,7 @@ bool grOldPupupu_8021128C(Vec* vec, f32 maxX, f32 minX, f32 maxY, f32 minY)
 bool fn_802112F4(Ground_GObj* gobj, HSD_GObj* fighter_gobj, Vec3* vel)
 {
     Ground* gp;
-    void *new_var;
+    void* new_var;
     Vec3 pos;
     PAD_STACK(8);
 
