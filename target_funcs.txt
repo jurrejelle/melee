@@ -3,7 +3,7 @@ Funcs:
 - [x] mnStageSw_80235C58
 - [x] mnStageSw_80235DC8
 - [x] fn_80235F80
-- [ ] mnStageSw_802359C8
+- [x] mnStageSw_802359C8
 - [ ] fn_80236998
 - [ ] mnStageSw_80236548
 - [ ] mnStageSw_80236CBC

@@ -22,6 +22,15 @@
 
 #define NUM_STAGES 29
 
+typedef struct MnStageSwTextData {
+    u8 pad_00[0x2C];
+    HSD_JObj* x2C;
+    HSD_JObj* x30;
+    HSD_JObj* x34;
+    u8 pad_38[8];
+    HSD_Text* x40[NUM_STAGES];
+} MnStageSwTextData;
+
 /// Stage switch toggle indices - maps menu position to internal stage ID
 static u8 mnStageSw_803ED4C4[NUM_STAGES] = {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09,
@@ -38,9 +47,10 @@ static u8 mnStageSw_stageIcons[NUM_STAGES] = {
 
 static HSD_GObj* mnStageSw_804D6BF0;
 static s8 mnStageSw_804D6BF4;
+extern u8 mn_804D6BB5;
 
 /* 23593C */ static void mnStageSw_8023593C(HSD_GObj* gobj);
-/* 2359C8 */ static void mnStageSw_802359C8(HSD_GObj* gobj);
+/* 2359C8 */ static void mnStageSw_802359C8(MnStageSwTextData* data);
 /* 235C58 */ static s32 mnStageSw_80235C58(u8 arg0);
 /* 235DC8 */ static void mnStageSw_80235DC8(u8* user_data, s32 buttons);
 /* 235F80 */ static void fn_80235F80(HSD_GObj* gobj);
@@ -77,7 +87,62 @@ static void mnStageSw_8023593C(HSD_GObj* gobj)
 }
 #pragma dont_inline reset
 
-/// #mnStageSw_802359C8
+static void mnStageSw_802359C8(MnStageSwTextData* data)
+{
+    HSD_Text* text;
+    f32 delta_y;
+    f32 step_y;
+    f32 start_y;
+    s32 i;
+    u8* icon;
+    HSD_Text** texts;
+
+    start_y = -1.6f + HSD_JObjGetTranslationY(data->x2C);
+    step_y = HSD_JObjGetTranslationY(data->x2C);
+    delta_y = HSD_JObjGetTranslationY(data->x30) - step_y;
+
+    texts = data->x40;
+    icon = mnStageSw_stageIcons;
+    for (i = 0; i < 15; i++) {
+        text = HSD_SisLib_803A5ACC(0, (s32) mn_804D6BB5,
+                                   1.0f + HSD_JObjGetTranslationX(data->x2C),
+                                   -((delta_y * (f32) i) + start_y), 17.5f,
+                                   160.0f, 300.0f);
+        *texts = text;
+        text->font_size.x = 0.0521f;
+        text->font_size.y = 0.0521f;
+        text->default_alignment = 2;
+        text->default_fitting = 1;
+        if (gm_80164430(gm_801641CC(mnStageSw_803ED4C4[i])) != 0) {
+            HSD_SisLib_803A6368(text, *icon);
+        } else {
+            HSD_SisLib_803A6368(text, 0x25);
+        }
+        texts++;
+        icon++;
+    }
+
+    texts = &data->x40[15];
+    icon = &mnStageSw_stageIcons[15];
+    for (i = 15; i < NUM_STAGES; i++) {
+        text = HSD_SisLib_803A5ACC(0, (s32) mn_804D6BB5,
+                                   1.0f + HSD_JObjGetTranslationX(data->x34),
+                                   -((delta_y * (f32) (i - 15)) + start_y),
+                                   17.5f, 160.0f, 300.0f);
+        *texts = text;
+        text->font_size.x = 0.0521f;
+        text->font_size.y = 0.0521f;
+        text->default_alignment = 2;
+        text->default_fitting = 1;
+        if (gm_80164430(gm_801641CC(mnStageSw_803ED4C4[i])) != 0) {
+            HSD_SisLib_803A6368(text, *icon);
+        } else {
+            HSD_SisLib_803A6368(text, 0x25);
+        }
+        texts++;
+        icon++;
+    }
+}
 
 static s32 mnStageSw_80235C58(u8 arg0)
 {
