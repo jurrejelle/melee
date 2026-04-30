@@ -14,6 +14,7 @@
 #include "gm/gm_16F1.h"
 #include "gm/gm_1A3F.h"
 #include "gm/gmmain_lib.h"
+#include "lb/lbarchive.h"
 #include "lb/lb_00F9.h"
 #include "lb/lbaudio_ax.h"
 #include "lb/lbcardgame.h"
@@ -415,4 +416,33 @@ void fn_8024FD40(HSD_GObj* gobj)
 
 /// #mnDataDel_8024FE4C
 
-/// #mnDataDel_80250170
+void mnDataDel_80250170(void)
+{
+    HSD_GObjProc* proc;
+
+    mn_804D6BC8.cooldown = 5;
+    mn_804A04F0.prev_menu = mn_804A04F0.cur_menu;
+    mn_804A04F0.cur_menu = 0x18;
+    mn_804A04F0.hovered_selection = 0;
+    mnDataDel_804D6C6C = NULL;
+    lbArchive_LoadSections(
+        mn_804D6BB8, (void**) &mnDataDel_804A0918.joint,
+        "MenMainConDl_Top_joint", &mnDataDel_804A0918.animjoint,
+        "MenMainConDl_Top_animjoint", &mnDataDel_804A0918.matanim_joint,
+        "MenMainConDl_Top_matanim_joint",
+        &mnDataDel_804A0918.shapeanim_joint,
+        "MenMainConDl_Top_shapeanim_joint", &mnDataDel_804A0928.joint,
+        "MenMainCursorDl_Top_joint", &mnDataDel_804A0928.animjoint,
+        "MenMainCursorDl_Top_animjoint", &mnDataDel_804A0928.matanim_joint,
+        "MenMainCursorDl_Top_matanim_joint",
+        &mnDataDel_804A0928.shapeanim_joint,
+        "MenMainCursorDl_Top_shapeanim_joint", &mnDataDel_804A0938.joint,
+        "MenMainWarCmn_Top_joint", &mnDataDel_804A0938.animjoint,
+        "MenMainWarCmn_Top_animjoint", &mnDataDel_804A0938.matanim_joint,
+        "MenMainWarCmn_Top_matanim_joint",
+        &mnDataDel_804A0938.shapeanim_joint,
+        "MenMainWarCmn_Top_shapeanim_joint", 0);
+    mnDataDel_8024FE4C(0U);
+    proc = HSD_GObj_SetupProc(GObj_Create(0U, 1U, 0x80U), fn_8024F840, 0U);
+    proc->flags_3 = HSD_GObj_804D783C;
+}
