@@ -7,7 +7,10 @@
 #include <sysdolphin/baselib/gobj.h>
 #include <sysdolphin/baselib/gobjplink.h>
 #include <sysdolphin/baselib/gobjproc.h>
+#include <sysdolphin/baselib/jobj.h>
+#include <sysdolphin/baselib/memory.h>
 #include <sysdolphin/baselib/sislib.h>
+#include <sysdolphin/baselib/debug.h>
 #include <melee/gm/gmmain_lib.h>
 #include <melee/lb/lb_00F9.h>
 #include <melee/lb/lbarchive.h>
@@ -95,6 +98,9 @@ extern HSD_GObj* mn_804D6BD0;
 extern u16 mn_804DBE04;
 extern s32 mn_804DBE08;
 extern u8 mn_804DBE0C;
+extern u16 mn_804DBDF8;
+extern u32 mn_804DBE10;
+extern u16 mn_804DBE14;
 extern u16 mn_803EC7DC[][2];
 extern u8 mn_803EC600[];
 extern s32 mn_804D6BD4;
@@ -911,6 +917,219 @@ int mn_80230D18(struct mn_802307F8_t* arg0, HSD_JObj* arg1, s8 arg2)
 }
 
 /// #mn_80230E38
+HSD_GObj* mn_80230E38(int arg0)
+{
+    HSD_GObj* gobj;
+    HSD_JObj* jobj;
+    HSD_JObj* roots[17];
+    StaticModelDesc** descs;
+    AnimLoopSettings* settings;
+    struct mn_802307F8_t* data;
+    u16 counts[8];
+    u16 indices[17];
+    u8* data8;
+    u8* p;
+    u8 count;
+    u8 hovered;
+    s32 i;
+    s32 j;
+    s32 visible;
+    s32 total_visible;
+    u32 bytes4;
+    u16 bytes2;
+
+    hovered = mn_804A04F0.hovered_selection;
+    count = mn_803EB6B0[15].selection_count;
+    for (i = 0; i < 0x11; i++) {
+        indices[i] = i;
+    }
+
+    gobj = GObj_Create(6, 7, 0x80);
+    mn_804D6BD0 = gobj;
+    jobj = HSD_JObjLoadJoint(MenMainConRl_Top.joint);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 4, 0x80);
+    HSD_GObj_SetupProc(gobj, fn_802309F0, 0);
+    HSD_JObjAddAnimAll(jobj, MenMainConRl_Top.animjoint,
+                       MenMainConRl_Top.matanim_joint,
+                       MenMainConRl_Top.shapeanim_joint);
+    HSD_JObjReqAnimAll(jobj, mn_804DBE00);
+    HSD_JObjAnimAll(jobj);
+
+    data = (struct mn_802307F8_t*) HSD_MemAlloc(sizeof(*data));
+    HSD_ASSERTREPORT(0x575, data, "Can't get user_data.\n");
+    GObj_InitUserData(gobj, 0, HSD_Free, data);
+    mn_80230D18(data, jobj, arg0);
+    data8 = (u8*) data;
+    if (data->x1 == 1 &&
+        ((struct mn_8022FB88_arg1_t*) mn_804D6BD0->user_data)->x2 == 1)
+    {
+        mn_804A04F0.confirmed_selection = data->x9;
+    } else {
+        mn_804A04F0.confirmed_selection = data8[data->x1 + 2];
+    }
+
+    if (arg0 != 0) {
+        if (data->xA == 1) {
+            settings = (AnimLoopSettings*) (mn_803EC600 + 0x1AC);
+        } else if (data->xA == 3) {
+            settings = (AnimLoopSettings*) (mn_803EC600 + 0x1B8);
+        } else {
+            settings = (AnimLoopSettings*) (mn_803EC600 + 0x1C4);
+        }
+        HSD_JObjReqAnim(data->xC[2], settings->start_frame);
+        HSD_JObjAnim(data->xC[2]);
+    }
+
+    descs = (StaticModelDesc**) (mn_803EC600 + 0x1EC);
+    for (i = 0; i < count; i++) {
+        visible = 0;
+        for (j = 0; j < i; j++) {
+            if (!(gm_801A4310() == 0x1B && (u8) j == 4)) {
+                visible++;
+            }
+        }
+        total_visible = 0;
+        for (j = 0; j < 7; j++) {
+            if (!(gm_801A4310() == 0x1B && (u8) j == 4)) {
+                total_visible++;
+            }
+        }
+
+        jobj = data->xC[indices[visible]];
+        HSD_JObjReqAnim(jobj, (f32) total_visible);
+        HSD_JObjAnim(jobj);
+
+        if (gm_801A4310() == 0x1B && (u8) i == 4) {
+            continue;
+        }
+
+        jobj = HSD_JObjLoadJoint(MenMainCursorRl_Top.joint);
+        HSD_JObjAddAnimAll(jobj, MenMainCursorRl_Top.animjoint,
+                           MenMainCursorRl_Top.matanim_joint,
+                           MenMainCursorRl_Top.shapeanim_joint);
+        HSD_JObjReqAnimAll(jobj, mn_804DBE00);
+        HSD_JObjAnimAll(jobj);
+        lb_8001204C(jobj, roots, indices, 0x11);
+        if (i == 1 &&
+            ((struct mn_8022FB88_arg1_t*) mn_804D6BD0->user_data)->x2 == 1)
+        {
+            HSD_JObjReqAnim(roots[7],
+                            ((f32*) &mn_804D4B88)[(u8) (i == hovered)]);
+        } else {
+            HSD_JObjReqAnim(
+                roots[7],
+                ((f32*) (mn_803EC600 + 0x10))[i * 2 + (u8) (i == hovered)]);
+        }
+        HSD_JObjAnim(roots[7]);
+        if (hovered != i) {
+            HSD_JObjSetFlagsAll(roots[16], 0x10U);
+        }
+        if (hovered != i || (u32) (i - 5) <= 1U) {
+            HSD_JObjSetFlagsAll(roots[13], 0x10U);
+        }
+        if ((u32) (i - 5) <= 1U) {
+            settings = (AnimLoopSettings*) (mn_803EC600 +
+                                            ((u8) (hovered == i) * 0xC) +
+                                            0x78);
+        } else {
+            settings = (AnimLoopSettings*) (mn_803EC600 +
+                                            ((u8) (hovered == i) * 0xC) +
+                                            0x60);
+        }
+        HSD_JObjReqAnimAll(roots[2], settings->start_frame);
+        HSD_JObjAnimAll(roots[2]);
+        if (hovered != i || (i != 5 && i != 6)) {
+            HSD_JObjSetFlagsAll(roots[8], 0x10U);
+        }
+        HSD_JObjAddChild(data->xC[indices[visible]], jobj);
+
+        if (i == 5 || i == 6) {
+            continue;
+        }
+
+        jobj = HSD_JObjLoadJoint(descs[i]->joint);
+        HSD_JObjAddAnimAll(jobj, descs[i]->animjoint, descs[i]->matanim_joint,
+                           descs[i]->shapeanim_joint);
+        HSD_JObjReqAnimAll(jobj, mn_804DBE00);
+        HSD_JObjAnimAll(jobj);
+        counts[i] = *((u16*) (mn_803EC600 + 0x208 + i * 2));
+        for (j = 0; j < counts[i]; j++) {
+            lb_80011E24(jobj, (HSD_JObj**) (data8 + 0x34 + i * 0x24 + j * 4), j,
+                        -1);
+        }
+
+        switch (i) {
+        case 1:
+            bytes4 = mn_804DBE10;
+            bytes2 = mn_804DBE14;
+            p = (u8*) &bytes4;
+            for (j = 0; j < 4; j++) {
+                HSD_JObj* text = HSD_JObjLoadJoint(MenMainNmRl_Top.joint);
+                HSD_JObjAddAnimAll(text, MenMainNmRl_Top.animjoint,
+                                   MenMainNmRl_Top.matanim_joint,
+                                   MenMainNmRl_Top.shapeanim_joint);
+                HSD_JObjAddChild(*(HSD_JObj**) (data8 + 0x58 + p[j] * 4), text);
+            }
+            p = (u8*) &bytes2;
+            for (j = 0; j < 2; j++) {
+                HSD_JObj* text = HSD_JObjLoadJoint(MenMainNmRl_Top.joint);
+                HSD_JObjAddAnimAll(text, MenMainNmRl_Top.animjoint,
+                                   MenMainNmRl_Top.matanim_joint,
+                                   MenMainNmRl_Top.shapeanim_joint);
+                HSD_JObjAddChild(*(HSD_JObj**) (data8 + 0x58 + p[j] * 4), text);
+            }
+            mn_8022FD18(
+                (u8) (((struct mn_8022FB88_arg1_t*) mn_804D6BD0->user_data)->x2 !=
+                     1));
+            break;
+        case 3:
+            bytes2 = mn_804DBDF8;
+            p = (u8*) &bytes2;
+            for (j = 0; j < 2; j++) {
+                HSD_JObj* text = HSD_JObjLoadJoint(MenMainNmRl_Top.joint);
+                HSD_JObjAddAnimAll(text, MenMainNmRl_Top.animjoint,
+                                   MenMainNmRl_Top.matanim_joint,
+                                   MenMainNmRl_Top.shapeanim_joint);
+                HSD_JObjAddChild(*(HSD_JObj**) (data8 + 0xA0 + p[j] * 4), text);
+            }
+            HSD_JObjReqAnimAll((HSD_JObj*) mn_80231634(
+                                   *(struct mn_80231634_t**) (data8 + 0xA8)),
+                               (f32) (u8) (data->x5 / 10));
+            HSD_JObjAnimAll((HSD_JObj*) mn_80231634(
+                *(struct mn_80231634_t**) (data8 + 0xA8)));
+            HSD_JObjReqAnimAll((HSD_JObj*) mn_80231634(
+                                   *(struct mn_80231634_t**) (data8 + 0xAC)),
+                               (f32) (u8) (data->x5 % 10));
+            HSD_JObjAnimAll((HSD_JObj*) mn_80231634(
+                *(struct mn_80231634_t**) (data8 + 0xAC)));
+            break;
+        case 0:
+        case 2:
+        case 4:
+            if (data8[i + 2] == 0) {
+                settings = (AnimLoopSettings*) (mn_803EC600 +
+                                                (*((u8*) (mn_803EC600 + 0x1DD +
+                                                          i * 2)) *
+                                                 0xC) +
+                                                0x134);
+            } else {
+                settings = (AnimLoopSettings*) (mn_803EC600 +
+                                                ((data8[i + 2] - 1) * 0xC) +
+                                                0x134);
+            }
+            HSD_JObjReqAnimAll(*(HSD_JObj**) (data8 + 0x34 + i * 0x24),
+                               settings->end_frame);
+            HSD_JObjAnimAll(*(HSD_JObj**) (data8 + 0x34 + i * 0x24));
+            break;
+        }
+
+        HSD_JObjAddChild(data->xC[indices[visible]], jobj);
+    }
+
+    mn_802307F8(data, data->x1, mn_804A04F0.confirmed_selection);
+    return gobj;
+}
 
 int mn_80231634(struct mn_80231634_t* arg0)
 {
