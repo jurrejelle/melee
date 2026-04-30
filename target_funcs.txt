@@ -3,7 +3,7 @@ Funcs:
 - [x] fn_8024B7E4
 - [x] mnSoundTest_8024BEE0
 - [x] mnSoundTest_8024A958
-- [ ] mnSoundTest_8024AA70
+- [x] mnSoundTest_8024AA70
 - [ ] fn_8024BAF0
 - [ ] mnSoundTest_8024A790
 - [ ] fn_8024B8B4
