@@ -22,14 +22,20 @@
 
 #define NUM_STAGES 29
 
-typedef struct MnStageSwTextData {
-    u8 pad_00[0x2C];
+typedef struct MnStageSwData {
+    u8 x0;
+    u8 x1;
+    u8 x2[NUM_STAGES];
+    u8 x1F;
+    u8 pad_20[4];
+    HSD_JObj* x24;
+    u8 pad_28[4];
     HSD_JObj* x2C;
     HSD_JObj* x30;
     HSD_JObj* x34;
     u8 pad_38[8];
     HSD_Text* x40[NUM_STAGES];
-} MnStageSwTextData;
+} MnStageSwData;
 
 /// Stage switch toggle indices - maps menu position to internal stage ID
 static u8 mnStageSw_803ED4C4[NUM_STAGES] = {
@@ -47,10 +53,11 @@ static u8 mnStageSw_stageIcons[NUM_STAGES] = {
 
 static HSD_GObj* mnStageSw_804D6BF0;
 static s8 mnStageSw_804D6BF4;
+extern f32 mnStageSw_803ED488[];
 extern u8 mn_804D6BB5;
 
 /* 23593C */ static void mnStageSw_8023593C(HSD_GObj* gobj);
-/* 2359C8 */ static void mnStageSw_802359C8(MnStageSwTextData* data);
+/* 2359C8 */ static void mnStageSw_802359C8(MnStageSwData* data);
 /* 235C58 */ static s32 mnStageSw_80235C58(u8 arg0);
 /* 235DC8 */ static void mnStageSw_80235DC8(u8* user_data, s32 buttons);
 /* 235F80 */ static void fn_80235F80(HSD_GObj* gobj);
@@ -87,7 +94,7 @@ static void mnStageSw_8023593C(HSD_GObj* gobj)
 }
 #pragma dont_inline reset
 
-static void mnStageSw_802359C8(MnStageSwTextData* data)
+static void mnStageSw_802359C8(MnStageSwData* data)
 {
     HSD_Text* text;
     f32 delta_y;
@@ -362,6 +369,7 @@ check_dpad:
 
 /// Position stage icon JObj based on index
 /// Uses stored reference JObjs to calculate X/Y position
+#pragma dont_inline on
 static void mnStageSw_80236178(HSD_GObj* gobj, u8 idx)
 {
     HSD_JObj* jobj;
@@ -388,6 +396,7 @@ static void mnStageSw_80236178(HSD_GObj* gobj, u8 idx)
                       HSD_JObjGetTranslationY((HSD_JObj*) gobj->user_data));
     }
 }
+#pragma dont_inline reset
 
 /// Get JObj for stage icon at given index
 /// Navigates JObj tree stored in gobj->user_data (idx < 15) or gobj->x34_unk
@@ -413,7 +422,126 @@ static HSD_JObj* mnStageSw_802364A0(HSD_GObj* gobj, u8 idx)
 
 /// #mnStageSw_80236548
 
-/// #fn_80236998
+static void fn_80236998(HSD_GObj* gobj)
+{
+    HSD_JObj* child;
+    HSD_JObj* jobj;
+    f32* anims;
+    s32 i;
+    u8 changed_menu;
+    u8 changed_hovered;
+    u8 changed_confirmed;
+    u8 state;
+    MnStageSwData* data;
+
+    anims = NULL;
+    changed_menu = 0;
+    changed_hovered = 0;
+    changed_confirmed = 0;
+    data = gobj->user_data;
+    state = data->x1F;
+    if ((state == 0 || state == 1 || state == 3) &&
+        data->x0 != (u8) mn_804A04F0.cur_menu)
+    {
+        if (mn_804A04F0.entering_menu != 0) {
+            data->x1F = 4;
+        } else {
+            data->x1F = 2;
+        }
+        switch ((s32) data->x1F) {
+        case 1:
+            anims = &mnStageSw_803ED488[3];
+            break;
+        case 2:
+            anims = &mnStageSw_803ED488[9];
+            break;
+        case 3:
+            anims = &mnStageSw_803ED488[6];
+            break;
+        case 4:
+            anims = &mnStageSw_803ED488[12];
+            break;
+        }
+        HSD_JObjReqAnim(data->x24, *anims);
+        HSD_JObjAnim(data->x24);
+        state = data->x1F;
+        if (state == 0 || state == 1 || state == 3) {
+            changed_menu = 1;
+            changed_hovered = 1;
+            changed_confirmed = 1;
+        }
+    }
+
+    state = data->x1F;
+    if (state != 0) {
+        jobj = data->x24;
+        switch ((s32) state) {
+        case 1:
+            anims = &mnStageSw_803ED488[3];
+            break;
+        case 2:
+            anims = &mnStageSw_803ED488[9];
+            break;
+        case 3:
+            anims = &mnStageSw_803ED488[6];
+            break;
+        case 4:
+            anims = &mnStageSw_803ED488[12];
+            break;
+        }
+        if (mn_8022F298(jobj) >= anims[1]) {
+            switch ((s32) data->x1F) {
+            case 1:
+            case 3:
+                data->x1F = 0;
+                mnStageSw_802359C8(data);
+                HSD_JObjClearFlagsAll(data->x2C, JOBJ_HIDDEN);
+                HSD_JObjClearFlagsAll(data->x34, JOBJ_HIDDEN);
+                for (i = 0; i < NUM_STAGES; i++) {
+                    jobj = mnStageSw_802364A0(gobj, i);
+                    if (i != data->x1) {
+                        lb_80011E24(jobj, &child, 3, -1);
+                        HSD_JObjSetFlagsAll(child, JOBJ_HIDDEN);
+                    }
+                }
+                mnStageSw_80236178(gobj, data->x1);
+                mnStageSw_804D6BF4 = 0;
+                return;
+            case 4:
+                for (i = 0; i < NUM_STAGES; i++) {
+                    HSD_SisLib_803A5CC4(data->x40[i]);
+                }
+                HSD_GObjPLink_80390228(gobj);
+                return;
+            }
+        } else {
+            HSD_JObjAnim(jobj);
+        }
+    }
+
+    state = data->x1F;
+    if (state == 0 || state == 1 || state == 3) {
+        if ((s32) data->x1 != (s32) mn_804A04F0.hovered_selection) {
+            changed_hovered = 1;
+        }
+        if (data->x2[mn_804A04F0.hovered_selection] !=
+            (u8) mn_804A04F0.confirmed_selection)
+        {
+            changed_confirmed = 1;
+        }
+    }
+
+    mnStageSw_80236548(gobj, changed_hovered, changed_confirmed);
+    if (changed_menu != 0) {
+        data->x0 = mn_804A04F0.cur_menu;
+    }
+    if (changed_hovered != 0) {
+        data->x1 = mn_804A04F0.hovered_selection;
+    }
+    if (changed_confirmed != 0) {
+        data->x2[mn_804A04F0.hovered_selection] = mn_804A04F0.confirmed_selection;
+    }
+}
 
 /// #mnStageSw_80236CBC
 
