@@ -1,9 +1,0 @@
-File: src/melee/mn/mnstagesw.c
-Funcs:
-- [x] mnStageSw_80235C58
-- [x] mnStageSw_80235DC8
-- [x] fn_80235F80
-- [x] mnStageSw_802359C8
-- [x] fn_80236998
-- [x] mnStageSw_80236548
-- [x] mnStageSw_80236CBC
