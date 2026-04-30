@@ -214,7 +214,7 @@ bool grFigureGet_80219890(Ground_GObj* gobj)
 
 void grFigureGet_80219898(Ground_GObj* gobj)
 {
-    u8 pad[0x10];
+    u32 pad2;
     HSD_GObj* var_r28;
     Item_GObj* temp_r3_2;
     Point3d pos;
@@ -222,13 +222,12 @@ void grFigureGet_80219898(Ground_GObj* gobj)
     f32 var_f2;
     s32 temp_r0;
     s32 temp_r3;
-    s32 temp_r3_3;
     s32 temp_r6;
     s32 var_r30;
     s32 var_r3;
-    s32 var_r3_2;
-    Ground* gp = gobj->user_data;
+    Ground* gp = GET_GROUND(gobj);
     int* var_r29;
+    u32 pad;
 
     for (var_r28 = HSD_GObj_Entities->fighters; var_r28 != NULL;
          var_r28 = var_r28->next)
@@ -254,7 +253,8 @@ void grFigureGet_80219898(Ground_GObj* gobj)
                 var_r3 = 0;
             }
             pos.x = 20.0f + (f32) var_r3;
-            if (HSD_Randi(2) == 0) {
+            var_r30 = 2;
+            if (HSD_Randi(var_r30) == 0) {
                 pos.x *= -1.0f;
             }
             pos.y = grFigureGet_804D6AC0->x14 + Stage_GetCamBoundsTopOffset();
@@ -263,13 +263,13 @@ void grFigureGet_80219898(Ground_GObj* gobj)
                                     gp->gv.figureget.x10[temp_r6 - 1], temp_r6);
             gp->gv.figureget.x34[gp->gv.figureget.x4 - 1] = temp_r3_2;
             it_802F2014(temp_r3_2, 0);
-            temp_r3_3 = grFigureGet_804D6AC0->x4;
-            if (temp_r3_3 != 0) {
-                var_r3_2 = HSD_Randi(temp_r3_3);
+            temp_r3 = grFigureGet_804D6AC0->x4;
+            if (temp_r3 != 0) {
+                var_r3 = HSD_Randi(temp_r3);
             } else {
-                var_r3_2 = 0;
+                var_r3 = 0;
             }
-            gp->gv.figureget.x0 = grFigureGet_804D6AC0->x0 + var_r3_2;
+            gp->gv.figureget.x0 = grFigureGet_804D6AC0->x0 + var_r3;
         } else {
             gp->gv.figureget.x0 = temp_r3 - 1;
         }
