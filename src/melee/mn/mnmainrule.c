@@ -44,12 +44,21 @@ struct mn_803EC818_t {
 };
 
 struct mn_8022FB88_arg1_t {
-    u8 pad_0[3];
+    u8 pad_0[2];
+    u8 x2;
     u8 x3;
     u8 pad_4[5];
     u8 x9;
     u8 pad_A[0x58 - 0x0A];
     HSD_JObj* x58[10];
+    u8 pad_80[0xA8 - 0x80];
+    struct mn_8022FEC8_jobj_ref_t* xA8;
+    struct mn_8022FEC8_jobj_ref_t* xAC;
+};
+
+struct mn_8022FEC8_jobj_ref_t {
+    u8 pad_0[0x10];
+    HSD_JObj* x10;
 };
 
 typedef union {
@@ -85,6 +94,7 @@ extern HSD_GObj* mn_804D6BD0;
 extern u16 mn_804DBE04;
 extern s32 mn_804DBE08;
 extern u8 mn_804DBE0C;
+extern u8 mn_803EC600[];
 
 /// #fn_8022F538
 
@@ -202,6 +212,76 @@ void mn_8022FD18(u8 arg0)
 }
 
 /// #mn_8022FEC8
+void mn_8022FEC8(HSD_GObj* arg0, HSD_JObj* arg1, u8 arg2, u8 arg3)
+{
+    HSD_JObj* temp_r28;
+    HSD_JObj* temp_r28_2;
+    HSD_JObj* var_r28;
+    HSD_JObj* var_r28_2;
+    f32* var_r8;
+    struct mn_8022FB88_arg1_t* temp_r31;
+    HSD_JObj** temp_r31_2;
+    struct mn_8022FEC8_jobj_ref_t* temp_r3;
+    struct mn_8022FEC8_jobj_ref_t* temp_r3_2;
+    u8* base;
+
+    temp_r31 = arg0->user_data;
+    base = mn_803EC600;
+    switch (arg2) {
+    case 1:
+        if (((struct mn_8022FB88_arg1_t*) mn_804D6BD0->user_data)->x2 != 1) {
+            mn_8022FB88(arg3, temp_r31);
+            return;
+        }
+        temp_r31_2 = temp_r31->x58;
+        temp_r28 = temp_r31_2[7];
+        HSD_JObjReqAnimAll(temp_r28, (f32) (u8) (arg3 / 10));
+        HSD_JObjAnimAll(temp_r28);
+        temp_r28_2 = temp_r31_2[8];
+        HSD_JObjReqAnimAll(temp_r28_2, (f32) (u8) (arg3 % 10));
+        HSD_JObjAnimAll(temp_r28_2);
+        return;
+    case 3:
+        temp_r3 = temp_r31->xA8;
+        if (temp_r3 == NULL) {
+            var_r28 = NULL;
+        } else {
+            var_r28 = temp_r3->x10;
+        }
+        HSD_JObjReqAnimAll(var_r28, (f32) (u8) (arg3 / 10));
+        HSD_JObjAnimAll(var_r28);
+        temp_r3_2 = temp_r31->xAC;
+        if (temp_r3_2 == NULL) {
+            var_r28_2 = NULL;
+        } else {
+            var_r28_2 = temp_r3_2->x10;
+        }
+        HSD_JObjReqAnimAll(var_r28_2, (f32) (u8) (arg3 % 10));
+        HSD_JObjAnimAll(var_r28_2);
+        return;
+    case 0:
+    case 2:
+    case 4:
+        break;
+    default:
+        return;
+    }
+
+    var_r8 = NULL;
+    if ((mn_804A04F0.buttons & 4) != 0) {
+        var_r8 =
+            (f32*) (base + 0x170 + (0xC * (base[0x1DD + (arg2 << 1)] - arg3)));
+        HSD_JObjReqAnimAll(arg1, *var_r8);
+    } else {
+        if (arg3 == 0) {
+            var_r8 = (f32*) (base + 0x134 + (0xC * base[0x1DD + (arg2 << 1)]));
+        } else {
+            var_r8 = (f32*) (base + 0x134 + (0xC * (arg3 - 1)));
+        }
+        HSD_JObjReqAnimAll(arg1, *var_r8);
+    }
+    HSD_JObjAnimAll(arg1);
+}
 
 void mn_80230198(HSD_GObj* gobj, HSD_JObj* jobj, u8 arg2)
 {
