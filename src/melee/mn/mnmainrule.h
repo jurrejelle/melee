@@ -17,8 +17,16 @@ struct mn_802307F8_t {
     /* 0x009 */ u8 x9;
     /* 0x00A */ u8 xA;
     /* 0x00B */ u8 xB_pad[0x00C-0x00B];
-    /* 0x00C */ HSD_JObj* xC[10];
-    /* 0x034 */ u8 x34_pad[0x130-0x034];
+    union {
+        /* 0x00C */ HSD_JObj* xC[17];
+        struct {
+            /* 0x00C */ HSD_JObj* xC0[10];
+            struct {
+                /* 0x00 */ HSD_JObj* x0;
+                /* 0x04 */ u8 x4_pad[0x24 - 0x04];
+            } x34[7];
+        };
+    };
     /* 0x130 */ HSD_Text* text;
 };
 
