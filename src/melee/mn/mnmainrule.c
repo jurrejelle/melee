@@ -9,6 +9,7 @@
 #include <sysdolphin/baselib/gobjproc.h>
 #include <sysdolphin/baselib/sislib.h>
 #include <melee/gm/gmmain_lib.h>
+#include <melee/lb/lb_00F9.h>
 #include <melee/lb/lbarchive.h>
 #include <melee/lb/lbaudio_ax.h>
 #include <melee/sc/types.h>
@@ -194,7 +195,39 @@ void mn_802308F0(HSD_GObj* gobj, int arg1, int arg2)
 
 /// #fn_802309F0
 
-/// #mn_80230D18
+extern s32 mn_804D6BD4;
+
+int mn_80230D18(struct mn_802307F8_t* arg0, HSD_JObj* arg1, s8 arg2)
+{
+    s32 result;
+    s32 i;
+
+    arg0->x0 = mn_804A04F0.cur_menu;
+    arg0->x1 = mn_804A04F0.hovered_selection;
+    arg0->x4 = gmMainLib_8015CC34()->handicap;
+    if (mn_804D6BD4 == 0 && arg0->x4 == 1) {
+        arg0->x4 = 0;
+    }
+    arg0->x5 = gmMainLib_8015CC34()->damage_ratio;
+    arg0->x6 = gmMainLib_8015CC34()->unk_x7;
+    arg0->x2 = gmMainLib_8015CC34()->mode;
+    arg0->x9 = gmMainLib_8015CC34()->stock_count;
+    arg0->x3 = gmMainLib_8015CC34()->time_limit;
+    if (gm_801A4310() == 0x1B && arg0->x3 == 0) {
+        arg0->x3 = 0x63;
+    }
+    arg0->xA = arg2;
+    result = 0;
+    i = result;
+    arg0->text = NULL;
+    arg0 = (struct mn_802307F8_t*) ((u8*) arg0 + (i << 2));
+    do {
+        result = lb_80011E24(arg1, (HSD_JObj**) ((u8*) arg0 + 0xC), i, -1);
+        i++;
+        arg0 = (struct mn_802307F8_t*) ((u8*) arg0 + 4);
+    } while (i < 10);
+    return result;
+}
 
 /// #mn_80230E38
 
@@ -233,8 +266,6 @@ void mn_8023164C(void)
     proc->flags_3 = HSD_GObj_804D783C;
     HSD_GObj_80390CD4(mn_80230E38(mode));
 }
-
-extern s32 mn_804D6BD4;
 
 void mn_80231714(void)
 {
