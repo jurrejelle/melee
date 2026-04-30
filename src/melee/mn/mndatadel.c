@@ -10,13 +10,58 @@
 #include "baselib/gobjplink.h"
 #include "baselib/gobjproc.h"
 #include "baselib/jobj.h"
+#include "gm/gm_1601.h"
+#include "gm/gm_16F1.h"
+#include "gm/gmmain_lib.h"
 #include "lb/lb_00F9.h"
+#include "lb/lbcardgame.h"
 #include "lb/lblanguage.h"
 #include "mn/mnmain.h"
 #include "mn/mnmainrule.h"
 #include "sc/types.h"
 
-/// #mnDataDel_8024E940
+void mnDataDel_8024E940(void)
+{
+    HSD_JObj* sp18;
+    f32 temp_f31;
+    s32* data;
+    s32 temp_ret;
+    s32 var_r30;
+    u8 var_r31;
+    struct MnDataDelGObjUserData* temp_r31;
+    PAD_STACK(24);
+
+    temp_r31 = mnDataDel_804D6C68->user_data;
+    data = &mnDataDel_803EF870.x3C;
+    temp_ret = mn_80231634(temp_r31->x10[data[1]]);
+    lb_80011E24((HSD_JObj*) temp_ret, &sp18, 1, -1);
+    temp_f31 = mn_8022F298(sp18);
+    HSD_JObjReqAnimAll(sp18, 1.0f);
+    mn_8022F3D8(sp18, 0xFFU, MOBJ_MASK);
+    HSD_JObjAnimAll(sp18);
+    HSD_JObjReqAnimAll(sp18, temp_f31);
+    mn_8022F3D8(sp18, 0xFFU, (enum _HSD_TypeMask) 0x480);
+    HSD_JObjAnimAll(sp18);
+    temp_r31->x4 = 1;
+    gm_801647D0();
+    gmMainLib_8015F490();
+    var_r30 = 0;
+    var_r31 = 0;
+    do {
+        if (gm_80164430(gm_801641CC(var_r31)) != 0 &&
+            gm_80164250((u16) var_r31) != 0)
+        {
+            var_r30 = 1;
+            break;
+        }
+        var_r31++;
+    } while ((s32) var_r31 < 0x1D);
+    if (var_r30 == 0) {
+        gm_801641E4(0U, 1U);
+    }
+    gm_801729EC();
+    lb_8001CE00();
+}
 
 /// #mnDataDel_8024EA6C
 
