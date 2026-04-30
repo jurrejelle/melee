@@ -1,11 +1,15 @@
 #include "groldkongo.h"
 
+#include "placeholder.h"
+
 #include <platform.h>
+
+#include "baselib/debug.h"
+#include "cm/camera.h"
+#include "ef/efsync.h"
 
 #include "forward.h"
 
-#include "cm/camera.h"
-#include "ef/efsync.h"
 #include "ft/ftdevice.h"
 #include "ft/ftlib.h"
 #include "ftCommon/ftCo_BarrelWait.h"
@@ -68,8 +72,6 @@ StageCallbacks grOk_803E658C[4] = {
       grOldKongo_8020F6E0, 0xC0000000 },
 };
 
-char grOk_803E6640[] = "groldkongo.c";
-char grOk_804D4888 = 0x30;
 static struct {
     s32 x0;
     s32 x4;
@@ -311,7 +313,7 @@ void grOldKongo_8020F888(Ground_GObj* arg0)
         } else if (temp_f3 < 0.0f) {
             var_f30 = temp_r31->gv.arwing.xDC - temp_r31->gv.oldkongo.xD8;
         } else {
-            __assert(grOk_803E6640, 0x18CU, &grOk_804D4888);
+            HSD_ASSERT(0x18CU, NULL);
         }
         if (var_f30 < 0.0f) {
             var_f30 = (f32) ((f64) var_f30 + M_TAU);
@@ -595,12 +597,14 @@ bool grOldKongo_802100F4(Ground_GObj* gobj)
 
 void grOldKongo_802100FC(Ground_GObj* arg0)
 {
+    u32 pad;
     f32 left;
-    f32 center;
     f32 right;
+    f32 center;
     Ground* gp = GET_GROUND(arg0);
     HSD_JObj* jobj = GET_JOBJ(arg0);
     s32 timer = gp->gv.unk.xC4;
+    u32 pad3;
 
     if (timer > 0) {
         gp->gv.unk.xC4 = timer - 1;
@@ -608,13 +612,13 @@ void grOldKongo_802100FC(Ground_GObj* arg0)
             f32 x;
 
             grAnime_801C8138(arg0, gp->map_id, 0);
-            HSD_JObjSetTranslateY(
-                jobj, (grOk_804D6A90->x4 * ((2.0f * HSD_Randf()) - 1.0f)) +
-                          70.0f);
+            HSD_JObjSetTranslateY(jobj, (grOk_804D6A90->x4 *
+                                         ((2.0f * (0, HSD_Randf())) - 1.0f)) +
+                                            70.0f);
             HSD_JObjSetTranslateZ(jobj, -200.0f);
             Camera_800307D0(&left, &center, &right);
             if (HSD_Randi(2) != 0) {
-                if (right > 200.0f) {
+                if (200.0f < right) {
                     x = right;
                 } else {
                     x = 200.0f;
@@ -623,15 +627,16 @@ void grOldKongo_802100FC(Ground_GObj* arg0)
                 HSD_JObjClearFlagsAll(Ground_801C3FA4(arg0, 3), 0x10U);
                 return;
             }
-            x = left;
-            if (!(x < -200.0f)) {
+            if (-200.0f > left) {
+                x = left;
+            } else {
                 x = -200.0f;
             }
             HSD_JObjSetTranslateX(jobj, x);
             HSD_JObjClearFlagsAll(Ground_801C3FA4(arg0, 1), 0x10U);
         }
     } else if (grAnime_801C83D0(arg0, 0, 7) != 0) {
-        int min;
+        s32 min;
         int max;
 
         HSD_JObjSetFlagsAll(jobj, 0x10U);
@@ -770,8 +775,7 @@ f32 grOldKongo_80210650(void)
                                     if (temp_r3_8 < 0) {
                                         var_f31 = -3.1415927f;
                                     } else {
-                                        __assert(grOk_803E6640, 0x312,
-                                                 &grOk_804D4888);
+                                        HSD_ASSERT(0x312,NULL);
                                     }
                                 }
                             }
