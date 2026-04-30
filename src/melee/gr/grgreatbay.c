@@ -898,10 +898,10 @@ void grGreatBay_801F60C4(Ground* gp, s32 arg1, CollData* arg2, s32 arg3,
 s32 grGreatBay_801F62F8(s32 current)
 {
     s32 result;
-    s32 i = 0;
     grGb_StageAttr* attr;
     s32 total;
     s32 rand;
+    s32 i = 0;
 
     do {
         current += 0;
@@ -916,7 +916,7 @@ s32 grGreatBay_801F62F8(s32 current)
             result = 2;
         } else if ((rand -= attr->kame_dir_prob[0]) < 0) {
             result = 0;
-        } else if ((rand = rand - attr->kame_dir_prob[3]) < 0) {
+        } else if ((rand -= attr->kame_dir_prob[3]) < 0) {
             result = 3;
         } else {
             HSD_ASSERT(1277, 0);
