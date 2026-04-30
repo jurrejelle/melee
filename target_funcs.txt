@@ -3,7 +3,7 @@ Funcs:
 - [x] fn_8021E994
 - [x] grHomeRun_8021C754
 - [x] grHomeRun_8021EA30
-- [ ] grHomeRun_8021EDD4
+- [x] grHomeRun_8021EDD4
 - [ ] grHomeRun_8021C82C
 - [ ] grHomeRun_8021EC58
 - [ ] grHomeRun_8021C914
