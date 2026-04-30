@@ -2,7 +2,7 @@ File: src/melee/gr/grhomerun.c
 Funcs:
 - [x] fn_8021E994
 - [x] grHomeRun_8021C754
-- [ ] grHomeRun_8021EA30
+- [x] grHomeRun_8021EA30
 - [ ] grHomeRun_8021EDD4
 - [ ] grHomeRun_8021C82C
 - [ ] grHomeRun_8021EC58
