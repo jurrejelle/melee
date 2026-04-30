@@ -1427,7 +1427,7 @@ static void fn_801D7700(Ground* gp, s32 arg1, CollData* cd, s32 arg3,
     f32 y1;
     f32 x2;
     f32 y2;
-    
+
     if (type == 1 || type == 3) {
         if (arg4 == mpLib_GroundEnum_Unk1) {
 
