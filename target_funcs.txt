@@ -9,4 +9,4 @@ Funcs:
 - [x] fn_8024B8B4
 - [x] mnSoundTest_8024BCA0
 - [x] fn_8024AED0
-- [ ] fn_8024B2B0
+- [x] fn_8024B2B0
