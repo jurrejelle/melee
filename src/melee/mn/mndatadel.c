@@ -14,6 +14,7 @@
 #include "gm/gm_16F1.h"
 #include "gm/gmmain_lib.h"
 #include "lb/lb_00F9.h"
+#include "lb/lbaudio_ax.h"
 #include "lb/lbcardgame.h"
 #include "lb/lblanguage.h"
 #include "mn/mnmain.h"
@@ -219,7 +220,47 @@ void mnDataDel_8024EEC0(void)
     }
 }
 
-/// #fn_8024F1D4
+void fn_8024F1D4(HSD_GObj* gobj)
+{
+    u32 buttons;
+    HSD_GObjProc* proc;
+    struct MnDataDelGObjUserData* user_data;
+    PAD_STACK(16);
+
+    user_data = mnDataDel_804D6C68->user_data;
+    buttons = mn_80229624(4U);
+    mn_804A04F0.buttons = buttons;
+    if (buttons & 0x10) {
+        if (user_data->x2 != 0) {
+            mnDataDel_8024EA6C();
+        } else {
+            lbAudioAx_80024030(0);
+        }
+        mn_804D6BC8.cooldown = 5;
+        user_data->x1 = 0;
+        HSD_GObjProc_8038FE24(HSD_GObj_804D7838);
+        proc = HSD_GObj_SetupProc(gobj, fn_8024F840, 0);
+        proc->flags_3 = HSD_GObj_804D783C;
+        return;
+    }
+    if (buttons & 0x20) {
+        lbAudioAx_80024030(0);
+        mn_804D6BC8.cooldown = 5;
+        user_data->x1 = 0;
+        HSD_GObjProc_8038FE24(HSD_GObj_804D7838);
+        proc = HSD_GObj_SetupProc(gobj, fn_8024F840, 0);
+        proc->flags_3 = HSD_GObj_804D783C;
+        return;
+    }
+    if ((buttons & 8) || (buttons & 4)) {
+        lbAudioAx_80024030(2);
+        if (user_data->x2 != 0) {
+            user_data->x2 = 0;
+            return;
+        }
+        user_data->x2 = 1;
+    }
+}
 
 /// #fn_8024F318
 
