@@ -7,7 +7,7 @@ Funcs:
 - [x] mnDataDel_8024EA6C
 - [x] mnDataDel_80250170
 - [x] fn_8024ECCC
-- [ ] mnDataDel_8024EEC0
+- [x] mnDataDel_8024EEC0
 - [ ] mnDataDel_8024FE4C
 - [ ] fn_8024F840
 - [ ] fn_8024F318
