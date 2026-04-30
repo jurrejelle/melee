@@ -1539,11 +1539,11 @@ void grKongo_801D8058(Ground_GObj* arg)
 
 HSD_GObj* grKongo_801D8078(HSD_GObj* gobj)
 {
+    s32 unused1;
     Vec3 pos;
     f32 unk;
     Vec3 item_pos;
     HSD_GObj* cur;
-
     Ground_801C4DA0(&pos, &unk);
 
     for (cur = HSD_GObj_Entities->items; cur != NULL; cur = cur->next) {
@@ -1553,8 +1553,8 @@ HSD_GObj* grKongo_801D8078(HSD_GObj* gobj)
             it_8026B294(cur, &item_pos);
 
             dx = pos.x - item_pos.x;
+            dz = pos.z - ((0, item_pos.z));
             dy = pos.y - item_pos.y;
-            dz = pos.z - item_pos.z;
             dx2 = dx * dx;
             dy2 = dy * dy;
             dz2 = dz * dz;
