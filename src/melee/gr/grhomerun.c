@@ -3,6 +3,7 @@
 #include <platform.h>
 
 #include "baselib/sislib.h"
+#include "baselib/jobj.h"
 #include "cm/camera.h"
 #include "gm/gmregclear.h"
 #include "gr/ground.h"
@@ -96,7 +97,16 @@ HSD_GObj* grHomeRun_8021C82C(int gobj_id)
     return gobj;
 }
 
-/// #grHomeRun_8021C914
+void grHomeRun_8021C914(Ground_GObj* gobj)
+{
+    Ground* gp = GET_GROUND(gobj);
+    HSD_JObj* jobj = GET_JOBJ(gobj);
+
+    grAnime_801C8138(gobj, gp->map_id, 0);
+    HSD_JObjSetScaleX(jobj, grHr_804D6AE4 * HSD_JObjGetScaleX(jobj));
+    HSD_JObjSetScaleY(jobj, grHr_804D6AE4 * HSD_JObjGetScaleY(jobj));
+    HSD_JObjSetScaleZ(jobj, grHr_804D6AE4 * HSD_JObjGetScaleZ(jobj));
+}
 
 bool grHomeRun_8021CB10(Ground_GObj* arg)
 {
