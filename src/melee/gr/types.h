@@ -969,9 +969,7 @@ struct grFigureGet_GroundVars {
     /*  +4 gp+C8 */ s32 x4;
     /*  +8 gp+CC */ int x8;
     /*  +C gp+D0 */ int xC;
-    /* +10 gp+D4 */ int x10;
-    /* +14 gp+D8 */ int x14;
-    /* +18 gp+DC */ int x18;
+    /* +10 gp+D4 */ int x10[3];
     /* +1C gp+E0 */ int x1C[3];
     /* +28 gp+EC */ HSD_GObj* x28[3];
     /* +34 gp+F8 */ Item_GObj* x34[3];
