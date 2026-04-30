@@ -148,7 +148,66 @@ static s32 mnStageSw_80235C58(u8 arg0)
     }
 }
 
-/// #mnStageSw_80235DC8
+static void mnStageSw_80235DC8(u8* user_data, s32 buttons)
+{
+    s32 selection;
+    u8 idx;
+
+    idx = mn_804A04F0.hovered_selection;
+    if (buttons & 1) {
+        do {
+            switch (idx) {
+            case 0:
+                mn_804A04F0.hovered_selection = 14;
+                break;
+            case 15:
+                mn_804A04F0.hovered_selection = 28;
+                break;
+            default:
+                mn_804A04F0.hovered_selection = idx - 1;
+                break;
+            }
+            idx = mn_804A04F0.hovered_selection;
+        } while (gm_80164430(gm_801641CC(mnStageSw_803ED4C4[idx])) == 0);
+        mn_804A04F0.confirmed_selection = user_data[idx + 2];
+        return;
+    }
+
+    if (buttons & 2) {
+        do {
+            switch (idx) {
+            case 14:
+                mn_804A04F0.hovered_selection = 0;
+                break;
+            case 28:
+                mn_804A04F0.hovered_selection = 15;
+                break;
+            default:
+                mn_804A04F0.hovered_selection = idx + 1;
+                break;
+            }
+            idx = mn_804A04F0.hovered_selection;
+        } while (gm_80164430(gm_801641CC(mnStageSw_803ED4C4[idx])) == 0);
+        mn_804A04F0.confirmed_selection = user_data[idx + 2];
+        return;
+    }
+
+    if (buttons & 4) {
+        if (idx >= 15 && idx < NUM_STAGES) {
+            selection = mnStageSw_80235C58(idx - 15);
+            if (selection != -1) {
+                mn_804A04F0.hovered_selection = (u8) selection;
+                mn_804A04F0.confirmed_selection = user_data[(u8) selection + 2];
+            }
+        }
+    } else if ((buttons & 8) && idx < 15) {
+        selection = mnStageSw_80235C58(idx + 15);
+        if (selection != -1) {
+            mn_804A04F0.hovered_selection = (u8) selection;
+            mn_804A04F0.confirmed_selection = user_data[(u8) selection + 2];
+        }
+    }
+}
 
 /// #fn_80235F80
 
