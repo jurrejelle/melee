@@ -182,7 +182,7 @@ void HSD_SObjLib_803A54EC(HSD_GObj* gobj, int unused)
     Mtx viewmtx;
     SObjLibData* data = &HSD_SObjLib_8040C3A0;
 
-    if (HSD_CObjSetCurrent(gobj->hsd_obj)) {
+    if (HSD_CObjSetCurrent(GET_COBJ(gobj))) {
         GXSetCurrentMtx(0);
         HSD_CObjGetViewingMtx(HSD_CObjGetCurrent(), viewmtx);
         GXLoadPosMtxImm(viewmtx, 0);
