@@ -99,6 +99,14 @@ u32 data_4[] = { 25, 8,  1,  6,  16, 17, 4,  2,  13, 0,  11, 5,  12, 14, 18,
                  6,  8,  11, 18, 14, 15, 16, 17, 18, 19, 20, 21, 22, 24, 13,
                  25, 26, 28, 27, 10, 7,  9,  31, 23, 30, 4,  0,  39, 3,  32 };
 
+static char mnSoundTest_803EF4F4[] = "Can't get user_data.\n";
+static char mnSoundTest_803EF50C[] = "mnsoundtest.c";
+static char mnSoundTest_803EF51C[] = "user_data";
+static char mnSoundTest_803EF528[] = "MenMainConTs_Top_joint";
+static char mnSoundTest_803EF540[] = "MenMainConTs_Top_animjoint";
+static char mnSoundTest_803EF55C[] = "MenMainConTs_Top_matanim_joint";
+static char mnSoundTest_803EF57C[] = "MenMainConTs_Top_shapeanim_joint";
+
 void mnSoundTest_8024A790(HSD_GObj* arg0)
 {
     f32 temp_f1;
@@ -440,4 +448,29 @@ void fn_8024B7E4(HSD_GObj* arg0)
     if (temp_f31 == temp_r31[1].end_frame) {
         HSD_GObjPLink_80390228(arg0);
     }
+}
+
+s32 mnSoundTest_8024BEE0(s32 arg0)
+{
+    HSD_GObjProc* proc;
+    s32 temp_ret;
+
+    mn_804D6BC8.cooldown = 5;
+    mn_804A04F0.prev_menu = mn_804A04F0.cur_menu;
+    mn_804A04F0.cur_menu = 0x1B;
+    mn_804A04F0.hovered_selection = 0;
+    mnSoundTest_804D6C48 = gm_801601C4(gmMainLib_8015ED74());
+    temp_ret = gm_80160244(gmMainLib_8015ED74());
+    mnSoundTest_804D6C4C = temp_ret;
+    mnSoundTest_804D6C44 = 1;
+    lbArchive_LoadSections(
+        mn_804D6BB8, (void**) &mnSoundTest_804A08C8.joint,
+        mnSoundTest_803EF528, &mnSoundTest_804A08C8.animjoint,
+        mnSoundTest_803EF540, &mnSoundTest_804A08C8.matanim_joint,
+        mnSoundTest_803EF55C, &mnSoundTest_804A08C8.shapeanim_joint,
+        mnSoundTest_803EF57C, 0);
+    mnSoundTest_8024BCA0(arg0);
+    proc = HSD_GObj_SetupProc(GObj_Create(0U, 1U, 0x80U), fn_8024B2B0, 0U);
+    proc->flags_3 = HSD_GObj_804D783C;
+    return (s32) proc;
 }

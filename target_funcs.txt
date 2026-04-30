@@ -1,7 +1,7 @@
 File: src/melee/mn/mnsoundtest.c
 Funcs:
 - [x] fn_8024B7E4
-- [ ] mnSoundTest_8024BEE0
+- [x] mnSoundTest_8024BEE0
 - [ ] mnSoundTest_8024A958
 - [ ] mnSoundTest_8024AA70
 - [ ] fn_8024BAF0
