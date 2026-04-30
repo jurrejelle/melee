@@ -577,6 +577,65 @@ void fn_8024BAF0(HSD_GObj* arg0)
     }
 }
 
+void mnSoundTest_8024BCA0(int arg0)
+{
+    HSD_JObj* sp24;
+    HSD_GObj* gobj;
+    HSD_GObjProc* proc;
+    HSD_JObj* jobj;
+    soundtest_user_data* user_data;
+    HSD_Text* text;
+    u8 temp_r29_2;
+    u8 temp_r29_3;
+
+    gobj = GObj_Create(6U, 7U, 0x80U);
+    mnSoundTest_804D6C40 = gobj;
+    jobj = HSD_JObjLoadJoint(mnSoundTest_804A08C8.joint);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 4U, 0x80U);
+    HSD_JObjAddAnimAll(jobj, mnSoundTest_804A08C8.animjoint,
+                       mnSoundTest_804A08C8.matanim_joint,
+                       mnSoundTest_804A08C8.shapeanim_joint);
+    HSD_JObjReqAnimAll(jobj, 0.0f);
+    HSD_JObjAnimAll(jobj);
+    proc = HSD_GObj_SetupProc(gobj, (void (*)(HSD_GObj*)) fn_8024BAF0, 0U);
+    proc->flags_3 = HSD_GObj_804D783C;
+    user_data = HSD_MemAlloc(0x20);
+    if (user_data == NULL) {
+        OSReport(mnSoundTest_803EF4F4);
+        __assert(mnSoundTest_803EF50C, 0x5F4U, mnSoundTest_803EF51C);
+    }
+    user_data->unk1 = 0;
+    user_data->unk2 = 0x50;
+    user_data->unk4 = 0;
+    user_data->unk3 = 0U;
+    user_data->unk0 = 0U;
+    user_data->unk8 = 1.0f;
+    user_data->unkC = 1.0f;
+    user_data->unk10 = NULL;
+    user_data->unk14 = NULL;
+    user_data->unk18 = NULL;
+    user_data->unk1C = NULL;
+    GObj_InitUserData(gobj, 0U, HSD_Free, user_data);
+    text = user_data->unk10;
+    if (text != NULL) {
+        HSD_SisLib_803A5CC4(text);
+    }
+    text = HSD_SisLib_803A5ACC(0, 1, -9.5f, 9.1f, 17.0f, 364.68332f, 38.38772f);
+    user_data->unk10 = text;
+    text->font_size.x = 0.0521f;
+    text->font_size.y = 0.0521f;
+    HSD_SisLib_803A6368(text, 0xBE);
+    temp_r29_2 = user_data->unk0;
+    mnSoundTest_8024ABF8(gobj, (u8) (-(s32) temp_r29_2 == 0));
+    mnSoundTest_8024AD58(gobj, temp_r29_2);
+    temp_r29_3 = data_4[user_data->unk3];
+    lb_80011E24(GET_JOBJ(gobj), &sp24, 0x15, -1);
+    HSD_JObjReqAnimAll(sp24, (f32) data_4[temp_r29_3 + 30]);
+    mn_8022F3D8(sp24, 0xFFU, 0xA0);
+    HSD_JObjAnimAll(sp24);
+}
+
 s32 mnSoundTest_8024BEE0(s32 arg0)
 {
     HSD_GObjProc* proc;

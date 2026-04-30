@@ -7,6 +7,6 @@ Funcs:
 - [x] fn_8024BAF0
 - [x] mnSoundTest_8024A790
 - [x] fn_8024B8B4
-- [ ] mnSoundTest_8024BCA0
+- [x] mnSoundTest_8024BCA0
 - [ ] fn_8024AED0
 - [ ] fn_8024B2B0
