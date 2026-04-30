@@ -3693,29 +3693,32 @@ void hsd_80397110(void)
 // order)
 s32 fn_80397374(void* data)
 {
-    struct ParticleScreenState* sp = &hsd_804CF810;
+    struct ParticleScreenState* sp;
     extern u8 lbl_8040BEC4[];
     u32 bit = 1;
     u32 spr_off = *(u32*) (lbl_8040BEC4 + 0x10);
     u32 sel = *(u32*) (lbl_8040BEC4 + 0x14);
 
-    while (bit <= sp->xBC) {
-        switch (sp->xBC & bit) {
+    while (bit <= (&hsd_804CF810)->xBC) {
+        switch ((&hsd_804CF810)->xBC & bit) {
         case 0x8:
             if (sel != 0) {
                 sel--;
             } else if (spr_off != 0) {
                 spr_off--;
             } else {
-                u32 max = sp->x1C - 4;
+                u32 max = (&hsd_804CF810)->x1C - 4;
                 sel = max;
-                spr_off = 0x44 - max;
+                spr_off = 0x44;
+                spr_off = spr_off - max;
             }
             *(u32*) (lbl_8040BEC4 + 0x10) = spr_off;
             *(u32*) (lbl_8040BEC4 + 0x14) = sel;
+            if ((&hsd_804CF810)->x1C) {
+            }
             return 1;
         case 0x4:
-            if (sel < (u32) (sp->x1C - 4)) {
+            if (sel < (u32) ((&hsd_804CF810)->x1C - 4)) {
                 sel++;
             } else if (spr_off + sel < 0x43) {
                 spr_off++;
@@ -3734,7 +3737,7 @@ s32 fn_80397374(void* data)
         case 0x1000:
             return 1;
         case 0x200:
-            ps_remove_node(sp, data);
+            ps_remove_node(&hsd_804CF810, data);
             return 1;
         default:
             bit <<= 1;
