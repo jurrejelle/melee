@@ -19,6 +19,8 @@ int grHr_804D6ADC;
 f32 grHr_804D6AE0;
 f32 grHr_804D6AE4;
 static void* grHr_804D6AE8;
+static char grHr_804D49D0[] = "%d";
+extern GXColor grHr_804DBC74;
 
 StageCallbacks grHr_803E8140[11] = {
     { grHomeRun_8021C914, grHomeRun_8021CB10, grHomeRun_8021CB18,
@@ -494,7 +496,28 @@ void fn_8021EB10(HSD_GObj* target_cam_gobj)
     }
 }
 
-/// #grHomeRun_8021EC58
+void* grHomeRun_8021EC58(u16 arg0)
+{
+    HSD_Text* text;
+    f32 temp_f31;
+    f32 temp_f31_2;
+
+    text = HSD_SisLib_803A6754(1, 0);
+    text->pos_z = 0.0F;
+    temp_f31 = 8.0F * (grHr_804D6AE4 * Ground_801C0498());
+    text->box_size_x = 13.0F * (grHr_804D6AE4 * Ground_801C0498());
+    text->box_size_y = temp_f31;
+    text->default_kerning = 0;
+    temp_f31_2 = 0.2F * (grHr_804D6AE4 * Ground_801C0498());
+    text->x34.x = 0.2F * (grHr_804D6AE4 * Ground_801C0498());
+    text->x34.y = temp_f31_2;
+    text->text_color = grHr_804DBC74;
+    text->default_alignment = 1;
+    text->default_fitting = 1;
+    text->x4C = 1;
+    HSD_SisLib_803A6B98(text, 0.0F, -29.0F, grHr_804D49D0, (s32) (f32) arg0);
+    return text;
+}
 
 void grHomeRun_8021ED74(void)
 {
