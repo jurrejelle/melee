@@ -4,6 +4,7 @@
 
 #include "baselib/sislib.h"
 #include "cm/camera.h"
+#include "gm/gmregclear.h"
 #include "gr/ground.h"
 #include "gr/grzakogenerator.h"
 #include "gr/inlines.h"
@@ -11,12 +12,14 @@
 #include "it/it_26B1.h"
 #include "lb/lb_00B0.h"
 #include "lb/lblanguage.h"
+#include "lb/types.h"
 
 f32 grHr_804D6AD8;
 int grHr_804D6ADC;
 f32 grHr_804D6AE0;
 f32 grHr_804D6AE4;
 static void* grHr_804D6AE8;
+
 StageCallbacks grHr_803E8140[11] = {
     { grHomeRun_8021C914, grHomeRun_8021CB10, grHomeRun_8021CB18,
       grHomeRun_8021CB1C, 0 },
@@ -394,7 +397,32 @@ void grHomeRun_8021E4FC(Ground_GObj* arg) {}
 
 /// #grHomeRun_8021E500
 
-/// #fn_8021E994
+s32 fn_8021E994(Ground* arg0, s32 arg1, CollData* arg2, s32 arg3,
+                mpLib_GroundEnum arg4, f32 arg5)
+{
+    HSD_GObj* var_r3;
+    s32 temp_r31;
+    void* temp_r30;
+
+    temp_r31 = ((*(u8*) &arg2->x34_flags >> 3U) & 0xF);
+    var_r3 = Ground_801C2BA4(0xA);
+    if (var_r3 != NULL) {
+        temp_r30 = var_r3->user_data;
+        if (temp_r30 == NULL) {
+            return (s32) var_r3;
+        }
+        if (temp_r31 == 1) {
+            var_r3 = gm_80180AF4();
+            if (arg2->x0_gobj == var_r3 && arg4 == 1) {
+                var_r3 = (HSD_GObj*) 1U;
+                *(u8*) ((u8*) temp_r30 + 0xE8) =
+                    (u8) (*(u8*) ((u8*) temp_r30 + 0xE8) |
+                          ((u32) var_r3 << 7));
+            }
+        }
+    }
+    return (s32) var_r3;
+}
 
 void grHomeRun_8021EA30(f32* pos)
 {
