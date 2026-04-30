@@ -29,7 +29,7 @@ typedef struct MnStageSwData {
     u8 x1F;
     u8 pad_20[4];
     HSD_JObj* x24;
-    u8 pad_28[4];
+    HSD_JObj* x28;
     HSD_JObj* x2C;
     HSD_JObj* x30;
     HSD_JObj* x34;
@@ -53,7 +53,7 @@ static u8 mnStageSw_stageIcons[NUM_STAGES] = {
 
 static HSD_GObj* mnStageSw_804D6BF0;
 static s8 mnStageSw_804D6BF4;
-extern f32 mnStageSw_803ED488[];
+extern AnimLoopSettings mnStageSw_803ED488[5];
 extern u8 mn_804D6BB5;
 
 /* 23593C */ static void mnStageSw_8023593C(HSD_GObj* gobj);
@@ -420,13 +420,67 @@ static HSD_JObj* mnStageSw_802364A0(HSD_GObj* gobj, u8 idx)
     return jobj;
 }
 
-/// #mnStageSw_80236548
+static void mnStageSw_80236548(HSD_GObj* gobj, u8 arg1, u8 arg2)
+{
+    HSD_JObj* sp3C;
+    HSD_JObj* sp44;
+    HSD_JObj* jobj;
+    HSD_JObj* temp;
+    MnStageSwData* data;
+    f32 delta_y;
+    f32 frame;
+    u16 hovered;
+    u8 sel;
+
+    data = gobj->user_data;
+    if (arg1 != 0) {
+        jobj = mnStageSw_802364A0(gobj, data->x1);
+        lb_80011E24(jobj, &sp44, 3, -1);
+        HSD_JObjSetFlagsAll(sp44, JOBJ_HIDDEN);
+        frame = mn_8022F298(sp44);
+        sel = (u8) mn_804A04F0.hovered_selection;
+        jobj = mnStageSw_802364A0(gobj, sel);
+        lb_80011E24(jobj, &sp44, 3, -1);
+        HSD_JObjClearFlagsAll(sp44, JOBJ_HIDDEN);
+        HSD_JObjReqAnimAll(sp44, frame);
+        HSD_JObjAnimAll(sp44);
+        HSD_JObjClearFlagsAll(data->x28, JOBJ_HIDDEN);
+        delta_y = HSD_JObjGetTranslationY(data->x30) -
+                  HSD_JObjGetTranslationY(data->x2C);
+        if (sel < 15) {
+            HSD_JObjSetTranslateX(data->x28, HSD_JObjGetTranslationX(data->x2C));
+            HSD_JObjSetTranslateY(data->x28,
+                                  delta_y * (f32) sel +
+                                      HSD_JObjGetTranslationY(data->x2C));
+        } else {
+            HSD_JObjSetTranslateX(data->x28, HSD_JObjGetTranslationX(data->x34));
+            HSD_JObjSetTranslateY(data->x28,
+                                  delta_y * (f32) (sel - 15) +
+                                      HSD_JObjGetTranslationY(data->x2C));
+        }
+    }
+    if (arg2 != 0) {
+        sel = mn_804A04F0.confirmed_selection;
+        jobj = mnStageSw_802364A0(gobj, (u8) mn_804A04F0.hovered_selection);
+        lb_80011E24(jobj, &sp3C, 2, -1);
+        HSD_JObjReqAnimAll(sp3C, sel);
+        HSD_JObjAnimAll(sp3C);
+    }
+    if (arg1 != 0) {
+        hovered = mn_804A04F0.hovered_selection;
+    } else {
+        hovered = data->x1;
+    }
+    temp = mnStageSw_802364A0(gobj, (u8) hovered);
+    lb_80011E24(temp, &sp44, 3, -1);
+    mn_8022ED6C(sp44, mnStageSw_803ED488);
+}
 
 static void fn_80236998(HSD_GObj* gobj)
 {
     HSD_JObj* child;
     HSD_JObj* jobj;
-    f32* anims;
+    AnimLoopSettings* anims;
     s32 i;
     u8 changed_menu;
     u8 changed_hovered;
@@ -450,19 +504,19 @@ static void fn_80236998(HSD_GObj* gobj)
         }
         switch ((s32) data->x1F) {
         case 1:
-            anims = &mnStageSw_803ED488[3];
+            anims = &mnStageSw_803ED488[1];
             break;
         case 2:
-            anims = &mnStageSw_803ED488[9];
+            anims = &mnStageSw_803ED488[3];
             break;
         case 3:
-            anims = &mnStageSw_803ED488[6];
+            anims = &mnStageSw_803ED488[2];
             break;
         case 4:
-            anims = &mnStageSw_803ED488[12];
+            anims = &mnStageSw_803ED488[4];
             break;
         }
-        HSD_JObjReqAnim(data->x24, *anims);
+        HSD_JObjReqAnim(data->x24, anims->start_frame);
         HSD_JObjAnim(data->x24);
         state = data->x1F;
         if (state == 0 || state == 1 || state == 3) {
@@ -477,19 +531,19 @@ static void fn_80236998(HSD_GObj* gobj)
         jobj = data->x24;
         switch ((s32) state) {
         case 1:
-            anims = &mnStageSw_803ED488[3];
+            anims = &mnStageSw_803ED488[1];
             break;
         case 2:
-            anims = &mnStageSw_803ED488[9];
+            anims = &mnStageSw_803ED488[3];
             break;
         case 3:
-            anims = &mnStageSw_803ED488[6];
+            anims = &mnStageSw_803ED488[2];
             break;
         case 4:
-            anims = &mnStageSw_803ED488[12];
+            anims = &mnStageSw_803ED488[4];
             break;
         }
-        if (mn_8022F298(jobj) >= anims[1]) {
+        if (mn_8022F298(jobj) >= anims->end_frame) {
             switch ((s32) data->x1F) {
             case 1:
             case 3:
