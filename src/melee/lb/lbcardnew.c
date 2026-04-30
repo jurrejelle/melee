@@ -946,14 +946,24 @@ int lb_8001C0F4(int chan, const char* name_a, const char* name_b,
     struct CardTask* task;
 
     lb_80019EF0(chan, 0, status_out, 0);
-    setup_task(0, 0x10000);
-    setup_task(1, 0x201);
+    task = lb_80019C38_noinline();
+    task->x0 = 0;
+    task->x4 = 0x10000;
+    task = lb_80019C38_noinline();
+    task->x0 = 1;
+    task->x4 = 0x201;
     lb_8001A4CC_dontinline(name_a, 0);
-    setup_task(3, -1);
-    task = setup_task(6, 14);
+    task = lb_80019C38_noinline();
+    task->x0 = 3;
+    task->x4 = -1;
+    task = lb_80019C38_noinline();
+    task->x0 = 6;
+    task->x4 = 14;
     strncpy(task->x10, name_a, 0x20);
     strncpy(task->x19, name_c, 0x20);
-    task = setup_task(2, 1);
+    task = lb_80019C38_noinline();
+    task->x0 = 2;
+    task->x4 = 1;
     if (name_b != NULL) {
         task->xC = task->x10;
         strncpy(task->x10, name_b, 0x20);
@@ -961,11 +971,17 @@ int lb_8001C0F4(int chan, const char* name_a, const char* name_b,
         task->xC = NULL;
     }
     task->x8 = 0;
-    setup_task(3, -1);
-    task = setup_task(6, 14);
+    task = lb_80019C38_noinline();
+    task->x0 = 3;
+    task->x4 = -1;
+    task = lb_80019C38_noinline();
+    task->x0 = 6;
+    task->x4 = 14;
     strncpy(task->x10, name_b, 0x20);
     strncpy(task->x19, name_a, 0x20);
-    task = setup_task(2, 1);
+    task = lb_80019C38_noinline();
+    task->x0 = 2;
+    task->x4 = 1;
     if (name_c != NULL) {
         task->xC = task->x10;
         strncpy(task->x10, name_c, 0x20);
@@ -973,8 +989,12 @@ int lb_8001C0F4(int chan, const char* name_a, const char* name_b,
         task->xC = NULL;
     }
     task->x8 = 0;
-    setup_task(3, -1);
-    task = setup_task(6, 14);
+    task = lb_80019C38_noinline();
+    task->x0 = 3;
+    task->x4 = -1;
+    task = lb_80019C38_noinline();
+    task->x0 = 6;
+    task->x4 = 14;
     strncpy(task->x10, name_c, 0x20);
     strncpy(task->x19, name_b, 0x20);
     return lb_80019CB0(0x10);
