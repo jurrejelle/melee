@@ -5,4 +5,4 @@ Funcs:
 - [x] mnEvent_8024D5B0
 - [x] mnEvent_8024E524
 - [x] mnEvent_8024D15C
-- [ ] fn_8024D864
+- [x] fn_8024D864
