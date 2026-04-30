@@ -3,16 +3,22 @@
 #include <platform.h>
 
 #include "baselib/sislib.h"
+#include "baselib/archive.h"
+#include "baselib/gobjgxlink.h"
+#include "baselib/gobjobject.h"
 #include "baselib/jobj.h"
+#include "baselib/memory.h"
 #include "cm/camera.h"
 #include "ft/ftlib.h"
 #include "gm/gmregclear.h"
 #include "gr/ground.h"
+#include "gr/grdatfiles.h"
 #include "gr/grzakogenerator.h"
 #include "gr/inlines.h"
 #include "gr/stage.h"
 #include "it/it_26B1.h"
 #include "lb/lb_00B0.h"
+#include "lb/lb_00F9.h"
 #include "lb/lblanguage.h"
 #include "lb/types.h"
 #include "mp/mplib.h"
@@ -131,7 +137,144 @@ void grHomeRun_8021CB18(Ground_GObj* arg) {}
 
 void grHomeRun_8021CB1C(Ground_GObj* arg) {}
 
-/// #grHomeRun_8021CB20
+void grHomeRun_8021CB20(Ground_GObj* gobj)
+{
+    static HSD_CameraDescPerspective cobj_desc = {
+        NULL,
+        0,
+        1,
+        { 0, 640, 0, 480 },
+        { 0, 640, 0, 480 },
+        NULL,
+        NULL,
+        0.0F,
+        NULL,
+        0.1F,
+        32768.0F,
+        30.0F,
+        1.4F,
+    };
+
+    Ground* gp = GET_GROUND(gobj);
+    grHomeRun_MainGroundVars* vars = (grHomeRun_MainGroundVars*) &gp->gv.homerun;
+    HSD_JObj* jobj = GET_JOBJ(gobj);
+    UnkArchiveStruct* archive;
+    HSD_CObj* cobj;
+    s16 i;
+
+    Ground_801C2ED0(jobj, gp->map_id);
+
+    vars->xC4 = HSD_MemAlloc(0x100);
+    if (vars->xC4 == NULL) {
+        __assert("grhomerun.c", 0x17A, "gobjs");
+    }
+    vars->xC8 = HSD_MemAlloc(0x40);
+    if (vars->xC8 == NULL) {
+        __assert("grhomerun.c", 0x17B, "jobjs");
+    }
+
+    HSD_JObjSetScaleX(jobj, grHr_804D6AE4 * HSD_JObjGetScaleX(jobj));
+    HSD_JObjSetScaleY(jobj, grHr_804D6AE4 * HSD_JObjGetScaleY(jobj));
+    HSD_JObjSetScaleZ(jobj, grHr_804D6AE4 * HSD_JObjGetScaleZ(jobj));
+
+    *(u8*) &gp->x10_flags |= 4;
+    grAnime_801C8138(gobj, gp->map_id, false);
+    mpJointSetCb1(0, gp, (mpLib_Callback) fn_8021E994);
+
+    archive = grDatFiles_801C6324();
+    vars->xD4 = GObj_Create(0x11, 0x13, 0);
+    cobj = lb_80013B14(&cobj_desc);
+    HSD_CObjSetPerspective(cobj, 30.0F, 1.4F);
+    HSD_GObjObject_80390A70(vars->xD4, HSD_GObj_804D784B, cobj);
+    GObj_SetupGXLinkMax(vars->xD4, (GObj_RenderFunc) fn_8021EB10, 7);
+    vars->xD4->gxlink_prios = 2;
+    HSD_SisLib_803A611C(1, vars->xD4, 9, 0xD, 0, 1, 0, 7);
+    HSD_SisLib_804D1124[1] =
+        HSD_ArchiveGetPublicAddress(archive->unk0, "SIS_GrHomerunData");
+
+    if (2.0F * (1.0F + (2400.0F / (160.0F * Ground_801C0498()))) >= 64.0F) {
+        __assert("grhomerun.c", 0x1A2, "gobjs_num < 64");
+    }
+
+    for (i = 0; (f32) i < 1.0F + (2400.0F / (160.0F * Ground_801C0498())); i++) {
+        vars->xC4[i] = grHomeRun_8021E500(i);
+    }
+    for (; i < 64; i++) {
+        vars->xC4[i] = NULL;
+    }
+
+    for (i = 0; i < 16; i++) {
+        HSD_JObj* child;
+
+        vars->xC8[i] = grHomeRun_8021C82C(4);
+        if (vars->xC8[i] == NULL) {
+            __assert("grhomerun.c", 0x1AB, "gobj");
+        }
+
+        jobj = GET_JOBJ(vars->xC8[i]);
+        if (jobj == NULL) {
+            __assert("grhomerun.c", 0x1AC, "jobj");
+        }
+
+        HSD_JObjSetScaleX(jobj, grHr_804D6AE4 * HSD_JObjGetScaleX(jobj));
+        HSD_JObjSetScaleY(jobj, grHr_804D6AE4 * HSD_JObjGetScaleY(jobj));
+        HSD_JObjSetScaleZ(jobj, grHr_804D6AE4 * HSD_JObjGetScaleZ(jobj));
+
+        child = HSD_JObjGetChild(jobj);
+        if (child == NULL) {
+            __assert("jobj.h", 0x3A4, "jobj");
+        }
+        HSD_JObjSetTranslateX(child, 0.0F);
+        HSD_JObjSetTranslateX(
+            jobj, grHr_804D6AE4 *
+                      ((4.0F + (f32) i) * -(160.0F * Ground_801C0498())));
+    }
+
+    vars->xD8 = grHomeRun_8021C82C(3);
+    if (vars->xD8 == NULL) {
+        __assert("grhomerun.c", 0x1BA, "rear_gobj");
+    }
+    jobj = GET_JOBJ(vars->xD8);
+    if (jobj == NULL) {
+        __assert("grhomerun.c", 0x1BB, "jobj");
+    }
+    HSD_JObjSetTranslateX(jobj, 1.5F * -(2150.99F * Ground_801C0498()));
+
+    vars->xDC = grHomeRun_8021C82C(3);
+    if (vars->xDC == NULL) {
+        __assert("grhomerun.c", 0x1BD, "rear2_gobj");
+    }
+    jobj = GET_JOBJ(vars->xDC);
+    if (jobj == NULL) {
+        __assert("grhomerun.c", 0x1BE, "jobj");
+    }
+    HSD_JObjSetTranslateX(jobj, 0.5F * -(2150.99F * Ground_801C0498()));
+
+    vars->xE0 = grHomeRun_8021C82C(3);
+    if (vars->xE0 == NULL) {
+        __assert("grhomerun.c", 0x1C0, "rear3_gobj");
+    }
+    jobj = GET_JOBJ(vars->xE0);
+    if (jobj == NULL) {
+        __assert("grhomerun.c", 0x1C1, "jobj");
+    }
+    HSD_JObjSetTranslateX(jobj, 0.5F * (2150.99F * Ground_801C0498()));
+
+    vars->xE4 = grHomeRun_8021C82C(3);
+    if (vars->xE4 == NULL) {
+        __assert("grhomerun.c", 0x1C3, "rear4_gobj");
+    }
+    jobj = GET_JOBJ(vars->xE4);
+    if (jobj == NULL) {
+        __assert("grhomerun.c", 0x1C4, "jobj");
+    }
+    HSD_JObjSetTranslateX(jobj, 1.5F * (2150.99F * Ground_801C0498()));
+
+    vars->xCC = NULL;
+    vars->xD0 = Ground_801C3FA4(gobj, 1);
+    gp->gv.yorster.elements[1].x00 =
+        (u8) gp->gv.yorster.elements[1].x00 & ~0x80;
+}
 
 bool grHomeRun_8021D678(Ground_GObj* arg)
 {
