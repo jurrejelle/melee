@@ -1,0 +1,8 @@
+File: src/melee/mn/mnevent.c
+Funcs:
+- [x] fn_8024E1B4
+- [ ] mnEvent_8024CE74
+- [ ] mnEvent_8024D5B0
+- [ ] mnEvent_8024E524
+- [ ] mnEvent_8024D15C
+- [ ] fn_8024D864

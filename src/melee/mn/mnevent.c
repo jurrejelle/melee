@@ -84,24 +84,28 @@ void mnEvent_8024D4E0(HSD_JObj* jobj, Vec3* translate)
 
 void fn_8024E1B4(HSD_GObj* gobj)
 {
-    int i;
+    HSD_JObj* tree = gobj->hsd_obj;
     MnEventData* data = gobj->user_data;
-    if (mn_8022EC18(gobj->hsd_obj, &mnEvent_803EF74C, 0x80) >=
-        mnEvent_803EF74C.end_frame)
+    MnEventData* iter;
+    int i;
+
+    if (mn_8022EC18(tree, &mnEvent_803EF74C, 0x80) >= mnEvent_803EF74C.end_frame)
     {
+        iter = data;
         for (i = 0; i < 9; i++) {
-            if (data->gobjs[i] != NULL) {
+            if (iter->gobjs[0] != NULL) {
                 HSD_GObjPLink_80390228(data->gobjs[i]);
-                data->gobjs[i] = NULL;
+                iter->gobjs[0] = NULL;
             }
-            if (data->texts[i] != NULL) {
+            if (iter->texts[0] != NULL) {
                 HSD_SisLib_803A5CC4(data->texts[i]);
-                data->texts[i] = NULL;
+                iter->texts[0] = NULL;
             }
-            if (data->icons[i] != NULL) {
+            if (iter->icons[0] != NULL) {
                 HSD_SisLib_803A5CC4(data->icons[i]);
-                data->icons[i] = NULL;
+                iter->icons[0] = NULL;
             }
+            iter = (MnEventData*) ((u8*) iter + 4);
         }
         HSD_GObjPLink_80390228(gobj);
     }
