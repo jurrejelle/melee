@@ -240,11 +240,13 @@ void grFigureGet_80219898(Ground_GObj* gobj)
         if (temp_r3 == 0) {
             pos = grFigureGet_803B8470;
             gp->gv.figureget.x4 += 1;
-            var_f2 = grFigureGet_804D6AC0->x10 - grFigureGet_804D6AC0->xC;
+            var_f2 = grFigureGet_804D6AC0->x10;
+            var_f2 = var_f2 - grFigureGet_804D6AC0->xC;
             if (var_f2 < 0.0f) {
                 var_f2 = -var_f2;
             }
-            temp_f1 = var_f2 * 0.5f;
+            temp_f1 = 0.5f;
+            temp_f1 = var_f2 * temp_f1;
             temp_f1 -= 20.0f;
             if ((s32) temp_f1 != 0) {
                 var_r3 = HSD_Randi((s32) temp_f1);
@@ -258,9 +260,8 @@ void grFigureGet_80219898(Ground_GObj* gobj)
             pos.y = grFigureGet_804D6AC0->x14 + Stage_GetCamBoundsTopOffset();
             temp_r6 = gp->gv.figureget.x4;
             temp_r3_2 = it_802F2094(gobj, &pos,
-                                    (&gp->gv.figureget.xC)[temp_r6], temp_r6);
-            *(Item_GObj**) ((u8*) gp + 0xF4 + gp->gv.figureget.x4 * 4) =
-                temp_r3_2;
+                                    gp->gv.figureget.x10[temp_r6 - 1], temp_r6);
+            gp->gv.figureget.x34[gp->gv.figureget.x4 - 1] = temp_r3_2;
             it_802F2014(temp_r3_2, 0);
             temp_r3_3 = grFigureGet_804D6AC0->x4;
             if (temp_r3_3 != 0) {
@@ -273,16 +274,11 @@ void grFigureGet_80219898(Ground_GObj* gobj)
             gp->gv.figureget.x0 = temp_r3 - 1;
         }
     } else if (grFigureGet_80219C50(gobj) != 0) {
-        var_r30 = 0;
-        var_r29 = gp->gv.figureget.x1C;
-        temp_r0 = gp->gv.figureget.x8;
-        while (var_r30 < temp_r0) {
-            gm_8017E280((u16) *var_r29, 1U);
-            var_r29 += 1;
-            var_r30 += 1;
+        for (var_r30 = 0; var_r30 < gp->gv.figureget.x8; var_r30++) {
+            gm_8017E280((u16) gp->gv.figureget.x1C[var_r30], 1U);
         }
-        if (temp_r0 != 0) {
-            if (temp_r0 == 3) {
+        if (gp->gv.figureget.x8 != 0) {
+            if (gp->gv.figureget.x8 == 3) {
                 stage_info.flags |= 0x20;
             }
             stage_info.flags |= 0x100;
