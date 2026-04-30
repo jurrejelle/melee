@@ -9,5 +9,5 @@ Funcs:
 - [x] fn_8024ECCC
 - [x] mnDataDel_8024EEC0
 - [x] mnDataDel_8024FE4C
-- [ ] fn_8024F840
+- [x] fn_8024F840
 - [ ] fn_8024F318
