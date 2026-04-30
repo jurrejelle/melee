@@ -87,6 +87,7 @@ AnimLoopSettings mn_803EC770[9] = {
 };
 
 extern f32 mn_804D4B90;
+extern u16 mn_804D4B94[2];
 extern f32 mn_804D6BD8;
 extern s32 mn_804DBDFC;
 extern f32 mn_804DBE00;
@@ -94,9 +95,205 @@ extern HSD_GObj* mn_804D6BD0;
 extern u16 mn_804DBE04;
 extern s32 mn_804DBE08;
 extern u8 mn_804DBE0C;
+extern u16 mn_803EC7DC[][2];
 extern u8 mn_803EC600[];
+extern s32 mn_804D6BD4;
+
+void mnItemSw_802358C0(void);
+void mn_802339FC(void);
+void mnCharSel_80264070(void);
+void mnCharSel_802640A0(void);
 
 /// #fn_8022F538
+void fn_8022F538(HSD_GObj* arg0)
+{
+    GameRules* rules;
+    u16* limits;
+    u32 buttons;
+    u8 hovered;
+    struct mn_802307F8_t* data;
+
+    data = mn_804D6BD0->user_data;
+    buttons = mn_80229624(4);
+    ((u32*) &mn_804A04F0.buttons)[1] = buttons;
+    ((u32*) &mn_804A04F0.buttons)[0] = 0;
+    if ((buttons & 0x200) != 0) {
+        if (mn_804A04F0.hovered_selection == 5 ||
+            mn_804A04F0.hovered_selection == 6)
+        {
+            lbAudioAx_80024030(1);
+            mn_804A04F0.entering_menu = 1;
+            mn_804D6BC8.cooldown = 5;
+            switch (mn_804A04F0.hovered_selection) {
+            case 5:
+                mnItemSw_802358C0();
+                HSD_GObjPLink_80390228(arg0);
+                break;
+            case 6:
+                mn_802339FC();
+                HSD_GObjPLink_80390228(arg0);
+                break;
+            }
+            rules = gmMainLib_8015CC34();
+            rules->mode = data->x2;
+            rules->time_limit = data->x3;
+            rules->handicap = data->x4;
+            rules->damage_ratio = data->x5;
+            rules->unk_x7 = data->x6;
+            rules->stock_count = data->x9;
+            return;
+        }
+    } else if ((buttons & 0x100) != 0) {
+        lbAudioAx_80024030(1);
+        rules = gmMainLib_8015CC34();
+        rules->mode = data->x2;
+        rules->time_limit = data->x3;
+        rules->handicap = data->x4;
+        rules->damage_ratio = data->x5;
+        rules->unk_x7 = data->x6;
+        rules->stock_count = data->x9;
+        if (gm_801A4310() == 1) {
+            mn_80229860(2);
+            return;
+        }
+        if (gm_801A4310() == 0x1B) {
+            HSD_SisLib_803A5E70();
+            mn_8022EBDC();
+            gm_80190EA4();
+            return;
+        }
+        if (gm_801A4310() == 1) {
+            mn_80229894(2, 3, 3);
+            return;
+        }
+        HSD_SisLib_803A5E70();
+        mn_8022EBDC();
+        mnCharSel_802640A0();
+        return;
+    }
+    if ((buttons & 0x20) != 0) {
+        lbAudioAx_80024030(0);
+        mn_804A04F0.entering_menu = 0;
+        rules = gmMainLib_8015CC34();
+        rules->mode = data->x2;
+        rules->time_limit = data->x3;
+        rules->handicap = data->x4;
+        rules->damage_ratio = data->x5;
+        rules->unk_x7 = data->x6;
+        rules->stock_count = data->x9;
+        if (gm_801A4310() == 0x1B) {
+            HSD_SisLib_803A5E70();
+            mn_8022EBDC();
+            gm_80190EA4();
+            return;
+        }
+        if (gm_801A4310() == 1) {
+            mn_80229894(2, 3, 3);
+            return;
+        }
+        HSD_SisLib_803A5E70();
+        mn_8022EBDC();
+        mnCharSel_802640A0();
+        return;
+    }
+    if ((buttons & 1) != 0) {
+        lbAudioAx_80024030(2);
+        do {
+            if (mn_804A04F0.hovered_selection == 0) {
+                mn_804A04F0.hovered_selection = 6;
+            } else {
+                mn_804A04F0.hovered_selection--;
+            }
+            hovered = mn_804A04F0.hovered_selection;
+        } while (gm_801A4310() == 0x1B && hovered == 4);
+        if (mn_804A04F0.hovered_selection == 1 && data->x2 == 1) {
+            mn_804A04F0.confirmed_selection = data->x9;
+            return;
+        }
+        mn_804A04F0.confirmed_selection =
+            ((u8*) data)[mn_804A04F0.hovered_selection + 2];
+        return;
+    }
+    if ((buttons & 2) != 0) {
+        lbAudioAx_80024030(2);
+        do {
+            if (mn_804A04F0.hovered_selection == 6) {
+                mn_804A04F0.hovered_selection = 0;
+            } else {
+                mn_804A04F0.hovered_selection++;
+            }
+            hovered = mn_804A04F0.hovered_selection;
+        } while (gm_801A4310() == 0x1B && hovered == 4);
+        if (mn_804A04F0.hovered_selection == 1 && data->x2 == 1) {
+            mn_804A04F0.confirmed_selection = data->x9;
+            return;
+        }
+        mn_804A04F0.confirmed_selection =
+            ((u8*) data)[mn_804A04F0.hovered_selection + 2];
+        return;
+    }
+
+    if (mn_804A04F0.hovered_selection == 1 && data->x2 == 1) {
+        limits = mn_804D4B94;
+    } else {
+        limits = mn_803EC7DC[mn_804A04F0.hovered_selection];
+    }
+    if ((buttons & 4) != 0) {
+        lbAudioAx_80024030(2);
+        if (mn_804A04F0.confirmed_selection > limits[0]) {
+            mn_804A04F0.confirmed_selection--;
+            if (mn_804A04F0.confirmed_selection == limits[0] &&
+                mn_804A04F0.hovered_selection == 1)
+            {
+                gm_801A36E0(4, 0x19);
+            }
+        } else {
+            mn_804A04F0.confirmed_selection = limits[1];
+        }
+        if (mn_804D6BD4 == 0 && mn_804A04F0.hovered_selection == 2 &&
+            mn_804A04F0.confirmed_selection == 1)
+        {
+            mn_804A04F0.confirmed_selection = 0;
+        }
+        if (gm_801A4310() == 0x1B && mn_804A04F0.hovered_selection == 1 &&
+            data->x2 != 1 && mn_804A04F0.confirmed_selection == limits[0])
+        {
+            mn_804A04F0.confirmed_selection = limits[1];
+        }
+        if (mn_804A04F0.hovered_selection == 2) {
+            gmMainLib_8015EA80();
+            mnCharSel_80264070();
+        }
+        return;
+    }
+    if ((buttons & 8) != 0) {
+        lbAudioAx_80024030(2);
+        if (mn_804A04F0.confirmed_selection < limits[1]) {
+            mn_804A04F0.confirmed_selection++;
+            if (mn_804A04F0.confirmed_selection == limits[1] &&
+                mn_804A04F0.hovered_selection == 1)
+            {
+                gm_801A36E0(4, 0x19);
+            }
+        } else {
+            mn_804A04F0.confirmed_selection = limits[0];
+        }
+        if (mn_804D6BD4 == 0 && mn_804A04F0.hovered_selection == 2 &&
+            mn_804A04F0.confirmed_selection == 1)
+        {
+            mn_804A04F0.confirmed_selection = 2;
+        }
+        if (gm_801A4310() == 0x1B && mn_804A04F0.hovered_selection == 1 &&
+            data->x2 != 1 && mn_804A04F0.confirmed_selection == limits[0])
+        {
+            mn_804A04F0.confirmed_selection = limits[0] + 1;
+        }
+        if (mn_804A04F0.hovered_selection == 2) {
+            gmMainLib_8015EA80();
+            mnCharSel_80264070();
+        }
+    }
+}
 
 void mn_8022FB88(u8 arg0, void* arg1)
 {
