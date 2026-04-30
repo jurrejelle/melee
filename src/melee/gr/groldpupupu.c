@@ -1,5 +1,7 @@
 #include "groldpupupu.h"
 
+#include "placeholder.h"
+
 #include "baselib/forward.h"
 
 #include "cm/camera.h"
@@ -147,6 +149,15 @@ bool grOldPupupu_802108AC(void)
 {
     return false;
 }
+#pragma push
+#pragma dont_inline on
+HSD_GObj* grOldPupupu_802108B4_noinline(int arg0);
+HSD_GObj* grOldPupupu_802108B4_noinline(int arg0)
+{
+    return grOldPupupu_802108B4(arg0);
+}
+#pragma dont_inline reset
+#pragma pop
 
 HSD_GObj* grOldPupupu_802108B4(int arg0)
 {
@@ -322,7 +333,8 @@ void grOldPupupu_80210D10(Ground_GObj* gobj)
     s32 i;
     s32 index;
 
-    gp = gobj->user_data;
+    PAD_STACK(0x10);
+    gp = GET_GROUND(gobj);
     timer = gp->gv.oldpupupu2.xC4;
     gp->gv.oldpupupu2.xC4 = timer - 1;
     if (timer < 0) {
@@ -351,7 +363,7 @@ void grOldPupupu_80210D10(Ground_GObj* gobj)
             (((f32) grOp_804D6A98->x4 * ((2.0F * HSD_Randf()) - 1.0F)) +
              20.0F);
         for (i = 0; i < count; i++) {
-            spawn = grOldPupupu_802108B4(2);
+            spawn = grOldPupupu_802108B4_noinline(2);
             if (spawn != NULL) {
                 jobj = spawn->hsd_obj;
                 HSD_ASSERT(0x216, jobj);
