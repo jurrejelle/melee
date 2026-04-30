@@ -79,7 +79,74 @@ static void mnStageSw_8023593C(HSD_GObj* gobj)
 
 /// #mnStageSw_802359C8
 
-/// #mnStageSw_80235C58
+static s32 mnStageSw_80235C58(u8 arg0)
+{
+    s32 found;
+    s32 i;
+    s32 low;
+    s32 high;
+    u8 curr;
+    u8 next;
+    u8 start;
+    u8 end;
+
+    if (arg0 < 15) {
+        low = 0;
+        high = 14;
+    } else {
+        low = 15;
+        high = 28;
+    }
+    if (arg0 < 15) {
+        start = 0;
+        end = 14;
+    } else {
+        start = 15;
+        end = 28;
+    }
+    curr = start;
+    while (true) {
+        if ((s32) curr > (s32) end) {
+            found = 1;
+            break;
+        }
+        if (gm_80164430(gm_801641CC(mnStageSw_803ED4C4[curr])) != 0) {
+            found = 0;
+            break;
+        }
+        curr++;
+    }
+    if (found != 0) {
+        return -1;
+    }
+
+    if (arg0 < NUM_STAGES &&
+        gm_80164430(gm_801641CC(mnStageSw_803ED4C4[arg0])) != 0)
+    {
+        return arg0;
+    }
+
+    i = 1;
+    next = arg0 + 1;
+    curr = arg0 + 1;
+    while (true) {
+        s32 prev = arg0 - i;
+
+        if (low <= prev &&
+            gm_80164430(gm_801641CC(mnStageSw_803ED4C4[prev])) != 0)
+        {
+            return prev;
+        }
+        if ((s32) next <= high &&
+            gm_80164430(gm_801641CC(mnStageSw_803ED4C4[curr])) != 0)
+        {
+            return arg0 + i;
+        }
+        next++;
+        curr++;
+        i++;
+    }
+}
 
 /// #mnStageSw_80235DC8
 
