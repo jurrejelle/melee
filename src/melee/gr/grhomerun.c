@@ -482,7 +482,7 @@ void grHomeRun_8021ED74(void)
 }
 
 void grHomeRun_8021EDD4(int arg0)
-{    
+{
     f32 scale;
     f32 max_dist;
     f32 ratio;
