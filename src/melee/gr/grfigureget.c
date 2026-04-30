@@ -6,7 +6,6 @@
 #include "gr/forward.h"
 
 #include "gr/granime.h"
-#include "gr/grdisplay.h"
 #include "gr/ground.h"
 #include "gr/stage.h"
 #include "gr/grzakogenerator.h"
@@ -23,6 +22,8 @@
 
 #include "lb/forward.h"
 
+#include "lb/lb_00B0.h"
+#include "lb/lb_00F9.h"
 #include "lb/types.h"
 
 #include "mp/forward.h"
