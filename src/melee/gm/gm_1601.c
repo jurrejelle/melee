@@ -2141,13 +2141,14 @@ MatchEnd* fn_80165D60(MatchEnd* arg0)
 void fn_80165E7C(MatchEnd* arg0)
 {
     s32 i;
+    int new_var;
 
     for (i = 0; i < 6; i++) {
         if ((u8) arg0->player_standings[i].slot_type != 3) {
             u8 team = arg0->player_standings[i].team;
 
             if (gm_801A4310() == MJ_STAMINA_VS || arg0->x5 == 1) {
-                int player_score = arg0->player_standings[i].score;
+                int player_score = new_var = arg0->player_standings[i].score;
 
                 if (player_score < 0) {
                     int team_score = arg0->team_standings[team].score;

@@ -126,9 +126,9 @@ void it_8029FDDC(HSD_GObj* gobj, int arg1)
 
 void it_8029FE64(Item_GObj* gobj, s32 i)
 {
+    Item* ip;
     HSD_JObj* jobj;
     s32 idx;
-    Item* ip;
     Vec3* v;
     PAD_STACK(32);
 
@@ -241,15 +241,13 @@ static void loop_lb_8000BA0C(Item* ip, HSD_JObj* hobj, f32 arg1)
 void it_802A0534(Item_GObj* gobj, Vec3* arg1, f32 angle)
 {
     Quaternion quad;
-    Item* ip;
-    HSD_JObj* jobj;
+    Item* ip = gobj->user_data;
+    HSD_JObj* jobj = gobj->hsd_obj;
     HSD_JObj* child;
-    itLinkBoomerangAttributes* attrs;
+    itLinkBoomerangAttributes* attrs =
+        ip->xC4_article_data->x4_specialAttributes;
     PAD_STACK(12);
 
-    ip = gobj->user_data;
-    jobj = gobj->hsd_obj;
-    attrs = ip->xC4_article_data->x4_specialAttributes;
     child = HSD_JObjGetChild(jobj);
 
     if (ftLk_SpecialHi_GetFv4(ip->xDD4_itemVar.linkboomerang.xF98) != 0) {
@@ -469,10 +467,11 @@ void itLinkboomerang_UnkMotion1_Phys(Item_GObj* gobj)
     f32 var_f31;
     itLinkBoomerangAttributes* attrs;
 
-    ip = gobj->user_data;
+    ip = GET_ITEM(gobj);
     attrs = ip->xC4_article_data->x4_specialAttributes;
     if (ip->xDD4_itemVar.linkboomerang.xDE8 != 1) {
         var_f31 = attrs->xC;
+        attrs->xC = attrs->xC;
         var_f31 = VEC_XY_LENGTH(&ip->x40_vel) - var_f31;
         if (var_f31 < attrs->x18) {
             var_f31 = attrs->x18;
@@ -497,7 +496,7 @@ void it_802A10E4(Item_GObj* gobj)
     Item* ip;
     itLinkBoomerangAttributes* attrs;
     Quaternion quat;
-    PAD_STACK(8);
+    PAD_STACK(12);
 
     hobj = gobj->hsd_obj;
     ip = gobj->user_data;
@@ -515,16 +514,18 @@ bool itLinkboomerang_UnkMotion2_Anim(Item_GObj* gobj)
     return it_802A0C34(gobj);
 }
 
-/// NOTE: identical to itLinkboomerang_UnkMotion1_Phys
 void itLinkboomerang_UnkMotion2_Phys(Item_GObj* gobj)
 {
-    Item* ip = gobj->user_data;
+    Item* ip;
     f32 angle;
     f32 var_f31;
-    itLinkBoomerangAttributes* attrs =
-        ip->xC4_article_data->x4_specialAttributes;
+    itLinkBoomerangAttributes* attrs;
+
+    ip = GET_ITEM(gobj);
+    attrs = ip->xC4_article_data->x4_specialAttributes;
     if (ip->xDD4_itemVar.linkboomerang.xDE8 != 1) {
         var_f31 = attrs->xC;
+        attrs->xC = attrs->xC;
         var_f31 = VEC_XY_LENGTH(&ip->x40_vel) - var_f31;
         if (var_f31 < attrs->x18) {
             var_f31 = attrs->x18;

@@ -584,10 +584,10 @@ void grOldKongo_80210058(Ground_GObj* arg) {}
 
 void grOldKongo_8021005C(Ground_GObj* gobj)
 {
-   Ground *gp = gobj->user_data;
-   HSD_JObj *jobj = (HSD_JObj *) HSD_GObjGetHSDObj(gobj);
-   HSD_JObjSetFlagsAll(jobj, 0x10);
-   gp->gv.unk.xC4 = rand_range(grOk_804D6A90->x2, grOk_804D6A90->x0);
+    Ground* gp = gobj->user_data;
+    HSD_JObj* jobj = GET_JOBJ(gobj);
+    HSD_JObjSetFlagsAll(jobj, 0x10);
+    gp->gv.unk.xC4 = rand_range(grOk_804D6A90->x2, grOk_804D6A90->x0);
 }
 
 bool grOldKongo_802100F4(Ground_GObj* gobj)
