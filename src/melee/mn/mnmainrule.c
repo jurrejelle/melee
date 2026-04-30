@@ -43,6 +43,16 @@ struct mn_803EC818_t {
     u8 pad_1[4];
 };
 
+struct mn_8022FB88_arg1_t {
+    u8 pad_0[0x58];
+    HSD_JObj* x58[7];
+};
+
+typedef union {
+    s32 packed;
+    u8 idx[4];
+} JObjIndices;
+
 AnimLoopSettings mn_803EC734[5] = {
     { 0.0f, 3.0f, -0.1f },
     { 20.0f, 23.0f, -0.1f },
@@ -63,9 +73,68 @@ AnimLoopSettings mn_803EC770[9] = {
     { 50.0f, 69.0f, -0.1f },
 };
 
+extern f32 mn_804D4B90;
+extern f32 mn_804D6BD8;
+extern s32 mn_804DBDFC;
+extern f32 mn_804DBE00;
+
 /// #fn_8022F538
 
-/// #mn_8022FB88
+void mn_8022FB88(u8 arg0, void* arg1)
+{
+    struct mn_8022FB88_arg1_t* data = arg1;
+    s32 sp10;
+    s32 sp14;
+    HSD_JObj* temp_r27;
+    HSD_JObj* temp_r28;
+    HSD_JObj* temp_r29;
+    HSD_JObj* temp_r29_2;
+    HSD_JObj* temp_r29_3;
+    HSD_JObj* temp_r31;
+    s32 var_r27;
+    s32 var_r28;
+    u8* var_r29;
+    u8* var_r29_2;
+    HSD_JObj** temp_r27_2;
+
+    sp14 = mn_804DBDFC;
+    if (arg0 == 0) {
+        var_r27 = 0;
+        var_r29 = (u8*) &sp14;
+        do {
+            HSD_JObjSetFlagsAll(data->x58[*var_r29], 0x10U);
+            var_r27 += 1;
+            var_r29 += 1;
+        } while (var_r27 < 4);
+        temp_r27 = data->x58[4];
+        HSD_JObjReqAnimAll(temp_r27, mn_804D4B90);
+        HSD_JObjAnimAll(temp_r27);
+        return;
+    }
+    var_r28 = 0;
+    var_r29_2 = (u8*) &sp14;
+    do {
+        HSD_JObjClearFlagsAll(data->x58[*var_r29_2], 0x10U);
+        var_r28 += 1;
+        var_r29_2 += 1;
+    } while (var_r28 < 4);
+    temp_r28 = data->x58[4];
+    HSD_JObjReqAnimAll(temp_r28, mn_804D6BD8);
+    HSD_JObjAnimAll(temp_r28);
+    temp_r27_2 = data->x58;
+    temp_r31 = data->x58[2];
+    HSD_JObjReqAnimAll(temp_r31, (f32) (u8) (arg0 / 10));
+    HSD_JObjAnimAll(temp_r31);
+    temp_r29 = temp_r27_2[3];
+    HSD_JObjReqAnimAll(temp_r29, (f32) (u8) (arg0 % 10));
+    HSD_JObjAnimAll(temp_r29);
+    temp_r29_2 = temp_r27_2[5];
+    HSD_JObjReqAnimAll(temp_r29_2, mn_804DBE00);
+    HSD_JObjAnimAll(temp_r29_2);
+    temp_r29_3 = temp_r27_2[6];
+    HSD_JObjReqAnimAll(temp_r29_3, mn_804DBE00);
+    HSD_JObjAnimAll(temp_r29_3);
+}
 
 /// #mn_8022FD18
 
