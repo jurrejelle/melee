@@ -165,7 +165,7 @@ void mnSoundTest_8024A958(Soundtest_GObj* arg0)
     HSD_Text* temp_r3_4;
     soundtest_user_data* temp_r30;
 
-    PAD_STACK(8);
+    PAD_STACK(4);
 
     temp_r30 = arg0->user_data;
     temp_r3 = temp_r30->unk14;
@@ -453,6 +453,61 @@ void fn_8024B7E4(HSD_GObj* arg0)
     mn_8022EFD8(sp18, &temp_r31[1]);
     if (temp_f31 == temp_r31[1].end_frame) {
         HSD_GObjPLink_80390228(arg0);
+    }
+}
+
+void fn_8024BAF0(HSD_GObj* arg0)
+{
+    HSD_JObj* sp1C;
+    HSD_JObj* sp18;
+    HSD_JObj* sp14;
+    HSD_GObjProc* proc;
+    HSD_GObjProc* proc2;
+    HSD_JObj* jobj;
+    soundtest_user_data* user_data;
+    HSD_Text* text;
+    f32 temp_f31;
+
+    PAD_STACK(8);
+
+    jobj = GET_JOBJ(arg0);
+    (lb_80011E24(jobj, &sp1C, 0xB, -1), lb_80011E24(jobj, &sp18, 2, -1),
+     lb_80011E24(jobj, &sp14, 1, -1));
+    if ((u8) mn_804A04F0.cur_menu != 0x1B) {
+        HSD_GObjProc_8038FE24(HSD_GObj_804D7838);
+        proc = HSD_GObj_SetupProc(arg0, fn_8024B7E4, 0U);
+        proc->flags_3 = HSD_GObj_804D783C;
+        user_data = arg0->user_data;
+        if (user_data->unk10 != NULL) {
+            HSD_SisLib_803A5CC4(user_data->unk10);
+            user_data->unk10 = NULL;
+        }
+        if (user_data->unk14 != NULL) {
+            HSD_SisLib_803A5CC4(user_data->unk14);
+            user_data->unk14 = NULL;
+        }
+        text = user_data->unk18;
+        if (text != NULL) {
+            HSD_SisLib_803A5CC4(text);
+            user_data->unk18 = NULL;
+        }
+        text = user_data->unk1C;
+        if (text != NULL) {
+            HSD_SisLib_803A5CC4(text);
+            user_data->unk1C = NULL;
+        }
+    } else {
+        temp_f31 = mn_8022EE84(sp1C, &mnSoundTest_803EF0A8[0], MOBJ_MASK);
+        mn_8022EE84(sp18, &mnSoundTest_803EF0A8[0], MOBJ_MASK);
+        mn_8022EFD8(sp14, &mnSoundTest_803EF0A8[0]);
+        if (temp_f31 == mnSoundTest_803EF0A8[0].end_frame) {
+            HSD_GObjProc_8038FE24(HSD_GObj_804D7838);
+            proc2 = HSD_GObj_SetupProc(arg0, (void (*)(HSD_GObj*)) fn_8024B8B4,
+                                      0U);
+            proc2->flags_3 = HSD_GObj_804D783C;
+            mnSoundTest_8024A958((Soundtest_GObj*) arg0);
+            mnSoundTest_804D6C44 = 0;
+        }
     }
 }
 
