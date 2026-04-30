@@ -1430,7 +1430,6 @@ static void fn_801D7700(Ground* gp, s32 arg1, CollData* cd, s32 arg3,
 
     if (type == 1 || type == 3) {
         if (arg4 == mpLib_GroundEnum_Unk1) {
-
             mpVtxGetPos(0x1D, &x1, &y1);
             mpVtxGetPos(0x1A, &x2, &y2);
 

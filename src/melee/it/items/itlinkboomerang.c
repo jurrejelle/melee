@@ -244,7 +244,8 @@ void it_802A0534(Item_GObj* gobj, Vec3* arg1, f32 angle)
     Item* ip = gobj->user_data;
     HSD_JObj* jobj = gobj->hsd_obj;
     HSD_JObj* child;
-    itLinkBoomerangAttributes* attrs = ip->xC4_article_data->x4_specialAttributes;
+    itLinkBoomerangAttributes* attrs =
+        ip->xC4_article_data->x4_specialAttributes;
     PAD_STACK(12);
 
     child = HSD_JObjGetChild(jobj);

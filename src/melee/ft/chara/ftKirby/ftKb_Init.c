@@ -3765,7 +3765,7 @@ void ftKb_SpecialN_800F07C0(Fighter_GObj* gobj)
 void ftKb_SpecialN_800F081C(Fighter_GObj* gobj)
 {
     if (((Fighter*) HSD_GObjGetUserData(gobj))->fv.kb.hat.jobj == NULL) {
-        Fighter *fp = HSD_GObjGetUserData(gobj);
+        Fighter* fp = HSD_GObjGetUserData(gobj);
         KirbyHatStruct** hats = ft_80459B88.hats;
         KirbyHatStruct* hat = hats[FTKIND_LUIGI];
         fp->fv.kb.hat.x14.data = HSD_ObjAlloc(&fighter_x2040_alloc_data);

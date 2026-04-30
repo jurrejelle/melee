@@ -347,12 +347,11 @@ static inline s32 randi_between(s32 min, s32 max)
 }
 
 // For some reason, the normal GET_GROUND didn't work here
-inline Ground* grOldYoshi_8020EFCC_inline(Ground_GObj *arg0);
-inline Ground* grOldYoshi_8020EFCC_inline(Ground_GObj *arg0)
+inline Ground* grOldYoshi_8020EFCC_inline(Ground_GObj* arg0);
+inline Ground* grOldYoshi_8020EFCC_inline(Ground_GObj* arg0)
 {
-  return arg0->user_data;
+    return arg0->user_data;
 }
-
 
 void grOldYoshi_8020EFCC(Ground_GObj* arg)
 {
