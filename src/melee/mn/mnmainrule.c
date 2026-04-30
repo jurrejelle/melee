@@ -37,6 +37,26 @@ extern StaticModelDesc MenMainCursorIs_Top;
 extern StaticModelDesc MenMainConSs_Top;
 extern StaticModelDesc MenMainCursorSs_Top;
 
+AnimLoopSettings mn_803EC734[5] = {
+    { 0.0f, 3.0f, -0.1f },
+    { 20.0f, 23.0f, -0.1f },
+    { 40.0f, 43.0f, -0.1f },
+    { 60.0f, 63.0f, -0.1f },
+    { 80.0f, 83.0f, -0.1f },
+};
+
+AnimLoopSettings mn_803EC770[9] = {
+    { 100.0f, 103.0f, -0.1f },
+    { 120.0f, 123.0f, -0.1f },
+    { 140.0f, 143.0f, -0.1f },
+    { 160.0f, 163.0f, -0.1f },
+    { 180.0f, 183.0f, -0.1f },
+    { 30.0f, 49.0f, -0.1f },
+    { 70.0f, 89.0f, -0.1f },
+    { 90.0f, 109.0f, -0.1f },
+    { 50.0f, 69.0f, -0.1f },
+};
+
 /// #fn_8022F538
 
 /// #mn_8022FB88
@@ -45,7 +65,52 @@ extern StaticModelDesc MenMainCursorSs_Top;
 
 /// #mn_8022FEC8
 
-/// #mn_80230198
+void mn_80230198(HSD_GObj* gobj, HSD_JObj* jobj, u8 arg2)
+{
+    AnimLoopSettings* p734;
+    AnimLoopSettings* settings;
+    AnimLoopSettings* p770;
+    f32 frame;
+    s32 i;
+    s32 option;
+
+    PAD_STACK(8);
+
+    option = arg2;
+
+    if (option != 3) {
+        if (option < 3) {
+            if (option != 1) {
+                if (option < 1 && option < 0) {
+                    return;
+                }
+                goto find;
+            }
+            return;
+        }
+        if (option < 7 && option < 5) {
+        find:
+            frame = mn_8022F298(jobj);
+            p770 = mn_803EC770;
+            p734 = mn_803EC734;
+
+            for (i = 5; i != 0; i--) {
+                settings = p770;
+                if (p770->start_frame <= frame && frame <= p770->end_frame) {
+                    break;
+                }
+                settings = p734;
+                if (p734->start_frame <= frame && frame <= p734->end_frame) {
+                    break;
+                }
+                p770++;
+                p734++;
+            }
+
+            mn_8022ED6C(jobj, settings);
+        }
+    }
+}
 
 /// #mn_80230274
 
