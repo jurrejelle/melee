@@ -1417,21 +1417,28 @@ void fn_801D542C(HSD_GObj* arg0)
 static void fn_801D7700(Ground* gp, s32 arg1, CollData* cd, s32 arg3,
                         mpLib_GroundEnum arg4, float arg8)
 {
+    s32 idx;
+    s32 idx2;
+    f32 ratio;
     Vec3* cur = &cd->cur_pos;
     s32 type = cd->x34_flags.b1234;
-
+    f32 segment_size;
+    f32 x1;
+    f32 y1;
+    f32 x2;
+    f32 y2;
+    
     if (type == 1 || type == 3) {
         if (arg4 == mpLib_GroundEnum_Unk1) {
-            f32 x1, y1, x2, y2;
 
             mpVtxGetPos(0x1D, &x1, &y1);
             mpVtxGetPos(0x1A, &x2, &y2);
 
             {
-                f32 segment_size = (x2 - x1) / 15.0F;
-                f32 ratio = (cur->x - x1) / segment_size;
-                s32 idx = (s32) ratio;
-                s32 idx2 = (s32) ratio;
+                segment_size = (x2 - x1) / 15.0F;
+                ratio = (cur->x - x1) / segment_size;
+                idx2 = (s32) ratio;
+                idx = (s32) ratio;
 
                 if (idx < 0) {
                     idx2 = 0;
