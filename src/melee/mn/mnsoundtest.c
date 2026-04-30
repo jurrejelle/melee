@@ -456,6 +456,72 @@ void fn_8024B7E4(HSD_GObj* arg0)
     }
 }
 
+void fn_8024B8B4(HSD_GObj* arg0, f32 farg0)
+{
+    HSD_JObj* sp20;
+    HSD_JObj* sp1C;
+    HSD_JObj* sp18;
+    HSD_JObj* sp14;
+    HSD_JObj* sp10;
+    HSD_GObjProc* proc;
+    HSD_JObj* jobj;
+    soundtest_user_data* user_data;
+    HSD_Text* text;
+    f32 var_f1;
+
+    var_f1 = farg0;
+    user_data = arg0->user_data;
+    jobj = GET_JOBJ(arg0);
+    if ((u8) mn_804A04F0.cur_menu != 0x1B) {
+        HSD_GObjProc_8038FE24(HSD_GObj_804D7838);
+        proc = HSD_GObj_SetupProc(arg0, fn_8024B7E4, 0U);
+        proc->flags_3 = HSD_GObj_804D783C;
+        text = user_data->unk10;
+        if (text != NULL) {
+            HSD_SisLib_803A5CC4(text);
+            user_data->unk10 = NULL;
+        }
+        text = user_data->unk14;
+        if (text != NULL) {
+            HSD_SisLib_803A5CC4(text);
+            user_data->unk14 = NULL;
+        }
+        text = user_data->unk18;
+        if (text != NULL) {
+            HSD_SisLib_803A5CC4(text);
+            user_data->unk18 = NULL;
+        }
+        text = user_data->unk1C;
+        if (text != NULL) {
+            HSD_SisLib_803A5CC4(text);
+            user_data->unk1C = NULL;
+        }
+        (lb_80011E24(jobj, &sp1C, 0xB, -1), lb_80011E24(jobj, &sp18, 2, -1),
+         lb_80011E24(jobj, &sp14, 1, -1));
+        HSD_JObjReqAnim(sp1C, mnSoundTest_803EF0A8[1].start_frame);
+        HSD_JObjAnim(sp1C);
+        HSD_JObjReqAnim(sp18, mnSoundTest_803EF0A8[1].start_frame);
+        HSD_JObjAnim(sp18);
+        HSD_JObjReqAnim(sp14, mnSoundTest_803EF0A8[1].start_frame);
+        HSD_JObjAnim(sp14);
+        return;
+    }
+    if ((u8) user_data->unk0 == 0) {
+        lb_80011E24(jobj, &sp20, 5, -1);
+        var_f1 = mn_8022EC18(sp20, &mnSoundTest_803EF0A8[2], MOBJ_MASK);
+    }
+    if ((u8) user_data->unk0 != 0) {
+        lb_80011E24(jobj, &sp20, 0xE, -1);
+        var_f1 = mn_8022EC18(sp20, &mnSoundTest_803EF0A8[2], MOBJ_MASK);
+    }
+    if ((u8) user_data->unk2 != 0x50) {
+        lb_80011E24(jobj, &sp10, 4, -1);
+        var_f1 = mn_8022EC18(sp10, &mnSoundTest_803EF0A8[4], MOBJ_MASK);
+    }
+    lb_80011E24(jobj, &sp10, 0xD, -1);
+    mn_8022EC18(sp10, &mnSoundTest_803EF0A8[5], MOBJ_MASK);
+}
+
 void fn_8024BAF0(HSD_GObj* arg0)
 {
     HSD_JObj* sp1C;
