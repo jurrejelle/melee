@@ -241,7 +241,42 @@ void fn_8024FC48(HSD_GObj* gobj)
     }
 }
 
-/// #fn_8024FD40
+void fn_8024FD40(HSD_GObj* gobj)
+{
+    HSD_JObj* jobj;
+    HSD_GObjProc* proc;
+    f32 frame;
+    s32 i;
+    s32* offsets;
+    struct MnDataDelGObjUserData* user_data;
+    struct MnDataDelData* data;
+    PAD_STACK(16);
+
+    jobj = GET_JOBJ(gobj);
+    data = &mnDataDel_803EF870;
+    user_data = gobj->user_data;
+    if ((u8) mn_804A04F0.cur_menu != 0x18) {
+        HSD_GObjProc_8038FE24(HSD_GObj_804D7838);
+        proc = HSD_GObj_SetupProc(gobj, fn_8024FBA4, 0);
+        proc->flags_3 = HSD_GObj_804D783C;
+        HSD_SisLib_803A5CC4(user_data->xC);
+        return;
+    }
+    frame = mn_8022EE84(jobj, &data->x0, (enum _HSD_TypeMask) 0x480);
+    offsets = &data->x3C;
+    i = 0;
+    do {
+        mn_8022EE84(user_data->x10[*offsets], &data->x0,
+                    (enum _HSD_TypeMask) 0x480);
+        offsets++;
+        i++;
+    } while (i < 6);
+    if (frame == data->x0.end_frame) {
+        HSD_GObjProc_8038FE24(HSD_GObj_804D7838);
+        proc = HSD_GObj_SetupProc(gobj, fn_8024FC48, 0);
+        proc->flags_3 = HSD_GObj_804D783C;
+    }
+}
 
 /// #mnDataDel_8024FE4C
 

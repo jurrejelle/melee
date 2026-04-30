@@ -60,6 +60,13 @@ struct MnDataDelData {
     f32 x6C;
 };
 
+struct MnDataDelGObjUserData {
+    /* +00 */ u8 x0;
+    /* +01 */ u8 pad_x1[0xB];
+    /* +0C */ HSD_Text* xC;
+    /* +10 */ HSD_JObj* x10[6];
+};
+
 static inline void JObj_GetChildAtIdx(HSD_JObj* parent, HSD_JObj** child,
                                       s32 idx)
 {

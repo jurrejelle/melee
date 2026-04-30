@@ -1,7 +1,7 @@
 File: src/melee/mn/mndatadel.c
 Funcs:
 - [x] mnDataDel_8024EBC8
-- [ ] fn_8024FD40
+- [x] fn_8024FD40
 - [ ] mnDataDel_8024E940
 - [ ] fn_8024F1D4
 - [ ] mnDataDel_8024EA6C
