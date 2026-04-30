@@ -44,8 +44,12 @@ struct mn_803EC818_t {
 };
 
 struct mn_8022FB88_arg1_t {
-    u8 pad_0[0x58];
-    HSD_JObj* x58[7];
+    u8 pad_0[3];
+    u8 x3;
+    u8 pad_4[5];
+    u8 x9;
+    u8 pad_A[0x58 - 0x0A];
+    HSD_JObj* x58[10];
 };
 
 typedef union {
@@ -77,6 +81,10 @@ extern f32 mn_804D4B90;
 extern f32 mn_804D6BD8;
 extern s32 mn_804DBDFC;
 extern f32 mn_804DBE00;
+extern HSD_GObj* mn_804D6BD0;
+extern u16 mn_804DBE04;
+extern s32 mn_804DBE08;
+extern u8 mn_804DBE0C;
 
 /// #fn_8022F538
 
@@ -137,6 +145,61 @@ void mn_8022FB88(u8 arg0, void* arg1)
 }
 
 /// #mn_8022FD18
+void mn_8022FD18(u8 arg0)
+{
+    u16 sp14;
+    u8 sp10;
+    s32 spC;
+    HSD_JObj* jobj;
+    struct mn_8022FB88_arg1_t* data;
+    s32 i;
+    u8* ptr;
+    u8 val;
+
+    data = mn_804D6BD0->user_data;
+    spC = mn_804DBE08;
+    sp14 = mn_804DBE04;
+    sp10 = mn_804DBE0C;
+    if (arg0 != 0) {
+        i = 0;
+        ptr = (u8*) &sp14;
+        do {
+            HSD_JObjSetFlagsAll(data->x58[*ptr], 0x10U);
+            i++;
+            ptr++;
+        } while (i < 2);
+        i = 0;
+        ptr = (u8*) &spC;
+        do {
+            HSD_JObjClearFlagsAll(data->x58[*ptr], 0x10U);
+            i++;
+            ptr++;
+        } while (i < 5);
+        mn_8022FB88(data->x3, data);
+        return;
+    }
+    i = 0;
+    ptr = (u8*) &sp14;
+    do {
+        HSD_JObjClearFlagsAll(data->x58[*ptr], 0x10U);
+        i++;
+        ptr++;
+    } while (i < 2);
+    i = 0;
+    ptr = (u8*) &spC;
+    do {
+        HSD_JObjSetFlagsAll(data->x58[*ptr], 0x10U);
+        i++;
+        ptr++;
+    } while (i < 5);
+    val = data->x9;
+    jobj = data->x58[7];
+    HSD_JObjReqAnimAll(jobj, (f32) (u8) (data->x9 / 10));
+    HSD_JObjAnimAll(jobj);
+    jobj = data->x58[8];
+    HSD_JObjReqAnimAll(jobj, (f32) (u8) (val % 10));
+    HSD_JObjAnimAll(jobj);
+}
 
 /// #mn_8022FEC8
 
