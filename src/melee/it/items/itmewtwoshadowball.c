@@ -179,6 +179,7 @@ Item_GObj* it_802C519C(Item_GObj* parent, Vec3* pos, s32 kind, s32 max_charge,
         ip->xDD4_itemVar.mewtwoshadowball.x30.y = 0.0f;
         ip->xDD4_itemVar.mewtwoshadowball.x30.x = 0.0f;
         ip->xDD4_itemVar.mewtwoshadowball.x48 = attr->x20;
+        attr->x18 = attr->x18;
         ip->xDD4_itemVar.mewtwoshadowball.x4.x = angle;
         ip->xDD4_itemVar.mewtwoshadowball.x3C = angle;
         {
