@@ -171,6 +171,12 @@ void fn_8024FBA4(HSD_GObj* gobj)
     }
 }
 
+inline HSD_JObj* fn_8024FC48_inline(int arg0);
+inline HSD_JObj* fn_8024FC48_inline(int arg0)
+{
+    return (HSD_JObj*) arg0;
+}
+
 void fn_8024FC48(HSD_GObj* gobj)
 {
     s32 i;
@@ -190,11 +196,11 @@ void fn_8024FC48(HSD_GObj* gobj)
     } else {
         for (i = 0; i < 6; i++) {
             lb_80011E24(
-                (HSD_JObj*) mn_80231634(
+                fn_8024FC48_inline(mn_80231634(
                     *(struct mn_80231634_t**) ((u8*) gobj->user_data +
                                                ((s32*) ((u8*) &data->x3C))[i] *
                                                    4 +
-                                               0x10)),
+                                               0x10))),
                 &jobj, 1, -1);
             if (user_data[0] == i) {
                 mn_8022EC18(jobj, &data->x18, (HSD_TypeMask) 0x400);
