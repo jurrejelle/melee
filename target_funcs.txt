@@ -1,7 +1,7 @@
 File: src/melee/mn/mnmainrule.c
 Funcs:
 - [x] mn_80230198
-- [ ] mn_802307F8
+- [x] mn_802307F8
 - [ ] mn_80230D18
 - [ ] mn_8022FB88
 - [ ] mn_8022FD18

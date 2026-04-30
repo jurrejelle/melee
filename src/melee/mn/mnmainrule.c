@@ -37,6 +37,11 @@ extern StaticModelDesc MenMainCursorIs_Top;
 extern StaticModelDesc MenMainConSs_Top;
 extern StaticModelDesc MenMainCursorSs_Top;
 
+struct mn_803EC818_t {
+    u8 x0;
+    u8 pad_1[4];
+};
+
 AnimLoopSettings mn_803EC734[5] = {
     { 0.0f, 3.0f, -0.1f },
     { 20.0f, 23.0f, -0.1f },
@@ -115,32 +120,35 @@ void mn_80230198(HSD_GObj* gobj, HSD_JObj* jobj, u8 arg2)
 /// #mn_80230274
 
 extern u8 mn_804D4B96;
-extern u8 mn_803EC818[];
+extern struct mn_803EC818_t mn_803EC818[];
+extern f32 mn_804DBE18;
+extern f32 mn_804DBE1C;
+extern f32 mn_804DBE20;
+extern f32 mn_804DBE24;
+extern f32 mn_804DBE28;
+extern f32 mn_804DBE2C;
 
-void mn_802307F8(struct mn_802307F8_t* data, s32 mode, s32 index)
+void mn_802307F8(struct mn_802307F8_t* arg0, s32 arg1, s32 arg2)
 {
-    HSD_Text* text;
+    HSD_Text* temp_r3_2;
+    u8 var_r30;
 
-    if (data->text != NULL) {
-        HSD_SisLib_803A5CC4(data->text);
-        data->text = NULL;
+    if (arg0->text != NULL) {
+        HSD_SisLib_803A5CC4(arg0->text);
+        arg0->text = NULL;
     }
-
-    if (mode == 1 && data->x2 == 1) {
-        index = mn_804D4B96;
-    } else if (mode == 1 || mode == 3 || (u32) (mode - 5) <= 1) {
-        index = mn_803EC818[mode * 5];
+    if ((arg1 == 1) && ((u8) arg0->x2 == 1)) {
+        var_r30 = mn_804D4B96;
+    } else if ((arg1 == 1) || (arg1 == 3) || ((u32) (arg1 - 5) <= 1U)) {
+        var_r30 = mn_803EC818[arg1].x0;
     } else {
-        s32 off = mode * 5;
-        index = mn_803EC818[off + index];
+        var_r30 = *(&mn_803EC818[arg1].x0 + arg2);
     }
-
-    text =
-        HSD_SisLib_803A5ACC(0, 1, -9.5F, 8.0F, 17.0F, 364.68332F, 76.77544F);
-    data->text = text;
-    text->font_size.x = 0.0521F;
-    text->font_size.y = 0.0521F;
-    HSD_SisLib_803A6368(text, (u8) index);
+    temp_r3_2 = HSD_SisLib_803A5ACC(0, 1, mn_804DBE18, mn_804DBE1C,
+                                    mn_804DBE20, mn_804DBE24, mn_804DBE28);
+    arg0->text = temp_r3_2;
+    temp_r3_2->font_size.y = temp_r3_2->font_size.x = mn_804DBE2C;
+    HSD_SisLib_803A6368(temp_r3_2, var_r30);
 }
 
 void mn_802308F0(HSD_GObj* gobj, int arg1, int arg2)
