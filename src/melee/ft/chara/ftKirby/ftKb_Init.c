@@ -4,6 +4,8 @@
 
 #include <placeholder.h>
 
+#include "baselib/forward.h"
+
 #include "cm/camera.h"
 #include "ef/efasync.h"
 #include "ef/eflib.h"
@@ -27,6 +29,7 @@
 #include "ft/ft_0881.h"
 #include "ft/ft_0892.h"
 #include "ft/ft_0C31.h"
+#include "ft/ftanim.h"
 #include "ft/ftcamera.h"
 #include "ft/ftcliffcommon.h"
 #include "ft/ftcolanim.h"
@@ -34,7 +37,6 @@
 #include "ft/ftcommon.h"
 #include "ft/ftdata.h"
 #include "ft/ftdynamics.h"
-#include "ft/ftanim.h"
 #include "ft/ftparts.h"
 #include "ft/ftwalkcommon.h"
 #include "ft/inlines.h"
@@ -3788,7 +3790,7 @@ void ftKb_SpecialN_800F08D4(Fighter_GObj* gobj)
 void ftKb_SpecialN_800F0938(Fighter_GObj* gobj)
 {
     if (GET_FIGHTER(gobj)->fv.kb.hat.jobj == NULL) {
-        Fighter* fp = GET_FIGHTER(gobj);
+        Fighter* fp = HSD_GObjGetUserData(gobj);
         KirbyHatStruct** hats = ft_80459B88.hats;
         KirbyHatStruct* hat = hats[FTKIND_MARS];
         fp->fv.kb.hat.x14.data = HSD_ObjAlloc(&fighter_x2040_alloc_data);
@@ -3813,7 +3815,7 @@ void ftKb_SpecialN_800F09F0(Fighter_GObj* gobj)
 void ftKb_SpecialN_800F0A54(Fighter_GObj* gobj)
 {
     if (GET_FIGHTER(gobj)->fv.kb.hat.jobj == NULL) {
-        Fighter* fp = GET_FIGHTER(gobj);
+        Fighter* fp = HSD_GObjGetUserData(gobj);
         KirbyHatStruct** hats = ft_80459B88.hats;
         KirbyHatStruct* hat = hats[FTKIND_ZELDA];
         fp->fv.kb.hat.x14.data = HSD_ObjAlloc(&fighter_x2040_alloc_data);
@@ -3860,7 +3862,7 @@ void ftKb_SpecialN_800F0C20(Fighter_GObj* gobj)
 void ftKb_SpecialN_800F0C7C(Fighter_GObj* gobj)
 {
     if (GET_FIGHTER(gobj)->fv.kb.hat.jobj == NULL) {
-        Fighter* fp = GET_FIGHTER(gobj);
+        Fighter* fp = HSD_GObjGetUserData(gobj);
         KirbyHatStruct** hats = ft_80459B88.hats;
         KirbyHatStruct* hat = hats[FTKIND_FALCO];
         fp->fv.kb.hat.x14.data = HSD_ObjAlloc(&fighter_x2040_alloc_data);
@@ -3907,7 +3909,7 @@ void ftKb_SpecialN_800F0E48(Fighter_GObj* gobj)
 void ftKb_SpecialN_800F0EA4(Fighter_GObj* gobj)
 {
     if (GET_FIGHTER(gobj)->fv.kb.hat.jobj == NULL) {
-        Fighter* fp = GET_FIGHTER(gobj);
+        Fighter* fp = HSD_GObjGetUserData(gobj);
         KirbyHatStruct** hats = ft_80459B88.hats;
         KirbyHatStruct* hat = hats[FTKIND_GANON];
         fp->fv.kb.hat.x14.data = HSD_ObjAlloc(&fighter_x2040_alloc_data);
