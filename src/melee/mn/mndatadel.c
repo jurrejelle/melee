@@ -12,6 +12,7 @@
 #include "baselib/jobj.h"
 #include "gm/gm_1601.h"
 #include "gm/gm_16F1.h"
+#include "gm/gm_1A3F.h"
 #include "gm/gmmain_lib.h"
 #include "lb/lb_00F9.h"
 #include "lb/lbaudio_ax.h"
@@ -64,7 +65,55 @@ void mnDataDel_8024E940(void)
     lb_8001CE00();
 }
 
-/// #mnDataDel_8024EA6C
+void mnDataDel_8024EA6C(void)
+{
+    HSD_JObj* sp18;
+    f32 temp_f31;
+    f32 temp_f30;
+    s32 temp_r0;
+    s32 temp_r30;
+    s32* var_r30;
+    struct MnDataDelGObjUserData* temp_r31;
+    s32 temp_ret;
+    s32 var_r29;
+    PAD_STACK(24);
+
+    var_r29 = 0;
+    var_r30 = &mnDataDel_803EF870.x3C;
+    temp_f30 = 1.0f;
+    temp_r31 = mnDataDel_804D6C68->user_data;
+    do {
+        temp_ret = mn_80231634(
+            ((struct MnDataDelGObjUserData*) mnDataDel_804D6C68->user_data)
+                ->x10[*var_r30]);
+        lb_80011E24((HSD_JObj*) temp_ret, &sp18, 1, -1);
+        temp_f31 = mn_8022F298(sp18);
+        HSD_JObjReqAnimAll(sp18, temp_f30);
+        mn_8022F3D8(sp18, 0xFFU, MOBJ_MASK);
+        HSD_JObjAnimAll(sp18);
+        HSD_JObjReqAnimAll(sp18, temp_f31);
+        mn_8022F3D8(sp18, 0xFFU, (enum _HSD_TypeMask) 0x480);
+        HSD_JObjAnimAll(sp18);
+        temp_r0 = var_r29 + 3;
+        var_r29 += 1;
+        *((u8*) temp_r31 + temp_r0) = 1;
+        var_r30 += 1;
+    } while (var_r29 < 6);
+
+    temp_r30 = lbLang_GetSavedLanguage();
+    gmMainLib_8015FBA4();
+    gm_801A3EF4();
+    if (temp_r30 == lbLang_GetSavedLanguage()) {
+        lbAudioAx_800237A8(0xBF, 0x7F, 0x40);
+    } else {
+        lbLang_SetSavedLanguage(temp_r30);
+        lbAudioAx_80027AB0(0xBF);
+    }
+    gm_801603B0();
+    gmMainLib_8015F588((s32) gmMainLib_8015F4E8());
+    gm_801729EC();
+    lb_8001CE00();
+}
 
 void mnDataDel_8024EBC8(HSD_JObj* arg0, u8 unused, u8 arg1, u8 arg2)
 {
