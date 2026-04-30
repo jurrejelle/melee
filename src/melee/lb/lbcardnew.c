@@ -33,6 +33,12 @@ int lb_80019BB8(int card_result)
     }
 }
 
+struct CardTask* lb_80019C38_noinline(void);
+struct CardTask* lb_80019C38_noinline(void)
+{
+    return lb_80019C38();
+}
+
 struct CardTask* lb_80019C38(void)
 {
     int i;
@@ -762,13 +768,25 @@ int lb_8001BB48(int chan, char* filename, void* file_entries, void* save_data,
                 UNK_T status_out)
 {
     int new_var;
+    struct CardTask* task;
     lb_80019EF0(chan, save_data, status_out, 0);
-    setup_task(0, 0x10000);
+
+    task = lb_80019C38_noinline();
+    task->x0 = 0;
+    task->x4 = 0x10000;
     new_var = 0x20;
-    setup_task(1, 0x201);
+    task = lb_80019C38_noinline();
+    task->x0 = 1;
+    task->x4 = 0x201;
     lb_8001A4CC_dontinline(filename, file_entries);
-    setup_task(3, -1);
-    memcpy(setup_task(7, 0x10)->x10, filename, new_var);
+    task = lb_80019C38_noinline();
+    task->x0 = 3;
+    task->x4 = -1;
+
+    task = lb_80019C38_noinline();
+    task->x0 = 7;
+    task->x4 = 0x10;
+    memcpy(task->x10, filename, new_var);
     lb_80432A68.unk_14 = write_buf;
     lb_80432A68.unk_18 = write_offset;
     lb_80432A68.unk_1C = write_len;
