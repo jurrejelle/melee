@@ -162,7 +162,7 @@ void grOldKongo_80210058(Ground_GObj* arg) {}
 
 void grOldKongo_8021005C(Ground_GObj* gobj)
 {
-    Ground* gp = GET_GROUND(gobj);
+    Ground* gp = gobj->user_data;
     HSD_JObj* jobj = GET_JOBJ(gobj);
     HSD_JObjSetFlagsAll(jobj, 0x10);
     gp->gv.unk.xC4 =

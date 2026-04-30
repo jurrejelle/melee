@@ -89,6 +89,7 @@ bool it_802C4F50(Item_GObj* gobj, CollData* cd)
 HSD_GObj* it_802C5000(Item_GObj* parent, Vec3* pos, s32 bone, s32 kind,
                       float facing_dir)
 {
+    f32 new_var;
     SpawnItem spawn;
     Item_GObj* item_gobj;
 
@@ -122,7 +123,8 @@ HSD_GObj* it_802C5000(Item_GObj* parent, Vec3* pos, s32 bone, s32 kind,
         ip->xDD4_itemVar.mewtwoshadowball.x30.x = 0.0f;
         ip->xDD4_itemVar.mewtwoshadowball.x48 = attr->x20;
         ip->xDD4_itemVar.mewtwoshadowball.x3C = (M_TAU * HSD_Randf());
-        ip->xDD4_itemVar.mewtwoshadowball.x40 = 2.5f + (HSD_Randf() - 0.5f);
+        new_var = HSD_Randf();
+        ip->xDD4_itemVar.mewtwoshadowball.x40 = 2.5f + (new_var - 0.5f);
         ip->xDD4_itemVar.mewtwoshadowball.x44 =
             -ip->xDD4_itemVar.mewtwoshadowball.x40 /
             (0.5f * ip->xDD4_itemVar.mewtwoshadowball.x48);
@@ -177,6 +179,7 @@ Item_GObj* it_802C519C(Item_GObj* parent, Vec3* pos, s32 kind, s32 max_charge,
         ip->xDD4_itemVar.mewtwoshadowball.x30.y = 0.0f;
         ip->xDD4_itemVar.mewtwoshadowball.x30.x = 0.0f;
         ip->xDD4_itemVar.mewtwoshadowball.x48 = attr->x20;
+        attr->x18 = attr->x18;
         ip->xDD4_itemVar.mewtwoshadowball.x4.x = angle;
         ip->xDD4_itemVar.mewtwoshadowball.x3C = angle;
         {

@@ -432,6 +432,7 @@ enum_t it_802BBD64(ItemLink* link, Vec3* arg1, itSeakChain_Attrs* sa)
 
     it_802A4420(link);
     temp_r29 = it_802BB938(cur, 1, sa->x4) & 0xFFF;
+    cur->pos.z = cur->pos.z;
     while (prev != NULL) {
         if (prev->x2C_b0) {
             if (it_802A3C98(&prev->pos, &cur->pos, &vec) > sa->x4) {

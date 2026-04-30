@@ -466,10 +466,11 @@ void itLinkboomerang_UnkMotion1_Phys(Item_GObj* gobj)
     f32 var_f31;
     itLinkBoomerangAttributes* attrs;
 
-    ip = gobj->user_data;
+    ip = GET_ITEM(gobj);
     attrs = ip->xC4_article_data->x4_specialAttributes;
     if (ip->xDD4_itemVar.linkboomerang.xDE8 != 1) {
         var_f31 = attrs->xC;
+        attrs->xC = attrs->xC;
         var_f31 = VEC_XY_LENGTH(&ip->x40_vel) - var_f31;
         if (var_f31 < attrs->x18) {
             var_f31 = attrs->x18;
@@ -512,16 +513,18 @@ bool itLinkboomerang_UnkMotion2_Anim(Item_GObj* gobj)
     return it_802A0C34(gobj);
 }
 
-/// NOTE: identical to itLinkboomerang_UnkMotion1_Phys
 void itLinkboomerang_UnkMotion2_Phys(Item_GObj* gobj)
 {
-    Item* ip = gobj->user_data;
+    Item* ip;
     f32 angle;
     f32 var_f31;
-    itLinkBoomerangAttributes* attrs =
-        ip->xC4_article_data->x4_specialAttributes;
+    itLinkBoomerangAttributes* attrs;
+
+    ip = GET_ITEM(gobj);
+    attrs = ip->xC4_article_data->x4_specialAttributes;
     if (ip->xDD4_itemVar.linkboomerang.xDE8 != 1) {
         var_f31 = attrs->xC;
+        attrs->xC = attrs->xC;
         var_f31 = VEC_XY_LENGTH(&ip->x40_vel) - var_f31;
         if (var_f31 < attrs->x18) {
             var_f31 = attrs->x18;
