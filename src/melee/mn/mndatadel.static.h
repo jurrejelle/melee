@@ -72,7 +72,7 @@ struct MnDataDelGObjUserData {
     /* +08 */ u8 x8;
     /* +09 */ u8 pad_x9[3];
     /* +0C */ HSD_Text* xC;
-    /* +10 */ void* x10[7];
+    /* +10 */ HSD_JObj* x10[8];
 };
 
 static inline void JObj_GetChildAtIdx(HSD_JObj* parent, HSD_JObj** child,

@@ -9,7 +9,10 @@
 #include "baselib/gobjobject.h"
 #include "baselib/gobjplink.h"
 #include "baselib/gobjproc.h"
+#include "baselib/gobjuserdata.h"
 #include "baselib/jobj.h"
+#include "baselib/memory.h"
+#include "sysdolphin/baselib/debug.h"
 #include "gm/gm_1601.h"
 #include "gm/gm_16F1.h"
 #include "gm/gm_1A3F.h"
@@ -36,7 +39,7 @@ void mnDataDel_8024E940(void)
 
     temp_r31 = mnDataDel_804D6C68->user_data;
     data = &mnDataDel_803EF870.x3C;
-    temp_ret = mn_80231634(temp_r31->x10[data[1]]);
+    temp_ret = mn_80231634((struct mn_80231634_t*) temp_r31->x10[data[1]]);
     lb_80011E24((HSD_JObj*) temp_ret, &sp18, 1, -1);
     temp_f31 = mn_8022F298(sp18);
     HSD_JObjReqAnimAll(sp18, 1.0f);
@@ -85,8 +88,9 @@ void mnDataDel_8024EA6C(void)
     temp_r31 = mnDataDel_804D6C68->user_data;
     do {
         temp_ret = mn_80231634(
-            ((struct MnDataDelGObjUserData*) mnDataDel_804D6C68->user_data)
-                ->x10[*var_r30]);
+            (struct mn_80231634_t*)
+                ((struct MnDataDelGObjUserData*) mnDataDel_804D6C68->user_data)
+                    ->x10[*var_r30]);
         lb_80011E24((HSD_JObj*) temp_ret, &sp18, 1, -1);
         temp_f31 = mn_8022F298(sp18);
         HSD_JObjReqAnimAll(sp18, temp_f30);
@@ -417,7 +421,87 @@ void fn_8024FD40(HSD_GObj* gobj)
     }
 }
 
-/// #mnDataDel_8024FE4C
+void mnDataDel_8024FE4C(u8 arg0)
+{
+    HSD_JObj* child;
+    HSD_GObj* gobj;
+    HSD_GObjProc* proc;
+    HSD_JObj* root;
+    HSD_JObj* joint;
+    HSD_Text* text;
+    f32 frame;
+    s32 enabled;
+    s32 i;
+    s32* offsets;
+    u16 sis_id;
+    u8 is_enabled;
+    struct MnDataDelGObjUserData* user_data;
+
+    gobj = GObj_Create(6U, 7U, 0x80U);
+    mnDataDel_804D6C68 = gobj;
+    root = HSD_JObjLoadJoint(mnDataDel_804A0918.joint);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, root);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 4U, 0x80U);
+    HSD_JObjAddAnimAll(root, mnDataDel_804A0918.animjoint,
+                       mnDataDel_804A0918.matanim_joint,
+                       mnDataDel_804A0918.shapeanim_joint);
+    HSD_JObjReqAnimAll(root, 0.0f);
+    HSD_JObjAnimAll(root);
+    user_data = HSD_MemAlloc(0x30);
+    HSD_ASSERTREPORT(0x402, user_data, "Can't get user_data.\n");
+    user_data->x0 = arg0;
+    user_data->x1 = 0;
+    user_data->x2 = 0;
+    user_data->x3 = 0;
+    user_data->x4 = 0;
+    user_data->x5 = 0;
+    user_data->x6 = 0;
+    user_data->x7 = 0;
+    user_data->x8 = 0;
+    user_data->xC = NULL;
+    GObj_InitUserData(gobj, 0U, HSD_Free, user_data);
+    for (i = 0; i < 8; i++) {
+        lb_80011E24(root, &user_data->x10[i], i, -1);
+    }
+    proc = HSD_GObj_SetupProc(gobj, fn_8024FD40, 0U);
+    proc->flags_3 = HSD_GObj_804D783C;
+    offsets = &mnDataDel_803EF870.x3C;
+    for (i = 0; i < 6; i++) {
+        joint = HSD_JObjLoadJoint(mnDataDel_804A0928.joint);
+        HSD_JObjAddAnimAll(joint, mnDataDel_804A0928.animjoint,
+                           mnDataDel_804A0928.matanim_joint,
+                           mnDataDel_804A0928.shapeanim_joint);
+        HSD_JObjReqAnimAll(joint, (f32) i);
+        HSD_JObjAnimAll(joint);
+        HSD_JObjAddChild(user_data->x10[*offsets], joint);
+        mnDataDel_8024EBC8(joint, i, user_data->x0 == i, 1U);
+        is_enabled = ((u8*) &user_data->x3)[i];
+        lb_80011E24(joint, &child, 1, -1);
+        frame = mn_8022F298(child);
+        if (is_enabled != 0) {
+            enabled = 1;
+        } else {
+            enabled = 0;
+        }
+        HSD_JObjReqAnimAll(child, (f32) enabled);
+        mn_8022F3D8(child, 0xFFU, MOBJ_MASK);
+        HSD_JObjAnimAll(child);
+        HSD_JObjReqAnimAll(child, frame);
+        mn_8022F3D8(child, 0xFFU, (enum _HSD_TypeMask) 0x480);
+        HSD_JObjAnimAll(child);
+        offsets++;
+    }
+    text = user_data->xC;
+    if (text != NULL) {
+        HSD_SisLib_803A5CC4(text);
+    }
+    sis_id = ((u16*) &mnDataDel_803EF870.x58)[user_data->x0];
+    text = HSD_SisLib_803A5ACC(0, 0, -9.5f, 9.1f, 17.0f, 364.68332f, 38.38772f);
+    user_data->xC = text;
+    text->font_size.x = 0.0521f;
+    text->font_size.y = 0.0521f;
+    HSD_SisLib_803A6368(text, (s32) sis_id);
+}
 
 void mnDataDel_80250170(void)
 {
