@@ -158,18 +158,23 @@ void mnSoundTest_8024A790(HSD_GObj* arg0)
 void mnSoundTest_8024A958(Soundtest_GObj* arg0)
 {
     char string[3];
+    f32 temp_f1;
     HSD_Text* temp_r3;
     HSD_Text* temp_r3_2;
     HSD_Text* temp_r3_3;
     HSD_Text* temp_r3_4;
     soundtest_user_data* temp_r30;
 
+    PAD_STACK(8);
+
     temp_r30 = arg0->user_data;
-    if (temp_r30->unk14 != NULL) {
-        HSD_SisLib_803A5CC4(temp_r30->unk14);
+    temp_r3 = temp_r30->unk14;
+    if (temp_r3 != NULL) {
+        HSD_SisLib_803A5CC4(temp_r3);
     }
-    if (temp_r30->unk18 != NULL) {
-        HSD_SisLib_803A5CC4(temp_r30->unk18);
+    temp_r3_2 = temp_r30->unk18;
+    if (temp_r3_2 != NULL) {
+        HSD_SisLib_803A5CC4(temp_r3_2);
     }
     temp_r3_3 =
         HSD_SisLib_803A5ACC(0, 0, mnSoundTest_803EF0A8[6].start_frame,
@@ -182,8 +187,9 @@ void mnSoundTest_8024A958(Soundtest_GObj* arg0)
     HSD_SisLib_803A6368(temp_r3_3, data_2[text_ids[temp_r30->unk1]].text_id);
     temp_r3_4 = HSD_SisLib_803A6754(0, 0);
     temp_r30->unk18 = temp_r3_4;
+    temp_f1 = mnSoundTest_803EF0A8[7].end_frame;
     temp_r3_4->pos_x = mnSoundTest_803EF0A8[7].start_frame;
-    temp_r3_4->pos_y = mnSoundTest_803EF0A8[7].end_frame;
+    temp_r3_4->pos_y = temp_f1;
     temp_r3_4->pos_z = 18.0f;
     temp_r3_4->font_size.x = 0.04f;
     temp_r3_4->font_size.y = 0.04f;
