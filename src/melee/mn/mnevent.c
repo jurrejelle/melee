@@ -76,10 +76,88 @@ s32 mnEvent_8024CE74(void)
 static AnimLoopSettings mnEvent_803EF740 = { 0, 0, -0.1f };
 static AnimLoopSettings mnEvent_803EF74C = { 0, 0, -0.1f };
 static AnimLoopSettings mnEvent_803EF758 = { 0, 199.0f, 0 };
+static char mnEvent_803EF794[9] = "%s:%s %s";
+static char mnEvent_803EF7A0[0xD0] = {
+    0x81, 0x7C, 0x81, 0x7C, 0x3A, 0x81, 0x7C, 0x81, 0x7C, 0x20, 0x81, 0x7C,
+    0x81, 0x7C, 0,    0,    0x43, 0x61, 0x6E, 0x27, 0x74, 0x20, 0x67, 0x65,
+    0x74, 0x20, 0x75, 0x73, 0x65, 0x72, 0x5F, 0x64, 0x61, 0x74, 0x61, 0x2E,
+    0xA,  0,    0,    0,    0x6D, 0x6E, 0x65, 0x76, 0x65, 0x6E, 0x74, 0x2E,
+    0x63, 0,    0,    0,    0x75, 0x73, 0x65, 0x72, 0x5F, 0x64, 0x61, 0x74,
+    0x61, 0,    0,    0,    0x4D, 0x65, 0x6E, 0x4D, 0x61, 0x69, 0x6E, 0x43,
+    0x6F, 0x6E, 0x45, 0x76, 0x5F, 0x54, 0x6F, 0x70, 0x5F, 0x6A, 0x6F, 0x69,
+    0x6E, 0x74, 0,    0,    0x4D, 0x65, 0x6E, 0x4D, 0x61, 0x69, 0x6E, 0x43,
+    0x6F, 0x6E, 0x45, 0x76, 0x5F, 0x54, 0x6F, 0x70, 0x5F, 0x61, 0x6E, 0x69,
+    0x6D, 0x6A, 0x6F, 0x69, 0x6E, 0x74, 0,    0,    0x4D, 0x65, 0x6E, 0x4D,
+    0x61, 0x69, 0x6E, 0x43, 0x6F, 0x6E, 0x45, 0x76, 0x5F, 0x54, 0x6F, 0x70,
+    0x5F, 0x6D, 0x61, 0x74, 0x61, 0x6E, 0x69, 0x6D, 0x5F, 0x6A, 0x6F, 0x69,
+    0x6E, 0x74, 0,    0,    0x4D, 0x65, 0x6E, 0x4D, 0x61, 0x69, 0x6E, 0x43,
+    0x6F, 0x6E, 0x45, 0x76, 0x5F, 0x54, 0x6F, 0x70, 0x5F, 0x73, 0x68, 0x61,
+    0x70, 0x65, 0x61, 0x6E, 0x69, 0x6D, 0x5F, 0x6A, 0x6F, 0x69, 0x6E, 0x74,
+    0,    0,    0,    0,    0x4D, 0x65, 0x6E, 0x4D, 0x61, 0x69, 0x6E, 0x4D,
+    0x61, 0x72, 0x6B, 0x45, 0x76, 0x5F, 0x54, 0x6F, 0x70, 0x5F, 0x6A, 0x6F,
+    0x69, 0x6E, 0x74, 0,
+};
+static s32 mnEvent_804D502C = 0xFF;
+static char mnEvent_804D5040[3] = "%d";
+static char mnEvent_804D5044[4] = { 0x81, 0x7C, 0, 0 };
 
 void mnEvent_8024D4E0(HSD_JObj* jobj, Vec3* translate)
 {
     HSD_JObjSetTranslate(jobj, translate);
+}
+
+void mnEvent_8024D5B0(HSD_GObj* gobj, u8 event)
+{
+    char sp18[4];
+    char sp14[4];
+    char sp10[4];
+    HSD_Text* temp_r3;
+    HSD_Text* temp_r3_2;
+    u32 temp_r30;
+    MnEventData* temp_r28;
+    u8 temp_r27;
+
+    temp_r28 = gobj->user_data;
+    temp_r27 = event;
+    temp_r3 = temp_r28->name_text;
+    if (temp_r3 != NULL) {
+        HSD_SisLib_803A5CC4(temp_r3);
+    }
+
+    temp_r3_2 = HSD_SisLib_803A6754(0, 1);
+    temp_r28->name_text = temp_r3_2;
+    temp_r3_2->pos_x = 3.8f;
+    temp_r3_2->pos_y = 6.9f;
+    temp_r3_2->pos_z = 17.0f;
+    *(s32*) &temp_r3_2->text_color = mnEvent_804D502C;
+    temp_r3_2->default_alignment = 2;
+    temp_r3_2->font_size.x = 0.03f;
+    temp_r3_2->font_size.y = 0.03f;
+    temp_r30 = gmMainLib_8015CF5C((s32) gm_801BEBC0(temp_r27));
+    if (gm_801BEB8C(gm_801BEBC0(temp_r27)) != 0) {
+        if (gmMainLib_8015CEFC((s32) gm_801BEBC0(temp_r27)) != 0) {
+            mn_8022EA78(sp18, 2, (temp_r30 / 60 / 60) % 60);
+            mn_8022EA78(sp14, 2, (temp_r30 / 60) % 60);
+            mn_8022EA78(sp10, 2,
+                        (u32) (s32) ((99.0f * (f32) (temp_r30 % 60)) / 59.0f));
+            HSD_SisLib_803A6B98(temp_r3_2, 0.0f, 0.0f, mnEvent_803EF794, sp18,
+                                sp14, sp10);
+            return;
+        }
+        temp_r3_2->pos_x = 4.25f;
+        temp_r3_2->pos_y = 6.9f;
+        temp_r3_2->pos_z = 17.0f;
+        temp_r3_2->default_kerning = 1;
+        HSD_SisLib_803A6B98(temp_r3_2, 0.0f, 0.0f, mnEvent_803EF7A0, sp18,
+                            sp14, sp10);
+        return;
+    }
+    if (gmMainLib_8015CEFC((s32) gm_801BEBC0(temp_r27)) != 0) {
+        HSD_SisLib_803A6B98(temp_r3_2, 0.0f, 0.0f, mnEvent_804D5040, temp_r30);
+        return;
+    }
+    temp_r3_2->default_kerning = 1;
+    HSD_SisLib_803A6B98(temp_r3_2, 0.0f, 0.0f, mnEvent_804D5044);
 }
 
 void fn_8024E1B4(HSD_GObj* gobj)
