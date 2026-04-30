@@ -810,9 +810,6 @@ inline int lb_8001BB48_inline(int chan, char* filename, void* file_entries,
     lb_80432A68.unk_14 = write_buf;
     lb_80432A68.unk_18 = write_offset;
     lb_80432A68.unk_1C = write_len;
-    lb_80432A68.unk_14 = write_buf;
-    lb_80432A68.unk_18 = write_offset;
-    lb_80432A68.unk_1C = write_len;
     return lb_80019CB0(0x10);
 }
 
