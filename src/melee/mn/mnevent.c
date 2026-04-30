@@ -17,6 +17,7 @@
 #include <baselib/gobjplink.h>
 #include <baselib/gobjproc.h>
 #include <baselib/gobjuserdata.h>
+#include <baselib/debug.h>
 #include <baselib/jobj.h>
 #include <baselib/memory.h>
 #include <baselib/sislib.h>
@@ -98,6 +99,9 @@ static char mnEvent_803EF7A0[0xD0] = {
     0x69, 0x6E, 0x74, 0,
 };
 static s32 mnEvent_804D502C = 0xFF;
+void* mnEvent_804A08F8[4];
+static char mnEvent_804D5030[7] = "jobj.h";
+static char mnEvent_804D5038[5] = "jobj";
 static char mnEvent_804D5040[3] = "%d";
 static char mnEvent_804D5044[4] = { 0x81, 0x7C, 0, 0 };
 
@@ -232,6 +236,63 @@ void fn_8024E34C(HSD_GObj* gobj)
             proc->flags_3 = HSD_GObj_804D783C;
         }
     }
+}
+
+void mnEvent_8024E524(s32 event_idx)
+{
+    HSD_JObj* jobj_0B;
+    HSD_JObj* jobj_0C;
+    HSD_JObj* jobj_0A;
+    HSD_JObj* jobj_09;
+    HSD_GObj* gobj;
+    HSD_GObjProc* proc;
+    HSD_JObj* tree;
+    MnEventData* user_data;
+    f32 y_a;
+    f32 y_b;
+    s32 i;
+    s32 first_event;
+    u8 page;
+    u8 event;
+
+    gobj = GObj_Create(6, 7, 0x80);
+    mnEvent_804D6C60 = gobj;
+    tree = HSD_JObjLoadJoint(mnEvent_804A08F8[0]);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, tree);
+    GObj_SetupGXLink(gobj, HSD_GObj_JObjCallback, 4, 0x80);
+    HSD_JObjAddAnimAll(tree, mnEvent_804A08F8[1], mnEvent_804A08F8[2],
+                       mnEvent_804A08F8[3]);
+    HSD_JObjReqAnimAll(tree, 0.0f);
+    HSD_JObjAnimAll(tree);
+
+    user_data = HSD_MemAlloc(sizeof(MnEventData));
+    HSD_ASSERTREPORT(0x39B, user_data, "Can't get user_data.\n");
+    mnEvent_8024E420(user_data, event_idx);
+    GObj_InitUserData(gobj, 0, HSD_Free, user_data);
+
+    page = user_data->page;
+    lb_80011E24(tree, &jobj_0C, 0xC, -1);
+    lb_80011E24(tree, &jobj_0A, 0xA, -1);
+    y_a = HSD_JObjGetTranslationY(jobj_0A);
+    y_b = HSD_JObjGetTranslationY(jobj_0C);
+    lb_80011E24(tree, &jobj_0B, 0xB, -1);
+    HSD_JObjSetTranslateY(jobj_0B, (f32) page * (y_b - y_a));
+
+    proc = HSD_GObj_SetupProc(gobj, fn_8024E34C, 0);
+    proc->flags_3 = HSD_GObj_804D783C;
+    first_event = user_data->first_event;
+    for (i = 0; i < 9; i++) {
+        mnEvent_8024D15C(i, first_event + i);
+    }
+
+    event = gm_801BEBA8((u8) (user_data->first_event + user_data->page));
+    mnEvent_8024D0CC(mnEvent_804D6C60, gm_801BEBF8(event));
+    mnEvent_8024D7E0(mnEvent_804D6C60, event);
+    mnEvent_8024D5B0(mnEvent_804D6C60, event);
+    lb_80011E24(mnEvent_804D6C60->hsd_obj, &jobj_09, 9, -1);
+    HSD_JObjReqAnimAll(jobj_09, (f32) gm_801BEB8C(gm_801BEBC0(event)));
+    HSD_JObjAnimAll(jobj_09);
+    mnEvent_8024D014(mnEvent_804D6C60);
 }
 
 void mnEvent_8024D014(HSD_GObj* gobj)
