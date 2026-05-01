@@ -9,6 +9,7 @@
 #include "ty/types.h"
 
 #include <m2c_macros.h>
+#include <baselib/aobj.h>
 #include <baselib/archive.h>
 #include <baselib/cobj.h>
 #include <baselib/controller.h>
@@ -37,6 +38,24 @@ typedef struct {
     u8 pad[0x4C];
     void* data;
 } TyArchiveData;
+
+typedef struct {
+    HSD_GObj* gobj;
+    u8 pad[0x14];
+    HSD_JObj* jobjs[3];
+} TyListArchiveAnimData;
+
+typedef struct {
+    u8 pad[0x20];
+    f32 x20;
+    s32 x24;
+} TyListWaitData;
+
+static void fn_80313BD8(HSD_GObj* gobj);
+
+extern s32 un_804D6EEC;
+
+static char un_804D5A88[3] = "%d";
 
 void un_803124BC(void)
 {
@@ -460,7 +479,45 @@ HSD_JObj* un_80313508(void* parent, void* symbol, float x, float y, float z)
 
 /// #fn_80313BD8
 
-/// #fn_8031438C
+void fn_8031438C(HSD_GObj* gobj)
+{
+    char* data = un_804A2AC0;
+    char* state = data + 0x2AC;
+    TyListArchiveAnimData* archive = un_804D6ED8;
+    HSD_JObj** jobjs = archive->jobjs;
+    s32 i;
+
+    if ((s8) state[0x16] != 0) {
+        if ((s8) state[0x16] > 1) {
+            for (i = 0; i < 3; i++) {
+                HSD_JObj* jobj = jobjs[i];
+                HSD_JObjReqAnim(jobj, i == *(s8*) (data + 0x29B) ? 1.0f : 0.0f);
+                HSD_AObjSetRate(jobj->aobj, 0.0f);
+            }
+            HSD_JObjAnimAll(GET_JOBJ(archive->gobj));
+        } else {
+            TyListWaitData* wait_data = *(TyListWaitData**) (state + 4);
+            if (wait_data != NULL) {
+                wait_data->x24 = 0;
+                wait_data->x20 = 36.0f;
+            }
+            *(HSD_Text**) (data + 0x290) = HSD_SisLib_803A6754(3, un_804D6EEC);
+            (*(HSD_Text**) (data + 0x290))->pos_z = 17.2f;
+            (*(HSD_Text**) (data + 0x290))->font_size.x = 0.038f;
+            (*(HSD_Text**) (data + 0x290))->font_size.y = 0.029f;
+            (*(HSD_Text**) (data + 0x290))->default_kerning = 1;
+            (*(HSD_Text**) (data + 0x290))->default_alignment = 2;
+            HSD_SisLib_803A6B98(*(HSD_Text**) (data + 0x290), 290.0f, 320.0f,
+                                un_804D5A88,
+                                un_GetTrophyTotal());
+        }
+        state[0x16] = state[0x16] - 1;
+        return;
+    }
+    HSD_GObjProc_8038FED4(gobj);
+    HSD_GObj_SetupProc(*(HSD_GObj**) state, fn_80313BD8, 0);
+    HSD_GObj_80390CD4(*(HSD_GObj**) state);
+}
 
 void fn_80314504(HSD_GObj* gobj)
 {
