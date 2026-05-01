@@ -55,8 +55,10 @@ typedef struct {
 typedef struct {
     HSD_GObj* x0;
     HSD_GObj* x4;
-    u8 pad_8[0xE];
-    s16 x16;
+    u8 pad_8[4];
+    s8 xC;
+    u8 pad_D[9];
+    s8 x16;
 } TyListCameraState;
 
 static void fn_80313BD8(HSD_GObj* gobj);
@@ -487,7 +489,92 @@ next:
     un_80312904(arg, 0x63);
     un_80313464(arg);
 }
-/// #un_8031305C
+
+s8 un_8031305C(TyListState* state, s8 arg2)
+{
+    TyListArg* entry;
+    s16 idx;
+    s32 i;
+    f32 delta;
+
+    if (state->x29F > 0) {
+        delta = state->x2A4;
+        if (state->x2A1 == 0) {
+            delta = -delta;
+        }
+
+        entry = state->entries;
+        for (i = 0; i < state->entryCount; i++) {
+            if ((state->x2A1 != 0 || entry->x24 != -1) &&
+                (state->x2A1 != 1 || state->entryCount - 1 != entry->x24))
+            {
+                un_80312E88(entry, delta);
+            }
+            entry = (TyListArg*) ((u8*) entry + sizeof(TyListArg));
+        }
+
+        state->x29F--;
+        if (state->x29F == 0) {
+            entry = state->entries;
+            for (i = 0; i < state->entryCount; i++) {
+                un_80312E88(entry, un_804DDE4C);
+                if (state->x2A1 == 0) {
+                    entry->x24--;
+                    if (entry->x24 < -1) {
+                        entry->x24 = state->entryCount - 2;
+                    }
+                } else {
+                    entry->x24++;
+                    if (entry->x24 >= state->entryCount - 1) {
+                        entry->x24 = -1;
+                    }
+                }
+                entry = entry->x4;
+            }
+
+            if (state->x2A1 == 0) {
+                state->x270->idx = state->x274->idx + 1;
+                if (state->x270->idx >= un_GetTrophyTotal()) {
+                    state->x270->idx = 0;
+                }
+                un_80312904(state->x270, un_804A2D6C.xC);
+                state->x278 = state->x278->x4;
+                state->selectedIdx = state->x278->idx;
+                state->x270 = state->x270->x4;
+                state->x274 = state->x274->x4;
+            } else {
+                state->x274->idx = state->x270->idx - 1;
+                if (state->x274->idx < 0) {
+                    state->x274->idx = un_GetTrophyTotal() - 1;
+                }
+                un_80312904(state->x274, un_804A2D6C.xC);
+                state->x278 = state->x278->x0;
+                state->selectedIdx = state->x278->idx;
+                state->x270 = state->x270->x0;
+                state->x274 = state->x274->x0;
+            }
+
+            if (state->x29E > 0) {
+                state->x29E--;
+            }
+            if (state->x29E == 0) {
+                HSD_JObjClearFlagsAll(state->jobj, 0x10);
+                entry = state->x278;
+                un_80312904(entry, entry->x24);
+                if (HSD_PadCopyStatus->button & 0xC00) {
+                    state->x2A0 = 5;
+                } else {
+                    state->x2A0 = 0;
+                }
+            }
+            if (arg2 != 0) {
+                lbAudioAx_80024030(2);
+            }
+        }
+    }
+    idx = state->x29F;
+    return idx;
+}
 
 void un_80313358(TyListState* state, s8 arg2, s8 arg3, s8 arg4)
 {
