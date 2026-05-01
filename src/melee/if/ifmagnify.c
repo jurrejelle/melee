@@ -1,16 +1,24 @@
 #include "ifmagnify.h"
 
+#include "gm/gm_1601.h"
+#include "gm/gm_16AE.h"
 #include "gr/ground.h"
 #include "if/ifall.h"
 #include "lb/lb_00B0.h"
 #include "lb/lb_00F9.h"
 #include "lb/lbarchive.h"
+#include "pl/player.h"
+#include "sc/types.h"
 
 #include <baselib/cobj.h>
+#include <baselib/dobj.h>
 #include <baselib/gobj.h>
 #include <baselib/gobjgxlink.h>
 #include <baselib/gobjobject.h>
 #include <baselib/gobjplink.h>
+#include <baselib/jobj.h>
+#include <baselib/memory.h>
+#include <baselib/mobj.h>
 #include <baselib/tobj.h>
 
 /* 3F97E8 */ extern HSD_CameraDescPerspective ifMagnify_803F97E8;
@@ -110,7 +118,74 @@ ifMagnifyPlayer* ifMagnify_802FB73C(ifMagnifyPlayer* arg0, Vec2* arg1, Vec2* arg
 
 void ifMagnify_802FC3BC(void) {}
 
-/// #ifMagnify_802FC3C0
+void ifMagnify_802FC3C0(s32 slot)
+{
+    HSD_GObj* gobj;
+    HSD_JObj* jobj;
+    HSD_JObj* child;
+    HSD_DObj* dobj;
+    HSD_ImageDesc* image_descs;
+    HSD_MObj* mobj;
+    HSD_Material* material;
+    ifMagnifyPlayer* player;
+    GXColor color;
+    u8 slot_type;
+    u8 teams_enabled;
+
+    player = &ifMagnify_804A1DE0.player[slot];
+    if (player->gobj != NULL) {
+        HSD_GObjPLink_80390228(player->gobj);
+    }
+
+    gobj = GObj_Create(0xE, 0xF, 0);
+    GObj_InitUserData(gobj, 0xE, (void (*)(void*)) ifMagnify_802FC3BC, player);
+
+    jobj = HSD_JObjLoadJoint(ifMagnify_804A1DE0.model_desc->joint);
+    HSD_GObjObject_80390A70(gobj, HSD_GObj_804D7849, jobj);
+    GObj_SetupGXLink(gobj, (void (*)(HSD_GObj*, int)) ifMagnify_802FB8C0, 0xB,
+                     0);
+
+    lb_80011E24(jobj, &child, 2, -1);
+    if (slot == 0) {
+        player->idesc = child->u.dobj->next->mobj->tobj->imagedesc;
+    } else {
+        image_descs = (HSD_ImageDesc*) ifMagnify_804A1DE0.image_descs;
+        image_descs[slot - 1] = *ifMagnify_804A1DE0.player[0].idesc;
+        player->idesc = &image_descs[slot - 1];
+        player->idesc->image_ptr = HSD_MemAlloc((GXGetTexBufferSize(
+                                                     player->idesc->width,
+                                                     player->idesc->height,
+                                                     player->idesc->format, 0, 0) +
+                                                 0x1F) &
+                                                ~0x1F);
+        child->u.dobj->next->mobj->tobj->imagedesc = player->idesc;
+    }
+
+    lb_80011E24(jobj, &player->jobj, 1, -1);
+
+    slot_type = Player_GetPlayerSlotType(slot);
+    teams_enabled = gm_8016B168();
+    color = gm_80160968(
+        gm_80160854((u8) slot, Player_GetTeam(slot), teams_enabled, slot_type));
+
+    dobj = player->jobj->u.dobj;
+    mobj = dobj->mobj;
+    material = mobj->mat;
+    material->diffuse.r = color.r;
+    material->diffuse.g = color.g;
+    material->diffuse.b = color.b;
+
+    dobj = child->u.dobj;
+    mobj = dobj->mobj;
+    material = mobj->mat;
+    material->diffuse.r = color.r;
+    material->diffuse.g = color.g;
+    material->diffuse.b = color.b;
+
+    player->gobj = gobj;
+    player->state.is_offscreen = 0;
+    player->state.ignore_offscreen = 0;
+}
 
 void ifMagnify_802FC618(void)
 {

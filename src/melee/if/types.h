@@ -109,8 +109,8 @@ struct Placeholder_8016AE50_ret_val {
 typedef struct ifMagnifyPlayer {
     HSD_GObj* gobj; // ifMagnify_802fc750 accesses 0x804A1DF4 + slot * 0x10
                     // for a GObj
-    HSD_TObj* tobj; // ifMagnify_802fb8c0 accesses 0x804A1DF8 + slot * 0x10
-                    // for a TObj
+    HSD_JObj* jobj; // ifMagnify_802fc3c0 / ifMagnify_802fb8c0 access
+                    // 0x804A1DF8 for a JObj
     HSD_ImageDesc*
         idesc; // ifMagnify_802FBBDC access 0x804A1DFC for an ImageDesc
     struct {
@@ -121,13 +121,14 @@ typedef struct ifMagnifyPlayer {
 } ifMagnifyPlayer;
 
 struct ifMagnify {
-    HSD_Joint* joint; // // ifMagnify_802fc3c0 accesses 0x804A1DE0 for a Joint
+    DynamicModelDesc* model_desc; // ifMagnify_802fc3c0 accesses 0x804A1DE0
     int x4;
     int x8;
     int xC;
     int x10;
     ifMagnifyPlayer player[6];
-    u8 unk[0xF0 - 0x74];
+    u8 image_descs[5 * 0x18];
+    u8 pad[0xF0 - 0xEC];
 };
 
 #define DEVTEXT_FLAG_HIDETEXT (0x80)
