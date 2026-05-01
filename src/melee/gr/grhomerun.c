@@ -119,7 +119,7 @@ HSD_GObj* grHomeRun_8021C82C(int gobj_id)
 
 void grHomeRun_8021C914(Ground_GObj* gobj)
 {
-    Ground* gp = GET_GROUND(gobj);
+    Ground* gp = gobj->user_data;
     HSD_JObj* jobj = GET_JOBJ(gobj);
 
     grAnime_801C8138(gobj, gp->map_id, 0);
