@@ -67,9 +67,14 @@ typedef struct TyListArg {
     /* 0x0C */ struct HSD_JObj* xC;
     /* 0x10 */ struct HSD_JObj* x10;
     /* 0x14 */ struct HSD_JObj* x14;
-    /* 0x18 */ u8 pad_18[0x26 - 0x18];
+    /* 0x18 */ struct HSD_Text* x18;
+    /* 0x1C */ struct HSD_Text* x1C;
+    /* 0x20 */ struct HSD_Text* x20;
+    /* 0x24 */ s8 x24;
+    /* 0x25 */ u8 x25;
     /* 0x26 */ s16 idx;
-    /* 0x28 */ u8 pad_28[0x2C - 0x28];
+    /* 0x28 */ s8 x28;
+    /* 0x29 */ u8 pad_29[0x2C - 0x29];
     /* 0x2C */ float x2C;
     /* 0x30 */ float x30;
 } TyListArg;

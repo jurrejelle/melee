@@ -65,6 +65,8 @@ extern char un_803FE5E8[];
 extern TyListCameraState un_804A2D6C;
 extern s32 un_804D6EE8;
 extern s32 un_804D6EEC;
+extern GXColor lb_804D3760;
+extern GXColor lb_804D3764;
 
 static char un_804D5A88[3] = "%d";
 
@@ -225,7 +227,81 @@ char* un_80312834(char* buf, u32 num)
     return buf;
 }
 
-/// #un_80312904
+void un_80312904(TyListArg* arg, s8 arg1)
+{
+    TyListState* state = (TyListState*) un_804A2AC0;
+    HSD_JObj* jobj;
+    HSD_JObj* parent_jobj;
+    f32 pos_x;
+    f32 pos_y;
+    f32 pos_z;
+    s32 show;
+
+    if (arg->idx != -1) {
+        if (un_GetTrophyTotal() < 0xB) {
+            if (arg->x24 == -1 || arg->x24 == state->entryCount - 2) {
+                show = 0;
+            } else {
+                show = 1;
+            }
+        } else {
+            show = 1;
+        }
+        if (show != 0) {
+            jobj = arg->xC;
+            if (jobj == NULL) {
+                __assert(&un_804D5A78, 0x3E1, &un_804D5A80);
+            }
+            parent_jobj = GET_JOBJ(state->gobj);
+            pos_x = jobj->translate.x - 6.5f;
+            if (parent_jobj == NULL) {
+                __assert(&un_804D5A78, 0x3EE, &un_804D5A80);
+            }
+            pos_y = (-arg->x30 - parent_jobj->translate.y) - 0.41f;
+            if (parent_jobj == NULL) {
+                __assert(&un_804D5A78, 0x3FB, &un_804D5A80);
+            }
+            pos_z = parent_jobj->translate.z;
+            if (arg1 != 0x63) {
+                if (arg->x24 == arg1) {
+                    arg->x18->text_color = lb_804D3764;
+                    arg->x1C->text_color = lb_804D3764;
+                    arg->x20->text_color = lb_804D3764;
+                } else {
+                    arg->x18->text_color = lb_804D3760;
+                    arg->x1C->text_color = lb_804D3760;
+                    arg->x20->text_color = lb_804D3760;
+                }
+            }
+            arg->x18->pos_x = pos_x;
+            arg->x18->pos_y = pos_y;
+            arg->x18->pos_z = pos_z;
+            arg->x18->font_size.x = 0.028f;
+            arg->x18->font_size.y = 0.029f;
+            arg->x18->default_kerning = 1;
+            HSD_SisLib_803A6368(arg->x18,
+                                un_803063D4(un_80308354(arg->idx), 2, 0x128));
+
+            arg->x1C->pos_x = pos_x + 14.7f;
+            arg->x1C->pos_y = pos_y;
+            arg->x1C->pos_z = pos_z;
+            arg->x1C->font_size.x = 0.028f;
+            arg->x1C->font_size.y = 0.029f;
+            HSD_SisLib_803A6368(arg->x1C, 0x13B);
+
+            un_80312834(arg->x20->string_buffer,
+                        un_803048C0(un_80308354(arg->idx)));
+            arg->x20->default_alignment = 2;
+            arg->x20->default_kerning = 1;
+            arg->x20->pos_x = pos_x + 10.5f;
+            arg->x20->pos_y = pos_y;
+            arg->x20->pos_z = pos_z;
+            arg->x20->font_size.x = 0.038f;
+            arg->x20->font_size.y = 0.029f;
+            HSD_SisLib_803A6368(arg->x20, arg->x28 + 0x12E);
+        }
+    }
+}
 
 /// #un_80312BAC
 
