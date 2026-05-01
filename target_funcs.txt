@@ -1,4 +1,4 @@
 File: src/melee/vi/vi1101.c
 Funcs:
 - [x] un_8031F714_OnEnter
-- [ ] un_8031F294
+- [x] un_8031F294
