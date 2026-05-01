@@ -118,6 +118,7 @@ check:
 
 void un_8031263C(void)
 {
+    char* data = un_803FDD18;
     s32 i;
     u16* table1;
     u16* table2;
@@ -129,15 +130,18 @@ void un_8031263C(void)
     if (un_804D6ED0 == NULL) {
         char* archiveName;
         if (lbLang_IsSavedLanguageJP()) {
-            archiveName = "TyDatai.dat";
+            archiveName = data + 0x608;
         } else {
-            archiveName = "TyDatai.usd";
+            archiveName = data + 0x614;
         }
-        un_804D6ED0 = lbArchive_LoadSymbols(
-            archiveName, &un_804D6EC4, "tyInitModelTbl", &un_804D6EC0,
-            "tyInitModelDTbl", &un_804D6EBC, "tyModelSortTbl", &un_804D6EB8,
-            "tyExpDifferentTbl", &un_804D6EB4, "tyNoGetUsTbl", &un_804D6EB0,
-            "tyDisplayModelTbl", &un_804D6EAC, "tyDisplayModelUsTbl", NULL);
+        un_804D6ED0 = lbArchive_LoadSymbols(archiveName, &un_804D6EC4,
+                                            data + 0x9DC, &un_804D6EC0,
+                                            data + 0x9EC, &un_804D6EBC,
+                                            data + 0x9FC, &un_804D6EB8,
+                                            data + 0xA0C, &un_804D6EB4,
+                                            data + 0xA20, &un_804D6EB0,
+                                            data + 0xA30, &un_804D6EAC,
+                                            data + 0xA44, NULL);
     }
 
     i = 0;
@@ -155,9 +159,9 @@ void un_8031263C(void)
     un_804A284C[3] |= 4;
 
     if (un_804D6ECC == NULL) {
-        un_804D6ECC = lbArchive_LoadSymbols(str_TyDataf_dat, &un_804D6EA8,
-                                            str_tyModelFileTbl, &un_804D6EA4,
-                                            str_tyModelFileUsTbl, NULL);
+        un_804D6ECC = lbArchive_LoadSymbols(data + 0xA58, &un_804D6EA8,
+                                            data + 0xA64, &un_804D6EA4,
+                                            data + 0xA74, NULL);
     }
 
     un_8031234C(0);
