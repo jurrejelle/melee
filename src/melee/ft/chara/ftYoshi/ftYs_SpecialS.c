@@ -35,6 +35,7 @@
 
 #include "lb/lb_00B0.h"
 #include "mp/mplib.h"
+#include "MSL/trigf.h"
 
 #include <dolphin/mtx.h>
 #include <baselib/gobj.h>
