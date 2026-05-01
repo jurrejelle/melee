@@ -30,6 +30,10 @@ f32 grHr_804D6AE4;
 static void* grHr_804D6AE8;
 static char grHr_804D49D0[] = "%d";
 extern GXColor grHr_804DBC74;
+extern f32 grHr_804DBC78;
+extern f32 grHr_804DBC7C;
+extern f32 grHr_804DBC80;
+extern f32 grHr_804DBC84;
 
 typedef struct grHomeRun_MainGroundVars {
     HSD_GObj** xC4;
@@ -899,26 +903,28 @@ void fn_8021EB10(HSD_GObj* target_cam_gobj)
     }
 }
 
-void* grHomeRun_8021EC58(u16 arg0)
+HSD_Text* grHomeRun_8021EC58(s32 arg0)
 {
     HSD_Text* text;
     f32 temp_f31;
     f32 temp_f31_2;
+    GXColor color = grHr_804DBC74;
 
     text = HSD_SisLib_803A6754(1, 0);
     text->pos_z = 0.0F;
-    temp_f31 = 8.0F * (grHr_804D6AE4 * Ground_801C0498());
-    text->box_size_x = 13.0F * (grHr_804D6AE4 * Ground_801C0498());
+    temp_f31 = grHr_804DBC78 * (grHr_804D6AE4 * Ground_801C0498());
+    text->box_size_x = grHr_804DBC7C * (grHr_804D6AE4 * Ground_801C0498());
     text->box_size_y = temp_f31;
     text->default_kerning = 0;
-    temp_f31_2 = 0.2F * (grHr_804D6AE4 * Ground_801C0498());
-    text->x34.x = 0.2F * (grHr_804D6AE4 * Ground_801C0498());
+    temp_f31_2 = grHr_804DBC80 * (grHr_804D6AE4 * Ground_801C0498());
+    text->x34.x = grHr_804DBC80 * (grHr_804D6AE4 * Ground_801C0498());
     text->x34.y = temp_f31_2;
-    text->text_color = grHr_804DBC74;
+    text->text_color = color;
     text->default_alignment = 1;
     text->default_fitting = 1;
     text->x4C = 1;
-    HSD_SisLib_803A6B98(text, 0.0F, -29.0F, grHr_804D49D0, (s32) (f32) arg0);
+    HSD_SisLib_803A6B98(text, 0.0F, grHr_804DBC84, grHr_804D49D0,
+                        (s32) (f32) arg0);
     return text;
 }
 
