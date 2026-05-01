@@ -89,7 +89,7 @@ void lbSnap_8001D4A4(int chan, char* arg1)
     new_var = ptr->num;
 
     do {
-        for(i=0; i < new_var; i++) {
+        for (i = 0; i < new_var; i++) {
             if (time == ptr->unk10[i].unk0) {
                 time++;
                 break;
@@ -97,7 +97,7 @@ void lbSnap_8001D4A4(int chan, char* arg1)
         }
     } while (i != ptr->num);
 
-    for(i = 0; i < 0x21; i++) {
+    for (i = 0; i < 0x21; i++) {
         arg1[i] = '\0';
     }
     sprintf(arg1, "%u", time);
