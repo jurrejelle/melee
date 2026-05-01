@@ -1091,7 +1091,66 @@ void un_8030663C(void)
     }
 }
 
-/// #un_803067BC
+void un_803067BC(s32 arg0, s32 arg1)
+{
+    s32 var_r29;
+    s32 var_r30;
+    s16* var_r31;
+    s16 temp_r6;
+    s16 var_r3;
+    s16* var_r4;
+    s16* var_r5;
+    s16 temp_r0_3;
+    s16 temp_r0_4;
+    u32 temp_r0_2;
+
+    var_r29 = (s32) un_804D6E64;
+    var_r30 = arg0;
+    if (arg1 == 0) {
+        var_r31 = (s16*) (var_r30 * 2 + var_r29);
+        var_r29 = 0;
+        var_r30 = 0;
+        while (var_r29 < (s16) *gmMainLib_8015CC90()) {
+            s16 temp = *var_r31;
+            var_r31 += 3;
+            var_r29++;
+            *(s16*) ((char*) un_804D6EDC + var_r30) = temp;
+            var_r30 += 2;
+        }
+        return;
+    }
+    temp_r6 = *gmMainLib_8015CC90();
+    var_r4 = (s16*) (var_r29 + var_r30 * 2);
+    var_r3 = temp_r6;
+    var_r5 = (s16*) ((char*) un_804D6EDC + (s32) temp_r6 * 2);
+    if (temp_r6 != 0) {
+        temp_r0_2 = (u32) var_r3 >> 3U;
+        if (temp_r0_2 != 0) {
+            do {
+                var_r5[0] = var_r4[0];
+                var_r5[-1] = var_r4[3];
+                var_r5[-2] = var_r4[6];
+                var_r5[-3] = var_r4[9];
+                var_r5[-4] = var_r4[12];
+                var_r5[-5] = var_r4[15];
+                var_r5[-6] = var_r4[18];
+                temp_r0_3 = var_r4[21];
+                var_r4 += 24;
+                var_r5[-7] = temp_r0_3;
+                var_r5 -= 8;
+            } while (--temp_r0_2 != 0);
+        }
+        var_r3 &= 7;
+        if (var_r3 != 0) {
+            do {
+                temp_r0_4 = *var_r4;
+                var_r4 += 3;
+                *var_r5 = temp_r0_4;
+                var_r5--;
+            } while (--var_r3 != 0);
+        }
+    }
+}
 
 s32 un_803068E0(HSD_GObj* gobj)
 {
