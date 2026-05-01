@@ -2284,7 +2284,10 @@ void un_80308F04(HSD_CObj* cobj)
     }
 }
 
-static Vec3 un_803B88D4;
+extern Vec3 un_803B88D4;
+extern f32 un_804DDCD8;
+extern f64 un_804DDD88;
+extern f64 un_804DDD90;
 
 f32 un_80309338(Vec3* arg0, Vec3* arg1)
 {
@@ -2293,9 +2296,8 @@ f32 un_80309338(Vec3* arg0, Vec3* arg1)
     volatile f32 sp10;
     Vec3* var_r3;
     Vec3* var_r4;
-    f32 dy;
-    f32 dx;
-    f32 dz;
+    f32 temp_f4;
+    f32 temp_f2;
     f32 var_f1;
     f64 guess;
 
@@ -2308,15 +2310,17 @@ f32 un_80309338(Vec3* arg0, Vec3* arg1)
     if (var_r4 == NULL) {
         var_r4 = &sp14;
     }
-    dy = var_r3->y - var_r4->y;
-    dx = var_r3->x - var_r4->x;
-    dz = var_r3->z - var_r4->z;
-    var_f1 = dy * dy + dx * dx + dz * dz;
-    if (var_f1 > 0.0F) {
+    var_f1 = var_r3->y - var_r4->y;
+    temp_f4 = var_r3->x - var_r4->x;
+    temp_f2 = var_r3->z - var_r4->z;
+    var_f1 = var_f1 * var_f1;
+    var_f1 = temp_f4 * temp_f4 + var_f1;
+    var_f1 = temp_f2 * temp_f2 + var_f1;
+    if (var_f1 > un_804DDCD8) {
         guess = __frsqrte((f64) var_f1);
-        guess = 0.5 * guess * (3.0 - guess * guess * var_f1);
-        guess = 0.5 * guess * (3.0 - guess * guess * var_f1);
-        guess = 0.5 * guess * (3.0 - guess * guess * var_f1);
+        guess = un_804DDD88 * guess * (un_804DDD90 - guess * guess * var_f1);
+        guess = un_804DDD88 * guess * (un_804DDD90 - guess * guess * var_f1);
+        guess = un_804DDD88 * guess * (un_804DDD90 - guess * guess * var_f1);
         sp10 = (f32) (var_f1 * guess);
         var_f1 = sp10;
     }
