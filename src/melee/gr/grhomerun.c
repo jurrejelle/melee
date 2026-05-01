@@ -941,7 +941,7 @@ void grHomeRun_8021ED74(void)
     it_8026BE84(&bobomb_rain);
 }
 
-void grHomeRun_8021EDD4()
+void grHomeRun_8021EDD4(void)
 {
     f32 scale;
     f32 max_dist;
