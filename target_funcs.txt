@@ -1,7 +1,7 @@
 File: src/melee/if/ifmagnify.c
 Funcs:
 - [x] ifMagnify_802FC750
-- [ ] ifMagnify_802FC870
+- [x] ifMagnify_802FC870
 - [ ] ifMagnify_802FB73C
 - [ ] ifMagnify_802FC3C0
 - [ ] ifMagnify_802FB8C0
