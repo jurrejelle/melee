@@ -910,14 +910,10 @@ int mn_80230D18(struct mn_802307F8_t* arg0, HSD_JObj* arg1, s8 arg2)
     }
     arg0->xA = arg2;
     result = 0;
-    i = result;
     arg0->text = NULL;
-    arg0 = (struct mn_802307F8_t*) ((u8*) arg0 + (i << 2));
-    do {
-        result = lb_80011E24(arg1, (HSD_JObj**) ((u8*) arg0 + 0xC), i, -1);
-        i++;
-        arg0 = (struct mn_802307F8_t*) ((u8*) arg0 + 4);
-    } while (i < 10);
+    for (i = 0; i < 10; i++) {
+        result = lb_80011E24(arg1, &arg0->xC[i], i, -1);
+    }
     return result;
 }
 
