@@ -82,7 +82,9 @@ typedef struct TyListArg {
 /* Trophy list UI state. Size: 0x2D8 bytes. */
 typedef struct TyListState {
     /* 0x000 */ TyListArg entries[12]; /* 12 * 0x34 = 0x270 */
-    /* 0x270 */ u8 pad_270[0xC];
+    /* 0x270 */ TyListArg* x270;
+    /* 0x274 */ TyListArg* x274;
+    /* 0x278 */ TyListArg* x278;
     /* 0x27C */ struct HSD_GObj* gobj;
     /* 0x280 */ u8 pad_280[0xC];
     /* 0x28C */ struct HSD_JObj* jobj;

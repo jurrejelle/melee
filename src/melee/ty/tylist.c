@@ -303,7 +303,90 @@ void un_80312904(TyListArg* arg, s8 arg1)
     }
 }
 
-/// #un_80312BAC
+void un_80312BAC(TyListState* state, s8 arg1)
+{
+    TyListArchiveAnimData* archive = un_804D6ED8;
+    TyListArg* entry;
+    HSD_JObj* jobj;
+    s16 idx;
+    s32 i;
+
+    idx = un_804D6EDC[state->selectedIdx];
+    un_803067BC(state->x29B, state->x29C);
+    state->selectedIdx = un_803062BC(idx);
+
+    idx = state->selectedIdx;
+    for (i = 0; i < state->x278->x24 + 1; i++) {
+        idx--;
+        if (idx < 0) {
+            idx = un_GetTrophyTotal() - 1;
+        }
+    }
+
+    jobj = state->jobj;
+    entry = state->x270;
+    if (jobj != NULL) {
+        float pos = entry->x30;
+        if (jobj == NULL) {
+            __assert(&un_804D5A78, 0x3B3, &un_804D5A80);
+        }
+        jobj->translate.y = pos;
+        if ((jobj->flags & 0x02000000) == 0) {
+            if (jobj != NULL) {
+                u32 flags = jobj->flags;
+                s32 skip = 0;
+                if ((flags & 0x800000) == 0 && (flags & 0x40)) {
+                    skip = 1;
+                }
+                if (skip == 0) {
+                    HSD_JObjSetMtxDirtySub(jobj);
+                }
+            }
+        }
+    }
+
+    for (i = 0; i < state->entryCount; i++) {
+        entry->idx = idx;
+        un_80312904(entry, arg1);
+        un_80313464(entry);
+        if (entry->x24 >= 0 && entry->x24 < state->entryCount - 2 &&
+            entry->idx == un_GetTrophyTotal() - 1)
+        {
+            jobj = state->jobj;
+            if (jobj != NULL) {
+                float pos = entry->x30;
+                if (jobj == NULL) {
+                    __assert(&un_804D5A78, 0x3B3, &un_804D5A80);
+                }
+                jobj->translate.y = pos;
+                if ((jobj->flags & 0x02000000) == 0) {
+                    if (jobj != NULL) {
+                        u32 flags = jobj->flags;
+                        s32 skip = 0;
+                        if ((flags & 0x800000) == 0 && (flags & 0x40)) {
+                            skip = 1;
+                        }
+                        if (skip == 0) {
+                            HSD_JObjSetMtxDirtySub(jobj);
+                        }
+                    }
+                }
+            }
+        }
+        entry = entry->x4;
+        idx++;
+        if (idx >= un_GetTrophyTotal()) {
+            idx = 0;
+        }
+    }
+
+    for (i = 0; i < 3; i++) {
+        HSD_JObj* anim_jobj = archive->jobjs[i];
+        HSD_JObjReqAnim(anim_jobj, i == state->x29B ? 1.0f : 0.0f);
+        HSD_AObjSetRate(anim_jobj->aobj, 0.0f);
+        HSD_JObjAnim(anim_jobj);
+    }
+}
 
 void un_80312E88(TyListArg* arg, float delta)
 {
