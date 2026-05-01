@@ -1,4 +1,5 @@
 #include "ftYs_SpecialS.h"
+#include "ftYoshi/ftYs_SpecialS.static.h"
 
 #include "ftYs_Init.h"
 #include "ftYs_SpecialHi.h"
@@ -34,12 +35,10 @@
 
 #include "lb/lb_00B0.h"
 #include "mp/mplib.h"
-#include "MSL/trigf.h"
 
 #include <dolphin/mtx.h>
 #include <baselib/gobj.h>
 
-extern bool ftYs_Unk3_803CED48[];
 
 /* 3CED84 */ static Vec4 ftYs_Unk3_803CED84 = { 0.65, 0.7, 0.8, 1 };
 /* 3CED94 */ static Vec4 ftYs_Unk3_803CED94 = { 1.1, 1.35, 1.3, 1.2 };

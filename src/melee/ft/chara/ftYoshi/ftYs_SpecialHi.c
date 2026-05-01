@@ -1,5 +1,3 @@
-#include "ftYs_SpecialHi.static.h"
-
 #include "placeholder.h"
 
 #include "baselib/forward.h"
