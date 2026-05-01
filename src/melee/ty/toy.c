@@ -1386,6 +1386,7 @@ void un_80306D70(s32 arg0)
 /* 96.3% match */
 static char un_804D5A54[] = "lobj.h";
 static char un_804D5A5C[] = "lobj";
+extern f32 un_804DDCD8;
 
 HSD_LObj* un_80306EEC(void* list_arg, s32 hasAnim_arg)
 {
@@ -1421,8 +1422,8 @@ HSD_LObj* un_80306EEC(void* list_arg, s32 hasAnim_arg)
                     *hasAnim = 1;
                 }
                 HSD_LObjAddAnimAll(lobj, *anims);
-                HSD_LObjReqAnimAll(lobj, 0.0F);
-                if ((*anims)->next != NULL) {
+                HSD_LObjReqAnimAll(lobj, un_804DDCD8);
+                if ((*anims)->position_anim != NULL) {
                     *animFlag = 1;
                 }
             }
