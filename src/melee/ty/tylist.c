@@ -5,7 +5,9 @@
 #include "lb/lb_00B0.h"
 #include "lb/lb_00F9.h"
 #include "lb/lbarchive.h"
+#include "lb/lbaudio_ax.h"
 #include "lb/lblanguage.h"
+#include "mn/mnmain.h"
 #include "ty/toy.h"
 #include "ty/types.h"
 
@@ -851,7 +853,227 @@ void un_80313774(void)
     un_80312BAC(state, state->x2B8);
 }
 
-/// #fn_80313BD8
+void fn_80313BD8(HSD_GObj* gobj)
+{
+    TyListState* state = (TyListState*) un_804A2AC0;
+    u8* scroll = (u8*) state + 0x2AC;
+    f32 stick_x;
+    f32 stick_y;
+    f32 move_x;
+    f32 move_y;
+    s32 i;
+    TyListArg* entry;
+
+    if (un_GetTrophyTotal() > 0xA && un_8031305C(state, 1) != 0) {
+        return;
+    }
+
+    if (state->x2A0 != 0) {
+        state->x2A0--;
+        return;
+    }
+
+    if (state->x29E != 0) {
+        s32 half = state->x29D / 2;
+        s8 count;
+        if ((state->x29D % 2) != 0) {
+            if (state->x29E <= half) {
+                count = 5 - state->x29E;
+            } else {
+                count = 4 - (state->x29D - state->x29E);
+            }
+        } else if (state->x29E == half) {
+            count = 4 - (state->x29D - (state->x29E + 1));
+        } else if (state->x29E < half) {
+            count = 4 - state->x29E;
+        } else {
+            count = 4 - (state->x29D - state->x29E);
+        }
+        if (count < 2) {
+            count = 2;
+        }
+        un_80313358(state, -1, count, -1);
+        return;
+    }
+
+    stick_x = un_80305D00();
+    stick_y = un_80305DB0();
+    move_x = 0.0f;
+    move_y = 0.0f;
+
+    if (stick_x < -0.8f) {
+        scroll[0x12]++;
+        move_x = -1.0f;
+    } else if (stick_x > 0.8f) {
+        scroll[0x12]++;
+        move_x = 1.0f;
+    } else if (stick_y < -0.6f || (un_80305C44() & 4)) {
+        scroll[0x12]++;
+        move_y = 1.0f;
+    } else if (stick_y > 0.6f || (un_80305C44() & 8)) {
+        scroll[0x12]++;
+        move_y = -1.0f;
+    } else {
+        move_y = 0.0f;
+        scroll[0xF] = 0;
+        scroll[0x12] = 0;
+        scroll[0x14] = 6;
+        scroll[0x13] = 0;
+        scroll[0x11] = 0;
+        scroll[0x10] = 0;
+        move_x = 0.0f;
+    }
+
+    if (mn_8022F218() != 0) {
+        lbAudioAx_80024030(0);
+        HSD_GObjProc_8038FE24(HSD_GObj_804D7838);
+        un_80310660(0);
+        un_803148E4(0);
+        mn_8022F268();
+        ((TyModeState*) un_804A284C)->x4 = 1;
+        return;
+    }
+
+    if (un_80305B88() & 0x200) {
+        lbAudioAx_80024030(0);
+        HSD_GObjProc_8038FE24(HSD_GObj_804D7838);
+        un_80310660(0);
+        un_803148E4(0);
+        ((TyModeState*) un_804A284C)->x4 = 1;
+        return;
+    }
+
+    if (un_GetTrophyTotal() != 0 && (un_80305B88() & 0x1100)) {
+        lbAudioAx_80024030(1);
+        HSD_GObjProc_8038FE24(HSD_GObj_804D7838);
+        un_80310660(0);
+        un_803148E4(1);
+        un_80310324();
+        return;
+    }
+
+    if (scroll[0x12] > scroll[0x14]) {
+        scroll[0x12] = scroll[0x14] + 1;
+        scroll[0x14] = 3;
+        scroll[0xF] = 0;
+    }
+
+    if (((move_x < 0.0f) && (move_x != (s8) scroll[0x10])) ||
+        (un_80305B88() & 0x41))
+    {
+        scroll[0x10] = (s8) move_x;
+        state->x29B--;
+        if (state->x29B < 0) {
+            state->x29B = 2;
+        }
+        un_80312BAC(state, scroll[0xC]);
+        lbAudioAx_80024030(1);
+        return;
+    }
+
+    if (((move_x > 0.0f) && (move_x != (s8) scroll[0x10])) ||
+        (un_80305B88() & 0x22))
+    {
+        scroll[0x10] = (s8) move_x;
+        state->x29B++;
+        if (state->x29B >= 3) {
+            state->x29B = 0;
+        }
+        un_80312BAC(state, scroll[0xC]);
+        lbAudioAx_80024030(1);
+        return;
+    }
+
+    if (un_GetTrophyTotal() >= 2) {
+        if (un_GetTrophyTotal() > 0xA) {
+            if (un_80305C44() & 0x400) {
+                HSD_JObjSetFlagsAll(state->x288, 0x10);
+                if (state->x274->idx == 0 ||
+                    state->x274->x0->idx + 9 < un_GetTrophyTotal())
+                {
+                    un_80313358(state, 9, 4, 0);
+                } else {
+                    un_80313358(state, un_GetTrophyTotal() - state->x274->idx, 4,
+                                0);
+                }
+                state->x29D = state->x29E;
+                return;
+            }
+            if (un_80305C44() & 0x800) {
+                HSD_JObjSetFlagsAll(state->x288, 0x10);
+                if (state->x270->idx == un_GetTrophyTotal() - 1 ||
+                    state->x270->x4->idx - 9 > 0)
+                {
+                    un_80313358(state, 9, 4, 1);
+                } else {
+                    un_80313358(state, state->x270->x4->idx, 4, 1);
+                }
+                state->x29D = state->x29E;
+                return;
+            }
+        }
+
+        if (move_y != 0.0f && scroll[0xF] == 0) {
+            scroll[0xF] = 1;
+            scroll[0xC] = (s8) ((s8) scroll[0xC] + move_y);
+            if ((s8) scroll[0xC] < 0) {
+                scroll[0xC] = 0;
+            } else if ((s8) scroll[0xC] > state->entryCount - 3) {
+                scroll[0xC] = state->entryCount - 3;
+            }
+            if ((s8) scroll[0xC] != (s8) scroll[0xD]) {
+                scroll[0x12] = 0;
+                scroll[0x13] = 0;
+                scroll[0x11] = (s8) move_y;
+                entry = state->entries;
+                for (i = 0; i < state->entryCount; i++) {
+                    if (entry->x24 == (s8) scroll[0xC]) {
+                        state->selectedIdx = entry->idx;
+                        state->x278 = entry;
+                        lbAudioAx_80024030(2);
+                        if (state->jobj != NULL) {
+                            state->jobj->translate.y = entry->x30;
+                            HSD_JObjSetMtxDirtySub(state->jobj);
+                        }
+                    }
+                    un_80312904(entry, state->x2B8);
+                    entry = (TyListArg*) ((u8*) entry + sizeof(TyListArg));
+                }
+                scroll[0xD] = scroll[0xC];
+                return;
+            }
+
+            if (un_GetTrophyTotal() > 0xA) {
+                if ((s8) scroll[0x11] == 0) {
+                    scroll[0x13] = 5;
+                    scroll[0x12] = scroll[0x14] + 1;
+                    scroll[0x14] = 3;
+                    scroll[0xF] = 0;
+                }
+                scroll[0x11] = (s8) move_y;
+                if ((s8) scroll[0x13] == 0) {
+                    scroll[0x13] = 1;
+                    return;
+                }
+                if ((s8) scroll[0x13] < 5) {
+                    scroll[0x13]++;
+                    return;
+                }
+                entry = state->entries;
+                for (i = 0; i < state->entryCount; i++) {
+                    un_80312904(entry, state->entryCount);
+                    entry = (TyListArg*) ((u8*) entry + sizeof(TyListArg));
+                }
+                HSD_JObjSetFlagsAll(state->x288, 0x10);
+                if (move_y > 0.0f) {
+                    un_80313358(state, 1, 6, 0);
+                    return;
+                }
+                un_80313358(state, 1, 6, 1);
+            }
+        }
+    }
+}
 
 void fn_8031438C(HSD_GObj* gobj)
 {

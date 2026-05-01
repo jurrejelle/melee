@@ -95,7 +95,7 @@ typedef struct TyListState {
     /* 0x29A */ s8 entryCount;
     /* 0x29B */ u8 x29B;
     /* 0x29C */ u8 x29C;
-    /* 0x29D */ u8 pad_29D;
+    /* 0x29D */ s8 x29D;
     /* 0x29E */ u8 x29E;
     /* 0x29F */ u8 x29F;
     /* 0x2A0 */ s8 x2A0;
