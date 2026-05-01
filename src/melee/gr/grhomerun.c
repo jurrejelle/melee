@@ -41,6 +41,16 @@ typedef struct grHomeRun_MainGroundVars {
     HSD_GObj* xDC;
     HSD_GObj* xE0;
     HSD_GObj* xE4;
+    struct {
+        u8 b0 : 1;
+        u8 b1 : 1;
+        u8 b2 : 1;
+        u8 b3 : 1;
+        u8 b4 : 1;
+        u8 b5 : 1;
+        u8 b6 : 1;
+        u8 b7 : 1;
+    } xE8_flags;
 } grHomeRun_MainGroundVars;
 
 StageCallbacks grHr_803E8140[11] = {
@@ -791,31 +801,29 @@ HSD_GObj* grHomeRun_8021E500(s16 arg0)
     return gobj;
 }
 
-s32 fn_8021E994(Ground* arg0, s32 arg1, CollData* arg2, s32 arg3,
-                mpLib_GroundEnum arg4, f32 arg5)
+HSD_GObj* fn_8021E994(Ground* arg0, s32 arg1, CollData* arg2, s32 arg3,
+                      mpLib_GroundEnum arg4, f32 arg5)
 {
-    HSD_GObj* var_r3;
-    s32 temp_r31;
-    void* temp_r30;
+    HSD_GObj* gobj;
+    Ground* gp;
+    grHomeRun_MainGroundVars* vars;
+    s32 collKind = (*(u8*) &arg2->x34_flags >> 3U) & 0xF;
 
-    temp_r31 = ((*(u8*) &arg2->x34_flags >> 3U) & 0xF);
-    var_r3 = Ground_801C2BA4(0xA);
-    if (var_r3 != NULL) {
-        temp_r30 = var_r3->user_data;
-        if (temp_r30 == NULL) {
-            return (s32) var_r3;
+    gobj = Ground_801C2BA4(0xA);
+    if (gobj != NULL) {
+        gp = GET_GROUND(gobj);
+        if (gp == NULL) {
+            return gobj;
         }
-        if (temp_r31 == 1) {
-            var_r3 = gm_80180AF4();
-            if (arg2->x0_gobj == var_r3 && arg4 == 1) {
-                var_r3 = (HSD_GObj*) 1U;
-                *(u8*) ((u8*) temp_r30 + 0xE8) =
-                    (u8) (*(u8*) ((u8*) temp_r30 + 0xE8) |
-                          ((u32) var_r3 << 7));
+        if (collKind == 1) {
+            gobj = gm_80180AF4();
+            if (arg2->x0_gobj == gobj && arg4 == 1) {
+                vars = (grHomeRun_MainGroundVars*) &gp->gv.homerun;
+                vars->xE8_flags.b0 = 1;
             }
         }
     }
-    return (s32) var_r3;
+    return gobj;
 }
 
 void grHomeRun_8021EA30(f32* pos)
