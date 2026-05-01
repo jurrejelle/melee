@@ -1,5 +1,3 @@
-#include "ftYs_SpecialHi.static.h"
-
 #include "placeholder.h"
 
 #include "baselib/forward.h"
@@ -16,7 +14,7 @@
 #include "ftCommon/ftCo_Fall.h"
 
 #include "ftYoshi/forward.h"
-
+#include "ftYs_SpecialHi.h"
 #include "ftYoshi/ftYs_Init.h"
 #include "ftYoshi/types.h"
 #include "it/items/ityoshieggthrow.h"
