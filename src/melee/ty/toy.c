@@ -1843,8 +1843,10 @@ void un_80307F64(s32 arg0, s32 arg1)
         }
     }
 }
-/* 95.7% match */
-char* un_8030813C(s16 arg0, enum_t unused)
+extern char un_803FE454[0x1F];
+
+/* 99.9% match */
+char* un_8030813C(s32 arg0, enum_t unused)
 {
     char* ptr;
     s32 i;
@@ -1880,8 +1882,8 @@ char* un_8030813C(s16 arg0, enum_t unused)
     }
 
     if (found == 0) {
-        OSReport("**** Not Found Toy Model!(%d)\n", arg0);
-        __assert("toy.c", 0xBA3, "0");
+        OSReport(un_803FE454, arg0);
+        __assert(un_804D5A48, 0xBA3, un_804D5A50);
     }
 
     return ptr;
