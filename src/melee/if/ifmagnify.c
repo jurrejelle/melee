@@ -14,6 +14,13 @@
 #include <baselib/tobj.h>
 
 /* 3F97E8 */ extern HSD_CameraDescPerspective ifMagnify_803F97E8;
+/* 4DDB08 */ extern f32 ifMagnify_804DDB08;
+/* 4DDB28 */ extern f32 ifMagnify_804DDB28;
+/* 4DDB2C */ extern f32 ifMagnify_804DDB2C;
+/* 4DDB30 */ extern f32 ifMagnify_804DDB30;
+/* 4DDB34 */ extern f32 ifMagnify_804DDB34;
+/* 4DDB38 */ extern f32 ifMagnify_804DDB38;
+/* 4DDB3C */ extern f32 ifMagnify_804DDB3C;
 /* 4DDB4C */ extern f32 ifMagnify_804DDB4C;
 /* 4DDB60 */ extern int ifMagnify_804DDB60;
 
@@ -27,7 +34,75 @@ s32 ifMagnify_802FB6E8(s32 slot)
     return 0;
 }
 
-/// #ifMagnify_802FB73C
+ifMagnifyPlayer* ifMagnify_802FB73C(ifMagnifyPlayer* arg0, Vec2* arg1, Vec2* arg2)
+{
+    f32 temp_f1;
+    f32 temp_f1_2;
+    f32 temp_f1_3;
+    f32 temp_f2;
+    f32 temp_f3;
+    f32 temp_f4;
+
+    temp_f2 = arg1->x;
+    temp_f4 = arg1->y;
+    if (0.0f == temp_f2) {
+        if (temp_f4 > 0.0f) {
+            arg2->y = ifMagnify_804DDB28;
+        } else {
+            arg2->y = ifMagnify_804DDB2C;
+        }
+        arg2->x = ifMagnify_804DDB08;
+    } else {
+        temp_f3 = temp_f4 / temp_f2;
+        if ((temp_f3 > ifMagnify_804DDB30) || (temp_f3 < ifMagnify_804DDB34)) {
+            if (temp_f4 > 0.0f) {
+                arg2->y = ifMagnify_804DDB28;
+            } else {
+                arg2->y = ifMagnify_804DDB2C;
+            }
+            temp_f1 = arg2->y * temp_f2;
+            temp_f1 /= temp_f4;
+            if (temp_f1 < ifMagnify_804DDB38) {
+                arg2->x = ifMagnify_804DDB38;
+            } else if (temp_f1 > ifMagnify_804DDB3C) {
+                arg2->x = ifMagnify_804DDB3C;
+            } else {
+                arg2->x = temp_f1;
+            }
+        } else {
+            if (temp_f2 > 0.0f) {
+                arg2->x = ifMagnify_804DDB3C;
+            } else {
+                arg2->x = ifMagnify_804DDB38;
+            }
+            temp_f1_2 = arg2->x * temp_f4;
+            temp_f1_2 /= temp_f2;
+            if (temp_f1_2 < ifMagnify_804DDB2C) {
+                arg2->y = ifMagnify_804DDB2C;
+            } else if (temp_f1_2 > ifMagnify_804DDB28) {
+                arg2->y = ifMagnify_804DDB28;
+            } else {
+                arg2->y = temp_f1_2;
+            }
+        }
+    }
+
+    temp_f1_3 = arg2->x;
+    if (temp_f1_3 == ifMagnify_804DDB38) {
+        arg0->state.unk = 2;
+        return arg0;
+    }
+    if (temp_f1_3 == ifMagnify_804DDB3C) {
+        arg0->state.unk = 4;
+        return arg0;
+    }
+    if (arg2->y == ifMagnify_804DDB28) {
+        arg0->state.unk = 1;
+        return arg0;
+    }
+    arg0->state.unk = 3;
+    return arg0;
+}
 
 /// #ifMagnify_802FB8C0
 
