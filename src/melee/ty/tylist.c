@@ -479,14 +479,17 @@ void fn_80314504(HSD_GObj* gobj)
 
 void un_803147C4(void)
 {
-    TyListState* state = (TyListState*) un_804A2AC0;
+    char* data = un_804A2AC0;
     char* strs = un_803FE880;
     TyArchiveData* archive;
+    HSD_JObj* jobj;
+    HSD_GObj** gobj;
     PAD_STACK(8);
 
-    memzero(&state->gobj_2AC, 0x18);
+    memzero(data + 0x2AC, 0x18);
     un_8031457C();
-    memzero(&state->gobj_2C4, 0x14);
+    gobj = (HSD_GObj**) (data + 0x2C4);
+    memzero(gobj, 0x14);
 
     archive = un_804D6ED8;
 
@@ -495,20 +498,17 @@ void un_803147C4(void)
         OSPanic(strs + 0x70, 0x636, un_804D5A8C);
     }
 
-    {
-        HSD_JObj* jobj =
-            HSD_ArchiveGetPublicAddress(archive->data, strs + 0x170);
-        if (jobj != NULL) {
-            state->gobj_2C4 = GObj_Create(2, 3, 0);
-            HSD_GObjObject_80390A70(state->gobj_2C4, (u8) HSD_GObj_804D784A,
-                                    un_80306EEC(jobj, 0));
-            GObj_SetupGXLink(state->gobj_2C4, HSD_GObj_LObjCallback, 0x34, 0);
-        }
+    jobj = HSD_ArchiveGetPublicAddress(archive->data, strs + 0x170);
+    if (jobj != NULL) {
+        *gobj = GObj_Create(2, 3, 0);
+        HSD_GObjObject_80390A70(*gobj, (u8) HSD_GObj_804D784A,
+                                un_80306EEC(jobj, 0));
+        GObj_SetupGXLink(*gobj, HSD_GObj_LObjCallback, 0x34, 0);
     }
 
     un_80307470(0);
     if (un_GetTrophyTotal() != 0) {
-        memzero(state, 0x2AC);
+        memzero(data, 0x2AC);
         un_80313774();
     }
     HSD_PadRenewStatus();
