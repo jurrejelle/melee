@@ -3,6 +3,7 @@
 #include "gm/gmmain_lib.h"
 #include "if/textlib.h"
 #include "lb/lb_00B0.h"
+#include "lb/lb_00F9.h"
 #include "lb/lbarchive.h"
 #include "lb/lblanguage.h"
 #include "ty/toy.h"
@@ -51,8 +52,18 @@ typedef struct {
     s32 x24;
 } TyListWaitData;
 
+typedef struct {
+    HSD_GObj* x0;
+    HSD_GObj* x4;
+    u8 pad_8[0xE];
+    s16 x16;
+} TyListCameraState;
+
 static void fn_80313BD8(HSD_GObj* gobj);
 
+extern char un_803FE5E8[];
+extern TyListCameraState un_804A2D6C;
+extern s32 un_804D6EE8;
 extern s32 un_804D6EEC;
 
 static char un_804D5A88[3] = "%d";
@@ -540,7 +551,69 @@ void fn_80314504(HSD_GObj* gobj)
     }
 }
 
-/// #un_8031457C
+void un_8031457C(void)
+{
+    HSD_CameraDescPerspective* cam_desc;
+    HSD_CObj* cobj;
+    HSD_RectS16 viewport;
+    Scissor scissor;
+    Vec3 interest;
+    Vec3 eye;
+    PAD_STACK(8);
+
+    cam_desc = HSD_ArchiveGetPublicAddress(((TyArchiveData*) un_804D6ED8)->data,
+                                           un_803FE5E8);
+    if (cam_desc != NULL) {
+        un_804A2D6C.x0 = GObj_Create(1, 2, 0);
+        HSD_GObjObject_80390A70(un_804A2D6C.x0, HSD_GObj_804D784B,
+                                lb_80013B14(cam_desc));
+        GObj_SetupGXLinkMax(un_804A2D6C.x0, (GObj_RenderFunc) un_80306954, 0);
+        un_804A2D6C.x0->gxlink_prios = 0x9010000000000000ULL;
+        HSD_GObj_SetupProc(un_804A2D6C.x0, fn_8031438C, 0);
+        HSD_GObj_80390CD4(un_804A2D6C.x0);
+        un_804A2D6C.x16 = 0x1A;
+    }
+
+    un_804D6EEC =
+        HSD_SisLib_803A611C(3, un_804A2D6C.x0, 0xC, 0xC, 0, 0x3F, 0, 0);
+
+    if (cam_desc != NULL) {
+        un_804A2D6C.x4 = GObj_Create(1, 2, 0);
+        cobj = lb_80013B14(cam_desc);
+        HSD_GObjObject_80390A70(un_804A2D6C.x4, HSD_GObj_804D784B, cobj);
+        GObj_SetupGXLinkMax(un_804A2D6C.x4, (GObj_RenderFunc) fn_80314504, 0);
+        un_804A2D6C.x4->gxlink_prios = 0x0210000000000000ULL;
+
+        interest.x = 1.1f;
+        interest.y = -0.24f;
+        interest.z = 0.0f;
+        HSD_CObjSetInterest(cobj, &interest);
+
+        eye.x = 1.1f;
+        eye.y = -0.24f;
+        eye.z = 40.05963f;
+        HSD_CObjSetEyePosition(cobj, &eye);
+
+        viewport.xmin = 0x76;
+        viewport.xmax = 0x230;
+        viewport.ymin = 0x4E;
+        viewport.ymax = 0x19C;
+        HSD_CObjSetViewport(cobj, &viewport);
+
+        scissor.left = 0x76;
+        scissor.right = 0x230;
+        scissor.top = 0x60;
+        if (un_GetTrophyTotal() < 0xA) {
+            scissor.bottom = un_GetTrophyTotal() * 0x1E + 0x60;
+        } else {
+            scissor.bottom = 0x18A;
+        }
+        HSD_CObjSetScissor(cobj, &scissor);
+
+        un_804D6EE8 =
+            HSD_SisLib_803A611C(0, un_804A2D6C.x4, 0xB, 0xB, 0, 0x3E, 0, 0);
+    }
+}
 
 void un_803147C4(void)
 {
