@@ -2,7 +2,7 @@ File: src/melee/ty/tylist.c
 Funcs:
 - [x] un_803147C4
 - [x] fn_8031438C
-- [ ] un_803124BC
+- [x] un_803124BC
 - [ ] un_8031263C
 - [ ] un_803148E4
 - [ ] un_80312E88

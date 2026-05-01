@@ -59,6 +59,7 @@ static char un_804D5A88[3] = "%d";
 
 void un_803124BC(void)
 {
+    char* data = un_803FDD18;
     u16* table1;
     s16* list;
     u16* table2;
@@ -70,15 +71,18 @@ void un_803124BC(void)
     if (un_804D6ED0 == NULL) {
         char* archiveName;
         if (lbLang_IsSavedLanguageJP()) {
-            archiveName = "TyDatai.dat";
+            archiveName = data + 0x608;
         } else {
-            archiveName = "TyDatai.usd";
+            archiveName = data + 0x614;
         }
-        un_804D6ED0 = lbArchive_LoadSymbols(
-            archiveName, &un_804D6EC4, "tyInitModelTbl", &un_804D6EC0,
-            "tyInitModelDTbl", &un_804D6EBC, "tyModelSortTbl", &un_804D6EB8,
-            "tyExpDifferentTbl", &un_804D6EB4, "tyNoGetUsTbl", &un_804D6EB0,
-            "tyDisplayModelTbl", &un_804D6EAC, "tyDisplayModelUsTbl", NULL);
+        un_804D6ED0 = lbArchive_LoadSymbols(archiveName, &un_804D6EC4,
+                                            data + 0x9DC, &un_804D6EC0,
+                                            data + 0x9EC, &un_804D6EBC,
+                                            data + 0x9FC, &un_804D6EB8,
+                                            data + 0xA0C, &un_804D6EB4,
+                                            data + 0xA20, &un_804D6EB0,
+                                            data + 0xA30, &un_804D6EAC,
+                                            data + 0xA44, NULL);
     }
 
     i = 0;
