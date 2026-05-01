@@ -77,7 +77,7 @@ void grHomeRun_8021C754(void)
     grHr_804D6AE8 = Ground_801C49F8();
     stage_info.unk8C.b4 = false;
     stage_info.unk8C.b5 = true;
-    grHomeRun_8021EDD4(1);
+    grHomeRun_8021EDD4();
     grHomeRun_8021C82C(0);
     grHomeRun_8021C82C(0xA);
     grHomeRun_8021ED74();
@@ -927,7 +927,7 @@ void grHomeRun_8021ED74(void)
     it_8026BE84(&bobomb_rain);
 }
 
-void grHomeRun_8021EDD4(int arg0)
+void grHomeRun_8021EDD4()
 {
     f32 scale;
     f32 max_dist;
