@@ -1918,29 +1918,32 @@ void un_80308328(s32 arg0)
 {
     un_803063D4((s16) arg0, 2, 0x128);
 }
-/* 68.1% match */
 s16 un_80308354(s16 idx)
 {
-    s32 i;
-    s16 target;
     TrophyData* entry;
+    register s32 target;
+    s32 i;
 
-    target = un_804D6EDC[idx];
     entry = un_804D6EC4;
-
+    target = un_804D6EDC[idx];
     for (i = 0; i < 0x125; i++) {
         if (target == entry->id) {
             break;
         }
         entry++;
     }
-
-    if (i == 0x125) {
-        OSReport(un_803FE474);
-        __assert(un_804D5A48, 0xC2A, un_804D5A50);
+    if (i != 0x125) {
+        goto lbl_return;
     }
+    OSReport(un_803FE474, target, entry);
+    __assert(un_804D5A48, 0xC2A, un_804D5A50);
+    goto lbl_end;
 
+lbl_return:
     return target;
+
+lbl_end:
+    ;
 }
 
 void un_803083D8(HSD_JObj* jobj, s32 arg1)
