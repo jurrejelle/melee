@@ -1,9 +1,13 @@
 #include "ifmagnify.h"
 
+#include "cm/camera.h"
+#include "ft/ftlib.h"
 #include "gm/gm_1601.h"
 #include "gm/gm_16AE.h"
+#include "gm/types.h"
 #include "gr/ground.h"
 #include "if/ifall.h"
+#include "if/if_2FC93.h"
 #include "lb/lb_00B0.h"
 #include "lb/lb_00F9.h"
 #include "lb/lbarchive.h"
@@ -21,7 +25,12 @@
 #include <baselib/mobj.h>
 #include <baselib/tobj.h>
 
+#include <math.h>
+
 /* 3F97E8 */ extern HSD_CameraDescPerspective ifMagnify_803F97E8;
+static char ifMagnify_803F988C[] = "!(jobj->flags & JOBJ_USE_QUATERNION)";
+static char ifMagnify_804D57F0[] = "jobj.h";
+static char ifMagnify_804D57F8[] = "jobj";
 /* 4DDB08 */ extern f32 ifMagnify_804DDB08;
 /* 4DDB28 */ extern f32 ifMagnify_804DDB28;
 /* 4DDB2C */ extern f32 ifMagnify_804DDB2C;
@@ -29,7 +38,11 @@
 /* 4DDB34 */ extern f32 ifMagnify_804DDB34;
 /* 4DDB38 */ extern f32 ifMagnify_804DDB38;
 /* 4DDB3C */ extern f32 ifMagnify_804DDB3C;
+/* 4DDB40 */ extern f32 ifMagnify_804DDB40;
+/* 4DDB44 */ extern f32 ifMagnify_804DDB44;
+/* 4DDB48 */ extern f32 ifMagnify_804DDB48;
 /* 4DDB4C */ extern f32 ifMagnify_804DDB4C;
+/* 4DDB50 */ extern f64 ifMagnify_804DDB50;
 /* 4DDB60 */ extern int ifMagnify_804DDB60;
 
 ifMagnify ifMagnify_804A1DE0;
@@ -112,7 +125,65 @@ ifMagnifyPlayer* ifMagnify_802FB73C(ifMagnifyPlayer* arg0, Vec2* arg1, Vec2* arg
     return arg0;
 }
 
-/// #ifMagnify_802FB8C0
+void ifMagnify_802FB8C0(HSD_GObj* arg0, s32 arg1)
+{
+    S32Vec2 screen_pos;
+    Vec2 pos;
+    Vec2 out;
+    Vec3 translate;
+    GXColor color;
+    HSD_GObj* fighter_gobj;
+    ifMagnifyPlayer* player;
+    s32 slot;
+    bool is_colored;
+    u8 arrow_kind;
+    u8 slot_type;
+    u8 teams_enabled;
+
+    if (arg1 != 0) {
+        return;
+    }
+
+    player = arg0->user_data;
+    slot = player - ifMagnify_804A1DE0.player;
+    is_colored = false;
+    if ((gm_8016AE38()->hud_enabled != 0) && !ifAll_IsHUDHidden() &&
+        !Camera_80030130() && player->state.is_offscreen)
+    {
+        fighter_gobj = Player_GetEntity(slot);
+        if (fighter_gobj != NULL) {
+            ftLib_80086A58(fighter_gobj, &screen_pos);
+            pos.x = screen_pos.x - 320.0f;
+            pos.y = -((f32) screen_pos.y - 240.0f);
+
+            HSD_JObjSetRotationZ(player->jobj, atan2f(pos.y, pos.x));
+
+            ifMagnify_802FB73C(player, &pos, &out);
+            translate.x = 0.09125f * out.x;
+            translate.y = 0.1f * out.y;
+            translate.z = 0.0f;
+            HSD_JObjSetTranslate((HSD_JObj*) player->gobj->hsd_obj, &translate);
+
+            HSD_GObj_JObjCallback(arg0, arg1);
+            if ((player->state.unk == 4) || (player->state.unk == 2)) {
+                slot_type = Player_GetPlayerSlotType(slot);
+                teams_enabled = gm_8016B168();
+                color = gm_80160968(gm_80160854((u8) slot, Player_GetTeam(slot),
+                                                teams_enabled, slot_type));
+                if (player->state.unk == 2) {
+                    arrow_kind = 1;
+                } else {
+                    arrow_kind = 2;
+                }
+                un_802FD928((u8) slot, arrow_kind, &color);
+                is_colored = true;
+            }
+        }
+    }
+    if (!is_colored) {
+        un_802FD9D8((u8) slot);
+    }
+}
 
 /// #ifMagnify_802FBBDC
 

@@ -4,5 +4,5 @@ Funcs:
 - [x] ifMagnify_802FC870
 - [x] ifMagnify_802FB73C
 - [x] ifMagnify_802FC3C0
-- [ ] ifMagnify_802FB8C0
+- [x] ifMagnify_802FB8C0
 - [ ] ifMagnify_802FBBDC
