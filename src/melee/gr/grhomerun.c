@@ -820,6 +820,7 @@ s32 fn_8021E994(Ground* arg0, s32 arg1, CollData* arg2, s32 arg3,
 
 void grHomeRun_8021EA30(f32* pos)
 {
+    float new_var;
     f32 result;
     f32 time;
 
@@ -827,7 +828,9 @@ void grHomeRun_8021EA30(f32* pos)
     result = *pos - 70.0F * (grHr_804D6AE4 * time);
 
     time = Ground_801C0498();
-    result /= grHr_804D6AE4 * ((f32) grHr_804D6ADC * (160.0F * time));
+    new_var = 160.0F * time;
+    new_var = ((f32) grHr_804D6ADC) * new_var;
+    result /= grHr_804D6AE4 * new_var;
     result *= grHr_804D6AE0;
 
     if (result < 0.0F) {
@@ -835,7 +838,7 @@ void grHomeRun_8021EA30(f32* pos)
     }
 
     if (lbLang_IsSavedLanguageUS()) {
-        result = (f32)(result * 0.304788);
+        result *= 0.304788;
     }
 
     stage_info.x6E0 = 100.0F * result;
