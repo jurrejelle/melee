@@ -563,11 +563,9 @@ void ifMagnify_802FC870(void)
     ifMagnify_802FC7C0(&ifMagnify_804A1DE0);
     archive = ifAll_802F3690();
     lbArchive_LoadSections(*archive, (void**) &ifMagnify_804A1DE0, "lupe", 0);
-    i = 0;
-    do {
+    for (i = 0; i < 6; i++) {
         ifMagnify_802FC3C0(i);
-        i++;
-    } while (i < 6);
+    }
     ifMagnify_802FC618();
 }
 
