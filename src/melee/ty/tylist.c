@@ -913,42 +913,44 @@ void fn_80313BD8(HSD_GObj* gobj)
 
 void fn_8031438C(HSD_GObj* gobj)
 {
-    char* data = un_804A2AC0;
-    char* state = data + 0x2AC;
+    TyListState* data = (TyListState*) un_804A2AC0;
+    TyListCameraState* state = (TyListCameraState*) &data->gobj_2AC;
     TyListArchiveAnimData* archive = un_804D6ED8;
-    HSD_JObj** jobjs = archive->jobjs;
     s32 i;
+    PAD_STACK(16);
 
-    if ((s8) state[0x16] != 0) {
-        if ((s8) state[0x16] > 1) {
+    if ((s8) data->x2C2 != 0) {
+        if ((s8) state->x16 > 1) {
             for (i = 0; i < 3; i++) {
-                HSD_JObj* jobj = jobjs[i];
-                HSD_JObjReqAnim(jobj, i == *(s8*) (data + 0x29B) ? 1.0f : 0.0f);
-                HSD_AObjSetRate(jobj->aobj, 0.0f);
+                if (i == (s8) data->x29B)
+                    HSD_JObjReqAnim(archive->jobjs[i], 1.0f);
+                else
+                    HSD_JObjReqAnim(archive->jobjs[i], 0.0f);
+                HSD_AObjSetRate(archive->jobjs[0]->u.dobj->mobj->tobj->aobj, 0.0f);
             }
             HSD_JObjAnimAll(GET_JOBJ(archive->gobj));
         } else {
-            TyListWaitData* wait_data = *(TyListWaitData**) (state + 4);
+            TyListWaitData* wait_data = (TyListWaitData*) state->x4;
             if (wait_data != NULL) {
                 wait_data->x24 = 0;
                 wait_data->x20 = 36.0f;
             }
-            *(HSD_Text**) (data + 0x290) = HSD_SisLib_803A6754(3, un_804D6EEC);
-            (*(HSD_Text**) (data + 0x290))->pos_z = 17.2f;
-            (*(HSD_Text**) (data + 0x290))->font_size.x = 0.038f;
-            (*(HSD_Text**) (data + 0x290))->font_size.y = 0.029f;
-            (*(HSD_Text**) (data + 0x290))->default_kerning = 1;
-            (*(HSD_Text**) (data + 0x290))->default_alignment = 2;
-            HSD_SisLib_803A6B98(*(HSD_Text**) (data + 0x290), 290.0f, 320.0f,
+            data->x290 = HSD_SisLib_803A6754(3, un_804D6EEC);
+            data->x290->pos_z = 17.2f;
+            data->x290->font_size.x = 0.038f;
+            data->x290->font_size.y = 0.029f;
+            data->x290->default_kerning = 1;
+            data->x290->default_alignment = 2;
+            HSD_SisLib_803A6B98(data->x290, 290.0f, 320.0f,
                                 un_804D5A88,
                                 un_GetTrophyTotal());
         }
-        state[0x16] = state[0x16] - 1;
+        state->x16 = state->x16 - 1;
         return;
     }
     HSD_GObjProc_8038FED4(gobj);
-    HSD_GObj_SetupProc(*(HSD_GObj**) state, fn_80313BD8, 0);
-    HSD_GObj_80390CD4(*(HSD_GObj**) state);
+    HSD_GObj_SetupProc(state->x0, fn_80313BD8, 0);
+    HSD_GObj_80390CD4(state->x0);
 }
 
 void fn_80314504(HSD_GObj* gobj)
