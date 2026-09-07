@@ -633,14 +633,6 @@ void mnSnap_80254014(void)
 #pragma pop
 #endif
 
-/// @todo .sdata2 order hack
-#ifdef MUST_MATCH
-static void mnSnap_sdata2_order(void)
-{
-    (void) -6.9F;
-}
-#endif
-
 /// Configures the Yes/No dialog button positions based on language setting.
 void mnSnap_8025409C(s32 dlg_type)
 {
@@ -867,7 +859,7 @@ static UNINITIALIZED_RETURN(s32) mnSnap_8025441C(u64 buttons)
     }
 }
 
-static void mnSnap_InitDialogText(void)
+static inline void mnSnap_InitDialogText(void)
 {
     HSD_Text* t;
     if (mnSnap_804A0A10.dlg_text != NULL) {
@@ -2481,28 +2473,11 @@ static inline s16* mnSnap_GetCardStatus(mnSnap_State* snap)
 
 static inline void mnSnap_InitPageText(HSD_Text** text)
 {
-    mnSnap_State* snap = &mnSnap_804A0A10;
-
-    snap->page_text = HSD_SisLib_803A6754(0, 0);
-    *text = snap->page_text;
+    mnSnap_804A0A10.page_text = HSD_SisLib_803A6754(0, 0);
+    *text = mnSnap_804A0A10.page_text;
     (*text)->pos_x = -1.8F;
     (*text)->pos_y = 9.2F;
     (*text)->pos_z = 17.0F;
-}
-
-static inline void** mnSnap_GetMainJoint(mnSnap_State* snap)
-{
-    return &snap->main_joint;
-}
-
-static inline void** mnSnap_GetMainShapeAnim(mnSnap_State* snap)
-{
-    return &snap->main_shapeanim;
-}
-
-static inline void** mnSnap_GetWarnAnimJoint(mnSnap_State* snap)
-{
-    return &snap->warn_animjoint;
 }
 
 /// Creates five thumbnail joints using the spacing between two markers.
@@ -2512,6 +2487,7 @@ mnSnap_CreateThumbnails(mnSnap_State* snap, HSD_JObj** thumb_root_ptr,
                         void** sub_matanim, void** sub_shapeanim)
 {
     HSD_JObj* jobj2;
+    HSD_JObj* marker;
     f32 step_z;
     f32 step_y;
     f32 step_x;
@@ -2521,7 +2497,8 @@ mnSnap_CreateThumbnails(mnSnap_State* snap, HSD_JObj** thumb_root_ptr,
 
     /* Get thumbnail start/end positions */
     HSD_JObjGetTranslation(snap->thumb_start, &start_pos);
-    HSD_JObjGetTranslation(snap->thumb_end, &end_pos);
+    marker = snap->thumb_end;
+    HSD_JObjGetTranslation(marker, &end_pos);
     step_x = end_pos.x - start_pos.x;
     step_y = end_pos.y - start_pos.y;
     step_z = end_pos.z - start_pos.z;
@@ -2546,6 +2523,8 @@ mnSnap_CreateThumbnails(mnSnap_State* snap, HSD_JObj** thumb_root_ptr,
 void mnSnap_80257F24(void)
 {
     void** main_load;
+    void** ld3;
+    char* sl2;
     mnSnap_State* snap = &mnSnap_804A0A10;
     HSD_JObj* jobj;
     HSD_GObj* gobj;
@@ -2579,6 +2558,7 @@ void mnSnap_80257F24(void)
     void** arrows_matanim;
     s32 i;
     s32 zero = 0;
+    s32 zero2 = 0;
 
     mn_804D6BC8.cooldown = 5;
     mn_804A04F0.prev_menu = mn_804A04F0.cur_menu;
@@ -2595,15 +2575,13 @@ void mnSnap_80257F24(void)
         s32* photo_count = snap->photo_count;
         photo_count[1] = zero;
     }
-    snap->card_status[0] = zero;
-    {
-        s16* card_status = mnSnap_GetCardStatus(snap);
-        card_status[1] = zero;
-    }
+    snap->card_status[0] = zero2;
+    mnSnap_GetCardStatus(snap)[1] = zero;
     archive = mn_804D6BB8;
 
-    main_matanim = &snap->main_matanim;
+    main_joint = &snap->main_joint;
     main_animjoint = &snap->main_animjoint;
+    main_matanim = &snap->main_matanim;
     main_shapeanim = &snap->main_shapeanim;
     csr_joint = &snap->csr_joint;
     csr_animjoint = &snap->csr_animjoint;
@@ -2623,12 +2601,10 @@ void mnSnap_80257F24(void)
     warn_matanim = &snap->warn_matanim;
     warn_shapeanim = &snap->warn_shapeanim;
 
-    main_joint = &snap->main_joint;
-
+    sl2 = "MenMainConSn_Top_matanim_joint";
     lbArchive_LoadSections(
-        archive, mnSnap_GetMainJoint(snap), "MenMainConSn_Top_joint",
-        main_animjoint, "MenMainConSn_Top_animjoint", main_matanim,
-        "MenMainConSn_Top_matanim_joint", mnSnap_GetMainShapeAnim(snap),
+        archive, main_joint, "MenMainConSn_Top_joint", main_animjoint,
+        "MenMainConSn_Top_animjoint", main_matanim, sl2, main_shapeanim,
         "MenMainConSn_Top_shapeanim_joint", csr_joint,
         "MenMainSubSn_Top_joint", csr_animjoint, "MenMainSubSn_Top_animjoint",
         csr_matanim, "MenMainSubSn_Top_matanim_joint", csr_shapeanim,
@@ -2641,7 +2617,7 @@ void mnSnap_80257F24(void)
         arrows_animjoint, "MenMainLoadSn_Top_animjoint", arrows_matanim,
         "MenMainLoadSn_Top_matanim_joint", arrows_shapeanim,
         "MenMainLoadSn_Top_shapeanim_joint", warn_joint,
-        "MenMainWarCmn_Top_joint", mnSnap_GetWarnAnimJoint(snap),
+        "MenMainWarCmn_Top_joint", warn_animjoint,
         "MenMainWarCmn_Top_animjoint", warn_matanim,
         "MenMainWarCmn_Top_matanim_joint", warn_shapeanim,
         "MenMainWarCmn_Top_shapeanim_joint\0\0\0\0\0\0", 0);
@@ -2649,13 +2625,14 @@ void mnSnap_80257F24(void)
     /* Main GObj */
     gobj = GObj_Create(6, 7, 0x80);
     snap->main_gobj = gobj;
-    main_load = main_joint;
+    ld3 = &snap->main_shapeanim;
+    main_load = &snap->main_joint;
     jobj = HSD_JObjLoadJoint((HSD_Joint*) *main_load);
     HSD_GObjObject_80390A70(gobj, HSD_GObj_JObjKind, jobj);
     GObj_SetupGXLink(gobj, (GObj_RenderFunc) fn_80253DB4, 4, 0x80);
     HSD_JObjAddAnimAll(jobj, (HSD_AnimJoint*) *main_animjoint,
                        (HSD_MatAnimJoint*) *main_matanim,
-                       (HSD_ShapeAnimJoint*) *main_shapeanim);
+                       (HSD_ShapeAnimJoint*) *ld3);
     HSD_JObjReqAnimAll(jobj, 0.0F);
     lb_80011E24(jobj, (&snap->thumb_jobjs[0]), 8, 9, 0xA, 0xB, 0xC, 0xD, 6, 2,
                 1, -1);
