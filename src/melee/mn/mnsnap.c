@@ -2601,10 +2601,10 @@ void mnSnap_80257F24(void)
     warn_matanim = &snap->warn_matanim;
     warn_shapeanim = &snap->warn_shapeanim;
 
-    sl2 = "MenMainConSn_Top_matanim_joint";
     lbArchive_LoadSections(
         archive, main_joint, "MenMainConSn_Top_joint", main_animjoint,
-        "MenMainConSn_Top_animjoint", main_matanim, sl2, main_shapeanim,
+        "MenMainConSn_Top_animjoint", main_matanim,
+        (sl2 = "MenMainConSn_Top_matanim_joint"), main_shapeanim,
         "MenMainConSn_Top_shapeanim_joint", csr_joint,
         "MenMainSubSn_Top_joint", csr_animjoint, "MenMainSubSn_Top_animjoint",
         csr_matanim, "MenMainSubSn_Top_matanim_joint", csr_shapeanim,
